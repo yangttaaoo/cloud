@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cist.yjgl.ljqygl.mapper.LjqyglMapper">
+	<!-- 查询拦截区域类型信息 -->
+ 	<select id="queryljqygl" parameterType="java.util.HashMap" resultType="com.cist.yjgl.ljqygl.model.Jcbk_Ljqy">
+ 		select * from JCBK_LJQY_INFO
+ 		<where>
+ 			<if test="qy_code != null and qy_code !=''">
+ 				and qy_code like '%'||#{qy_code}||'%'
+ 			</if>
+ 			<if test="qy_name != null and qy_name != ''">
+ 				and qy_name like '%'||#{qy_name}||'%'
+ 			</if>
+ 		</where>
+ 		order by pk_id desc
+ 	</select>
+ 	<!-- 添加拦截区域类型信息 -->
+ 	<insert id="addljqygl" parameterType="java.util.HashMap">
+ 		insert into JCBK_LJQY_INFO
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			pk_id,
+      		qy_code,
+       		qy_name,
+       		dept_id,
+       		create_user,
+       		status,
+			<if test="qy !=null and qy !=''">
+			qy,
+			</if>
+		</trim>
+		<trim prefix="values(" suffix=")" suffixOverrides=",">
+			seq_c_veh_bus_pk.nextval,#{qy_code},#{qy_name},#{dept_id},#{create_user},#{status},
+			<if test="qy !=null and qy !=''">
+			#{qy,jdbcType=CLOB},
+			</if>
+		</trim>
+ 	</insert>
+ 	<!-- 删除拦截区域管理 -->
+ 	<delete id="delljqygl" parameterType="java.util.HashMap">
+ 		delete from JCBK_LJQY_INFO where pk_id in
+		<foreach item="w" collection="pk_id" open="(" separator="," close=")">
+		       #{w}
+		 </foreach>
+ 	</delete>
+ 	<!-- 更新拦截区域管理 -->
+ 	<update id="updateljqygl" parameterType="java.util.HashMap">
+ 		update JCBK_LJQY_INFO
+		<trim prefix="set" suffixOverrides=",">
+			<if test="qy_name!=null">qy_name = #{qy_name,jdbcType=VARCHAR},</if>
+			<if test="qy_code!=null">qy_code = #{qy_code,jdbcType=INTEGER},</if>
+			<if test="dept_id!=null">dept_id = #{dept_id,jdbcType=INTEGER},</if>
+			<if test="status!=null">status = #{status,jdbcType=VARCHAR},</if>
+			<if test="qy!=null">qy = #{qy,jdbcType=CLOB},</if>
+		</trim>
+		where pk_id=#{pk_id}
+ 	</update>
+ 	<!-- 根据单位pk查询单位名称 -->
+ 	<select id="querydept_name" parameterType="java.lang.String" resultType="java.lang.String">
+ 		 select dept_name from sys_depart_info where dept_code = #{dept_pk}
+ 	</select>
+ 	<!-- 根据警员code查询警员姓名 -->
+ 	<select id="querypolicename" parameterType="java.lang.String" resultType="java.lang.String">
+ 		select sypi_name from SYS_POLICE_INFO where sypi_code=#{sypi_code}
+ 	</select>
+</mapper>

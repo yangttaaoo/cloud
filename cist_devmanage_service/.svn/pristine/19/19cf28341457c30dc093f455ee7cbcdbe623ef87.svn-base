@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cist.videopatrol.mapper.VideoPatrolMapper">
+	<!-- 查询视频巡逻方案 -->
+	<select id="querycruise" parameterType="java.util.HashMap" resultType="com.cist.videopatrol.model.TBL_VIO_CRUISE_CASE">
+		select * from TBL_VIO_CRUISE_CASE
+	</select>
+	<!-- 根据条件查询视频巡逻方案摄像机表 -->
+	<select id="querycruiseconf" parameterType="java.util.HashMap" resultType="com.cist.videopatrol.model.TBL_VIO_CRUISE_CONFIG">
+		select * from vw_spxljk_info 
+		<where>
+			<if test="vcc_pk!=null and vcc_pk!=''">
+				and vcc_pk = #{vcc_pk}
+			</if>
+		</where>
+	</select>
+	<select id="querydev" parameterType="java.util.HashMap" resultType="com.cist.patrolplan.model.Tbl_Dev_Info">
+		select * from JCSJ_DEVICE
+		<where>
+			<if test="dvc_pk!=null and dvc_pk!=''">
+				and device_num=#{dvc_pk,jdbcType=INTEGER}
+			</if>
+		</where>
+	</select>
+	<select id="queryinfo" parameterType="java.util.HashMap" resultType="com.cist.videopatrol.model.TBL_VIO_CRUISE_CONFIG">
+		select * from vw_spxljk_info k
+		<where>
+			<if test="vcc_pk!=null and vcc_pk!=''">
+				and k.vcc_pk = #{vcc_pk}
+			</if>
+			<!-- <if test="dvc_pk!=null and dvc_pk!=''">
+				and k.dvc_pk=#{dvc_pk,jdbcType=INTEGER}
+			</if> -->
+			<!-- <if test="zt!=null and zt!=''">
+				and k.DVC_STATUS = #{zt}
+			</if> -->
+		</where>
+	</select>
+</mapper>

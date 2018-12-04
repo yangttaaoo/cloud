@@ -1,0 +1,12 @@
+package com.cist.qwgl.qwbb.model;
+
+import java.io.Serializable;
+
+public class Qw_report_car_relation implements Serializable{
+	private static final long serialVersionUID = 1L;
+	private Integer pk_id;//
+	private String fk_car_patrol_id;//
+	private String fk_user_id;//
+	private String user_type;//
+
+}

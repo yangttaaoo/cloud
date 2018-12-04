@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cist.xxtj.sjwxyytj.mapper.SjwxyytjMapper">
+	<!-- 查询无效原因信息 -->
+	<select id="querywxyytj" parameterType="java.util.HashMap" resultType="com.cist.xxtj.sjwxyytj.model.TBL_WFXW_INVALID_STAT">
+		select * from TBL_WFXW_INVALID_STAT 
+			<where>
+				<if test="kssj!=null and kssj!=''">
+					<![CDATA[ and tjsj >=to_date(#{kssj},'yyyy-mm-dd HH24:mi:ss')]]>
+				</if>
+				<if test="jssj!=null and jssj!=''">
+					<![CDATA[and tjsj <= to_date(#{jssj},'yyyy-mm-dd HH24:mi:ss') ]]>
+				</if>
+				<if test="dept_name !=null and dept_name !=''">
+					and glbm = #{dept_name}
+				</if>
+			</where>
+	</select>
+	
+	<!-- 查询上传失败原因信息 -->
+	<select id="queryscsbyytj" parameterType="java.util.HashMap" resultType="com.cist.xxtj.sjwxyytj.model.TBL_WFXW_FAIL_STAT">
+		select * from TBL_WFXW_FAIL_STAT 
+			<where>
+				<if test="kssj!=null and kssj!=''">
+					<![CDATA[ and tjsj >=to_date(#{kssj},'yyyy-mm-dd HH24:mi:ss')]]>
+				</if>
+				<if test="jssj!=null and jssj!=''">
+					<![CDATA[and tjsj <= to_date(#{jssj},'yyyy-mm-dd HH24:mi:ss') ]]>
+				</if>
+				<if test="dept_name !=null and dept_name !=''">
+					and glbm = #{dept_name}
+				</if>
+			</where>
+	</select>
+	
+	<!-- 按部门统计违法行为统计 -->
+	<select id="wfxwttjbydept" parameterType="java.util.HashMap" resultType="com.cist.xxtj.sjwxyytj.model.WfxwtjByDept">
+		select glbm,sum(wxzs) wxzs, listagg(wfxwtj,'-') WITHIN  GROUP(ORDER BY pk) wfxwtj from TBL_WFXW_INVALID_STAT
+			<where>
+				<if test="kssj!=null and kssj!=''">
+					<![CDATA[ and tjsj >=to_date(#{kssj},'yyyy-mm-dd HH24:mi:ss')]]>
+				</if>
+				<if test="jssj!=null and jssj!=''">
+					<![CDATA[and tjsj <= to_date(#{jssj},'yyyy-mm-dd HH24:mi:ss') ]]>
+				</if>
+			</where>
+		 group by glbm
+	</select>
+	<!-- 违法行为合计 -->
+	<select id="wxxwhj" parameterType="java.util.HashMap" resultType="com.cist.xxtj.sjwxyytj.model.WfxwtjByDept">
+		select '合计' glbm, sum(wxzs) wxzs, listagg(wfxwtj,'-')
+ 		WITHIN  GROUP(ORDER BY pk) wfxwtj from TBL_WFXW_INVALID_STAT
+ 		<where>
+				<if test="kssj!=null and kssj!=''">
+					<![CDATA[ and tjsj >=to_date(#{kssj},'yyyy-mm-dd HH24:mi:ss')]]>
+				</if>
+				<if test="jssj!=null and jssj!=''">
+					<![CDATA[and tjsj <= to_date(#{jssj},'yyyy-mm-dd HH24:mi:ss') ]]>
+				</if>
+			</where>
+	</select>
+	<!-- 上传失败原因统计 -->
+	<select id="scsbyytjbydept" parameterType="java.util.HashMap" resultType="com.cist.xxtj.sjwxyytj.model.WfxwtjByDept">
+		select glbm,sum(wxzs) wxzs, listagg(wfxwtj,'-') WITHIN  GROUP(ORDER BY pk) wfxwtj from TBL_WFXW_FAIL_STAT
+			<where>
+				<if test="kssj!=null and kssj!=''">
+					<![CDATA[ and tjsj >=to_date(#{kssj},'yyyy-mm-dd HH24:mi:ss')]]>
+				</if>
+				<if test="jssj!=null and jssj!=''">
+					<![CDATA[and tjsj <= to_date(#{jssj},'yyyy-mm-dd HH24:mi:ss') ]]>
+				</if>
+			</where>
+		 group by glbm
+	</select>
+	<!-- 上传失败合计 -->
+	<select id="scsbhj" parameterType="java.util.HashMap" resultType="com.cist.xxtj.sjwxyytj.model.WfxwtjByDept">
+		select '合计' glbm, sum(wxzs) wxzs, listagg(wfxwtj,'-')
+ 		WITHIN  GROUP(ORDER BY pk) wfxwtj from TBL_WFXW_FAIL_STAT
+ 		<where>
+				<if test="kssj!=null and kssj!=''">
+					<![CDATA[ and tjsj >=to_date(#{kssj},'yyyy-mm-dd HH24:mi:ss')]]>
+				</if>
+				<if test="jssj!=null and jssj!=''">
+					<![CDATA[and tjsj <= to_date(#{jssj},'yyyy-mm-dd HH24:mi:ss') ]]>
+				</if>
+			</where>
+	</select>
+</mapper>

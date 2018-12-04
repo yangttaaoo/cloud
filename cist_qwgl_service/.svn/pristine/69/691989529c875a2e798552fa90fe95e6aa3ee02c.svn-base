@@ -1,0 +1,227 @@
+package com.cist.personalentry.model;
+
+import java.io.Serializable;
+import java.sql.Date;
+import java.util.List;
+public class IndividualInfo implements Serializable{
+
+	private static final long serialVersionUID = 1L;
+	private Integer pk_id;//ID
+	private Integer fk_dept_id;//管理部门ID
+	private char data_sources_type;//数据来源（0：系统录入；1：其他）
+	private char assessment_type;//考核类型（1：勤务考核；2：非现考核；3：其他）
+	private Integer fk_user_id;//考核人ID	
+	private Integer fk_repori_id;//勤务报备ID
+	private Integer assessment_num;//考核条数
+	private Integer verify_num;//审核条数
+	private Date start_date;//执勤开始日期
+	private Date end_date;//执勤结束日期
+	private Integer fk_patrol_area_id;//执勤区域ID
+	private char own_guns;//是否配枪（0：否；1：是）
+	private Integer fk_topic_id;//考核栏目ID
+	private Integer fk_regulations_id;//考核条例ID
+	private String explain;//说明
+	private Integer input_person;//录入人ID
+	private Date input_time;//录入时间
+	private char verify_status;//审核状态（0：未审核、1：已审核）
+	private Integer fk_verify_person_id;//审核人ID
+	private Date verify_time;//审核时间
+	private String record_invalid_reason;//作废原因
+	private Integer att_pk_id;//附件表ID
+	private Integer fk_relation_id;//关联表ID
+	private String attachment_source;//附件路径
+	private List<IndividualInfo> tp;//图片List
+	
+	
+	
+	public IndividualInfo(Integer pk_id, Integer fk_dept_id,
+			char data_sources_type, char assessment_type, Integer fk_user_id,
+			Integer fk_repori_id, Integer assessment_num, Integer verify_num,
+			Date start_date, Date end_date, Integer fk_patrol_area_id,
+			char own_guns, Integer fk_topic_id, Integer fk_regulations_id,
+			String explain, Integer input_person, Date input_time,
+			char verify_status, Integer fk_verify_person_id, Date verify_time,
+			String record_invalid_reason, Integer att_pk_id,
+			Integer fk_relation_id, String attachment_source,
+			List<IndividualInfo> tp) {
+		super();
+		this.pk_id = pk_id;
+		this.fk_dept_id = fk_dept_id;
+		this.data_sources_type = data_sources_type;
+		this.assessment_type = assessment_type;
+		this.fk_user_id = fk_user_id;
+		this.fk_repori_id = fk_repori_id;
+		this.assessment_num = assessment_num;
+		this.verify_num = verify_num;
+		this.start_date = start_date;
+		this.end_date = end_date;
+		this.fk_patrol_area_id = fk_patrol_area_id;
+		this.own_guns = own_guns;
+		this.fk_topic_id = fk_topic_id;
+		this.fk_regulations_id = fk_regulations_id;
+		this.explain = explain;
+		this.input_person = input_person;
+		this.input_time = input_time;
+		this.verify_status = verify_status;
+		this.fk_verify_person_id = fk_verify_person_id;
+		this.verify_time = verify_time;
+		this.record_invalid_reason = record_invalid_reason;
+		this.att_pk_id = att_pk_id;
+		this.fk_relation_id = fk_relation_id;
+		this.attachment_source = attachment_source;
+		this.tp = tp;
+	}
+	
+	public List<IndividualInfo> getTp() {
+		return tp;
+	}
+	public void setTp(List<IndividualInfo> tp) {
+		this.tp = tp;
+	}
+	public Integer getAtt_pk_id() {
+		return att_pk_id;
+	}
+	public void setAtt_pk_id(Integer att_pk_id) {
+		this.att_pk_id = att_pk_id;
+	}
+	public Integer getFk_relation_id() {
+		return fk_relation_id;
+	}
+	public void setFk_relation_id(Integer fk_relation_id) {
+		this.fk_relation_id = fk_relation_id;
+	}
+	public String getAttachment_source() {
+		return attachment_source;
+	}
+	public void setAttachment_source(String attachment_source) {
+		this.attachment_source = attachment_source;
+	}
+	public Integer getPk_id() {
+		return pk_id;
+	}
+	public void setPk_id(Integer pk_id) {
+		this.pk_id = pk_id;
+	}
+	public Integer getFk_dept_id() {
+		return fk_dept_id;
+	}
+	public void setFk_dept_id(Integer fk_dept_id) {
+		this.fk_dept_id = fk_dept_id;
+	}
+	public char getData_sources_type() {
+		return data_sources_type;
+	}
+	public void setData_sources_type(char data_sources_type) {
+		this.data_sources_type = data_sources_type;
+	}
+	public char getAssessment_type() {
+		return assessment_type;
+	}
+	public void setAssessment_type(char assessment_type) {
+		this.assessment_type = assessment_type;
+	}
+	public Integer getFk_user_id() {
+		return fk_user_id;
+	}
+	public void setFk_user_id(Integer fk_user_id) {
+		this.fk_user_id = fk_user_id;
+	}
+	public Integer getFk_repori_id() {
+		return fk_repori_id;
+	}
+	public void setFk_repori_id(Integer fk_repori_id) {
+		this.fk_repori_id = fk_repori_id;
+	}
+	public Integer getAssessment_num() {
+		return assessment_num;
+	}
+	public void setAssessment_num(Integer assessment_num) {
+		this.assessment_num = assessment_num;
+	}
+	public Integer getVerify_num() {
+		return verify_num;
+	}
+	public void setVerify_num(Integer verify_num) {
+		this.verify_num = verify_num;
+	}
+	public Date getStart_date() {
+		return start_date;
+	}
+	public void setStart_date(Date start_date) {
+		this.start_date = start_date;
+	}
+	public Date getEnd_date() {
+		return end_date;
+	}
+	public void setEnd_date(Date end_date) {
+		this.end_date = end_date;
+	}
+	public Integer getFk_patrol_area_id() {
+		return fk_patrol_area_id;
+	}
+	public void setFk_patrol_area_id(Integer fk_patrol_area_id) {
+		this.fk_patrol_area_id = fk_patrol_area_id;
+	}
+	public char getOwn_guns() {
+		return own_guns;
+	}
+	public void setOwn_guns(char own_guns) {
+		this.own_guns = own_guns;
+	}
+	public Integer getFk_topic_id() {
+		return fk_topic_id;
+	}
+	public void setFk_topic_id(Integer fk_topic_id) {
+		this.fk_topic_id = fk_topic_id;
+	}
+	public Integer getFk_regulations_id() {
+		return fk_regulations_id;
+	}
+	public void setFk_regulations_id(Integer fk_regulations_id) {
+		this.fk_regulations_id = fk_regulations_id;
+	}
+	public String getExplain() {
+		return explain;
+	}
+	public void setExplain(String explain) {
+		this.explain = explain;
+	}
+	public Integer getInput_person() {
+		return input_person;
+	}
+	public void setInput_person(Integer input_person) {
+		this.input_person = input_person;
+	}
+	public Date getInput_time() {
+		return input_time;
+	}
+	public void setInput_time(Date input_time) {
+		this.input_time = input_time;
+	}
+	public char getVerify_status() {
+		return verify_status;
+	}
+	public void setVerify_status(char verify_status) {
+		this.verify_status = verify_status;
+	}
+	public Integer getFk_verify_person_id() {
+		return fk_verify_person_id;
+	}
+	public void setFk_verify_person_id(Integer fk_verify_person_id) {
+		this.fk_verify_person_id = fk_verify_person_id;
+	}
+	public Date getVerify_time() {
+		return verify_time;
+	}
+	public void setVerify_time(Date verify_time) {
+		this.verify_time = verify_time;
+	}
+	public String getRecord_invalid_reason() {
+		return record_invalid_reason;
+	}
+	public void setRecord_invalid_reason(String record_invalid_reason) {
+		this.record_invalid_reason = record_invalid_reason;
+	}
+	
+	
+}

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cist.menu.mapper.MenuMapper" >
+    <select id="selectMenu" resultType="com.cist.menu.model.Menu" parameterType="java.util.Map">
+    select * from sys_module_info t where t.SYMI_PARENT=#{symi_parent} and t.SYMI_LEVEL=1
+    </select>
+</mapper>

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cist.serviceconfig.warningconfig.mapper.WarningconfigMapper">
+	<!-- 点位树 -->
+	<!-- <select id="depart_infolist" resultType="com.cist.serviceconfig.warningconfig.model.DeptInfo" parameterType="java.lang.Integer">
+		select t.dept_pk,t.dept_code,t.dept_name as name,t.DEPT_SUPERIOR from sys_depart_info t 
+		<where>
+		  <if test="_parameter  == null or _parameter  == ''">
+		     t.DEPT_SUPERIOR is null
+		   </if>
+		     <if test="_parameter  != null and _parameter  != ''">
+		     t.DEPT_SUPERIOR=#{_parameter}
+		   </if>
+		</where>
+	</select>
+   <select id="Monitorpoint" resultType="com.cist.serviceconfig.warningconfig.model.DeptInfo" parameterType="string">
+   select t.tbmp_id as dept_code,t.tbmp_dept_code,t.tbmp_name as name,t.tbmp_azdz from c_monitor_point t  where t.tbmp_dept_code=#{_parameter}
+   </select>
+   
+   <select id="Device" resultType="com.cist.serviceconfig.warningconfig.model.DeptInfo" parameterType="string">
+   select t.tbei_code as dept_code,t.tbei_name as name,t.tbei_code from vw_dev_info t  where t.tbec_kkbh=#{_parameter}
+   </select> -->
+   
+   <select id="getDeptNode" resultType="com.cist.serviceconfig.warningconfig.model.VideoMonitorTree">
+		SELECT dept_code key,dept_name title FROM  SYS_DEPART_INFO
+	</select>
+	<select id="getRoadNode" resultType="com.cist.serviceconfig.warningconfig.model.VideoMonitorTree" parameterType="java.util.HashMap">
+	SELECT ROIM_CODE key,ROIM_NAME title FROM  C_ROAD_ITEM where DEPT_CODE=#{deptId} 
+	</select>
+	<select id="getVideoMonitorNode" resultType="com.cist.serviceconfig.warningconfig.model.VideoMonitorTree" parameterType="java.util.HashMap">
+	SELECT d.road_name key,d.road_name title FROM  Jcsj_device d  where d.BELONGED_ROAD_ID=#{roadId} and d.fk_device_type not in('KK','QJCS') group by road_name  
+	</select>
+	<select id="getMonitorDevNode" parameterType="java.util.HashMap" resultType="com.cist.serviceconfig.warningconfig.model.VideoMonitorTree">
+	select d.device_name title,d.device_num key  from Jcsj_device d join JCSJ_DEVICE_HAVE_FUNCTION f on d.pk_id=f.device_id 
+	where d.road_name=#{devId} and d.fk_device_type not in('KK','QJCS')  and f.FK_HAVE_FUNCTION =(select f.fc_pk pk  from SYS_FRM_CODE f join SYS_FRM_CODE_TYPE t  on f.FCT_CODE=t.FCT_CODE where t.FCT_CODE='G999'  and f.fc_code='SP')
+	</select>
+   
+   <!-- 查询预警阈值 -->
+   <select id="queryyjyz" parameterType="java.util.HashMap"
+   resultType="com.cist.serviceconfig.warningconfig.model.TBL_OFFE_VIO_ALARM">
+   		select * from TBL_OFFE_VIO_ALARM
+   		<where>
+   			<if test="tbov_wfdz !=null and tbov_wfdz !='' ">
+   				and tbov_wfdz =#{tbov_wfdz}
+   			</if>
+   			<!-- <if test="tbov_wfdd != null and tbov_wfdd!=''">
+   				and tbov_wfdd = #{tbov_wfdd}
+   			</if> -->
+   			<if test="tbov_max != null and tbov_max !=''">
+   				and tbov_max = #{tbov_max}
+   			</if>
+   			<if test="tbov_min !=null and tbov_min!=''">
+   				and tbov_min = #{tbov_min}
+   			</if>
+   			<if test="tbov_dlmc != null and tbov_dlmc != ''">
+   				and tbov_dlmc like '%'||#{tbov_dlmc}||'%'
+   			</if>
+   		</where>
+   </select>
+   <!-- 添加预警阈值 -->
+   <insert id="addyjyz" parameterType="java.util.HashMap">
+   		insert into TBL_OFFE_VIO_ALARM(
+   		tbov_pk,
+   		tbov_wfdz,
+   		tbov_wfdd,
+   		tbov_max,
+   		tbov_min,tbov_dlmc)
+   		 values(
+   		 SEQ_TBL_OFFE_VIO_ALARM_TBOV_PK.NEXTVAL,
+   		 #{tbov_wfdz},
+   		 #{tbov_wfdd},
+   		 #{tbov_max},
+   		 #{tbov_min},#{tbov_dlmc})
+   </insert>
+   <!-- 修改预警阈值 -->
+   <update id="updateyjyz" parameterType="java.util.HashMap">
+   		update TBL_OFFE_VIO_ALARM set tbov_max=#{tbov_max},tbov_min=#{tbov_min}
+   		 where tbov_wfdz=#{tbov_wfdz} and tbov_wfdd = #{tbov_wfdd}
+   </update>
+   <!-- 删除预警阈值 -->
+   <delete id="delyjyz"  parameterType="java.util.HashMap">
+   		delete from TBL_OFFE_VIO_ALARM where tbov_pk=#{tbov_pk}
+   </delete>
+</mapper>

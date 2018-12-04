@@ -1,0 +1,476 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cist.policemngment.mapper.PoliceMngmentMapper">
+
+
+	<select id="selectByResourc" resultType="com.cist.policemngment.model.Jcsj_police_resourc"
+		parameterType="java.util.Map">
+
+
+
+		select * from jcsj_police_resources t
+
+		<where>
+		
+		
+			<if test="qysj1 !=null and qysj1 !=''">
+	      		 <![CDATA[ and t.enable_date >=to_date(#{qysj1},'yyyy-mm-dd HH24:mi:ss')]]>
+			</if>
+			
+			
+			<if test="qysj2 !=null and qysj2 !=''">
+	       <![CDATA[ and t.enable_date <=to_date(#{qysj2},'yyyy-mm-dd HH24:mi:ss')]]>
+			</if>
+			
+			<if test="fk_dept_id != null and fk_dept_id !=''">
+				and t.fk_dept_id =#{fk_dept_id}
+			</if>
+
+
+			<if test="resources_type != null and resources_type !=''">
+				and t.resources_type =#{resources_type}
+			</if>
+
+			<if test="device_type != null and device_type !=''">
+				and t.device_type =#{device_type}
+			</if>
+			
+			<if test="sim_num != null and sim_num !=''">
+				and t.sim_num =#{sim_num}
+			</if>
+			
+			<if test="call_num != null and call_num !=''">
+				and t.call_num =#{call_num}
+			</if>
+			
+			<if test="car_num != null and car_num !=''">
+				and t.car_num =#{car_num}
+			</if>
+		</where>
+
+	</select>
+
+
+	<select id="depart_infolist" resultType="com.cist.policemngment.model.DeptInfo"
+		parameterType="java.lang.Integer">
+		select t.dept_pk,t.dept_code,t.dept_name as name,t.DEPT_SUPERIOR from
+		sys_depart_info t
+		<where>
+			<if test="_parameter  == null or _parameter  == ''">
+				t.DEPT_SUPERIOR is null
+			</if>
+			<if test="_parameter  != null and _parameter  != ''">
+				t.DEPT_SUPERIOR=#{_parameter}
+			</if>
+		</where>
+	</select>
+
+
+
+
+	<select id="selectPolice" resultType="com.cist.policemngment.model.SysPoliceInfo">
+		select * from
+		sys_police_info t
+	</select>
+
+	<select id="selectCarGPS" resultType="com.cist.policemngment.model.Jcsj_P_R_Relation">
+		select * from
+		jcsj_p_r_relation t
+	</select>
+
+<select id="selectHave" resultType="com.cist.policemngment.model.Jcsj_P_R_Have">
+		select fk_have_function from
+		jcsj_p_r_have_function t where fk_p_r_id=#{fk_p_r_id}
+	</select>
+
+<select id="selectPoliceCheck" resultType="com.cist.policemngment.model.Jcsj_P_R_Allot">
+		select fk_user_id from jcsj_p_r_allot where fk_p_r_id=#{fk_p_r_id}
+	</select>
+
+   <select id="selectSysFrmCode" resultType="com.cist.policemngment.model.Sys_frm_code" parameterType="java.lang.String">
+    select * from SYS_FRM_CODE
+    where
+    FCT_CODE=#{fct_code}
+  </select>
+
+	<insert id="insetResourc" parameterType="java.util.Map">
+	<selectKey resultType="java.lang.Integer" order="BEFORE" keyProperty="fk_p_r_id">
+        SELECT cistsys.SEQ_TXZ_PERMIT.nextval FROM DUAL
+    </selectKey>
+		insert into
+			jcsj_police_resources
+			<trim prefix="(" suffix=")" suffixOverrides="," >
+			pk_id,
+			fk_dept_id,
+			enable_date,
+			validity_date,
+			create_person,
+			create_time,
+			resources_type,
+		<if test="car_purpose != null and car_purpose !=''">
+			car_purpose,
+		</if>
+			
+		<if test="car_type != null and car_type !=''">
+			car_type,
+		</if>
+			
+			
+			
+			<if test="car_brand != null and car_brands !=''">
+			car_brand,
+		</if>
+			
+			
+			
+			<if test="car_num != null and car_num !=''">
+			car_num,
+		</if>
+			
+			
+			<if test="annual_inspection_valid != null and annual_inspection_valid !=''">
+			annual_inspection_valid,
+		</if>
+			
+			
+			<if test="insurance_company != null and insurance_company !=''">
+			insurance_company,
+		</if>
+			
+			<if test="insurance_num != null and insurance_num !=''">
+			insurance_num,
+		</if>
+			
+			<if test="manufacturer != null and manufacturer !=''">
+			manufacturer,
+		</if>
+			
+			<if test="sim_num != null and sim_num !=''">
+			sim_num,
+		</if>
+			
+			<if test="staff_name != null and staff_name !=''">
+			staff_name,
+		</if>
+			
+			<if test="staff_contacts_num != null and staff_contacts_num !=''">
+			staff_contacts_num,
+		</if>
+			
+			<if test="call_num != null and call_num !=''">
+			call_num,
+		</if>
+			
+			<if test="device_model != null and device_model !=''">
+			device_model,
+		</if>
+			
+			<if test="device_type != null and device_type !=''">
+			device_type,
+		</if>
+		
+
+		</trim>
+
+ <trim prefix="values (" suffix=")" suffixOverrides="," >
+		
+			#{fk_p_r_id},
+			#{fk_dept_id},
+			to_date(#{enable_date},'yyyy-mm-dd HH24:mi:ss'),
+			to_date(#{validity_date},'yyyy-mm-dd HH24:mi:ss'),
+			
+			#{create_person},
+			sysdate,
+			#{resources_type,jdbcType=VARCHAR},
+			
+			<if test="car_purpose != null and car_purpose !=''">
+			#{car_purpose,jdbcType=VARCHAR},
+		</if>
+			
+				<if test="car_type != null and car_type !=''">
+			#{car_type,jdbcType=VARCHAR},
+		</if>
+			
+				<if test="car_brand != null and car_brand !=''">
+			#{car_brand,jdbcType=VARCHAR},
+		</if>
+			
+				<if test="car_num != null and car_num !=''">
+		#{car_num,jdbcType=VARCHAR},
+		</if>
+			
+			
+			
+				<if test="annual_inspection_valid != null and annual_inspection_valid !=''">
+			to_date(#{annual_inspection_valid},'yyyy-mm-dd HH24:mi:ss'),
+		</if>
+			
+				<if test="insurance_company != null and insurance_company !=''">
+		#{insurance_company,jdbcType=VARCHAR},
+		</if>
+			
+			
+			
+				<if test="insurance_num != null and insurance_num !=''">
+			#{insurance_num,jdbcType=VARCHAR},
+		</if>
+			
+			
+				<if test="manufacturer != null and manufacturer !=''">
+		#{manufacturer,jdbcType=VARCHAR},
+		</if>
+			
+			
+			
+				<if test="sim_num != null and sim_num !=''">
+		#{sim_num,jdbcType=VARCHAR},
+		</if>
+		
+			
+				<if test="staff_name != null and staff_name !=''">
+			#{staff_name,jdbcType=VARCHAR},
+		</if>
+			
+			
+				<if test="staff_contacts_num != null and staff_contacts_num !=''">
+			#{staff_contacts_num,jdbcType=VARCHAR},
+		</if>
+			
+			
+				<if test="call_num != null and call_num !=''">
+			#{call_num,jdbcType=VARCHAR},
+		</if>
+		
+			
+				<if test="device_model != null and device_model !=''">
+			#{device_model,jdbcType=VARCHAR},
+		</if>
+			
+			
+				<if test="device_type != null and device_type !=''">
+			#{device_type,jdbcType=VARCHAR},
+		</if>
+			
+			
+		</trim>
+
+	</insert>
+
+	<insert id="allotPolice" parameterType="java.util.Map">
+		insert into jcsj_p_r_allot 
+		(
+		fk_user_id,
+		fk_p_r_id
+		
+		)
+    	SELECT cd.*
+			FROM(
+	<foreach item="item" index="index" collection="array" separator="union all"> 
+   SELECT 
+          #{item},
+          #{fk_p_r_id}
+     FROM dual
+    </foreach>
+    )cd
+   
+    	
+	</insert>
+
+
+	<insert id="insertHave" parameterType="java.util.Map">
+		insert into jcsj_p_r_have_function 
+		(
+		fk_have_function,
+		fk_p_r_id
+		
+		)
+    	SELECT cd.*
+			FROM(
+	<foreach item="item" index="index" collection="arrays" separator="union all"> 
+   SELECT 
+          #{item},
+          #{fk_p_r_id}
+     FROM dual
+    </foreach>
+    )cd
+   
+    	
+	</insert>
+
+	<!-- <insert id="allotPolice" parameterType="java.util.Map">
+	
+		insert into
+			jcsj_p_r_allot
+		<trim prefix="(" suffix=")" suffixOverrides="," >
+			fk_p_r_id,
+			
+			
+		<if test="fk_user_id != null and fk_user_id !=''">
+			fk_user_id,
+		</if>
+		</trim>
+		 <trim prefix="values (" suffix=")" suffixOverrides="," >
+			#{fk_p_r_id},
+		
+		<if test="fk_user_id != null and fk_user_id !=''">
+			#{fk_user_id},
+		</if>
+			
+		</trim>
+
+	</insert>
+ -->
+
+	<update id="updateResourc"  parameterType="java.util.Map">
+		update jcsj_police_resources 
+		<set>
+		<if test="fk_dept_id != null and fk_dept_id !=''">
+				fk_dept_id = #{fk_dept_id},
+			</if>
+			
+			
+			<if test="enable_date != null and enable_date !=''">
+				enable_date =to_date(#{enable_date},'yyyy-mm-dd HH24:mi:ss'),
+			</if>
+			
+			<if test="validity_date != null and validity_date !=''">
+				validity_date = to_date(#{validity_date},'yyyy-mm-dd HH24:mi:ss'),
+			</if>
+			
+			<if test="car_type != null and car_type !=''">
+				car_type = #{car_type},
+			</if>
+			
+			<if test="car_brand != null and car_brand !=''">
+				car_brand = #{car_brand},
+			</if>
+			
+			<if test="car_num != null and car_num !=''">
+				car_num = #{car_num},
+			</if>
+			
+			<if test="annual_inspection_valid != null and annual_inspection_valid !=''">
+				annual_inspection_valid = to_date(#{annual_inspection_valid},'yyyy-mm-dd HH24:mi:ss'),
+			</if>
+			
+			<if test="insurance_company != null and insurance_company !=''">
+				insurance_company = #{insurance_company},
+			</if>
+			
+			<if test="insurance_num != null and insurance_num !=''">
+				insurance_num = #{insurance_num},
+			</if>
+			
+			<if test="manufacturer != null and manufacturer !=''">
+				manufacturer = #{manufacturer},
+			</if>
+			
+			<if test="sim_num != null and sim_num !=''">
+				sim_num = #{sim_num},
+			</if>
+			
+			<if test="staff_name != null and staff_name !=''">
+				staff_name = #{staff_name},
+			</if>
+			
+			
+			<if test="staff_contacts_num != null and staff_contacts_num !=''">
+				staff_contacts_num = #{staff_contacts_num},
+			</if>
+			
+			<if test="call_num != null and call_num !=''">
+				call_num = #{call_num},
+			</if>
+			
+			<if test="device_model != null and device_model !=''">
+				device_model = #{device_model},
+			</if>
+			
+		 	<if test="device_type != null and device_type !=''">
+				device_type = #{device_type},
+			</if>
+			 
+			<if test="create_person != null and create_person !=''">
+				create_person = #{create_person},
+			</if>
+			
+
+			<if test="car_purpose != null and car_purpose !=''">
+				car_purpose = #{car_purpose},
+			</if>
+			
+			
+			<if test="resources_type != null and resources_type !=''">
+				resources_type = #{resources_type},
+			</if>
+			
+		</set>
+		where pk_id = #{pk_id,jdbcType=DECIMAL}
+	</update>
+
+<!-- 	<update id="updatePolicce"  parameterType="java.util.Map">
+		
+		
+		
+	<foreach collection="array" item="item" index="index" open="begin" close=";end;" separator=";">
+        update jcsj_p_r_allot
+        <set>
+            fk_user_id=#{item}
+        </set>
+       where fk_p_r_id = #{fk_p_r_id,jdbcType=DECIMAL}
+    </foreach>   
+		
+	
+	update jcsj_p_r_allot 
+	<trim prefix="set" suffixOverrides=",">
+		
+	
+		 <trim prefix="fk_user_id" suffix="end,">
+                <foreach collection="array" item="cus">
+                    <if test="fk_user_id!=null">
+                        when fk_p_r_id=#{fk_p_r_id} then #{cus.fk_user_id}
+                    </if>
+                </foreach>
+            </trim>
+
+	</trim>
+		where fk_p_r_id=#{fk_p_r_id}
+ 
+		
+		
+	</update> -->
+
+
+		<!-- <update id="updateHave"  parameterType="java.util.Map">
+		update jcsj_p_r_have_function 
+		<set>
+			<if test="fk_have_function != null and fk_have_function !=''">
+				fk_have_function = #{fk_have_function},
+			</if>
+			
+			
+		</set>
+		where fk_p_r_id = #{fk_p_r_id,jdbcType=DECIMAL}
+	</update> -->
+	
+
+
+	<delete id="deleteResourc" parameterType="java.util.Map">
+
+delete FROM jcsj_police_resources 
+		WHERE pk_id=#{pk_id} 
+</delete>
+	<delete id="deletePolice" parameterType="java.util.Map">
+ delete FROM jcsj_p_r_allot 
+		WHERE  
+		fk_p_r_id=#{fk_p_r_id} 
+	</delete>
+	
+		<delete id="deleteHave" parameterType="java.util.Map">
+
+delete FROM jcsj_p_r_have_function 
+		WHERE fk_p_r_id=#{fk_p_r_id} 
+</delete>
+
+</mapper>
+	

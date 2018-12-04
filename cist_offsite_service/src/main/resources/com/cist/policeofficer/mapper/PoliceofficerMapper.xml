@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cist.policeofficer.mapper.PoliceofficerMapper" >
+
+   <select id="policeLogin" resultType="com.cist.policeofficer.model.SysPoliceInfo" parameterType="java.util.HashMap">
+   select * from sys_police_info t where t.sypi_name=#{sypi_name} and t.sypi_comp=#{sypi_comp}
+   </select>
+ 
+</mapper>

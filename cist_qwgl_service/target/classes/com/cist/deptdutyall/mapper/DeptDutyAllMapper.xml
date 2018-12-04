@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cist.deptdutyall.mapper.DeptDutyAllMapper" >
+<select id="deptdutyAllInfopageList" resultType="com.cist.dutyall.model.DutyAllInfo" parameterType="java.util.HashMap">
+select rownum as pm,p.* from (select t.dept_name as sypi_dept_name,t.dept_pk,t.dept_head,case when c.eva_num is null then 0 else c.eva_num end as eva_num,
+case when j.zf is null then 100 else j.zf end as zf,
+case when r.kf is null then 0 else r.kf end as kf,
+case when m.jf is null then 0 else m.jf end as jf,
+case when (case when j.zf is null then 100 else j.zf end) >= (case when c.eva_num is null then 0 else c.eva_num end) then '合格' else '不合格' end as hg
+from SYS_DEPART_INFO t LEFT OUTER JOIN (select *from SYS_ASSESS_TARGET where col_pk = 0) c on t.dept_pk=c.sypi_pk left join
+(select 100+sum(v.tlfz) as zf,t.ssdw from SYS_DUTY_ASSESSMENT t,SYS_RULE_MANAGER v where t.khtl=v.pk and t.jybh is null and t.shzt != 2 group by t.ssdw) j
+on  j.ssdw = t.dept_pk 
+left join (select sum(v.tlfz) as kf,t.ssdw from SYS_DUTY_ASSESSMENT t,SYS_RULE_MANAGER v where t.khtl=v.pk and t.jybh is  null and t.shzt != 2 and v.pdgz=1 group by t.ssdw) r 
+on r.ssdw = t.dept_pk 
+left join  (select sum(v.tlfz) as jf,t.ssdw from SYS_DUTY_ASSESSMENT t,SYS_RULE_MANAGER v where t.khtl=v.pk and t.jybh is  null and t.shzt != 2 and v.pdgz=2 group by t.ssdw) m 
+on m.ssdw = t.dept_pk
+	<where>
+		1=1
+		<if test="ssdw !=null and ssdw !=''">
+		and	t.dept_pk=#{ssdw}
+		</if>
+	</where>
+  ORDER BY hg DESC,zf DESC) p
+  <where>
+	1=1
+	<if test="zbhg==1" >
+	and  p.hg = '合格'
+	</if>
+	<if test="zbhg==2" >
+	and  p.hg = '不合格'
+	</if>
+	</where>
+</select>
+<select id="deptdutyAllInfo" resultType="com.cist.dutyall.model.DutyAllInfo" parameterType="java.util.HashMap">
+select rownum as pm,p.* from (select t.dept_name as sypi_dept_name,t.dept_pk,t.dept_head,case when c.eva_num is null then 0 else c.eva_num end as eva_num,
+case when j.zf is null then 100 else j.zf end as zf,
+case when r.kf is null then 0 else r.kf end as kf,
+case when m.jf is null then 0 else m.jf end as jf,
+case when (case when j.zf is null then 100 else j.zf end) >= (case when c.eva_num is null then 0 else c.eva_num end) then '合格' else '不合格' end as hg
+from SYS_DEPART_INFO t LEFT OUTER JOIN (select *from SYS_ASSESS_TARGET where col_pk = 0) c on t.dept_pk=c.sypi_pk left join
+(select 100+sum(v.tlfz) as zf,t.ssdw from SYS_DUTY_ASSESSMENT t,SYS_RULE_MANAGER v where t.khtl=v.pk and t.jybh is null and t.shzt != 2 group by t.ssdw) j
+on  j.ssdw = t.dept_pk 
+left join (select sum(v.tlfz) as kf,t.ssdw from SYS_DUTY_ASSESSMENT t,SYS_RULE_MANAGER v where t.khtl=v.pk and t.jybh is  null and t.shzt != 2 and v.pdgz=1 group by t.ssdw) r 
+on r.ssdw = t.dept_pk 
+left join  (select sum(v.tlfz) as jf,t.ssdw from SYS_DUTY_ASSESSMENT t,SYS_RULE_MANAGER v where t.khtl=v.pk and t.jybh is  null and t.shzt != 2 and v.pdgz=2 group by t.ssdw) m 
+on m.ssdw = t.dept_pk
+	<where>
+		1=1
+		<if test="ssdw !=null and ssdw !=''">
+		and	t.dept_pk=#{ssdw}
+		</if>
+	</where>
+  ORDER BY hg DESC,zf DESC) p
+  <where>
+	1=1
+	<if test="zbhg==1" >
+	and  p.hg = '合格'
+	</if>
+	<if test="zbhg==2" >
+	and  p.hg = '不合格'
+	</if>
+	</where>
+</select>
+
+	<select id="hgecharts" resultType="com.cist.duty.model.EchartsInfo" parameterType="java.util.HashMap">
+	select l.hg,o.bhg from(select  count(*) as hg from SYS_DEPART_INFO t LEFT OUTER JOIN (select *from SYS_ASSESS_TARGET where col_pk = 0) c on t.dept_pk=c.sypi_pk left join
+	(select 100+sum(v.tlfz) as zf,t.ssdw from SYS_DUTY_ASSESSMENT t,SYS_RULE_MANAGER v where t.khtl=v.pk and t.jybh is  null and t.shzt != 2 group by t.ssdw) j
+	on  j.ssdw = t.dept_pk where (case when j.zf is null then 0 else j.zf end) >= (case when c.eva_num is null then 0 else c.eva_num end)) l,
+	(select  count(*) as bhg from SYS_DEPART_INFO t LEFT OUTER JOIN (select *from SYS_ASSESS_TARGET where col_pk = 0) c on t.dept_pk=c.sypi_pk left join
+	(select 100+sum(v.tlfz) as zf,t.ssdw from SYS_DUTY_ASSESSMENT t,SYS_RULE_MANAGER v where t.khtl=v.pk and t.jybh is  null and t.shzt != 2 group by t.ssdw) j
+	on  j.ssdw = t.dept_pk where (case when j.zf is null then 0 else j.zf end) &lt; (case when c.eva_num is null then 0 else c.eva_num end)) o
+  	</select>
+  	
+  	<select id="tlecharts" resultType="com.cist.duty.model.EchartsInfo" parameterType="java.util.HashMap">
+ 		select j.lmmc,case when y.fz is null then 0 else y.fz end as fz from SYS_RULE_MANAGER j LEFT OUTER JOIN 
+		(select t.sjlm,sum(t.tlfz) as fz from SYS_DUTY_ASSESSMENT c,(select v.*from SYS_RULE_MANAGER v,(select *from SYS_RULE_MANAGER t where t.lmlx = 2) t where v.sjlm = t.pk and v.pdgz = '1') t where t.pk = c.khtl 
+		group by t.sjlm
+ 		) y on y.sjlm = j.pk where j.sjlm is null and j.lmlx = 2
+  	</select>
+  	<select id="tllist" resultType="com.cist.dutyall.model.TlInfo" parameterType="java.lang.Integer">
+ 		select
+ g.lmmc,g.lmfz,
+ g.lmfz+(case when j.tlfz is null then 0 else j.tlfz end) as khpf
+     from 
+     (select t.lmmc,t.pk,t.lmfz from SYS_RULE_MANAGER t where t.sjlm is null and t.lmlx = 2 ORDER BY pk) g 
+     LEFT OUTER JOIN 
+     (select t.sjlm,sum(t.tlfz) as tlfz,c.ssdw from SYS_RULE_MANAGER t,SYS_DUTY_ASSESSMENT c where t.pk = c.khtl and c.ssdw=TO_NUMBER(#{_parameter}) group by t.sjlm,c.ssdw) j on g.pk = j.sjlm
+  	</select>
+  	
+  	<select id="tlcx" resultType="com.cist.dutyall.model.TlInfo">
+ 		select t.lmmc from SYS_RULE_MANAGER t where t.sjlm is null and t.lmlx = 2 ORDER BY pk
+  	</select>
+  	
+
+</mapper>

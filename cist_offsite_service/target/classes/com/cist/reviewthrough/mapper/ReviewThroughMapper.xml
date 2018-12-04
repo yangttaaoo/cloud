@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cist.reviewthrough.mapper.ReviewThroughMapper" >
+<select id="reviewThroughpageList" resultType="com.cist.offsite.invalidtrial.model.TblOffeEvdiInfo" parameterType="java.util.HashMap">
+    select t.* from OEUSER.TBL_OFFE_EVDI t
+    <where>
+       t.shbz = 2
+        <if test="wfpk != null and wfpk !=''">
+            and t.WFPk = #{wfpk}
+          </if>
+			<if test="hphm!=null and hphm!=''">
+				and t.hphm like '%'||#{hphm}||'%'
+			</if>
+			
+			<if test="hpzl!=null and hpzl!=''">
+				and t.hpzl = #{hpzl}
+			</if>
+			<if test="wfdd!=null and wfdd!=''">
+				and t.wfdd like '%'||#{wfdd}||'%'
+			</if>
+			<if test="wfxw!=null and wfxw!=''">
+				and t.wfxw = #{wfxw}
+			</if>
+			<if test="wfkssj!=null and wfkssj!=''">
+		    <![CDATA[ and t.WFKSSJ >=to_date(#{wfkssj},'yyyy-mm-dd HH24:mi:ss')]]>
+	        </if>
+	        <if test="wfjssj!=null and wfjssj!=''">
+		    <![CDATA[and t.WFJSSJ <= to_date(#{wfjssj},'yyyy-mm-dd HH24:mi:ss') ]]>
+	        </if>
+	        <if test="sbbh!=null and sbbh!=''">
+				and t.SBBH = #{sbbh}
+			</if>
+		</where>
+		order by t.wfsj desc
+  </select>
+
+<update id="updateByWfpk" parameterType="com.cist.offsite.invalidtrial.model.TblOffeEvdiInfo">
+		update OEUSER.TBL_OFFE_EVDI
+		<set>
+			<if test="hphm != null and hphm !=''">
+				HPHM = #{hphm},
+			</if>
+			<if test="hpzl!= null and hpzl !=''">
+				HPZL = #{hpzl},
+			</if>
+			<if test="hpys!= null and hpys !=''">
+				HPYS = #{hpys},
+			</if>
+			<if test="wfxw!= null and wfxw !=''">
+				WFXW = #{wfxw},
+			</if>
+			<if test="shbz!= null and shbz !=''">
+				SHBZ = #{shbz},
+			</if>
+			<if test="shsm!= null and shsm !=''">
+				SHSM = #{shsm}
+			</if>
+		</set>
+		where WFPK = #{wfpk,jdbcType=DECIMAL}
+	</update>
+<select id="selectByCReasonInfo" resultType="com.cist.reviewthrough.model.Creason">
+   select * from c_reason t
+</select>
+</mapper>

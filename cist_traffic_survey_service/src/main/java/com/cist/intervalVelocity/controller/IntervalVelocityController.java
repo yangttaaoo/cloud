@@ -1,0 +1,203 @@
+package com.cist.intervalVelocity.controller;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.cist.devRegister.model.Device;
+import com.cist.devRegister.model.DeviceList;
+import com.cist.devRegister.service.DevRegisterService;
+import com.cist.frame.page.PageInfo;
+import com.cist.intervalVelocity.model.IntervalVelocity;
+import com.cist.intervalVelocity.service.IntervalVelocityService;
+
+@RequestMapping("intervalVelocity")
+@RestController
+public class IntervalVelocityController {
+	@Autowired
+	private DevRegisterService devRegisterService;
+	@Autowired
+	private IntervalVelocityService service;
+
+	@RequestMapping("initIndexTab")
+	public HashMap<String, Object> initIndexTab() {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		String initDeptTree = null;
+		try {
+			initDeptTree = devRegisterService.initDeptTree();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		resultMap.put("dept", initDeptTree);
+		resultMap.put("road", devRegisterService.queryRoadList());
+		return resultMap;
+
+	}
+
+	@RequestMapping("queryKKList")
+	public PageInfo<Device> queryKKList(@RequestBody HashMap<String, Object> paramMap) {
+		@SuppressWarnings("rawtypes")
+		PageInfo pageInfo = new PageInfo();
+		pageInfo.setPageSize(Integer.parseInt(paramMap.get("pageSize").toString()));
+		pageInfo.setPageNum(Integer.parseInt(paramMap.get("currentPage").toString()));
+		@SuppressWarnings("unchecked")
+		PageInfo<Device> querypageList = (PageInfo<Device>) service.queryKKpageList(paramMap, pageInfo);
+		return querypageList;
+
+	}
+
+	@RequestMapping("insert")
+	@Transactional
+	public int insert(@RequestBody HashMap<String, Object> paramMap) {
+		int addDevBaseInfo = devRegisterService.addDeviceInfo(paramMap);
+		int addIntervalParam = service.addIntervalParam(paramMap);
+		if (addDevBaseInfo > 0 && addIntervalParam > 0&&null!=paramMap.get("bayonetIds")&&paramMap.get("bayonetIds").toString().length()>2) {
+			return service.addDevConnectBayonet(paramMap);
+		}
+
+		return addDevBaseInfo;
+
+	}
+	public boolean getExitsBoolean(List<Integer> list,Integer id) {
+		for (Integer index : list) {
+			if(index.equals(id)) {
+				return true;
+			}
+		}
+		
+		return false;
+		
+	}
+	@RequestMapping("update")
+	@Transactional
+	public int update(@RequestBody HashMap<String, Object> paramMap) {
+		int addDevBaseInfo = devRegisterService.updateDeviceInfo(paramMap);
+		if(addDevBaseInfo>0) {
+			int updateIntervalParam = service.updateIntervalParam(paramMap);
+			if(updateIntervalParam>0) {
+			//1 2 4
+			List<Integer> devConnectBayonet = service.getDevConnectBayonet(paramMap);
+			@SuppressWarnings("unchecked")
+			//1 2  3
+			List<Integer> relevance_device_ids = (List<Integer>) paramMap.get("bayonetIds");
+			if(devConnectBayonet !=null) {
+				//查询出来的ID在传入进来的ID集合中  不存在 表明不再关联  =>做删除操作
+				 HashMap<String, Object> delMap = new HashMap<String,Object>();
+				 List<Integer> delList = new ArrayList<Integer>();
+				for (Integer dcb : devConnectBayonet) {
+					//1   2   4
+					if(getExitsBoolean(relevance_device_ids,dcb)) {
+						//1 不管   2  不管
+					}else {
+						//  4  收集
+						delList.add(dcb);
+					}
+				}
+				if(delList.size()>0) {
+				delMap.put("pk_id", paramMap.get("pk_id"));
+				delMap.put("list", delList);
+				service.delDevConnectBayonet(delMap);
+				}
+				//传入进来的ID集合在查询出来的集合中  不存在 表明是新增关联  =>做添加操作
+				 HashMap<String, Object> addMap = new HashMap<String,Object>();
+				 List<Integer> addList = new ArrayList<Integer>();
+					for (Integer id : relevance_device_ids) {
+						//1   2   3
+						if(getExitsBoolean(devConnectBayonet,id)) {
+							//1 不管   2  不管
+						}else {
+							//3 收集
+							addList.add(id);
+						}
+					}
+					if(addList.size()>0) {
+						addMap.put("pk_id", paramMap.get("pk_id"));
+						addMap.put("bayonetIds", addList);
+						service.addDevConnectBayonet(addMap);
+					}
+			}else {
+				HashMap<String, Object> map = new HashMap<String,Object>();
+				map.put("pk_id", paramMap.get("pk_id"));
+				map.put("bayonetIds", relevance_device_ids);
+				service.addDevConnectBayonet(map);
+			}
+			}
+		}
+		
+
+		return 1;
+
+	}
+	@RequestMapping("delete")
+	public  int  delete(@RequestBody HashMap<String, Object> paramMap) {
+		service.deleteParam(paramMap);
+		service.deleteConnect(paramMap);
+		service.delDevByQJCS(paramMap);
+		
+		return 1;
+		
+	}
+	@RequestMapping("queryList")
+	public PageInfo<IntervalVelocity> queryList(@RequestBody HashMap<String, Object> paramMap) {
+		@SuppressWarnings("rawtypes")
+		PageInfo pageInfo = new PageInfo();
+		pageInfo.setPageSize(Integer.parseInt(paramMap.get("pageSize").toString()));
+		pageInfo.setPageNum(Integer.parseInt(paramMap.get("currentPage").toString()));
+		@SuppressWarnings("unchecked")
+		PageInfo<IntervalVelocity> querypageList = (PageInfo<IntervalVelocity>) service.querypageList(paramMap, pageInfo);
+
+		return querypageList;
+
+	}
+	@RequestMapping("getCheckKKDevice")
+	public  HashMap<String, Object>  getCheckKKDevice(@RequestBody HashMap<String, Object> paramMap) {
+		
+		 HashMap<String, Object> resultMap = new HashMap<String,Object>();
+		 String initDeptTree = null;
+			try {
+				initDeptTree = devRegisterService.initDeptTree();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			resultMap.put("dept", initDeptTree);
+			resultMap.put("road", devRegisterService.queryRoadList());
+		IntervalVelocity velocity = service.queryDeviceById(paramMap);
+		 resultMap.put("baseParam",velocity);
+		if(null!=velocity) {
+			 List<String> idList = velocity.getRelevance_device_id();
+			 List<Integer> list = new ArrayList<Integer>();
+				for (String id : idList) {
+					list.add(Integer.parseInt(id));
+				}
+				if(list.size() >0) {
+					paramMap.put("list", list);
+				  List<Device> device = service.getCheckKKDevice(paramMap);
+				  resultMap.put("dev", device);
+				 }else {
+					 resultMap.put("dev",null);
+				 }
+				
+		}
+		
+		return resultMap;
+		
+	}
+	@RequestMapping("queryDeviceList")
+	public PageInfo<DeviceList> queryDeviceList(@RequestBody HashMap<String, Object> paramMap) {
+		@SuppressWarnings("rawtypes")
+		PageInfo pageInfo = new PageInfo();
+		pageInfo.setPageSize(Integer.parseInt(paramMap.get("pageSize").toString()));
+		pageInfo.setPageNum(Integer.parseInt(paramMap.get("currentPage").toString()));
+		@SuppressWarnings("unchecked")
+		PageInfo<DeviceList> queryDeviceList = (PageInfo<DeviceList>) service.queryDevicepageList(paramMap, pageInfo);
+
+		return queryDeviceList;
+	}
+}

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cist.messagequery.warningquery.mapper.WarningQueryMapper">
+	<!-- 查询当天设备下过车数量 -->
+	<select id="queryallwarning" parameterType="com.cist.messagequery.warningquery.model.WarningQuery"
+	resultType="com.cist.messagequery.warningquery.model.WarningQuery">
+		select * from tbl_dev_info a , (select sbbh,count(sbbh) gcll from oeuser.tbl_offe_evdi
+			<where>
+				<if test="kssj!=null">
+					and wfsj &gt; #{kssj}
+				</if>
+				<if test="jssj!=null">
+					and wfsj &lt; #{jssj}
+				</if>
+			</where>
+			 group by sbbh) t 
+		where a.tbei_code = t.sbbh and a.tbet_num &lt; t.gcll
+	</select>
+</mapper>

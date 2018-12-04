@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cist.xxtj.sbyjfztj.mapper.SbyjfztjMapper">
+	<!-- 查询设备预警数 -->
+	<select id="querysbyjnum" parameterType="java.util.HashMap" resultType="int">
+		select count(*) from TBL_OFFE_VIO_ALARM_STAT
+		<where>
+			<if test="kssj!=null and kssj!=''">
+				<![CDATA[ and tjsj >=to_date(#{kssj},'yyyy-mm-dd HH24:mi:ss')]]>
+			</if>
+			<if test="jssj!=null and jssj!=''">
+				<![CDATA[and tjsj <= to_date(#{jssj},'yyyy-mm-dd HH24:mi:ss') ]]>
+			</if>
+		</where>
+	</select>
+	<!-- 查询设备预警阈值统计表信息 -->
+	<select id="querysbyjtj" parameterType="java.util.HashMap"
+	 resultType="com.cist.xxtj.sbyjfztj.model.TBL_OFFE_VIO_ALARM_STAT">
+	 	select * from TBL_OFFE_VIO_ALARM_STAT
+	 	<where>
+	 		<if test="kssj!=null and kssj!=''">
+				<![CDATA[ and tjsj >=to_date(#{kssj},'yyyy-mm-dd HH24:mi:ss')]]>
+			</if>
+			<if test="jssj!=null and jssj!=''">
+				<![CDATA[and tjsj <= to_date(#{jssj},'yyyy-mm-dd HH24:mi:ss') ]]>
+			</if>
+			<if test="sbdd !=null and sbdd !=''">
+				and sbdd like '%'||#{sbdd}||'%'
+			</if>
+			<if test="dept_name !=null and dept_name !=''">
+				and dept_name like '%'||#{dept_name}||'%'
+			</if>
+	 	</where>
+	 </select>
+	 <!-- 根据条件查询同周比 -->
+	 <select id="querytzb" parameterType="java.util.HashMap" resultType="int">
+	 		select * from TBL_OFFE_VIO_ALARM_STAT
+	 		<where>
+	 			<if test="tjnf!=null and tjnf!=''">
+	 				and tjnf=#{tjnf}
+	 			</if>
+	 			<if test="tjyf !=null and tjyf !=''">
+	 				and tjyf=#{tjyf}
+	 			</if>
+	 			<if test="tjrq !=null and tjrq !=''">
+	 				and tjrq=#{tjrq}
+	 			</if>
+	 			<if test="tjxs !=null and tjxs !=''">
+	 				and tjxs=#{tjxs}
+	 			</if>
+	 		</where>
+	 </select>
+	 <!-- 违法地点预警排名 -->
+	 <select id="querywfddyjpm" parameterType="java.util.HashMap" resultType="com.cist.xxtj.sbyjfztj.model.Wfddyjpm">
+	 	select p.sbdd , sum(p.yjz) num from (
+	 		select t.sbdd,to_char(t.cjsl-t.sbcjmax) yjz from TBL_OFFE_VIO_ALARM_STAT t 
+	 		<where>
+	 			<if test="tjkssj!=null and tjkssj!=''">
+					<![CDATA[ and tjsj >=to_date(#{tjkssj},'yyyy-mm-dd HH24:mi:ss')]]>
+				</if>
+				<if test="tjjssj!=null and tjjssj!=''">
+					<![CDATA[and tjsj <= to_date(#{tjjssj},'yyyy-mm-dd HH24:mi:ss') ]]>
+				</if>
+				and t.cjsl>t.sbcjmax
+	 		</where>
+	 		)p group by p.sbdd
+		order by sum(p.yjz) desc
+	 </select>
+	 <!-- 查询预警违法地点 -->
+	 <select id="queryyjwfdd" parameterType="java.util.HashMap" resultType="com.cist.xxtj.sbyjfztj.model.Yjwfdd">
+	 	select p.sbdd ,avg(p.cjsl) cjsl,avg(p.zcfw) zcfw,avg(p.dyzxyj) dyzxyj, avg(p.yjz) cczdyj  from (
+	       select t.sbdd,to_char(t.cjsl-t.sbcjmax) yjz,t.cjsl,to_char(t.sbcjmax-t.sbcjmin) zcfw,
+	       to_char(t.sbcjmin-t.cjsl) dyzxyj from TBL_OFFE_VIO_ALARM_STAT t 
+	       <where>
+	 			<if test="kssj!=null and kssj!=''">
+					<![CDATA[ and tjsj >=to_date(#{kssj},'yyyy-mm-dd HH24:mi:ss')]]>
+				</if>
+				<if test="jssj!=null and jssj!=''">
+					<![CDATA[and tjsj <= to_date(#{jssj},'yyyy-mm-dd HH24:mi:ss') ]]>
+				</if>
+				<if test="sbdd !=null and sbdd !=''">
+					and sbdd like '%'||#{sbdd}||'%'
+				</if>
+				<if test="dept_name !=null and dept_name !=''">
+					and dept_name like '%'||#{dept_name}||'%'
+				</if>
+	 		</where>
+	       	)p group by p.sbdd
+		order by sum(p.yjz) desc
+	 </select>
+	 <!-- 根据地点统计抓拍数量 -->
+	 <select id="querynumbywfdd" parameterType="java.util.HashMap" resultType="com.cist.xxtj.sbyjfztj.model.Wfddzpnum">
+	 	select p.rq ,j.num from (
+	        select to_char(trunc(sysdate,'iw'),'yyyy-mm-dd') rq from dual union all
+	        select to_char(trunc(sysdate,'iw') +1,'yyyy-mm-dd') rq from dual union all
+	        select to_char(trunc(sysdate,'iw') +2,'yyyy-mm-dd') rq from dual union all
+	        select to_char(trunc(sysdate,'iw') +3,'yyyy-mm-dd') rq from dual union all
+	        select to_char(trunc(sysdate,'iw') +4,'yyyy-mm-dd') rq from dual union all
+	        select to_char(trunc(sysdate,'iw') +5,'yyyy-mm-dd') rq from dual union all
+	        select to_char(trunc(sysdate,'iw') +6,'yyyy-mm-dd') rq from dual
+		) p left join (
+		        select to_char(t.wfsj+15/24, 'YYYY-MM-DD') rq,count(*) num from oeuser.tbl_offe_evdi t 
+		        where t.sbbh = (select device_num from JCSJ_DEVICE t where t.road_name like '%'||#{sbdd}||'%')
+		        group by to_char(t.wfsj+15/24, 'YYYY-MM-DD')
+		) j on p.rq = j.rq order by p.rq
+	 </select>
+	 <!-- 查询抓拍排名 -->
+	 <select id="queryzppm" parameterType="java.util.HashMap"
+	 resultType="com.cist.xxtj.sbyjfztj.model.Wfddyjpm">
+	 	select to_char(t.wfsj+15/24, 'YYYY-MM-DD') sbdd,count(*) num from 
+	 	oeuser.tbl_offe_evdi t 
+	 	<where>
+	 		<if test="kssj!=null and kssj!=''">
+					<![CDATA[ and wfsj >=to_date(#{kssj},'yyyy-mm-dd HH24:mi:ss')]]>
+				</if>
+				<if test="jssj!=null and jssj!=''">
+					<![CDATA[and wfsj <= to_date(#{jssj},'yyyy-mm-dd HH24:mi:ss') ]]>
+				</if>
+	 	</where>
+	 	group by to_char(t.wfsj+15/24, 'YYYY-MM-DD')
+	 	order by num desc
+	 </select>
+	 
+	 <!-- 查询违法抓拍数量趋势 -->
+	 <select id="querywfzpqs" parameterType="java.util.HashMap" resultType="com.cist.xxtj.sbyjfztj.model.Wfzpqs">
+		select * from 
+		(
+				select p.sj||':00' sj,k.cjsl,k.zccjsl ,k.tjsj,k.dept_name,k.sbdd from (
+		       select to_char(to_date(to_char(sysdate -(rownum - 1) / 24,'yyyy-mm-dd hh24') || ':00:00','yyyy-mm-dd hh24:mi:ss'),'hh24') sj
+		        from dual
+		        connect by <![CDATA[rownum <= 24]]>
+		      ) p left join (
+		          select t.tjxs sj,t.cjsl,t.zccjsl,t.tjsj,t.dept_name,t.sbdd from TBL_OFFE_VIO_ALARM_STAT t where
+		            t.tjsj >(select to_date(#{sj}||' 00:00:00', 'YYYY-MM-DD HH24:MI:SS') from dual)
+		           <![CDATA[and t.tjsj <(select to_date(#{sj}||' 23:59:59', 'YYYY-MM-DD HH24:MI:SS')]]> from dual)
+		      ) k on p.sj=k.sj order by p.sj
+		) t
+		where sbdd=#{sbdd} or sbdd is null
+	 </select>
+	 <!-- 根据设备地点和时间查询相应数据 -->
+	 <select id="queryszcjslbysj" parameterType="java.util.HashMap" resultType="com.cist.xxtj.sbyjfztj.model.TBL_OFFE_VIO_ALARM_STAT">
+	 	select * from TBL_OFFE_VIO_ALARM_STAT
+	 	where sbdd=#{sbdd} and to_char(tjsj,'yyyy-mm-dd HH24')=#{sj}
+	 </select>
+	 <!-- 违法地点预警列表 -->
+	 <select id="querywfzpqstable" parameterType="java.util.HashMap" resultType="com.cist.xxtj.sbyjfztj.model.Wfzpqs">
+		select * from (
+				select p.sj||':00' sj,k.cjsl,k.zccjsl ,k.tjsj,k.dept_name,k.sbdd from (
+		       select to_char(to_date(to_char(sysdate -(rownum - 1) / 24,'yyyy-mm-dd hh24') || ':00:00','yyyy-mm-dd hh24:mi:ss'),'hh24') sj
+		        from dual
+		        connect by <![CDATA[rownum <= 24]]>
+		      ) p left join (
+		          select t.tjxs sj,t.cjsl,t.zccjsl,t.tjsj,t.dept_name,t.sbdd from TBL_OFFE_VIO_ALARM_STAT t where
+		            t.tjsj >(select to_date(#{sj}||' 00:00:00', 'YYYY-MM-DD HH24:MI:SS') from dual)
+		           <![CDATA[and t.tjsj <(select to_date(#{sj}||' 23:59:59', 'YYYY-MM-DD HH24:MI:SS')]]> from dual)
+		      ) k on p.sj=k.sj order by p.sj
+		) t
+		where sbdd=#{sbdd}
+	 </select>
+	 <!-- 查询违法抓拍量排名 -->
+	 <select id="querywfzppm" parameterType="java.util.HashMap" resultType="com.cist.xxtj.sbyjfztj.model.Wfddyjpm">
+	 	select (select  to_char(sysdate, 'MM' )||'月'||to_char(sysdate, 'dd' )||'日 '  from dual)||sj sbdd ,cjsl num from VW_WFZPQS_INFO t
+		where sbdd=#{sbdd} and cjsl is not null
+		 order by cjsl desc
+	 </select>
+	 <!-- 查询设备相关信息 -->
+	 <select id="querysbinfo" parameterType="java.util.HashMap" resultType="com.cist.xxtj.sbyjfztj.model.TBL_ALARM_CARD_STAT">
+	 	select * from (select * from TBL_ALARM_CARD_STAT order by tjsj desc) where rownum=1
+	 </select>
+	 
+	 
+	 <select id="getDeptNode" resultType="com.cist.xxtj.sbyjfztj.model.VideoMonitorTree">
+		SELECT dept_code key,dept_name title FROM  SYS_DEPART_INFO
+	</select>
+	<select id="getRoadNode" resultType="com.cist.xxtj.sbyjfztj.model.VideoMonitorTree" parameterType="java.util.HashMap">
+		SELECT ROIM_CODE key,ROIM_NAME title FROM  C_ROAD_ITEM where DEPT_CODE=#{deptId} 
+	</select>
+	<select id="getVideoMonitorNode" resultType="com.cist.xxtj.sbyjfztj.model.VideoMonitorTree" parameterType="java.util.HashMap">
+		SELECT d.road_name key,d.road_name title FROM  Jcsj_device d  where d.BELONGED_ROAD_ID=#{roadId} and d.fk_device_type not in('KK','QJCS') group by road_name  
+	</select>
+</mapper>

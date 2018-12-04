@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cist.tjfx.mapper.TjfxMapper">
+	<!-- 统计各状态的证据总数 -->
+	<select id="queryevidencenum" parameterType="java.util.HashMap"
+		resultType="int">
+		select count(*) from ZJJH_EVIDENCE_INFO
+		<where>
+			<if test="evidence_status != null and evidence_status != ''">
+				and evidence_status = #{evidence_status}
+			</if>
+		</where>
+	</select>
+	<!-- 统计每月新增量 -->
+	<select id="querymyxzl" parameterType="java.util.HashMap"
+		resultType="com.cist.tjfx.model.Myxzltj">
+		select trunc(create_time,'mm') yf,count(*) num from ZJJH_EVIDENCE_INFO
+		<where>
+			<if test="jssj != null and jssj != ''">
+			<![CDATA[ and create_time >=to_date(#{kssj},'yyyy-mm-dd HH24:mi:ss')]]>
+			</if>
+			<if test="jssj != null and jssj != ''">
+			<![CDATA[ and create_time <=to_date(#{jssj},'yyyy-mm-dd HH24:mi:ss')]]>
+			</if>
+		</where>
+		group by trunc(create_time,'mm')
+	</select>
+	<!-- 统计本月总量 -->
+	<select id="querybyxz" parameterType="java.util.HashMap"
+		resultType="int">
+		select count(*) from ZJJH_EVIDENCE_INFO
+		where create_time
+		&gt; to_date(#{kssj},'yyyy-mm-dd HH24:mi:ss')
+		and create_time &lt;
+		sysdate
+		group by trunc(create_time,'mm')
+	</select>
+	<!-- 根据单位来进行统计证据数量 -->
+	<select id="querynumbydept" parameterType="java.util.HashMap"
+		resultType="com.cist.tjfx.model.EvidenceTj">
+		select (select d.dept_name from SYS_DEPART_INFO d where e.fk_dept_id =
+		d.dept_pk) name,count(*) num
+		from ZJJH_EVIDENCE_INFO e
+		<where>
+			<if test="kssj!=null and kssj!=''">
+				<![CDATA[ and e.create_time >=to_date(#{kssj},'yyyy-mm-dd HH24:mi:ss')]]>
+			</if>
+			<if test="jssj!=null and jssj!=''">
+				<![CDATA[and e.create_time <= to_date(#{jssj},'yyyy-mm-dd HH24:mi:ss') ]]>
+			</if>
+		</where>
+		group by e.fk_dept_id
+	</select>
+	<!-- 证据类型统计 -->
+	<select id="querytjbyzjlx" parameterType="java.util.HashMap"
+		resultType="com.cist.tjfx.model.EvidenceTj">
+		select (select f.fc_name from sys_frm_code f where f.fc_pk
+		= t.fk_evidence_type_id) name,count(*) num
+		from ZJJH_EVIDENCE_INFO t group by t.fk_evidence_type_id
+	</select>
+	<!-- 涉案类型统计 -->
+	<select id="querytjbysalx" parameterType="java.util.HashMap"
+		resultType="com.cist.tjfx.model.EvidenceTj">
+		select (select f.fc_name from sys_frm_code f where f.fc_pk =
+		t.fk_involved_type_id) name,count(*) num
+		from ZJJH_EVIDENCE_INFO t group by t.fk_involved_type_id
+	</select>
+	<!-- 按照天数来统计总量 -->
+	<select id="querybzzl" parameterType="java.util.HashMap" resultType="com.cist.tjfx.model.Myxzltj">
+		select trunc(create_time,'dd') yf,count(*) num from ZJJH_EVIDENCE_INFO
+		<where>
+			<if test="jssj != null and jssj != ''">
+			<![CDATA[ and create_time >=to_date(#{kssj},'yyyy-mm-dd HH24:mi:ss')]]>
+			</if>
+			<if test="jssj != null and jssj != ''">
+			<![CDATA[ and create_time <=to_date(#{jssj},'yyyy-mm-dd HH24:mi:ss')]]>
+			</if>
+		</where>
+		group by trunc(create_time,'dd')
+	</select>
+</mapper>

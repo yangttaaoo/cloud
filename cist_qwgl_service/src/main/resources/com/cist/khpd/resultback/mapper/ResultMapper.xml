@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cist.khpd.resultback.mapper.ResultMapper">
+<!-- 查询所有数据 -->
+<select id="selectData" resultType="com.cist.khpd.resultback.model.ResultBack">
+   select * from sys_result_back 
+   <where>
+    <if test="fkbt!=null and fkbt!=''">
+    back_title=#{fkbt}
+    </if>
+    <if test="hfzt!=null and hfzt!=''">
+     and  reply_type=#{hfzt}
+    </if>
+    <if test="name!=null and name!=''">
+     and  user_name=#{name}
+    </if>
+    <if test="fklx!=null and fklx!=''">
+     and back_type=#{fklx}
+    </if> 
+    <if test="tjsj!=null and tjsj!=''">
+     <![CDATA[and submit_time>=to_date(#{tjsj},'yyyy-mm-dd HH24:mi:ss')]]>
+    </if>
+    <if test="tjsj1!=null and tjsj!=''">
+      <![CDATA[and submit_time<=to_date(#{tjsj1},'yyyy-mm-dd HH24:mi:ss')]]>
+    </if>
+   </where>
+   </select>
+ <!--增加部门反馈数据  -->
+ <insert id="addData" parameterType="java.util.HashMap">
+   insert into sys_result_back (result_pk,depart,back_title,
+   user_number,user_name,content,back_type,reply_type)
+   values(
+   cistsys.SEQ_RESULT_BACK.nextval,
+   #{depart,jdbcType=VARCHAR},
+   #{title,jdbcType=VARCHAR},
+   #{number,jdbcType=VARCHAR},
+   #{name,jdbcType=VARCHAR},
+   #{content,jdbcType=VARCHAR},
+   1,2)
+ </insert>
+  <!--增加个人反馈数据  -->
+ <insert id="addPersonData" parameterType="java.util.HashMap">
+   insert into sys_result_back (result_pk,depart,back_title,
+   user_number,user_name,content,back_type,reply_type)
+   values(
+   cistsys.SEQ_RESULT_BACK.nextval,
+   #{depart,jdbcType=VARCHAR},
+   #{title,jdbcType=VARCHAR},
+   #{number,jdbcType=VARCHAR},
+   #{name,jdbcType=VARCHAR},
+   #{content,jdbcType=VARCHAR},
+   2,2)
+ </insert>
+ <!-- 删除数据 --> 
+ <delete id="deleteData" parameterType="java.util.HashMap">
+   delete from  sys_result_back where result_pk=#{pk}
+ </delete> 
+ 
+ <!--更新数据  -->
+ <update id="updateData" parameterType="java.util.HashMap">
+    update sys_result_back set
+    depart=#{depart,jdbcType=VARCHAR},
+    user_name=#{name,jdbcType=VARCHAR},
+    user_number=#{number,jdbcType=VARCHAR},
+    back_title=#{title,jdbcType=VARCHAR},
+    content=#{content,jdbcType=VARCHAR}
+    where result_pk=#{pk}
+ </update>
+ <!--回复数据  -->
+   <update id="replyUser" parameterType="java.util.HashMap">
+      update sys_result_back set
+      reply_type='1',
+      reply_time=sysdate,
+      reply_content=#{content}
+      where result_pk=#{pk}
+   </update>
+<!--查询警员名字  -->
+  <select id="selectPerson"  parameterType="java.lang.String" resultType="com.cist.khpd.resultback.model.Police">
+     select sypi_code,sypi_name from sys_police_info  where sypi_code=#{sypi_code}
+  </select>
+</mapper>

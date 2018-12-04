@@ -1,0 +1,238 @@
+package com.cist.qwgl.qwbb.service.impl;
+
+
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Set;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.cist.qwgl.qwbb.mapper.QwbbMapper;
+import com.cist.qwgl.qwbb.model.Jcsjpoliceresources;
+import com.cist.qwgl.qwbb.model.Qw_car_patrol_info;
+import com.cist.qwgl.qwbb.model.Qw_car_patrol_relation;
+import com.cist.qwgl.qwbb.model.Qw_duty_relation;
+import com.cist.qwgl.qwbb.model.Qw_equip_info;
+import com.cist.qwgl.qwbb.model.Qw_guns_relation;
+import com.cist.qwgl.qwbb.model.Qw_police_team;
+import com.cist.qwgl.qwbb.model.Qw_police_team_duty;
+import com.cist.qwgl.qwbb.model.Qw_police_team_street;
+import com.cist.qwgl.qwbb.model.Qw_walk_patrol_relation;
+import com.cist.qwgl.qwbb.model.Qwgl_bc_info;
+import com.cist.qwgl.qwbb.model.Qwpatrolarea;
+import com.cist.qwgl.qwbb.model.Sysfrmcode;
+import com.cist.qwgl.qwbb.model.Syspoliceinfo;
+import com.cist.qwgl.qwbb.service.QwbbService;
+@Service
+public class QwbbSeviceImpl implements QwbbService{
+	@Autowired
+	private QwbbMapper mapper;
+
+	@Override
+	public List<Jcsjpoliceresources> querylistpageList(HashMap<String, Object> map) {
+		return mapper.querylistpageList(map);
+	}
+
+	@Override
+	public List<Sysfrmcode> selectSysfrmcode(HashMap<String, Object> map) {
+		return mapper.selectSysfrmcode(map);
+	}
+
+	@Override
+	public List<Syspoliceinfo> selectpolice(HashMap<String, Object> map) {
+		return mapper.selectpolice(map);
+	}
+
+	@Override
+	public List<Sysfrmcode> selfct(HashMap<String, Object> map) {
+		return mapper.selfct(map);
+	}
+
+	@Override
+	public List<Sysfrmcode> selfctquan(HashMap<String, Object> map) {
+		return mapper.selfctquan(map);
+	}
+
+	@Override
+	public List<Sysfrmcode> bancigt(HashMap<String, Object> map) {
+		return mapper.bancigt(map);
+	}
+
+	@Override
+	public List<Qwpatrolarea> patrolarea(HashMap<String, Object> map) {
+		return mapper.patrolarea(map);
+	}
+
+	@Override
+	public List<Qwgl_bc_info> qwglbcinfo(HashMap<String, Object> map) {
+		return mapper.qwglbcinfo(map);
+	}
+
+	@Override
+	public Integer saveQw_police_team(HashMap<String, Object> map) {
+		return mapper.saveQw_police_team(map);
+	}
+
+	@Override
+	public Integer saveQw_police_team_street(HashMap<String, Object> map) {
+		return mapper.saveQw_police_team_street(map);
+	}
+
+	@Override
+	public Integer saveQw_equip_info(HashMap<String, Object> map) {
+		return mapper.saveQw_equip_info(map);
+	}
+
+	@Override
+	public Integer saveQw_walk_patrol_relation(List<Syspoliceinfo> policList) {
+		return mapper.saveQw_walk_patrol_relation(policList);
+	}
+
+	@Override
+	public Integer saveqw_car_patrol_info(HashMap<String, Object> map) {
+		return mapper.saveqw_car_patrol_info(map);
+	}
+
+	@Override
+	public Integer saveqw_car_patrol_relation(HashMap<String, Object> map) {
+		return mapper.saveqw_car_patrol_relation(map);
+	}
+
+	@Override
+	public List<Qw_police_team> qwpoliceteampagelist(HashMap<String, Object> map) {
+		return mapper.qwpoliceteampagelist(map);
+	}
+
+	@Override
+	public Sysfrmcode selectSysfrmcodeinfo(HashMap<String, Object> map) {
+		return mapper.selectSysfrmcodeinfo(map);
+	}
+
+	@Override
+	public Qw_police_team_street selQw_police_team_street(HashMap<String, Object> map) {
+		return mapper.selQw_police_team_street(map);
+	}
+
+	@Override
+	public Qwgl_bc_info chauxnQwgl_bc_info(HashMap<String, Object> map) {
+		return mapper.chauxnQwgl_bc_info(map);
+	}
+
+	@Override
+	public Qwpatrolarea chauxnxunqu(HashMap<String, Object> map) {
+		return mapper.chauxnxunqu(map);
+	}
+
+	@Override
+	public Integer addteam_duty(HashMap<String, Object> map) {
+		return mapper.addteam_duty(map);
+	}
+
+	@Override
+	public Integer addrelation(HashMap<String, Object> map) {
+		return mapper.addrelation(map);
+	}
+
+	@Override
+	public List<Qw_walk_patrol_relation> qwwalkpatrolrelationlist(HashMap<String, Object> map) {
+		return mapper.qwwalkpatrolrelationlist(map);
+	}
+
+	@Override
+	public Syspoliceinfo syspoliceinfo(HashMap<String, Object> map) {
+		return mapper.syspoliceinfo(map);
+	}
+
+	@Override
+	public Qw_equip_info qwequipinfos(HashMap<String, Object> map) {
+		return mapper.qwequipinfos(map);
+	}
+
+	@Override
+	public List<Qw_guns_relation> qwgunsrelation(HashMap<String, Object> map) {
+		return mapper.qwgunsrelation(map);
+	}
+
+	@Override
+	public List<Qw_car_patrol_info> qw_car_patrol_info(HashMap<String, Object> map) {
+		return mapper.qw_car_patrol_info(map);
+	}
+
+	@Override
+	public List<Qw_car_patrol_relation> qw_car_patrol_relation(HashMap<String, Object> map) {
+		return mapper.qw_car_patrol_relation(map);
+	}
+
+	@Override
+	public Jcsjpoliceresources jcsjpoliceresources(HashMap<String, Object> map) {
+		return mapper.jcsjpoliceresources(map);
+	}
+
+	@Override
+	public Integer addqw_report(HashMap<String, Object> map) {
+		return mapper.addqw_report(map);
+	}
+
+	@Override
+	public Integer addqw_report_street(HashMap<String, Object> map) {
+		return mapper.addqw_report_street(map);
+	}
+
+	@Override
+	public Integer addqw_guns_relation(HashMap<String, Object> map) {
+		return mapper.addqw_guns_relation(map);
+	}
+
+	@Override
+	public Qw_police_team_duty seqw_police_team_duty(HashMap<String, Object> map) {
+		return mapper.seqw_police_team_duty(map);
+	}
+
+	@Override
+	public List<Qw_duty_relation> qw_duty_relationid(HashMap<String, Object> map) {
+		return mapper.qw_duty_relationid(map);
+	}
+
+	@Override
+	public Integer addqw_report_duty(HashMap<String, Object> map) {
+		return mapper.addqw_report_duty(map);
+	}
+
+	@Override
+	public Integer addqw_report_duty_relation(HashMap<String, Object> map) {
+		return mapper.addqw_report_duty_relation(map);
+	}
+
+	@Override
+	public Integer addqw_report_office(HashMap<String, Object> map) {
+		return mapper.addqw_report_office(map);
+	}
+
+	@Override
+	public Integer addqw_report_office_relation(HashMap<String, Object> map) {
+		return mapper.addqw_report_office_relation(map);
+	}
+
+	@Override
+	public Integer addqw_report_rest(HashMap<String, Object> map) {
+		return mapper.addqw_report_rest(map);
+	}
+
+	@Override
+	public Integer addqw_report_rest_relation(HashMap<String, Object> map) {
+		return mapper.addqw_report_rest_relation(map);
+	}
+
+	@Override
+	public Integer addqw_report_alarm(HashMap<String, Object> map) {
+		return mapper.addqw_report_alarm(map);
+	}
+
+	@Override
+	public Integer addqw_report_alarm_relation(HashMap<String, Object> map) {
+		return mapper.addqw_report_alarm_relation(map);
+	}
+
+
+}

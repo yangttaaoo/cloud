@@ -1,0 +1,352 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cist.evidencemanage.mapper.EvidenceManageMapper" >
+  
+  <select id="selectAttachment" resultType="com.cist.evidencemanage.model.ZjjhEvidenceAttachment"
+		parameterType="java.util.HashMap">
+		select * from
+		ZJJH_EVIDENCE_ATTACHMENT t
+		<where>
+			<if test=" pk_id != null and pk_id != ''">
+				FK_EVIDENCE_ID=#{pk_id}
+			</if>
+		</where>
+	</select>
+  
+  <select id="selectRoad" resultType="com.cist.evidencemanage.model.C_road_item"
+		parameterType="java.util.HashMap">
+		select * from
+		c_road_item t
+		<where>
+			<if test="roim_code != null and roim_code != ''">
+				roim_code=#{roim_code}
+			</if>
+		</where>
+	</select>
+	
+	 <select id="selectDev" resultType="com.cist.evidencemanage.model.C_road_item"
+		parameterType="java.util.HashMap">
+		select DEVICE_NUM as roim_code,DEVICE_NAME as roim_name,KILOMETRE_NUM,DEVICE_NAME,BELONGED_ROAD_ID from
+		JCSJ_DEVICE t
+		<where>
+			<if test="roim_code != null and roim_code != ''">
+				BELONGED_ROAD_ID=#{roim_code}
+			</if>
+			<if test="kilometre_num != null and kilometre_num != ''">
+				KILOMETRE_NUM=#{kilometre_num}
+			</if>
+			<if test="device_name != null and device_name != ''">
+				device_name like '%'||#{device_name}||'%'
+			</if>
+			
+		</where>
+	</select>
+  
+  
+  <select id="depart_infolist" resultType="com.cist.evidencemanage.model.DeptInfo"
+		parameterType="java.lang.Integer">
+		select t.dept_pk,t.dept_code,t.dept_name as name,t.DEPT_SUPERIOR from
+		sys_depart_info t
+		<where>
+			<if test="_parameter  == null or _parameter  == ''">
+				t.DEPT_SUPERIOR is null
+			</if>
+			<if test="_parameter  != null and _parameter  != ''">
+				t.DEPT_SUPERIOR=#{_parameter}
+			</if>
+		</where>
+	</select>
+	
+   <select id="selectFrmCode" resultType="com.cist.evidencemanage.model.Sys_frm_code" parameterType="java.lang.String">
+    select * from SYS_FRM_CODE
+    where
+    FCT_CODE=#{fct_code}
+  </select>
+  <insert id="insertAttachment">
+  insert into ZJJH_EVIDENCE_ATTACHMENT
+  <trim prefix="(" suffix=")" suffixOverrides=",">
+		    PK_ID,
+			fk_evidence_id,
+			evidence_type,
+			data_source_type,
+			fk_extract_device_id,
+			extract_time,
+			attachment_name,
+			attachment_location,
+	</trim>
+	select cistsys.SEQ_ZJJH_ATTACHMENT_PK.NEXTVAL, cd.* from(
+	<foreach item="item" index="index" collection="list" separator="union all"> 
+         SELECT  
+            #{item.fk_evidence_id},
+            #{item.evidence_type},
+            #{item.data_source_type},
+            <if test="item.fk_extract_device_id !=null and item.fk_extract_device_id !=''">
+            #{item.fk_extract_device_id},
+            </if>
+              <if test="item.fk_extract_device_id ==null ">
+         #{item.fk_extract_device_id,jdbcType=VARCHAR},
+            </if>
+            <if test="item.extract_time !=null and item.extract_time !=''">
+            #{item.extract_time},
+            </if>
+            <if test="item.extract_time ==null ">
+          #{item.extract_time,jdbcType=VARCHAR},
+            </if>
+            #{item.attachment_name},
+            #{item.attachment_location}
+		FROM DUAL 
+    </foreach >
+		)cd
+  </insert>
+  <update id="update">
+  update ZJJH_EVIDENCE_INFO set
+  evidence_status=#{evidence_status}
+  where pk_id=#{pk_id}
+  </update>
+  
+    <update id="updateAll">
+  update ZJJH_EVIDENCE_INFO
+ <trim prefix="set" suffixOverrides=",">  
+  <if test="fk_dept_id != null and fk_dept_id != '' ">
+			FK_DEPT_ID=#{fk_dept_id},
+		</if>
+		<if test="evidence_name != null and evidence_name != ''">
+			EVIDENCE_NAME=#{evidence_name},
+		</if>
+		<if test="evidence_num != null and evidence_num != ''">
+			EVIDENCE_NUM=#{evidence_num},
+		</if>
+		<if test="data_source != null and data_source !='' ">
+			DATA_SOURCE=#{data_source},
+		</if>
+		<if test="fk_evidence_type_id != null and fk_evidence_type_id != ''">
+			FK_EVIDENCE_TYPE_ID=#{fk_evidence_type_id},
+		</if>
+		<if test="fk_involved_type_id != null and fk_involved_type_id != ''">
+			FK_INVOLVED_TYPE_ID=#{fk_involved_type_id},
+		</if>
+		<if test="relation_case_name != null and relation_case_name != ''">
+			RELATION_CASE_NAME=#{relation_case_name},
+		</if>
+		<if test="relation_case_id != null and relation_case_id !=''">
+			RELATION_CASE_ID=#{relation_case_id},
+		</if>
+		<if test="remarks != null and remarks != '' and remarks !='null' ">
+			REMARKS=#{remarks},
+		</if>
+		<if test="evidence_status != null and evidence_status !='' ">
+			EVIDENCE_STATUS=#{evidence_status},
+		</if>
+		<if test="create_person_id != null and create_person_id !='' ">
+			CREATE_PERSON_ID=#{create_person_id},
+		</if>
+  </trim>
+  where pk_id=#{fk_evidence_id}
+  </update>
+  <!--删除附件信息 -->
+<delete id="deleteAttachment">
+delete from ZJJH_EVIDENCE_ATTACHMENT
+where pk_id in
+		<foreach item="items" collection="deleteId" open="(" separator="," close=")">
+            #{items}
+        </foreach>
+</delete>
+ <insert id="save" parameterType="java.util.HashMap">
+ <selectKey keyProperty="fk_evidence_id" resultType="java.lang.Integer" order="BEFORE">  
+            select SEQ_ZJJH_EVIDENCE_INFO_PK.NEXTVAL as fk_evidence_id from dual  
+        </selectKey> 
+	insert into ZJJH_EVIDENCE_INFO
+	<trim prefix="(" suffix=")" suffixOverrides=",">
+		PK_ID,
+		<if test="fk_dept_id != null and fk_dept_id != '' ">
+			FK_DEPT_ID,
+		</if>
+		<if test="evidence_name != null and evidence_name != ''">
+			EVIDENCE_NAME,
+		</if>
+		<if test="evidence_num != null and evidence_num != ''">
+			EVIDENCE_NUM,
+		</if>
+		<if test="data_source != null and data_source !='' ">
+			DATA_SOURCE,
+		</if>
+		<if test="fk_evidence_type_id != null and fk_evidence_type_id != ''">
+			FK_EVIDENCE_TYPE_ID,
+		</if>
+		<if test="fk_involved_type_id != null and fk_involved_type_id != ''">
+			FK_INVOLVED_TYPE_ID,
+		</if>
+		<if test="relation_case_name != null and relation_case_name != ''">
+			RELATION_CASE_NAME,
+		</if>
+		<if test="relation_case_id != null and relation_case_id !=''">
+			RELATION_CASE_ID,
+		</if>
+		<if test="remarks != null and remarks != '' and remarks !='null' ">
+			REMARKS,
+		</if>
+		<if test="evidence_status != null and evidence_status !='' ">
+			EVIDENCE_STATUS,
+		</if>
+		<if test="create_person_id != null and create_person_id !='' ">
+			CREATE_PERSON_ID,
+		</if>
+		<if test="extract_pwd != null and extract_pwd !='' ">
+			extract_pwd,
+		</if>
+			CREATE_TIME,
+		
+	</trim>
+	<trim prefix="values (" suffix=")" suffixOverrides=",">
+		#{fk_evidence_id},
+		<if test="fk_dept_id != null and fk_dept_id != '' ">
+			#{fk_dept_id},
+		</if>
+		<if test="evidence_name != null and evidence_name != ''">
+			#{evidence_name},
+		</if>
+		<if test="evidence_num != null and evidence_num != ''">
+			#{evidence_num},
+		</if>
+		<if test="data_source != null and data_source !='' ">
+			#{data_source},
+		</if>
+		<if test="fk_evidence_type_id != null and fk_evidence_type_id != ''">
+			#{fk_evidence_type_id},
+		</if>
+		<if test="fk_involved_type_id != null and fk_involved_type_id != ''">
+			#{fk_involved_type_id},
+		</if>
+		<if test="relation_case_name != null and relation_case_name != ''">
+			#{relation_case_name},
+		</if>
+		<if test="relation_case_id != null and relation_case_id!=''">
+			#{relation_case_id},
+		</if>
+		<if test="remarks != null and remarks != '' and remarks!='null' ">
+			#{remarks},
+		</if>
+		<if test="evidence_status != null and evidence_status !='' ">
+			#{evidence_status},
+		</if>
+		<if test="create_person_id != null and create_person_id !='' ">
+			#{create_person_id},
+		</if>
+		<if test="extract_pwd != null and extract_pwd !='' ">
+			#{extract_pwd},
+		</if>
+			sysdate,
+	</trim>
+</insert>
+
+ <insert id="insertDownload" parameterType="java.util.HashMap">
+<selectKey keyProperty="fk_evidence_download_id" resultType="java.lang.Integer" order="BEFORE">  
+            select SEQ_ZJJH_DOWNLOAD_INFO_PK.NEXTVAL as fk_evidence_download_id from dual  
+        </selectKey> 
+	insert into ZJJH_EVIDENCE_DOWNLOAD_INFO
+	<trim prefix="(" suffix=")" suffixOverrides=",">
+		PK_ID,
+		<if test="fk_evidence_id != null and fk_evidence_id != '' ">
+			fk_evidence_id,
+		</if>
+		<if test="fk_use_unit_id != null and fk_use_unit_id != ''">
+			fk_use_unit_id,
+		</if>
+		<if test="fk_download_unit_id != null and fk_download_unit_id != ''">
+			fk_download_unit_id,
+		</if>
+		<if test="fk_download_person_id != null and fk_download_person_id !='' ">
+			fk_download_person_id,
+		</if>
+		<if test="download_reason != null and download_reason != ''">
+			download_reason,
+		</if>
+		
+			download_time,
+		
+	</trim>
+	<trim prefix="values (" suffix=")" suffixOverrides=",">
+			#{fk_evidence_download_id},
+		<if test="fk_evidence_id != null and fk_evidence_id != '' ">
+			#{fk_evidence_id},
+		</if>
+		<if test="fk_use_unit_id != null and fk_use_unit_id != ''">
+			#{fk_use_unit_id},
+		</if>
+		<if test="fk_download_unit_id != null and fk_download_unit_id != ''">
+			#{fk_download_unit_id},
+		</if>
+		<if test="fk_download_person_id != null and fk_download_person_id !='' ">
+			#{fk_download_person_id},
+		</if>
+		<if test="download_reason != null and download_reason != ''">
+			#{download_reason},
+		</if>
+		
+			sysdate,
+	</trim>
+</insert>
+
+<!--证据附件下载列表  -->
+<insert id="insertDownloadList" parameterType="java.util.HashMap">
+	insert into ZJJH_ATTACHMENT_DOWNLOAD_LIST
+	<trim prefix="(" suffixOverrides="," suffix=")">
+		PK_ID,
+			fk_evidence_download_id,
+			fk_evidence_attachment_id,
+			download_stauts,
+	</trim>
+	<trim prefix="values(" suffixOverrides="," suffix=")">
+	SEQ_ZJJH_DOWNLOAD_LIST_PK.NEXTVAL,
+	#{fk_evidence_download_id},
+	#{pk_id},
+	#{download_stauts},
+	</trim>
+<!-- 	select SEQ_ZJJH_DOWNLOAD_LIST_PK.NEXTVAL, cd.* from(
+	<foreach item="item" index="index" collection="list" separator="union all"> 
+         SELECT  
+             #{fk_evidence_download_id},
+			#{item.pk_id},
+			#{item.download_stauts}
+		FROM DUAL 
+    </foreach >
+		)cd -->
+</insert>
+<select id="list" resultType="com.cist.evidencemanage.model.ZjjhEvidenceInfo"
+	parameterType="java.util.HashMap">
+	select * from VW_ZJJH_EVIDENCE_INFO
+	<where>
+		<if test=" fk_dept_id !=null and fk_dept_id !=''">
+			and fk_dept_id=#{fk_dept_id}
+		</if>
+		<if test=" fk_evidence_type_id !=null and fk_evidence_type_id !=''">
+			and fk_evidence_type_id=#{fk_evidence_type_id}
+		</if>
+		<if test=" fk_involved_type_id !=null and fk_involved_type_id !=''">
+			and fk_involved_type_id=#{fk_involved_type_id}
+		</if>
+		<if test=" evidence_name !=null and evidence_name !=''">
+			and evidence_name like '%'||#{evidence_name}||'%'
+		</if>
+		<if test=" kssj !=null and kssj !=''">
+			 <![CDATA[ and create_time >= to_date(#{kssj},'yyyy-mm-dd') ]]>
+		</if>
+		<if test=" jssj !=null and jssj !=''">
+			 <![CDATA[ and create_time <= to_date(#{jssj},'yyyy-mm-dd') ]]>
+		</if>
+		<if test=" relation_case_name !=null and relation_case_name !=''">
+			and relation_case_name like '%'||#{relation_case_name}||'%'
+		</if>
+		<if test=" relation_case_id !=null and relation_case_id !=''">
+			and relation_case_id=#{relation_case_id}
+		</if>
+	</where>
+</select>
+
+<select id="selectPsw" resultType="com.cist.evidencemanage.model.ZjjhEvidenceInfo" parameterType="java.util.HashMap">
+select * from ZJJH_EVIDENCE_INFO
+
+where pk_id=#{pk_id}
+and  extract_pwd=#{extract_pwd}
+</select>
+</mapper>

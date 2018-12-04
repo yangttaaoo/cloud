@@ -1,0 +1,475 @@
+package com.cist.evidencemanage.controller;
+
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.image.BufferedImage;
+import java.io.BufferedOutputStream;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLConnection;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Vector;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+
+import javax.imageio.ImageIO;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import javax.swing.ImageIcon;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+import com.cist.evidencemanage.model.C_road_item;
+import com.cist.evidencemanage.model.DeptInfo;
+import com.cist.evidencemanage.model.ZjjhEvidenceAttachment;
+import com.cist.evidencemanage.model.ZjjhEvidenceInfo;
+import com.cist.evidencemanage.service.EvidenceManageService;
+import com.cist.evidencemanage.util.FileUtil;
+import com.cist.evidencemanage.util.FilesUtil;
+import com.cist.evidencemanage.util.UrlFilesToZip;
+import com.cist.evidencemanage.util.WaterMarkUtils;
+import com.cist.frame.page.PageInfo;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+
+/***
+ * 
+ * @Title:  EvidenceManageController.java   
+ * @Package com.cist.evidencemanage.controller   
+ * @Description:   证据管理
+ * @author: yt
+ * @date:   2018年9月17日 上午10:27:35 
+ * @version V1.0
+ */
+@RestController
+@RequestMapping("evidencemanage")
+public class EvidenceManageController{
+    
+	@Autowired
+	private EvidenceManageService service;
+	
+	/***
+	    * 条件查询
+	    * @param HashMap<String,Object>
+	    * @return PageInfo<SysModuleInfo>
+	    * @throws 
+	    */
+	@RequestMapping("list")
+	public PageInfo<ZjjhEvidenceInfo> select(@RequestBody HashMap<String,Object> map){
+		try{	
+		PageInfo pinfo = new PageInfo();
+	    pinfo.setPageNum(Integer.parseInt(map.get("currentPage").toString()));
+		pinfo.setPageSize(Integer.parseInt(map.get("pageSize").toString()));
+		PageInfo<ZjjhEvidenceInfo> pageinfo=(PageInfo<ZjjhEvidenceInfo>)service.listpageList(map, pinfo);
+		 return pageinfo;
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	/***
+	    * 条件查询
+	    * @param HashMap<String,Object>
+	    * @return PageInfo<SysModuleInfo>
+	    * @throws 
+	    */
+	@RequestMapping("addList")
+	public HashMap<String,Object> addList(@RequestBody HashMap<String,Object> map){
+		HashMap<String,Object> modelMap=new HashMap<String,Object>();
+		modelMap.put("evidence_type", service.selectFrmCode("E001"));//证据类型
+		modelMap.put("involved_type", service.selectFrmCode("E002"));//涉案类型
+		return modelMap;
+	}
+	/***
+	    * 条件查询
+	    * @param HashMap<String,Object>
+	    * @return PageInfo<SysModuleInfo>
+	    * @throws 
+	    */
+	@RequestMapping("selectDevType")
+	public HashMap<String,Object> selectDevType(@RequestBody HashMap<String,Object> map){
+		HashMap<String,Object> modelMap=new HashMap<String,Object>();
+		modelMap.put("devType", service.selectFrmCode("M001"));//设备类型
+		return modelMap;
+	}
+	
+	/***
+	    * 更新证据信息状态
+	    * @param HashMap<String,Object>
+	    * @return PageInfo<SysModuleInfo>
+	    * @throws 
+	    */
+	@RequestMapping("update")
+	public String update(@RequestBody HashMap<String,Object> map){
+		
+		Integer update = service.update(map);
+		   if(update>0)//1表示保存成功返回的行数
+  			{
+  				return "{\"result\":\"保存成功\"}";
+  			}
+  			else{
+  				return "{\"result\":\"保存失败\"}";
+  			}
+		
+		
+	}
+	/***
+	    * 更新证据信息包括附件信息
+	    * @param HashMap<String,Object>
+	    * @return PageInfo<SysModuleInfo>
+	    * @throws 
+	    */
+	@RequestMapping("updateAll")
+	public String updateAll(List<MultipartFile> files,List<MultipartFile> vifiles,String data){
+		
+		HashMap<String,Object> modelMap=new HashMap<String, Object>();
+		ObjectMapper objectMapper = new ObjectMapper();
+		HashMap map=new HashMap<String,Object>();
+		try {
+			
+			map = objectMapper.readValue(data, HashMap.class); //JSON转Map
+			
+			//data为前台传递的参数JSON参数字符串
+			
+		} catch (JsonParseException e) {
+			e.printStackTrace();
+		} catch (JsonMappingException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		Integer updateAll = service.updateAll(map,files,vifiles);
+		 if(updateAll>0)//1表示更新成功返回的行数
+			{
+				return "{\"result\":\"更新成功\"}";
+			}
+			else{
+				return "{\"result\":\"更新失败\"}";
+			}
+		
+		
+	}
+	 /***
+	    * 查询附件信息
+	    * @param HashMap<String,Object>
+	    * @return List<ZjjhEvidenceAttachment>
+	    */
+	@RequestMapping("selectAttachment")
+	public HashMap<String,Object> selectAttachment(@RequestBody HashMap<String,Object> map){
+		HashMap<String,Object> modelMap=new HashMap<String,Object>();
+		List<ZjjhEvidenceAttachment> selectAttachment = service.selectAttachment(map);//查询证据的附件信息
+		List<ZjjhEvidenceAttachment> pic=new ArrayList<ZjjhEvidenceAttachment>();
+		List<ZjjhEvidenceAttachment> video=new ArrayList<ZjjhEvidenceAttachment>();
+		for (ZjjhEvidenceAttachment list : selectAttachment) {
+			if(list.getEvidence_type().equals("0"))
+			{
+				pic.add(list);
+			}
+			else
+			{
+				video.add(list);
+			}
+		}
+		modelMap.put("pic", pic);
+		modelMap.put("video", video);
+		return modelMap;
+	}
+	
+	/***
+	    * 新增证据信息
+	    * @param HashMap<String,Object>
+	    * @return String
+	    * @throws 
+	    */
+	@RequestMapping("save")
+	public String save(List<MultipartFile> files,List<MultipartFile> vifiles,String data,HttpServletRequest request){
+		
+		HttpSession session = request.getSession();
+		Map<String,Object> userMap = (Map<String,Object>)session.getAttribute("userInfo"+session.getId());
+		String userPk = userMap.get("sypi_pk")==null?null:userMap.get("sypi_pk").toString();//获取用户id
+		String sypi_dept = userMap.get("sypi_dept")==null?null:userMap.get("sypi_dept").toString();//获取用户部门id
+		HashMap<String,Object> modelMap=new HashMap<String, Object>();
+		ObjectMapper objectMapper = new ObjectMapper();
+		HashMap map=new HashMap<String,Object>();
+		try {
+			
+			map = objectMapper.readValue(data, HashMap.class); //JSON转Map
+			map.put("create_person_id", userPk);//用户id
+			map.put("fk_dept_id", sypi_dept);//用户id
+			//data为前台传递的参数JSON参数字符串
+			
+		} catch (JsonParseException e) {
+			e.printStackTrace();
+		} catch (JsonMappingException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		Integer save = service.save(map,files,vifiles);
+		 if(save==1)//1表示更新成功返回的行数
+			{
+				return "{\"result\":\"保存成功\"}";
+			}
+			else{
+				return "{\"result\":\"保存失败\"}";
+			}
+	
+	}
+	
+	/***
+	    * 保存证据文件信息
+	    * @param HashMap<String,Object>
+	    * @return String
+	    * @throws 
+	    */
+	@RequestMapping("saveFile")
+	public HashMap<String,Object> saveFile(MultipartFile files){
+		
+		HashMap<String,Object> modelMap=new HashMap<String,Object>();
+		String fileUploadService = FileUtil.FileUploadService(files);
+		
+		 if(fileUploadService.equals("false"))//1表示更新成功返回的行数
+			{
+			 modelMap.put("result", "上传失败");
+			}
+			else{
+				 modelMap.put("result", fileUploadService);
+			}
+		 return modelMap;
+	
+	}
+	
+	/**
+	 * 道路设备树
+	 * @return
+	 * @throws JsonProcessingException
+	 */
+	@RequestMapping("treeDev")
+	public List<HashMap<String, Object>> treeDev(@RequestBody HashMap<String,Object> map) throws JsonProcessingException {
+		// 道路树
+		List<C_road_item> departinfo = service.selectRoad(map);
+		ObjectMapper mapper = new ObjectMapper();
+		List<C_road_item> list = roadinfodg(departinfo,map);
+//		String json = mapper.writeValueAsString(getroad(list));
+		return getroad(list);
+//		return json.substring(1, json.length() - 1);
+	}
+
+	public List<HashMap<String, Object>> getroad(List<C_road_item> list) {
+		List<HashMap<String, Object>> listmap = new ArrayList<HashMap<String, Object>>();
+		for (C_road_item road : list) {
+			HashMap<String, Object> map = new HashMap<String, Object>();
+			map.put("title", road.getRoim_name());
+			map.put("key", road.getRoim_code());
+			map.put("selectable", true);
+			
+			if (null != road.getChildren()) {// 下级
+				map.put("isLeaf", false);
+				map.put("children", getroad(road.getChildren()));
+				listmap.add(map);
+			} else {
+				map.put("isLeaf", true);
+				listmap.add(map);
+			}
+		}
+		return listmap;
+	}
+
+	public List<C_road_item> roadinfodg(List<C_road_item> departinfo,HashMap<String,Object> map) {
+		for (C_road_item road : departinfo) {
+			// 设备
+			map.put("roim_code", road.getRoim_code());//设备对应的道路代码
+			List<C_road_item> list = service.selectDev(map);
+			if (list.size() != 0) {
+				road.setChildren(list);
+				roadinfodg(list,map);
+			}
+		}
+		return departinfo;
+	}
+	
+	/**
+	 * 管理部门树
+	 * @return
+	 * @throws JsonProcessingException
+	 */
+	@RequestMapping("deptinfo")
+	public String roadDev() throws JsonProcessingException {
+		// 顶级部门
+		List<DeptInfo> departinfo = service.depart_infolist(null);
+		ObjectMapper mapper = new ObjectMapper();
+		List<DeptInfo> list = departinfodg(departinfo);
+		String json = mapper.writeValueAsString(getdiwfdidian(list));
+		return json.substring(1, json.length() - 1);
+	}
+
+	public List<HashMap<String, Object>> getdiwfdidian(List<DeptInfo> list) {
+		List<HashMap<String, Object>> listmap = new ArrayList<HashMap<String, Object>>();
+		for (DeptInfo depart_info : list) {
+			HashMap<String, Object> map = new HashMap<String, Object>();
+			map.put("title", depart_info.getName());
+			map.put("key", depart_info.getDept_code());
+			map.put("selectable", depart_info.getSelectable());
+			map.put("isLeaf", depart_info.getIsLeaf());
+			if (null != depart_info.getChildren()) {// 下级
+
+				map.put("children", getdiwfdidian(depart_info.getChildren()));
+				listmap.add(map);
+			} else {
+				listmap.add(map);
+			}
+		}
+		return listmap;
+	}
+
+	public List<DeptInfo> departinfodg(List<DeptInfo> departinfo) {
+		for (DeptInfo depart_info : departinfo) {
+			// 部门
+			List<DeptInfo> list = service.depart_infolist(depart_info.getDept_pk());
+			if (list.size() != 0) {
+				depart_info.setChildren(list);
+				departinfodg(list);
+			}
+		}
+		return departinfo;
+	}
+	/**
+	 * 新增下载文件信息
+	 * @return
+	 * @throws JsonProcessingException
+	 */
+	@RequestMapping("downloadInfo")
+	public  HashMap<String,Object> downloadInfo(@RequestBody HashMap<String,Object> map){
+		HashMap<String,Object> modelMap=new HashMap<String,Object>();
+		//		下载信息新增
+		Integer insertDownload = service.insertDownload(map);
+		if(insertDownload>0)
+		{
+			modelMap.put("fk_evidence_download_id", map.get("fk_evidence_download_id"));
+			return modelMap;
+		}
+		return modelMap;
+		}
+	/**
+	 * 下载文件
+	 * @return
+	 * @throws JsonProcessingException
+	 */
+	@SuppressWarnings("finally")
+	@RequestMapping("download")
+	public  void download(@RequestParam HashMap<String,Object> map,String urlString,HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException{
+		
+		try {
+			if(map.get("flag").toString().equals("video"))
+			{
+				FilesUtil.downloadFile(map.get("attachment_location").toString(), map.get("attachment_name").toString(),map.get("attachment_name").toString(),map.get("pk_id").toString(),map.get("flag").toString(),request, response);
+				map.put("download_stauts", 0);//附件下载信息状态若没抛出异常则输出文件成功
+				service.insertDownloadList(map);
+			}
+			else
+			{
+				HttpSession session = request.getSession();
+				Map<String,Object> userMap = (Map<String,Object>)session.getAttribute("userInfo"+session.getId());
+				String sypi_name = userMap.get("sypi_name")==null?null:userMap.get("sypi_name").toString();
+				String userCode = userMap.get("sypi_code")==null?null:userMap.get("sypi_code").toString();
+		        String string=sypi_name+":"+userCode+",此图片只用于事故处理";
+				FilesUtil.downloadFiles(map.get("attachment_location").toString(), map.get("attachment_name").toString(),map.get("attachment_name").toString(),map.get("pk_id").toString(),map.get("flag").toString(),request, response,string);
+				map.put("download_stauts", 0);//附件下载信息状态若没抛出异常则输出文件成功
+				service.insertDownloadList(map);
+			}
+			
+		} catch (IOException e) {
+			map.put("download_stauts", 1);//附件下载信息状态若抛出异常则为下载失败信息。
+			service.insertDownloadList(map);
+			e.printStackTrace();
+		}
+		
+    }
+	 /***
+	    * 获取下载进度
+	    * @param HashMap<String,Object>
+	    * @return Integer
+	    */
+	@RequestMapping("progress")
+	public  HashMap<String,Object> progress(@RequestBody HashMap<String,Object> map){
+		return UrlFilesToZip.map;
+	}
+	 /***
+	    * 清除下载完成map中的数据
+	    * @param HashMap<String,Object>
+	    * @return Integer
+	    */
+	@RequestMapping("deleteMap")
+	public  void deleteMap(@RequestBody HashMap<String,Object> map){
+	
+		Iterator iterator = UrlFilesToZip.map.keySet().iterator(); 
+		while (iterator.hasNext()) {
+		    String key = (String) iterator.next();
+		    if ((map.get("pk_id").toString()).equals(key)) {
+		       iterator.remove();        //移除map中的数据
+		       UrlFilesToZip.map.remove(key);    
+		     }
+		 }
+	}
+	
+
+	 /***
+	    * 查询附件提取密码
+	    * @param HashMap<String,Object>
+	    * @return Integer
+	    */
+	@RequestMapping("selectPsw")
+	public  String selectPsw(@RequestBody HashMap<String,Object> map){
+		
+		List<ZjjhEvidenceInfo> selectPsw = service.selectPsw(map);
+		 if(selectPsw.size()>0)//1表示更新成功返回的行数
+			{
+				return "{\"result\":\"密码正确\"}";
+			}
+			else{
+				return "{\"result\":\"密码错误\"}";
+			}
+	}
+	 /***
+	    * 删除附件信息
+	    * @param HashMap<String,Object>
+	    * @return String
+	    */
+	@RequestMapping("deleteAttachment")
+	public  String deleteAttachment(@RequestBody HashMap<String,Object> map){
+		
+		Integer deleteAttachment = service.deleteAttachment(map);
+		 if(deleteAttachment>0)//1表示删除成功返回的行数
+			{
+				return "{\"result\":\"删除成功\"}";
+			}
+			else{
+				return "{\"result\":\"删除失败\"}";
+			}
+	}
+}

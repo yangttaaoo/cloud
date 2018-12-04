@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sbzc.mappers.QwAppraiseTopicMapper" >
+  <resultMap id="BaseResultMap" type="com.sbzc.model.QwAppraiseTopic" >
+    <result column="PK_ID" property="pkId" jdbcType="DECIMAL" />
+    <result column="FK_DEPT_ID" property="fkDeptId" jdbcType="DECIMAL" />
+    <result column="TOPIC_NAME" property="topicName" jdbcType="VARCHAR" />
+    <result column="DEFAULT_VALUE" property="defaultValue" jdbcType="DECIMAL" />
+    <result column="TOPIC_EXPLAIN" property="topicExplain" jdbcType="VARCHAR" />
+    <result column="ENABLED_STATE" property="enabledState" jdbcType="CHAR" />
+    <result column="CREATE_PERSON_ID" property="createPersonId" jdbcType="DECIMAL" />
+    <result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <insert id="insert" parameterType="com.sbzc.model.QwAppraiseTopic" >
+    insert into QW_APPRAISE_TOPIC (PK_ID, FK_DEPT_ID, TOPIC_NAME, 
+      DEFAULT_VALUE, TOPIC_EXPLAIN, ENABLED_STATE, 
+      CREATE_PERSON_ID, CREATE_TIME)
+    values (#{pkId,jdbcType=DECIMAL}, #{fkDeptId,jdbcType=DECIMAL}, #{topicName,jdbcType=VARCHAR}, 
+      #{defaultValue,jdbcType=DECIMAL}, #{topicExplain,jdbcType=VARCHAR}, #{enabledState,jdbcType=CHAR}, 
+      #{createPersonId,jdbcType=DECIMAL}, #{createTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.sbzc.model.QwAppraiseTopic" >
+    insert into QW_APPRAISE_TOPIC
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="pkId != null" >
+        PK_ID,
+      </if>
+      <if test="fkDeptId != null" >
+        FK_DEPT_ID,
+      </if>
+      <if test="topicName != null" >
+        TOPIC_NAME,
+      </if>
+      <if test="defaultValue != null" >
+        DEFAULT_VALUE,
+      </if>
+      <if test="topicExplain != null" >
+        TOPIC_EXPLAIN,
+      </if>
+      <if test="enabledState != null" >
+        ENABLED_STATE,
+      </if>
+      <if test="createPersonId != null" >
+        CREATE_PERSON_ID,
+      </if>
+      <if test="createTime != null" >
+        CREATE_TIME,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="pkId != null" >
+        #{pkId,jdbcType=DECIMAL},
+      </if>
+      <if test="fkDeptId != null" >
+        #{fkDeptId,jdbcType=DECIMAL},
+      </if>
+      <if test="topicName != null" >
+        #{topicName,jdbcType=VARCHAR},
+      </if>
+      <if test="defaultValue != null" >
+        #{defaultValue,jdbcType=DECIMAL},
+      </if>
+      <if test="topicExplain != null" >
+        #{topicExplain,jdbcType=VARCHAR},
+      </if>
+      <if test="enabledState != null" >
+        #{enabledState,jdbcType=CHAR},
+      </if>
+      <if test="createPersonId != null" >
+        #{createPersonId,jdbcType=DECIMAL},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+</mapper>

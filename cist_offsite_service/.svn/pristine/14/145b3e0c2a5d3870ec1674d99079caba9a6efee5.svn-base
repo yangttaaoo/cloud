@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cist.redinfo.mapper.RedInfoMapper">
+	<!-- 查询红名单数据 -->
+	<select id="selectRedInfo" resultType="com.cist.redinfo.model.RedInfo"
+		parameterType="java.util.HashMap">
+		select * from vw_red_info t
+		<where> 
+			<if test="hphm!=null and hphm!=''">
+				<!-- and t.hphm like '%'||#{hphm}||'%' -->
+				 lower(t.hphm) like lower('%'||#{hphm}||'%')				
+			</if>
+			<if test="hpzl!=null and hpzl!='' and hpzl!='null'">
+				and t.hpzl=#{hpzl}
+			</if>
+			
+			<if test="clbj !=null and clbj!=''">
+				and t.clbj=#{clbj}
+			</if>
+			
+			<if test="cllx!=null and cllx!='' and cllx!='null'">
+				and t.cllx=#{cllx}
+			</if>
+			<if test="ssdw!=null and ssdw!=''">
+				and t.ssdw=#{ssdw}
+			</if>
+		
+			<if test="clzt!=null and clzt!='' and clzt!=6 and clzt!=7">
+				and t.clzt=#{clzt}
+			</if>
+			<if test="clzt==6 and clzt!=null and clzt!=''">
+				 (sysdate <![CDATA[<]]> t.yxsj)  and  t.clzt=2  
+			</if>
+			<if test="clzt==7 and clzt!=null and clzt!=''">
+				 (sysdate <![CDATA[>]]> t.yxsj)  and  t.clzt=2 
+			</if>
+		</where>
+	</select>
+	<!-- 查询红名单详情 -->
+	<select id="selectByfk"  resultType="com.cist.redinfo.model.RedInfo" parameterType="java.lang.Integer">
+	    select * from vw_red_info t  where t.pk=#{pk}
+	</select>
+	<!--根据车的编号查询车名  -->
+	<select id="selectCar" resultType="com.cist.redinfo.model.Car" parameterType="java.util.HashMap">
+	    select * from c_car_type 
+	    <where>	    
+	    <if test="code!=null and code!=''">
+	     code=#{code}
+	    </if>
+	    </where>
+	</select>
+	<select id="selectCllx" resultType="com.cist.redinfo.model.Sys_frm_code">
+	    select fct_code,fc_code,fc_name from sys_frm_code where fct_code='C002'
+	    
+	</select>
+	<!--根据基础信息表查出数据来  -->
+	<select id="selectInfo" resultType="com.cist.redinfo.model.Sys_frm_code" parameterType="java.util.HashMap">
+	   select * from sys_frm_code 
+	    <where>	    
+	    <if test="fc_code!=null and fc_code!=''">
+	     and fc_code=#{fc_code} 
+	    </if>
+	    <if test="fct_code!=null and fct_code!=''">
+	     and fct_code=#{fct_code}
+	    </if>
+	    </where>
+	</select>
+	<!--查询所属单位  -->
+	<select id="selectDepart" resultType="com.cist.redinfo.model.Depart_info" parameterType="java.util.HashMap">
+	   select * from sys_depart_info where dept_pk=#{depat}
+	</select>
+	<select id="selectDeparts" resultType="com.cist.redinfo.model.Depart_info">
+	   select dept_name,dept_pk from sys_depart_info
+	</select>
+</mapper>

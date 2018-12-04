@@ -1,0 +1,144 @@
+package com.cist.myDuty.myAssess.controller;
+
+import java.util.HashMap;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.cist.configManage.areaPlan.service.AreaPlanService;
+import com.cist.frame.page.PageInfo;
+import com.cist.myDuty.myAssess.model.FeedbackResponse;
+import com.cist.myDuty.myAssess.model.GpsRecord;
+import com.cist.myDuty.myAssess.model.IndividualAssessment;
+import com.cist.myDuty.myAssess.model.OffSiteQuery;
+import com.cist.myDuty.myAssess.model.ReportStreet;
+import com.cist.myDuty.myAssess.model.SignIn;
+import com.cist.myDuty.myAssess.service.MyAssessService;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+@RestController
+@RequestMapping("myAssess")
+public class MyAssessController {
+	@Autowired
+	private AreaPlanService areaPlanService;
+	@Autowired
+	private MyAssessService service;
+
+	/**
+	 * 初始化我的考核-反馈页面需要的初始数据
+	 * 
+	 * @param paramMap
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping("initMyAssessFeedback")
+	public HashMap<String, Object> initMyAssessPageData(@RequestBody HashMap<String, Object> paramMap)
+			throws Exception {
+
+		ObjectMapper obj = new ObjectMapper();
+		String dept = obj.writeValueAsString(areaPlanService.initDeptTree());
+		paramMap.put("dept", dept);
+		paramMap.put("assessType", areaPlanService.queryBaseDateByFct_Code("QW06"));
+		paramMap.put("assessItem", service.queryAssessItem());
+		return paramMap;
+
+	}
+
+	/**
+	 * 查询我的考核信息列表
+	 * 
+	 * @param paramMap
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	@RequestMapping("queryAssessList")
+	public PageInfo<IndividualAssessment> queryAssessInfoList(@RequestBody HashMap<String, Object> paramMap) {
+		@SuppressWarnings("rawtypes")
+		PageInfo pageInfo = new PageInfo();
+		pageInfo.setPageSize(Integer.parseInt(paramMap.get("pageSize").toString()));
+		pageInfo.setPageNum(Integer.parseInt(paramMap.get("currentPage").toString()));
+		return (PageInfo<IndividualAssessment>) service.queryAssesspageList(paramMap, pageInfo);
+
+	}
+
+	/**
+	 * 增加一条个人考核的反馈信息
+	 * 
+	 * @param paramMap
+	 * @return
+	 */
+	@RequestMapping("addfeedback")
+	public int addfeedback(@RequestBody HashMap<String, Object> paramMap) {
+
+		return service.addfeedback(paramMap);
+
+	}
+
+	/**
+	 * 查询个人考核已反馈的详细信息
+	 * 
+	 * @param paramMap
+	 * @return
+	 */
+	@RequestMapping("queryHaveFeedback")
+	public FeedbackResponse queryHaveFeedback(@RequestBody HashMap<String, Object> paramMap) {
+
+		return service.queryHaveFeedback(paramMap);
+
+	}
+
+	/**
+	 * 查询报备勤务考核中考核类型为街面勤务的执勤情况页需要的数据
+	 * 
+	 * @param paramMap
+	 * @return
+	 */
+	@RequestMapping("queryReportStreet")
+	public HashMap<String, Object> queryReportStreet(@RequestBody HashMap<String, Object> paramMap) {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		resultMap.put("reportStreet", service.queryReportStreet(paramMap));
+		List<SignIn> signInfo = service.querySignIn(paramMap);
+		for (SignIn sign : signInfo) {
+			// 签到
+			if (sign.getSign_in_type() == '1')
+				resultMap.put("signIn", sign);
+			// 签退
+			if (sign.getSign_in_type() == '2')
+				resultMap.put("signBack", sign);
+		}
+
+		return resultMap;
+
+	}
+
+	/**
+	 * 查询报备勤务考核中考核类型为街面勤务的执勤情况页需要的数据
+	 * 
+	 * @param paramMap
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	@RequestMapping("queryOffSiteQueryList")
+	public PageInfo<OffSiteQuery> queryOffSiteQueryList(@RequestBody HashMap<String, Object> paramMap) {
+		@SuppressWarnings("rawtypes")
+		PageInfo pageInfo = new PageInfo();
+		pageInfo.setPageSize(Integer.parseInt(paramMap.get("pageSize").toString()));
+		pageInfo.setPageNum(Integer.parseInt(paramMap.get("currentPage").toString()));
+		return (PageInfo<OffSiteQuery>) service.queryOffSiteQuerypageList(paramMap, pageInfo);
+
+	}
+	/**
+	 *  根据警员Id查询某段时间的巡逻轨迹信息
+	 * 
+	 * @param paramMap
+	 * @return
+	 */ 
+	@RequestMapping("queryTrackPlayback")
+	public List<GpsRecord> queryTrackPlayback(@RequestBody HashMap<String, Object> paramMap) {
+		return service.queryTrackPlayback(paramMap);
+
+	}
+}

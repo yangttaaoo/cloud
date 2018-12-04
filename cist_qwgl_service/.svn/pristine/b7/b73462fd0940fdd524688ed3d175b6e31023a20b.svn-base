@@ -1,0 +1,581 @@
+package com.cist.qwgl.qwbb.controller;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.alibaba.fastjson.JSON;
+import com.cist.qwgl.bcgl.model.DeptInfo;
+import com.cist.qwgl.bcgl.model.Qw_type;
+import com.cist.qwgl.qwbb.model.Jcsjpoliceresources;
+import com.cist.qwgl.qwbb.model.Qw_car_patrol_info;
+import com.cist.qwgl.qwbb.model.Qw_car_patrol_relation;
+import com.cist.qwgl.qwbb.model.Qw_duty_relation;
+import com.cist.qwgl.qwbb.model.Qw_equip_info;
+import com.cist.qwgl.qwbb.model.Qw_guns_relation;
+import com.cist.qwgl.qwbb.model.Qw_police_team;
+import com.cist.qwgl.qwbb.model.Qw_police_team_duty;
+import com.cist.qwgl.qwbb.model.Qw_police_team_street;
+import com.cist.qwgl.qwbb.model.Qw_walk_patrol_relation;
+import com.cist.qwgl.qwbb.model.Qwgl_bc_info;
+import com.cist.qwgl.qwbb.model.Qwpatrolarea;
+import com.cist.qwgl.qwbb.model.Sysfrmcode;
+import com.cist.qwgl.qwbb.model.Syspoliceinfo;
+import com.cist.qwgl.qwbb.service.QwbbService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
+
+@RestController
+@RequestMapping("qwbb")
+public class QwbbController {
+	@Autowired
+	private QwbbService service;
+	/***
+	 * 警组分页查询
+	 * @param modelMap
+	 * @return
+	 */
+	@RequestMapping("policeteam")
+	public PageInfo<Qw_police_team> policeteam(@RequestBody HashMap<String,Object> modelMap ){
+		Integer pageSize= Integer.parseInt(modelMap.get("pageSize").toString());//每页有显示多少条
+		//获取分页数据位置,每页显示16条数据
+ 		PageHelper.startPage(Integer.valueOf(modelMap.get("currentPage").toString()),pageSize, true);
+		List<Qw_police_team> list= service.qwpoliceteampagelist(modelMap);
+		PageInfo<Qw_police_team> pageinfo=new PageInfo<Qw_police_team>(list,5);
+		for (Qw_police_team qw_police_team : list) {
+			modelMap.put("fk_police_team_id", qw_police_team.getPk_id());//警组id
+			modelMap.put("fc_num", qw_police_team.getReport_type());//报备类型（1：街面勤务；2：值班值守；3：接处警；4：机关工作）
+			qw_police_team.setSysfrmcode(service.selectSysfrmcodeinfo(modelMap));//报备类型
+			if(qw_police_team.getReport_type().equals("2")) {//	2：值班值守
+				Qw_police_team_duty qw_police_team_duty=service.seqw_police_team_duty(modelMap);//值班值守
+				qw_police_team.setQw_police_team_duty(qw_police_team_duty);//值班值守
+				modelMap.put("bc_pk", qw_police_team_duty.getFk_work_shift_id());//班次id
+				qw_police_team_duty.setQwgl_bc_info(service.chauxnQwgl_bc_info(modelMap));
+				List<Qw_duty_relation> qwdutyrelationlist=service.qw_duty_relationid(modelMap);//9.7.	值班值守关联人员信息
+				for (Qw_duty_relation qw_duty_relation : qwdutyrelationlist) {
+					modelMap.put("fk_user_id", qw_duty_relation.getFk_user_id());
+					qw_duty_relation.setSyspoliceinfo(service.syspoliceinfo(modelMap));
+				}
+				qw_police_team_duty.setQw_duty_relation(qwdutyrelationlist);//值班值守关联人员信息
+			}
+			if(qw_police_team.getReport_type().equals("1")) {//	1：街面勤务
+				Qw_police_team_street qw_police_team_street=service.selQw_police_team_street(modelMap);//警组信息
+				if(null!=qw_police_team_street) {
+					modelMap.put("bc_pk",qw_police_team_street.getFk_work_shift_id());//班次id
+					modelMap.put("qwpatrolareaid",qw_police_team_street.getFk_patrol_area_id());//巡区id
+					qw_police_team_street.setQwpatrolarea(service.chauxnxunqu(modelMap));//巡区信息
+					qw_police_team_street.setQwgl_bc_info(service.chauxnQwgl_bc_info(modelMap));//班次信息
+					
+					//9.3.	车巡信息
+					List<Qw_car_patrol_info> listcar=service.qw_car_patrol_info(modelMap);
+					for (Qw_car_patrol_info qw_car_patrol_info : listcar) {
+						modelMap.put("fk_car_patrol_id", qw_car_patrol_info.getPk_id());
+						List<Qw_car_patrol_relation> listqwcar=service.qw_car_patrol_relation(modelMap);//9.4.	车巡关联人员信息
+						for (Qw_car_patrol_relation qw_car_patrol_relation : listqwcar) {
+							modelMap.put("fk_user_id", qw_car_patrol_relation.getFk_user_id());
+							if(null!=modelMap.get("fk_user_id")) {
+								qw_car_patrol_relation.setSyspoliceinfo(service.syspoliceinfo(modelMap));//车巡关联人员信息
+							}
+							
+						}
+						qw_car_patrol_info.setQw_car_patrol_relation(listqwcar);//9.4.	车巡关联人员信息
+						modelMap.put("jcsjpoliceresourcespk", qw_car_patrol_info.getFk_police_car_id());
+						qw_car_patrol_info.setJcsjpoliceresources(service.jcsjpoliceresources(modelMap));
+					}//syspoliceinfo
+					qw_police_team.setQw_car_patrol_info(listcar);//车巡信息
+					
+					qw_police_team.setQw_police_team_street(qw_police_team_street);//警组信息
+					Qw_equip_info qw_equip_info=service.qwequipinfos(modelMap);//9.14.	装备信息
+					modelMap.put("fk_equip_id",qw_equip_info.getPk_id());
+					List<Qw_guns_relation> listguns=service.qwgunsrelation(modelMap);//枪支关联警员信息 装备信息ID查询
+					for (Qw_guns_relation qw_guns_relation : listguns) {
+						modelMap.put("fk_user_id", qw_guns_relation.getFk_user_id());
+						if(null!=modelMap.get("fk_user_id")) {
+						qw_guns_relation.setSyspoliceinfo(service.syspoliceinfo(modelMap));//枪支关联警员信息
+						}
+					}
+					qw_equip_info.setQw_guns_relation(listguns);//9.15.	枪支关联警员信息
+					qw_police_team.setQw_equip_info(qw_equip_info);//9.14.	装备信息
+					List<Qw_walk_patrol_relation> walklist=service.qwwalkpatrolrelationlist(modelMap);
+					for (Qw_walk_patrol_relation qw_walk_patrol_relation : walklist) {
+						modelMap.put("fk_user_id", qw_walk_patrol_relation.getFk_user_id());
+						if(null!=modelMap.get("fk_user_id")) {
+						qw_walk_patrol_relation.setSyspoliceinfo(service.syspoliceinfo(modelMap));
+						}
+					}
+					qw_police_team.setQw_walk_patrol_relation(walklist);//步巡关联人员信息
+					
+				}
+			}
+		}
+		return pageinfo;
+	}
+	/***
+	 * 警车分页查询
+	 * @param modelMap
+	 * @return
+	 */
+	@RequestMapping("jclist")
+	public PageInfo<Jcsjpoliceresources> querylist(@RequestBody HashMap<String,Object> modelMap ){
+		Integer pageSize= Integer.parseInt(modelMap.get("pageSize").toString());//每页有显示多少条
+		//获取分页数据位置,每页显示16条数据
+ 		PageHelper.startPage(Integer.valueOf(modelMap.get("currentPage").toString()),pageSize, true);
+		List<Jcsjpoliceresources> list= service.querylistpageList(modelMap);
+		PageInfo<Jcsjpoliceresources> pageinfo=new PageInfo<Jcsjpoliceresources>(list,5);
+		 return pageinfo;
+	}
+	/***
+	 * 获取车辆基础类型
+	 * @param modelMap
+	 * @return
+	 */
+	@RequestMapping("fctlist")
+	public List<Sysfrmcode> fctlist(@RequestBody HashMap<String,Object> modelMap ){
+		 return service.selectSysfrmcode(modelMap);
+	}
+	/***
+	 * 警员分页查询
+	 * @param modelMap
+	 * @return
+	 */
+	@RequestMapping("policelist")
+	public PageInfo<Syspoliceinfo> policelist(@RequestBody HashMap<String,Object> modelMap ){
+		Integer pageSize= Integer.parseInt(modelMap.get("pageSize").toString());//每页有显示多少条
+		//获取分页数据位置,每页显示16条数据
+ 		PageHelper.startPage(Integer.valueOf(modelMap.get("currentPage").toString()),pageSize, true);
+		List<Syspoliceinfo> list= service.selectpolice(modelMap);
+		PageInfo<Syspoliceinfo> pageinfo=new PageInfo<Syspoliceinfo>(list,5);
+		 return pageinfo;
+	}
+	/**
+	 * 查询勤务类型
+	 * @return
+	 */
+	@RequestMapping("queryqwlx")
+	public List<Sysfrmcode> queryqwlx(@RequestBody HashMap<String,Object> modelMap){
+		return service.selfct(modelMap);
+	}
+	/**
+	 * 查询勤务类型
+	 * @return
+	 */
+	@RequestMapping("queryqwlxquan")
+	public List<Sysfrmcode> queryqwlxquan(@RequestBody HashMap<String,Object> modelMap){
+		return service.selfctquan(modelMap);
+	}
+	/**
+	 * 班次跨天
+	 * @return
+	 */
+	@RequestMapping("bancigt")
+	public List<Sysfrmcode> bancigt(@RequestBody HashMap<String,Object> modelMap){
+		return service.bancigt(modelMap);
+	}
+	/**
+	 * 获取巡区信息
+	 * @return
+	 */
+	@RequestMapping("patrolarea")
+	public List<Qwpatrolarea> patrolarea(@RequestBody HashMap<String,Object> modelMap){
+		return service.patrolarea(modelMap);
+	}
+	/**
+	 *  获取班次信息
+	 * @return
+	 */
+	@RequestMapping("qwglbcinfo")
+	public List<Qwgl_bc_info> qwglbcinfo(@RequestBody HashMap<String,Object> modelMap){
+		return service.qwglbcinfo(modelMap);
+	}
+	/***
+	 * 获取当前用户
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping("getuser")
+	public Map<String,Object> indexSelf(HttpServletRequest request){
+		HttpSession session = request.getSession();
+		Map<String,Object> userMap = (Map<String,Object>)session.getAttribute("userInfo"+session.getId());
+		return userMap;
+	}
+	/**
+	 * 保存警组街面勤务
+	 * @param modelMap
+	 * @param request
+	 * @return
+	 * @throws ParseException
+	 */
+	@RequestMapping("saveinformation")
+	public Integer saveinformation(@RequestBody HashMap<String,Object> modelMap,HttpServletRequest request) throws ParseException{
+		try {
+			HttpSession session = request.getSession();
+			Map<String,Object> userMap = (Map<String,Object>)session.getAttribute("userInfo"+session.getId());//获取用户
+			modelMap.put("fk_dept_id", userMap.get("sypi_dept_pk"));//部门id
+			modelMap.put("create_person_id", userMap.get("sypi_pk"));//创建人
+			modelMap.put("report_person_id",userMap.get("sypi_pk"));//创建人
+			modelMap.put("report_time",new Date());//报备时间
+			modelMap.put("report_type", 1);//报备类型（1：街面勤务；2：值班值守；3：接处警；4：轮休;5：机关）
+			modelMap.put("service_type", 1);//勤务类型（冗余数据）（1：街面勤务；2：值班值守；3：接处警；4：轮休;5：机关）
+			modelMap.put("fk_police_team_id", modelMap.get("fk_police_team_id"));//警组ID
+			modelMap.put("personnel_list_str",JSONArray.fromObject(modelMap.get("personnel_list_str")).toString());//关联人员集合，存放人员类型、姓名、警号、呼号、电话号码json对象，以逗号分割（冗余数据）
+			modelMap.put("car_list_str",JSONArray.fromObject(modelMap.get("car_list_str")).toString());//警车集合，存放车牌号，以逗号分割（冗余数据）
+			JSONArray selecteddate = JSONArray.fromObject(modelMap.get("selecteddate"));//报备日期
+			for(int q=0;q<selecteddate.size();q++){
+				String timr=selecteddate.get(q).toString().replace("年", "-").replace("月", "-").replace("日", "");
+				SimpleDateFormat data=new SimpleDateFormat("yyyy-MM-dd");
+		        modelMap.put("report_period_type", data.parse(timr));//报备日期
+				//保存9.17.	勤务报备
+				Integer start=service.addqw_report(modelMap);
+				//获取勤务报备ID
+				Integer count=(Integer) modelMap.get("seq_qw_reportpk");
+				modelMap.put("fk_report_id", count);//勤务报备ID
+				//保存9.18.	街面勤务报备
+				service.addqw_report_street(modelMap);
+				//保存装备信息
+				service.saveQw_equip_info(modelMap);
+				//获取装备信息ID
+				Integer qwequipinfopk=(Integer) modelMap.get("qwequipinfopk");
+				modelMap.put("fk_equip_id", qwequipinfopk);//勤务报备ID
+				JSONArray gunsdata = JSONArray.fromObject(modelMap.get("gunsdata"));//枪支关联警员
+				if(!gunsdata.toString().equals("[null]")) {
+				for(int i=0;i<gunsdata.size();i++){//枪支关联警员
+					JSONObject json=gunsdata.getJSONObject(i);
+					modelMap.put("fk_user_id", json.get("sypi_pk"));
+					service.addqw_guns_relation(modelMap);
+				}
+				}
+			    //步巡人员 start
+				List<Syspoliceinfo> policList=new ArrayList<Syspoliceinfo>();//警员集合
+				if(null!=modelMap.get("personincharge")&&!modelMap.get("personincharge").equals("")) {
+					JSONArray personincharge = JSONArray.fromObject(modelMap.get("personincharge"));//负责人
+					for(int i=0;i<personincharge.size();i++){//负责人
+					    Syspoliceinfo stu=(Syspoliceinfo)JSONObject.toBean(personincharge.getJSONObject(i), Syspoliceinfo.class);
+					    stu.setSypi_comp("1");//1负责人2 民警 3协警
+					    stu.setFk_police_team_id(count.toString());//勤务报备ID
+					    policList.add(stu);
+				 }
+				}
+				if(null!=modelMap.get("peoplespolice")&&!modelMap.get("peoplespolice").equals("")) {
+					JSONArray peoplespolice = JSONArray.fromObject(modelMap.get("peoplespolice"));//民警
+					for(int i=0;i<peoplespolice.size();i++){//民警
+					    Syspoliceinfo stu=(Syspoliceinfo)JSONObject.toBean(peoplespolice.getJSONObject(i), Syspoliceinfo.class);
+					    stu.setSypi_comp("2");//1负责人2 民警 3协警
+					    stu.setFk_police_team_id(count.toString());//勤务报备ID
+					    policList.add(stu);
+				 }
+				}
+				if(null!=modelMap.get("peoplespolice")&&!modelMap.get("peoplespolice").equals("")) {
+					JSONArray auxiliarypolice = JSONArray.fromObject(modelMap.get("auxiliarypolice"));//协警
+					for(int i=0;i<auxiliarypolice.size();i++){//协警
+					    Syspoliceinfo stu=(Syspoliceinfo)JSONObject.toBean(auxiliarypolice.getJSONObject(i), Syspoliceinfo.class);
+					    stu.setSypi_comp("3");//1负责人2 民警 3协警
+					    stu.setFk_police_team_id(count.toString());//勤务报备ID
+					    policList.add(stu);
+				 }
+				}
+				
+				//保存步巡人员
+				if(policList.size()>0) {
+					service.saveQw_walk_patrol_relation(policList);
+				}
+				
+				//步巡人员 end
+				 
+				//巡控方式  车辆 start
+				if(null!=modelMap.get("getpolicecar")&&!modelMap.get("getpolicecar").equals("")) {
+					JSONArray policecar = JSONArray.fromObject(modelMap.get("getpolicecar"));//车辆信息
+					for(int i=0;i<policecar.size();i++){//负责人
+					 JSONObject json=policecar.getJSONObject(i);
+					 modelMap.put("fk_police_car_id", json.get("pk_id"));//警车ID
+					 service.saveqw_car_patrol_info(modelMap);//保存车巡信息
+					 Integer patrolpk=(Integer) modelMap.get("seq_qw_report_car_patrolpk");//获取车巡信息id
+					 modelMap.put("fk_car_patrol_id", patrolpk);//车巡信息id
+						 if(null!=json.get("fuzeren")&&!json.get("fuzeren").equals("null")&&!json.get("fuzeren").equals("")) {
+							 modelMap.put("qw_car_patrol_relation_user_type", 1);//关联人员类型（1：负责人；2：民警；3：协警）
+								 JSONArray fuzeren = JSONArray.fromObject(json.get("fuzeren"));//车辆负责人
+								 for(int k=0;k<fuzeren.size();k++){
+									 JSONObject fuzerenjson=fuzeren.getJSONObject(k);
+									 modelMap.put("qw_car_patrol_relation_fk_user_id",fuzerenjson.get("sypi_pk"));
+									 service.saveqw_car_patrol_relation(modelMap);
+								 }
+							 
+						 }
+						if(null!=json.get("xiejing")&&!json.get("xiejing").equals("null")&&!json.get("xiejing").equals("")) {
+							 modelMap.put("qw_car_patrol_relation_user_type", 3);//关联人员类型（1：负责人；2：民警；3：协警）
+								 JSONArray xiejing = JSONArray.fromObject(json.get("xiejing"));//车辆协警
+								 for(int k=0;k<xiejing.size();k++){
+									 JSONObject xiejingjson=xiejing.getJSONObject(k);
+									 modelMap.put("qw_car_patrol_relation_fk_user_id",xiejingjson.get("sypi_pk"));
+									 service.saveqw_car_patrol_relation(modelMap);
+								 }
+							 
+						}
+						if(null!=json.get("minjing")&&!json.get("minjing").equals("null")&&!json.get("minjing").equals("")) {
+							 modelMap.put("qw_car_patrol_relation_user_type", 2);//关联人员类型（1：负责人；2：民警；3：协警）
+								 JSONArray minjing = JSONArray.fromObject(json.get("minjing"));//车辆民警
+								 for(int k=0;k<minjing.size();k++){
+									 JSONObject minjingjson=minjing.getJSONObject(k);
+									 modelMap.put("qw_car_patrol_relation_fk_user_id",minjingjson.get("sypi_pk"));
+									 service.saveqw_car_patrol_relation(modelMap);
+								 }
+						}
+					
+					}
+				}
+				
+				//巡控方式  车辆 end
+				
+				
+			}
+			return 1;
+		} catch (Exception e) {
+			System.err.println(e.getMessage());
+			return 2;
+		}
+	}
+	/***
+	 * 保存报备值班值守信息
+	 * @param modelMap
+	 * @param request
+	 * @return
+	 * @throws ParseException
+	 */
+	@RequestMapping("beonduty")
+	public Integer beonduty(@RequestBody HashMap<String,Object> modelMap,HttpServletRequest request) throws ParseException{
+		try {
+			HttpSession session = request.getSession();
+			Map<String,Object> userMap = (Map<String,Object>)session.getAttribute("userInfo"+session.getId());//获取用户
+			modelMap.put("fk_dept_id", userMap.get("sypi_dept_pk"));//部门id
+			modelMap.put("report_person_id", userMap.get("sypi_pk"));//报备人
+			modelMap.put("report_time", new Date());//报备时间
+			modelMap.put("fk_police_team_id", modelMap.get("fk_police_team_id"));//警组ID
+			modelMap.put("report_type", 2);//2：值班值守
+			JSONArray selecteddate = JSONArray.fromObject(modelMap.get("selecteddate"));//报备日期
+			modelMap.put("personnel_list_str", JSONArray.fromObject(modelMap.get("personnel_list_str")).toString());//关联人员集合，存放人员类型、姓名、警号、呼号、电话号码json对象，以逗号分割（冗余数据）
+			for(int q=0;q<selecteddate.size();q++){
+				String timr=selecteddate.get(q).toString().replace("年", "-").replace("月", "-").replace("日", "");
+				SimpleDateFormat data=new SimpleDateFormat("yyyy-MM-dd");
+		        modelMap.put("report_period_type", data.parse(timr));//报备日期
+				service.addqw_report(modelMap);//保存9.17.	勤务报备
+				Integer seq_qw_reportpk=(Integer) modelMap.get("seq_qw_reportpk");//获取勤务报备pk
+				modelMap.put("fk_report_id", seq_qw_reportpk);
+				service.addqw_report_duty(modelMap);//保存9.22.	值班值守报备
+				JSONArray dutyleader = JSONArray.fromObject(modelMap.get("Dutyleader"));//值班领导
+				for(int k=0;k<dutyleader.size();k++){
+					 JSONObject json=dutyleader.getJSONObject(k);
+					modelMap.put("fk_user_id", json.get("sypi_pk"));
+					modelMap.put("leader_telphone", json.get("sypi_mobial"));//值班领导联系电话
+					if(null==json.get("sypi_mobial")||json.get("sypi_mobial").equals("null")) {
+						modelMap.put("leader_telphone", "");//值班领导联系电话
+					}
+					modelMap.put("user_type", 1);//关联人员类型（1：值班领导；2：指挥长；3：值班长；4：值班民警；5：值班协警）
+					service.addqw_report_duty_relation(modelMap);
+				}
+				modelMap.put("leader_telphone","");//值班领导联系电话
+				JSONArray commander = JSONArray.fromObject(modelMap.get("Commander"));//指挥长
+				for(int k=0;k<commander.size();k++){
+					 JSONObject json=commander.getJSONObject(k);
+					modelMap.put("fk_user_id", json.get("sypi_pk"));
+					modelMap.put("user_type", 2);//关联人员类型（1：值班领导；2：指挥长；3：值班长；4：值班民警；5：值班协警）
+					service.addqw_report_duty_relation(modelMap);
+				}
+				JSONArray shiftforeman = JSONArray.fromObject(modelMap.get("shiftforeman"));//值班长
+				for(int k=0;k<shiftforeman.size();k++){
+					 JSONObject json=shiftforeman.getJSONObject(k);
+					modelMap.put("fk_user_id", json.get("sypi_pk"));
+					modelMap.put("user_type", 3);//关联人员类型（1：值班领导；2：指挥长；3：值班长；4：值班民警；5：值班协警）
+					service.addqw_report_duty_relation(modelMap);
+				}
+				JSONArray dutypolice = JSONArray.fromObject(modelMap.get("Dutypolice"));//值班民警
+				for(int k=0;k<dutypolice.size();k++){
+					 JSONObject json=dutypolice.getJSONObject(k);
+					modelMap.put("fk_user_id", json.get("sypi_pk"));
+					modelMap.put("user_type", 4);//关联人员类型（1：值班领导；2：指挥长；3：值班长；4：值班民警；5：值班协警）
+					service.addqw_report_duty_relation(modelMap);
+				}
+				JSONArray guardonduty = JSONArray.fromObject(modelMap.get("Guardonduty"));//值班协警
+				for(int k=0;k<guardonduty.size();k++){
+					 JSONObject json=guardonduty.getJSONObject(k);
+					modelMap.put("fk_user_id", json.get("sypi_pk"));
+					modelMap.put("user_typ", 5);//关联人员类型（1：值班领导；2：指挥长；3：值班长；4：值班民警；5：值班协警）
+					service.addqw_report_duty_relation(modelMap);
+				}
+				
+			}
+			return 1;
+		} catch (Exception e) {
+			System.err.println(e.getMessage());
+			return 2;
+		}
+	}
+	/***
+	 * 保存机关工作报备
+	 * @param modelMap
+	 * @param request
+	 * @return
+	 * @throws ParseException
+	 */
+	@RequestMapping("officework")
+	public Integer officework(@RequestBody HashMap<String,Object> modelMap,HttpServletRequest request) throws ParseException{
+		try {
+			HttpSession session = request.getSession();
+			Map<String,Object> userMap = (Map<String,Object>)session.getAttribute("userInfo"+session.getId());//获取用户
+			modelMap.put("fk_dept_id", userMap.get("sypi_dept_pk"));//部门id
+			modelMap.put("report_person_id", userMap.get("sypi_pk"));//报备人
+			modelMap.put("report_time", new Date());//报备时间
+			modelMap.put("fk_police_team_id", modelMap.get("fk_police_team_id"));//警组ID
+			modelMap.put("report_type", 5);//5：机关
+			JSONArray selecteddate = JSONArray.fromObject(modelMap.get("selecteddate"));//报备日期
+			modelMap.put("personnel_list_str", JSONArray.fromObject(modelMap.get("personnel_list_str")).toString());//关联人员集合，存放人员类型、姓名、警号、呼号、电话号码json对象，以逗号分割（冗余数据）
+			for(int q=0;q<selecteddate.size();q++){
+				String timr=selecteddate.get(q).toString().replace("年", "-").replace("月", "-").replace("日", "");
+				SimpleDateFormat data=new SimpleDateFormat("yyyy-MM-dd");
+		        modelMap.put("report_period_type", data.parse(timr));//报备日期
+				service.addqw_report(modelMap);//保存9.17.	勤务报备
+				Integer seq_qw_reportpk=(Integer) modelMap.get("seq_qw_reportpk");//获取勤务报备pk
+				modelMap.put("fk_report_id", seq_qw_reportpk);
+				service.addqw_report_office(modelMap);//保存9.28.	机关工作报备
+				Integer seq_qw_report_officepk=(Integer) modelMap.get("seq_qw_report_officepk");//机关工作报备ID
+				modelMap.put("fk_report_office_id", seq_qw_report_officepk);//机关工作报备ID
+				JSONArray dutypolice = JSONArray.fromObject(modelMap.get("Dutypolice"));//值班民警
+				for(int k=0;k<dutypolice.size();k++){
+					 JSONObject json=dutypolice.getJSONObject(k);
+					modelMap.put("fk_user_id", json.get("sypi_pk"));
+					modelMap.put("user_type", 1);//关联人员类型（1：民警；2：协警）
+					service.addqw_report_office_relation(modelMap);
+				}
+				JSONArray guardonduty = JSONArray.fromObject(modelMap.get("Guardonduty"));//值班协警
+				for(int k=0;k<guardonduty.size();k++){
+					 JSONObject json=guardonduty.getJSONObject(k);
+					modelMap.put("fk_user_id", json.get("sypi_pk"));
+					modelMap.put("user_typ", 2);//关联人员类型（1：民警；2：协警）
+					service.addqw_report_office_relation(modelMap);
+				}
+			}
+			return 1;
+		} catch (Exception e) {
+			System.err.println(e.getMessage());
+			return 2;
+		}
+	}
+	/***
+	 * 保存轮休报备报备
+	 * @param modelMap
+	 * @param request
+	 * @return
+	 * @throws ParseException
+	 */
+	@RequestMapping("roundbreak")
+	public Integer roundbreak(@RequestBody HashMap<String,Object> modelMap,HttpServletRequest request) throws ParseException{
+		try {
+			HttpSession session = request.getSession();
+			Map<String,Object> userMap = (Map<String,Object>)session.getAttribute("userInfo"+session.getId());//获取用户
+			modelMap.put("fk_dept_id", userMap.get("sypi_dept_pk"));//部门id
+			modelMap.put("report_person_id", userMap.get("sypi_pk"));//报备人
+			modelMap.put("report_time", new Date());//报备时间
+			modelMap.put("fk_police_team_id", modelMap.get("fk_police_team_id"));//警组ID
+			modelMap.put("report_type", 4);//4：轮休
+			JSONArray selecteddate = JSONArray.fromObject(modelMap.get("selecteddate"));//报备日期
+			modelMap.put("personnel_list_str", JSONArray.fromObject(modelMap.get("personnel_list_str")).toString());//关联人员集合，存放人员类型、姓名、警号、呼号、电话号码json对象，以逗号分割（冗余数据）
+			for(int q=0;q<selecteddate.size();q++){
+				String timr=selecteddate.get(q).toString().replace("年", "-").replace("月", "-").replace("日", "");
+				SimpleDateFormat data=new SimpleDateFormat("yyyy-MM-dd");
+		        modelMap.put("report_period_type", data.parse(timr));//报备日期
+				service.addqw_report(modelMap);//保存9.17.	勤务报备
+				Integer seq_qw_reportpk=(Integer) modelMap.get("seq_qw_reportpk");//获取勤务报备pk
+				modelMap.put("fk_report_id", seq_qw_reportpk);
+				service.addqw_report_rest(modelMap);//保存9.26.	轮休报备
+				Integer qwreportrestpk=(Integer) modelMap.get("qwreportrestpk");//轮休报备ID
+				modelMap.put("fk_report_rest_id", qwreportrestpk);//机关工作报备ID
+				JSONArray dutypolice = JSONArray.fromObject(modelMap.get("Dutypolice"));//值班民警
+				for(int k=0;k<dutypolice.size();k++){
+					 JSONObject json=dutypolice.getJSONObject(k);
+					modelMap.put("fk_user_id", json.get("sypi_pk"));
+					modelMap.put("user_type", 1);//关联人员类型（1：民警；2：协警）
+					service.addqw_report_rest_relation(modelMap);
+				}
+				JSONArray guardonduty = JSONArray.fromObject(modelMap.get("Guardonduty"));//值班协警
+				for(int k=0;k<guardonduty.size();k++){
+					 JSONObject json=guardonduty.getJSONObject(k);
+					modelMap.put("fk_user_id", json.get("sypi_pk"));
+					modelMap.put("user_typ", 2);//关联人员类型（1：民警；2：协警）
+					service.addqw_report_rest_relation(modelMap);
+				}
+			}
+			return 1;
+		} catch (Exception e) {
+			System.err.println(e.getMessage());
+			return 2;
+		}
+	}
+	/***
+	 * 保存接处警报备
+	 * @param modelMap
+	 * @param request
+	 * @return
+	 * @throws ParseException
+	 */
+	@RequestMapping("takepolice")
+	public Integer takepolice(@RequestBody HashMap<String,Object> modelMap,HttpServletRequest request) throws ParseException{
+		try {
+			HttpSession session = request.getSession();
+			Map<String,Object> userMap = (Map<String,Object>)session.getAttribute("userInfo"+session.getId());//获取用户
+			modelMap.put("fk_dept_id", userMap.get("sypi_dept_pk"));//部门id
+			modelMap.put("report_person_id", userMap.get("sypi_pk"));//报备人
+			modelMap.put("report_time", new Date());//报备时间
+			modelMap.put("fk_police_team_id", modelMap.get("fk_police_team_id"));//警组ID
+			modelMap.put("report_type", 3);//3：接处警
+			JSONArray selecteddate = JSONArray.fromObject(modelMap.get("selecteddate"));//报备日期
+			modelMap.put("personnel_list_str", JSONArray.fromObject(modelMap.get("personnel_list_str")).toString());//关联人员集合，存放人员类型、姓名、警号、呼号、电话号码json对象，以逗号分割（冗余数据）
+			modelMap.put("telephone", modelMap.get("telephone"));//值班电话
+			for(int q=0;q<selecteddate.size();q++){
+				String timr=selecteddate.get(q).toString().replace("年", "-").replace("月", "-").replace("日", "");
+				SimpleDateFormat data=new SimpleDateFormat("yyyy-MM-dd");
+		        modelMap.put("report_period_type", data.parse(timr));//报备日期
+				service.addqw_report(modelMap);//保存9.17.	勤务报备
+				Integer seq_qw_reportpk=(Integer) modelMap.get("seq_qw_reportpk");//获取勤务报备pk
+				modelMap.put("fk_report_id", seq_qw_reportpk);
+				
+				service.addqw_report_alarm(modelMap);//保存9.24.	接处警报备
+				Integer restrelationpk=(Integer) modelMap.get("restrelationpk");//接处警报备ID
+				modelMap.put("fk_report_alarm_id", restrelationpk);//接处警报备ID
+				JSONArray dutypolice = JSONArray.fromObject(modelMap.get("Dutypolice"));//值班民警
+				for(int k=0;k<dutypolice.size();k++){
+					 JSONObject json=dutypolice.getJSONObject(k);
+					modelMap.put("fk_user_id", json.get("sypi_pk"));
+					modelMap.put("user_type", 1);//关联人员类型（1：民警；2：协警）
+					service.addqw_report_alarm_relation(modelMap);
+				}
+				JSONArray guardonduty = JSONArray.fromObject(modelMap.get("Guardonduty"));//值班协警
+				for(int k=0;k<guardonduty.size();k++){
+					 JSONObject json=guardonduty.getJSONObject(k);
+					modelMap.put("fk_user_id", json.get("sypi_pk"));
+					modelMap.put("user_typ", 2);//关联人员类型（1：民警；2：协警）
+					service.addqw_report_alarm_relation(modelMap);
+				}
+			}
+			return 1;
+		} catch (Exception e) {
+			System.err.println(e.getMessage());
+			return 2;
+		}
+	}
+}

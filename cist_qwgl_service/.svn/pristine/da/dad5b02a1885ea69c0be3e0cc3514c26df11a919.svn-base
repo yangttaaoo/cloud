@@ -1,0 +1,184 @@
+package com.cist.personalentry.controller;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.cist.frame.page.PageInfo;
+import com.cist.personalentry.model.AppraiseInfo;
+import com.cist.personalentry.model.DeptInfo;
+import com.cist.personalentry.model.IndividualInfo;
+import com.cist.personalentry.model.Oeuser;
+import com.cist.personalentry.model.PoliceInfo;
+import com.cist.personalentry.model.RegulationsInfo;
+import com.cist.personalentry.service.PersonalEntryService;
+import com.cist.preparation.service.PrepartionService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+/***
+ * 
+ * @Title:  PersonalEntryController.java   
+ * @Package com.cist.personalentry.controller
+ * @Description:    个人勤务考核录入
+ * @author: 田隽杭    
+ * @date:   2018年11月13日 下午04:06:00 
+ * @version V1.0
+ */
+@RestController
+@RequestMapping("/personalentry")
+public class PersonalEntryController {
+	@Autowired
+	private PersonalEntryService service;
+	
+	/**
+	 * 管理部门树查询
+	 * @param map
+	 */
+	@RequestMapping("deptinfo")
+	public String deptinfo()throws JsonProcessingException{
+    //顶级部门
+	List<DeptInfo>	departinfo=service.depart_infolist(null);
+	ObjectMapper mapper = new ObjectMapper();
+	List<DeptInfo> list=departinfodg(departinfo);
+	String json=mapper.writeValueAsString(getdiwfdidian(list));
+	return json.substring(1, json.length()-1);
+	}
+	public List<HashMap<String, Object>> getdiwfdidian(List<DeptInfo> list){
+		List<HashMap<String, Object>> listmap=new ArrayList<HashMap<String, Object>>();
+		for (DeptInfo depart_info : list) {
+			HashMap<String, Object> map=new HashMap<String, Object>();
+			map.put("title", depart_info.getName());
+			map.put("key", depart_info.getDept_pk());
+			map.put("selectable", depart_info.getSelectable());
+			map.put("isLeaf", depart_info.getIsLeaf());
+			if(null!=depart_info.getChildren()) {//下级
+				
+				map.put("children", getdiwfdidian(depart_info.getChildren()));
+				listmap.add(map);
+			}else {
+				listmap.add(map);
+			}
+		}
+		return listmap;
+	}
+	public List<DeptInfo> departinfodg(List<DeptInfo> departinfo){
+	for (DeptInfo depart_info : departinfo) {
+	//部门
+	List<DeptInfo> list= service.depart_infolist(depart_info.getDept_pk());
+		if(list.size()!=0){
+			depart_info.setChildren(list);
+			departinfodg(list);
+		}
+	  }
+     return departinfo;
+	}
+	/**
+	 * 非现场审核警员树查询/部门-警员
+	 * @param map
+	 */
+	@RequestMapping("policeinfo")
+	public String policeinfo() throws JsonProcessingException{
+    //顶级部门 null
+	List<PoliceInfo> departinfo=service.police_infolist(null);
+	ObjectMapper mapper = new ObjectMapper();	
+	List<PoliceInfo> list=departinfodg2(departinfo);
+	String json=mapper.writeValueAsString(getdiwfdidian2(list));
+	return json.substring(1, json.length()-1);
+	}
+	
+	public List<HashMap<String, Object>> getdiwfdidian2(List<PoliceInfo> list){
+		List<HashMap<String, Object>> listmap=new ArrayList<HashMap<String, Object>>();
+		for (PoliceInfo depart_info : list) {
+			HashMap<String, Object> map=new HashMap<String, Object>();
+			map.put("title", depart_info.getName());
+			map.put("key", depart_info.getDept_code());
+			map.put("selectable", depart_info.getSelectable());
+			map.put("isLeaf", depart_info.getIsLeaf());
+			if(null!=depart_info.getChildren()) {//下级
+				map.put("children", getdiwfdidian2(depart_info.getChildren()));
+				listmap.add(map);
+			}else {
+				listmap.add(map);
+			}
+		}
+		return listmap;
+	}
+	
+	
+	public List<PoliceInfo> departinfodg2(List<PoliceInfo> departinfo){
+		for (PoliceInfo depart_info : departinfo) {
+			//警员
+			depart_info.setChildren(service.Police(depart_info.getDept_pk()));
+			//部门
+			List<PoliceInfo> list= service.police_infolist(depart_info.getDept_pk());
+			for (PoliceInfo depart_info2 : list) {
+				depart_info.getChildren().add(depart_info2);
+			}
+			depart_info.setChildren(depart_info.getChildren());
+			if(null!=list){
+				departinfodg2(list);
+			}
+		}
+		return departinfo;
+	}
+	/**
+	 * 非现场审核信息查询
+	 * @param map
+	 */
+	@RequestMapping("/findData")
+	public PageInfo<Oeuser> findData(@RequestBody HashMap<String, Object> map) {
+		try {
+			PageInfo page = new PageInfo();
+			page.setPageNum(Integer.parseInt(map.get("currentPage").toString()));
+			page.setPageSize(Integer.parseInt(map.get("pageSize").toString()));
+			PageInfo<Oeuser> user = (PageInfo<Oeuser>) service.findDatapageList(map, page);
+			return user;
+		} 
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	/**
+	 * 考核栏目查询
+	 * @param map
+	 */
+	@RequestMapping("AppraiseList")
+	public List<AppraiseInfo>  AppraiseList(){			
+		List<AppraiseInfo> Appraiselist = service.AppraiseList();
+		return Appraiselist;
+	}
+	/**
+	 * 考核条例查询
+	 * @param map
+	 */
+	@RequestMapping("RegulationsList")
+	public List<RegulationsInfo>  RegulationsList(@RequestBody HashMap<String, Object> map){			
+		List<RegulationsInfo> Regulationslist = service.RegulationsList(map);
+		return Regulationslist;
+	}
+	/**
+	 * 个人勤务考核录入信息查询
+	 * @param map
+	 */
+	@RequestMapping("IndivInfopageList")
+	@SuppressWarnings("rawtypes")
+    public PageInfo<IndividualInfo> IndivInfopageList(@RequestBody HashMap<String,Object> modelMap ){
+		PageInfo pinfo = new PageInfo();
+	    pinfo.setPageNum(Integer.parseInt(modelMap.get("currentPage").toString()));
+		pinfo.setPageSize(Integer.parseInt(modelMap.get("pageSize").toString()));
+    	PageInfo<IndividualInfo> list= (PageInfo<IndividualInfo>)service.IndivInfopageList(modelMap,pinfo);
+    	for(int i=0;i<list.getList().size();i++){
+    		List<IndividualInfo> tp = service.getAttachment(list.getList().get(i).getPk_id());
+    		list.getList().get(i).setTp(tp);
+    	}
+		return list;
+	}
+	
+}

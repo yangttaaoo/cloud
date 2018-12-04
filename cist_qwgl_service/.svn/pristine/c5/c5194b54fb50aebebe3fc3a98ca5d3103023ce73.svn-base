@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cist.khpd.rules.mapper.RuleMapper">
+<!-- 查询数据 -->
+<select id="seleteData" resultType="com.cist.khpd.rules.model.Rule"
+parameterType="java.util.HashMap">
+  select * from sys_rule_manager
+  <where>
+    <if test="lmmc!=null and lmmc!=''">
+       tlmc=#{lmmc}
+    </if>
+    <if test="sfqy!=null and sfqy!=''">
+     and  sfqy=#{sfqy}
+    </if>
+    <if test="pdlm!=null and pdlm!=''">
+     and lmmc=#{pdlm}
+    </if>
+  </where>
+  order by lmmc
+</select>
+  <!--删除数据  -->
+  <delete id="deleteData" parameterType="java.util.HashMap">
+    delete from  sys_rule_manager  where  pk=#{pk}
+  </delete>
+  <!-- 增加条例数据 -->
+  <insert id="addData"  parameterType="java.util.HashMap">
+   insert into sys_rule_manager
+   (pk,lmmc,tlmc,lmfz,lmsm,sjlm,pdgz,tlfz,sfqy) 
+   values(
+    cistsys.SEQ_RULE_ASSESS.nextval,
+     #{lmmc,jdbcType=VARCHAR},
+     #{tlmc,jdbcType=VARCHAR},
+     #{lmfz,jdbcType=INTEGER},
+     #{lmsm,jdbcType=VARCHAR},
+      1,
+     #{pdgz,jdbcType=INTEGER},
+     #{tlfz,jdbcType=INTEGER},
+     #{sfqy,jdbcType=INTEGER}
+   )
+  </insert>
+  <!--增加栏目数据  -->
+  <insert id="addBanner"  parameterType="java.util.HashMap">
+   insert into sys_rule_manager
+   (pk,lmmc,lmfz,lmsm,pdgz,sfqy,lmlx) 
+   values(
+    cistsys.SEQ_RULE_ASSESS.nextval,
+     #{lmmc,jdbcType=VARCHAR},
+     #{lmfz,jdbcType=INTEGER},
+     #{lmsm,jdbcType=VARCHAR},
+     #{pdgz,jdbcType=INTEGER},
+     #{sfqy,jdbcType=INTEGER},
+     #{lmlx,jdbcType=INTEGER}
+   )
+   </insert>
+  <!-- 更新数据 -->
+  <update id="updateData" parameterType="java.util.HashMap">
+    update sys_rule_manager set
+    lmmc=#{lmmc,jdbcType=VARCHAR},
+    tlmc=#{tlmc,jdbcType=VARCHAR},
+    lmfz=#{lmfz,jdbcType=INTEGER},
+    lmsm=#{lmsm,jdbcType=VARCHAR},
+    pdgz=#{pdgz,jdbcType=INTEGER},
+    tlfz=#{tlfz,jdbcType=INTEGER},
+    sfqy=#{sfqy,jdbcType=INTEGER}
+    where pk=#{pk}  
+    </update>
+    <!--查询栏目名称  -->
+    <select id="selecteLmmc" resultType="com.cist.khpd.rules.model.Rule">
+     select lmmc  from sys_rule_manager group by lmmc
+    </select>
+    
+    <select id="seleteDatas" resultType="com.cist.khpd.rules.model.RuleMannage"
+   parameterType="java.util.HashMap">
+   select * from sys_rule_manager
+  <where>
+    <if test="lmmc!=null and lmmc!=''">
+      lmmc=#{lmmc}
+    </if>
+    <if test="sfqy!=null and sfqy!=''">
+      sfqy=#{sfqy}
+    </if>
+    <if test="pdlm!=null and pdlm!=''">
+      lmmc=#{pdlm}
+    </if>
+  </where>
+  order by lmmc
+</select>
+  
+</mapper>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cist.user.mapper1.SecondMapper">
+	<!-- 获取道路 -->
+	<select id="querylist1" resultType="com.cist.user.model.PlateColor">
+		select * from cistsys.C_PLATE_COLOR
+	</select>
+	<insert id="insertdata">
+	   insert into cistsys.C_PLATE_COLOR values (bsuser.test_seq.nextval,'seee',12)
+	</insert>
+</mapper>

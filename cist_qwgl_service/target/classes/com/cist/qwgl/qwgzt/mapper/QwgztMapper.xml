@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cist.qwgl.qwgzt.mapper.QwgztMapper" >
+
+<select id="queryNeed" resultType="com.cist.qwgl.qwgzt.model.Need" parameterType="java.util.HashMap">
+		select t.zqmj,t.zqxj,c.cx as cx,t.kssj,t.jssj from qwgl_pbgl_pbinfo t join qwgl_pbgl_cxcl c on t.cx=c.cx
+		where t.jssj &gt; to_date(#{kssj},'yyyy-mm-dd HH24:mi:ss') and
+		t.kssj &lt; to_date(#{jssj},'yyyy-mm-dd HH24:mi:ss')
+</select>
+
+<select id="queryCar" resultType="com.cist.qwgl.qwgzt.model.CarInfo" parameterType="java.lang.String">
+		select zqmj,zqxj from qwgl_pbgl_cxcl t where t.cx=#{cx}
+</select>
+
+<select id="depart_infolist" resultType="com.cist.leavemanagment.model.DeptInfo" parameterType="java.lang.Integer">
+		select t.dept_pk,t.dept_code,t.dept_name as name,t.DEPT_SUPERIOR from sys_depart_info t 
+		<where>
+				  <if test="_parameter  == null or _parameter  == ''">
+				     t.DEPT_SUPERIOR is null
+				   </if>
+				     <if test="_parameter  != null and _parameter  != ''">
+				     t.DEPT_SUPERIOR=#{_parameter}
+				   </if>
+		</where>
+	</select>
+	
+	<select id="selectPolice" resultType="com.cist.qwgl.qwgzt.model.Police" parameterType="java.util.HashMap">
+		select t.sypi_name as policename,dept.dept_name from sys_police_info t left join sys_depart_info dept on
+		t.sypi_dept=dept.dept_pk  where t.sypi_kind = #{sypi_kind}
+	<!-- 	and t.sypi_pk not in
+		<foreach collection="zhiban" item="item" open="(" separator="," close=")">
+	      	#{item}
+	 	</foreach> -->
+ 	</select>
+	
+	<select id="selectPoliceCarCount" resultType="com.cist.qwgl.qwgzt.model.PoliceCar" parameterType="java.util.HashMap">
+		select qpc.plateno hphm,dept.dept_name from q_police_car qpc left join sys_depart_info dept on qpc.dept_pk=dept.dept_pk
+		 where qpc.plateno not in (select distinct c.hphm as hphm from qwgl_pbgl_pbinfo t join qwgl_pbgl_cxcl c on t.cx=c.cx
+		where to_date(#{today},'yyyy-mm-dd HH24:mi:ss') &lt; t.jssj)
+	</select>
+	
+	<select id="selectPbglPolice" resultType="com.cist.qwgl.qwgzt.model.PbglPolice" parameterType="java.lang.String">
+		select t.zqmj,t.zqxj from qwgl_pbgl_pbinfo t where to_date(#{today},'yyyy-mm-dd HH24:mi:ss') &lt; t.jssj
+	</select>
+	
+	<select id="querydepts" resultType="java.lang.String">
+		select t.dept_name from sys_depart_info t
+	</select>
+
+</mapper>

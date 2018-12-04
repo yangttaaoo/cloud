@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cist.personageassess.mapper.PersonageAssessMapper" >
+	<!-- 查询个人勤务考核详情 -->
+	<select id="querypersonageassessinfo" parameterType="java.util.HashMap"
+	resultType="com.cist.personageassess.model.Qw_individual_assessment">
+		select * from VW_PERSONAGEASSESS_INFO t
+		<where>
+			<if test="fk_dept_id !=null and fk_dept_id !=''">
+				and fk_dept_id = #{fk_dept_id}
+			</if>
+			<if test="sypi_name != null and sypi_name !=''">
+				and sypi_name like '%'||#{sypi_name}||'%'
+			</if>
+			<if test="verify_status != null and verify_status != ''">
+				and verify_status = #{verify_status}
+			</if>
+			<if test="fkzt != null and fkzt != ''">
+				and fkzt = #{fkzt}
+			</if>
+			<if test="hfzt != null and hfzt != ''">
+				and hfzt = #{hfzt}
+			</if>
+			<if test="kssj!=null and kssj!=''">
+				<![CDATA[ and input_time >=to_date(#{kssj},'yyyy-mm-dd HH24:mi:ss')]]>
+			</if>
+			<if test="jssj!=null and jssj!=''">
+				<![CDATA[and input_time <= to_date(#{jssj},'yyyy-mm-dd HH24:mi:ss') ]]>
+			</if>
+		</where>
+		order by pk_id desc
+	</select>
+	<!-- 根据个人勤务id查询日志信息 -->
+  	<select id="querylog" parameterType="java.util.HashMap" 
+  	resultType="com.cist.personageassess.model.Qw_Opertion_Log">
+  		select * from QW_OPERATION_LOG
+  		<where>
+  			<if test="fk_relation_id != null and fk_relation_id !=''">
+  				and fk_relation_id =#{fk_relation_id}
+  			</if>
+  		</where>
+  		order by pk_id desc
+  	</select>
+  	<!-- 根据审核人进行查询非现信息 -->
+  	<select id="queryfxinfo" parameterType="java.util.HashMap"
+  	resultType="com.cist.personageassess.model.TBL_OFFE_EVDI">
+  		select * from oeuser.tbl_offe_evdi where 
+	  		(csr = #{shr} and <![CDATA[cssj >= to_date(#{kssj},'yyyy-mm-dd HH24:mi:ss') and cssj <= to_date(#{jssj},'yyyy-mm-dd HH24:mi:ss')]]>)
+	  		or 
+	  		(fsr = #{shr} and <![CDATA[fssj >= to_date(#{kssj},'yyyy-mm-dd HH24:mi:ss') and fssj <= to_date(#{jssj},'yyyy-mm-dd HH24:mi:ss')]]>) 
+  	</select>
+  	<!-- 根据个人勤务考核查询附件信息 -->
+  	<select id="queryfjinfo" parameterType="java.util.HashMap" 
+  	resultType="com.cist.personageassess.model.Qw_assessment_attachment">
+  		select * from QW_ASSESSMENT_ATTACHMENT where fk_relation_id= #{fk_relation_id} and constraint = lower(#{constraint})
+  	</select>
+  	<!-- 根据条件查询考核栏目名称 -->
+  	<select id="querykhlm" parameterType="java.util.HashMap" resultType="java.lang.String">
+  		select topic_name from QW_APPRAISE_TOPIC where pk_id = #{khlm}
+  	</select>
+  	<!-- 根据条件查询考核条例名称 -->
+  	<select id="querykhtl" parameterType="java.util.HashMap" resultType="java.lang.String">
+  		select regulations_name from QW_APPRAISE_REGULATIONS where pk_id = #{khtl}
+  	</select>
+  	<!-- 根据勤务报备id查询勤务报备信息 -->
+  	<select id="queryqwbbinfo" parameterType="java.util.HashMap"
+  	resultType="com.cist.personageassess.model.Qw_report">
+  		select * from qw_report where pk_id=#{fk_report_id}
+  	</select>
+  	<!-- 根据条件查询街面勤务异常日志 -->
+  	<select id="queryjmqwlog" parameterType="java.util.HashMap"
+  	 resultType="com.cist.personageassess.model.Qw_patrol_alarm_log">
+  		select * from QW_PATROL_ALARM_LOG t where jmqwbbid= #{jmqwbbid}
+  	</select>
+  	<!-- 根据勤务报备id查询界面勤务信息 -->
+  	<select id="queryjmqwinfo" parameterType="java.util.HashMap"
+  	resultType="com.cist.personageassess.model.QwReportStreet">
+  		select * from QW_REPORT_STREET where fk_report_id = #{fk_report_id}
+  	</select>
+  	<!-- 根据勤务报备id查询装备报备信息 -->
+  	<select id="queryequip" parameterType="java.util.HashMap"
+  	resultType="com.cist.qwgl.jzgl.model.Qw_equip_info">
+  		select * from QW_EQUIP_INFO where fk_report_id = #{fk_report_id}
+  	</select>
+</mapper>

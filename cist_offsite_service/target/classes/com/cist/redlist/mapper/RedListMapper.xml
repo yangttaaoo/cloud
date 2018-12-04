@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cist.redlist.mapper.RedListMapper" >
+
+   <select id="plateTypeList" resultType="com.cist.redlist.model.RedListInfo">
+      select t.fc_name as hpzl_name,t.fc_code as hpzl from SYS_FRM_CODE t where t.fct_code = 'C001'
+   </select>
+   <select id="plateColorList" resultType="com.cist.redlist.model.RedListInfo">
+      select t.fc_name as hpys_name,t.fc_code as hpys from SYS_FRM_CODE t where t.fct_code = 'C007'
+   </select>
+   <select id="plateKerisList" resultType="com.cist.redlist.model.RedListInfo">
+      select t.fc_name as hpqy from SYS_FRM_CODE t where t.fct_code = 'C009'
+   </select>
+   <select id="carTypeList" resultType="com.cist.redlist.model.RedListInfo">
+      select t.fc_name as cllx_name,t.fc_code as cllx from SYS_FRM_CODE t where t.fct_code = 'C002'
+   </select>
+    <select id="carLogoList" resultType="com.cist.redlist.model.RedListInfo">
+      select t.fc_name as clpp_name,t.fc_code as clpp from SYS_FRM_CODE t where t.fct_code = 'C110'
+   </select>
+   <select id="carColorList" resultType="com.cist.redlist.model.RedListInfo">
+      select t.fc_name as csys_name,t.fc_code as csys from SYS_FRM_CODE t where t.fct_code = 'C003'
+   </select>
+   <select id="redInfopageList" resultType="com.cist.redlist.model.RedListInfo" parameterType="java.util.HashMap">
+   select * from vw_red_info t
+    <where>
+	    t.clzt=1
+	    <if test="hpzl !=null and hpzl !=''">
+	    and t.hpzl = #{hpzl}
+	    </if>
+	    <if test="hphm !=null and hphm !=''" >
+	    and t.hphm LIKE '%'||#{hphm}||'%'
+	    </if>
+	    <if test="ssdw !=null and ssdw !='' and ssdw !=8474 " >
+	    and t.ssdw = #{ssdw}
+	    </if>
+	    </where>
+   </select>
+   <select id="depart_infolist" resultType="com.cist.redlist.model.DeptInfo" parameterType="java.lang.Integer">
+select t.dept_pk,t.dept_code,t.dept_name as name,t.DEPT_SUPERIOR from sys_depart_info t 
+<where>
+		  <if test="_parameter  == null or _parameter  == ''">
+		     t.DEPT_SUPERIOR is null
+		   </if>
+		     <if test="_parameter  != null and _parameter  != ''">
+		     t.DEPT_SUPERIOR=#{_parameter}
+		   </if>
+</where>
+   </select>
+   <insert id="addRedInfo" parameterType="java.util.HashMap">
+	   INSERT INTO tbl_red_info
+            (
+             YXSJ,
+             HPYS,
+             CLBJ,
+             CLPP,
+             CLZT,
+             SSDW,
+             CLLX,
+             CSYS,
+             HPHM,
+             HPZL)
+       VALUES (
+            to_date(#{yxsj},'yyyy-mm-dd HH24:mi:ss'),
+        	#{hpys,jdbcType=VARCHAR},
+            #{clbj},
+            #{clpp,jdbcType=VARCHAR},
+        	#{clzt},
+            #{ssdw,jdbcType=VARCHAR},
+            #{cllx,jdbcType=VARCHAR},
+        	#{csys,jdbcType=VARCHAR},
+            #{hphm,jdbcType=VARCHAR},
+        	#{hpzl,jdbcType=VARCHAR})
+	</insert>
+	
+	<select id="selectByCllx" resultType="com.cist.redlist.model.CarTypeInfo">
+ select * from c_car_type 
+    <where>
+   <if test="cllx!=null and cllx!='' ">
+   and CODE=#{cllx}
+   </if>
+    </where>
+  </select>
+  
+  <select id="selectByCsys" resultType="com.cist.redlist.model.CarColorInfo">
+ select t.fc_name as name from SYS_FRM_CODE t  
+    <where>
+    t.fct_code = 'C003'
+   <if test="csys!=null and csys!='' ">
+   and fc_code=#{csys}
+   </if>
+    </where>
+  </select>
+  <select id="selectBySsdw" resultType="com.cist.offsite.invalidtrial.model.SysDepartInfo">
+ select DEPT_NAME as deptName,DEPT_PK as deptPk from SYS_DEPART_INFO 
+    <where>
+   <if test="ssdw!=null and ssdw!='' ">
+   and DEPT_PK=#{ssdw}
+   </if>
+    </where>
+  </select>
+  
+  <delete id="delRedInfo" parameterType="java.util.HashMap">
+		DELETE FROM TBL_RED_INFO WHERE PK = #{pk}
+	</delete>
+	
+	 <select id="OneRedInfo" parameterType="java.util.HashMap" resultType="com.cist.redlist.model.RedListInfo">
+         select * from vw_red_info t
+   	  <where>
+        <if test="pk!=null and pk!='' ">
+            and t.pk=#{pk}
+   		</if>
+  	  </where>
+  </select>
+  
+  <update id="editRedInfo"  parameterType="java.util.HashMap">
+       UPDATE tbl_red_info SET 
+             YXSJ=to_date(#{yxsj},'yyyy-mm-dd HH24:mi:ss'),
+             HPYS=#{hpys,jdbcType=VARCHAR},
+             CLBJ=#{clbj},
+             CLPP=#{clpp,jdbcType=VARCHAR},
+             SSDW=#{ssdw,jdbcType=VARCHAR},
+             CLLX=#{cllx,jdbcType=VARCHAR},
+             CSYS=#{csys,jdbcType=VARCHAR},
+             HPHM=#{hphm,jdbcType=VARCHAR},
+             HPZL=#{hpzl,jdbcType=VARCHAR}
+       where pk = #{pk}
+     </update>
+</mapper>

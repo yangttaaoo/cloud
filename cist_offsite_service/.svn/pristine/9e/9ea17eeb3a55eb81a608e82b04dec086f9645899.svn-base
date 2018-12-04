@@ -1,0 +1,5 @@
+spring.cloud.config.name=config-its
+spring.cloud.config.profile=test
+spring.cloud.config.uri=http://192.168.0.112:8001/
+spring.cloud.config.label=cist_its_cloud
+management.security.enabled=false

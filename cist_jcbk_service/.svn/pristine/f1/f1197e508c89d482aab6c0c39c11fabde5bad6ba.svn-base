@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cist.yjgl.infoStatistics.mapper.InfoStatisticsMapper">
+  <select id="getTableStaSum"  resultType="com.cist.yjgl.infoStatistics.model.TableStaModel" parameterType="java.util.HashMap">
+ select t.SSBM dept_code,d.dept_name  ,
+sum(case when v.BAYONET_TYPE=2 then 1 else 0 end) shenjkk_yj, sum(case when v.BAYONET_TYPE=2 and w.QSSJ is not null  then 1 else 0 end) shenjkk_qs,
+sum(case when v.BAYONET_TYPE=3 then 1 else 0 end) shijkk_yj,sum(case when v.BAYONET_TYPE=3 and w.QSSJ is not null   then 1 else 0 end) shijkk_qs,
+sum(case when v.BAYONET_TYPE=5 then 1 else 0 end) glzxkk_yj,sum(case when v.BAYONET_TYPE=5 and w.QSSJ is not null  then 1 else 0 end) glzxkk_qs,
+sum(case when v.BAYONET_TYPE=7 then 1 else 0 end) cqdlkk_yj,sum(case when v.BAYONET_TYPE=7 and w.QSSJ is not null  then 1 else 0 end) cqdlkk_qs
+,sum(case when v.BAYONET_TYPE=2 and w.QSSJ is not null  then 1 else 0 end)+sum(case when v.BAYONET_TYPE=3 and w.QSSJ is not null   then 1 else 0 end)
++sum(case when v.BAYONET_TYPE=5 and w.QSSJ is not null  then 1 else 0 end)+sum(case when v.BAYONET_TYPE=7 and w.QSSJ is not null  then 1 else 0 end) qs,
+sum(case when v.BAYONET_TYPE=2 then 1 else 0 end) +sum(case when v.BAYONET_TYPE=3 then 1 else 0 end)
++sum(case when v.BAYONET_TYPE=5 then 1 else 0 end)+sum(case when v.BAYONET_TYPE=7 then 1 else 0 end) yj
+from tbl_warning_vehicle t  join VM_BAYONET_FUNCTION_INTERCEPT  v  on t.KKBH=v.bayonet_code
+	join SYS_DEPART_INFO  d on d.DEPT_CODE=t.SSBM
+  left join tbl_issued_warning  w   on  t.pk=w.yjpk
+  where 1=1
+  <if test="start_date !=null and start_date !='' ">
+   and t.YJSJ &gt;=to_date(#{start_date},'yyyy-mm-dd HH24:mi:ss')
+    and t.YJSJ &lt;=to_date(#{end_date},'yyyy-mm-dd HH24:mi:ss')
+  </if>
+	group by t.SSBM,d.dept_name
+  </select>
+  <select id="getEarlyWarnSum" resultType="com.cist.yjgl.infoStatistics.model.StaModel" parameterType="java.util.HashMap">
+  	select v.BAYONET_TYPE_NAME name, count(t.pk) value
+	from tbl_warning_vehicle t  join VM_BAYONET_FUNCTION_INTERCEPT  v  on t.KKBH=v.bayonet_code
+	where 1=1
+	 <if test="start_date !=null and start_date !='' ">
+   	and t.YJSJ &gt;=to_date(#{start_date},'yyyy-mm-dd HH24:mi:ss')
+    and t.YJSJ &lt;=to_date(#{end_date},'yyyy-mm-dd HH24:mi:ss')
+  </if>
+	group by v.BAYONET_TYPE_NAME
+  </select>
+  <select id="getSignInSum" resultType="com.cist.yjgl.infoStatistics.model.StaModel" parameterType="java.util.HashMap">
+ select v.BAYONET_TYPE_NAME name, count(t.pk) value
+from tbl_warning_vehicle t  join VM_BAYONET_FUNCTION_INTERCEPT  v  on t.KKBH=v.bayonet_code
+join tbl_issued_warning w on w.YJPK=t.pk
+where  w.qssj is not null
+ <if test="start_date !=null and start_date !='' ">
+   	and t.YJSJ &gt;=to_date(#{start_date},'yyyy-mm-dd HH24:mi:ss')
+    and t.YJSJ &lt;=to_date(#{end_date},'yyyy-mm-dd HH24:mi:ss')
+  </if>
+	group by v.BAYONET_TYPE_NAME
+	</select> 
+	<select  id="getYJSum" parameterType="java.util.HashMap" resultType="com.cist.yjgl.infoStatistics.model.StaModel" >
+select to_char(c_time,'mm/dd') name,nvl(totalUser,0)  as value from (        select   (trunc(sysdate,'y')+level - 1) as 
+c_time  from dual connect by level  &lt;= last_day(add_months(trunc(SYSDATE,'y'),11)) - trunc(sysdate,'y') + 1        ) 
+a left join (       
+select trunc(u.yjsj) as create_time,count(*) as totalUser from tbl_warning_vehicle u
+where 1=1
+ <if test="start_date !=null and start_date !='' ">
+   	and u.YJSJ &gt;=to_date(#{start_date},'yyyy-mm-dd HH24:mi:ss')
+    and u.YJSJ &lt;=to_date(#{end_date},'yyyy-mm-dd HH24:mi:ss')
+  </if>
+ group by trunc(u.yjsj)         ) 
+b on a.c_time = b.create_time 
+
+order by to_char(c_time,'mm/dd')
+</select>
+
+<select  id="getQSSum" parameterType="java.util.HashMap" resultType="com.cist.yjgl.infoStatistics.model.StaModel">
+select to_char(c_time,'mm/dd') name,nvl(totalUser,0)  as value from (        select   (trunc(sysdate,'y')+level - 1) as 
+c_time  from dual connect by level  &lt;= last_day(add_months(trunc(SYSDATE,'y'),11)) - trunc(sysdate,'y') + 1        ) 
+a left join (       
+select trunc(tiw.Qssj) as create_time,count(*) totalUser from tbl_warning_vehicle twv  join tbl_issued_warning tiw on twv.pk=tiw.Yjpk  where  tiw.Qssj is not null 
+ <if test="start_date !=null and start_date !='' ">
+   	and twv.YJSJ &gt;=to_date(#{start_date},'yyyy-mm-dd HH24:mi:ss')
+    and twv.YJSJ &lt;=to_date(#{end_date},'yyyy-mm-dd HH24:mi:ss')
+  </if>
+ group by trunc(tiw.Qssj)  ) 
+b on a.c_time = b.create_time order by to_char(c_time,'mm/dd')
+</select>
+	
+</mapper>

@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cist.personalstats.mapper.PersonalStatsMapper">
+	<sql id="Base_Column_List">
+		WFPK, WFBH, WFDD, WFXW, FXBH, HPZL, HPHM, HPYS, CLSD, WFKSSJ, WFSJ, WFJSSJ,
+		KKBH,
+		SBBH, WFZJ1, WFZJ2, WFZJ3, WFZJ4, CLBZ, SHBZ, SHR, SHSJ, ECSHR, ECSHSJ,
+		SHSM, SJLY,
+		CJDW, CLPP, CLLX, CSYS, BDSD, SYR, SYRDH, JSZH, ZPLX, LRR, LRSJ, SCSJ,
+		SCBZ, SCDM,
+		CSBZ, RESVE, CDBH
+	</sql>
+	<!--查询采集单位所有信息 -->
+	<select id="selectSysDepartInfo" resultType="com.cist.offsite.invalidtrial.model.TblOffeEvdiInfo">
+		select * from SYS_DEPART_INFO
+	</select>
+	
+	<!--查询初审统计 -->
+	<select id="statsListByCs" resultType="com.cist.personalstats.model.PersonalStats" parameterType="java.util.HashMap">
+	select  trunc( shsj,'dd') as fssj,
+    count(case when shbz='1' then 1 else null end ) as cstg,
+    count(case when shbz='3' then 1 else null end ) as cszf, 
+	count(0) as shzs from OEUSER.TBL_OFFE_EVDI  where shbz in('1','3')
+	<if test="shr!=null and shr!=''">
+	      and shr like '%'||#{shr}||'%'
+	     </if>
+	       <if test="cjdw!=null and cjdw!=''">
+	      and cjdw =#{cjdw}
+	     </if>
+	    <if test="tjkssj!=null and tjkssj!=''">
+	    <![CDATA[ and shsj >=to_date(#{tjkssj},'yyyy-mm-dd HH24:mi:ss')]]>
+	    </if>
+	    <if test="tjjssj!=null and tjjssj!=''">
+	    <![CDATA[ and shsj <=to_date(#{tjjssj},'yyyy-mm-dd HH24:mi:ss')]]>
+	    </if>
+	    group by trunc(shsj,'dd')
+	</select>
+	<!--查询初审统计 -->
+	<select id="statsListByFs" resultType="com.cist.personalstats.model.PersonalStats" parameterType="java.util.HashMap">
+	select  trunc(ecshsj,'dd') as fssj,
+count(case when shbz='2' then 1 else null end ) as fstg,
+count(case when shbz='4' then 1 else null end ) as fszf, 
+count(0) as shzs from OEUSER.TBL_OFFE_EVDI  where shbz in('2','4') 
+	<if test="shr!=null and shr!=''">
+	      and ecshr like '%'||#{shr}||'%'
+	     </if>
+	       <if test="cjdw!=null and cjdw!=''">
+	      and cjdw =#{cjdw}
+	     </if>
+	    <if test="tjkssj!=null and tjkssj!=''">
+	    <![CDATA[ and ecshsj >=to_date(#{tjkssj},'yyyy-mm-dd HH24:mi:ss')]]>
+	    </if>
+	    <if test="tjjssj!=null and tjjssj!=''">
+	    <![CDATA[ and ecshsj <=to_date(#{tjjssj},'yyyy-mm-dd HH24:mi:ss')]]>
+	    </if>
+	    group by trunc(ecshsj,'dd')
+	</select>
+	
+	<!--查询个人工作信息根据时间分组 -->
+	<select id="selectPersonalStats" resultType="com.cist.personalstats.model.PersonalStats"
+	parameterType="java.util.HashMap">
+	SELECT fzsj, COUNT (shbz) as shzs,
+	SUM ( CASE WHEN shbz = '1' THEN 1 ELSE 0 END ) AS cstg,
+	SUM ( CASE WHEN shbz = '2' THEN 1 ELSE 0 END ) AS fstg,
+	SUM ( CASE WHEN shbz = '3' THEN 1 ELSE 0 END ) AS cszf,
+	SUM ( CASE WHEN shbz = '4' THEN 1 ELSE 0 END ) AS fszf
+	FROM(SELECT TO_CHAR (shsj, 'YYYY-MM-DD') AS fzsj,shbz
+	FROM OEUSER.TBL_OFFE_EVDI 
+	<where>
+	  and  shbz in('1','2','3','4')
+	<if test="shrxm!=null and shrxm!='' ">
+		and shr =#{shrxm}
+	</if>
+	<if test="tjkssj!=null and tjkssj!=''">
+	    <![CDATA[ and shsj >=to_date(#{tjkssj},'yyyy-mm-dd HH24:mi:ss')]]>
+	</if>
+	<if test="tjjssj!=null and tjjssj!='' ">
+	    <![CDATA[ and  shsj <=to_date(#{tjjssj},'yyyy-mm-dd HH24:mi:ss')]]>
+	</if>
+	 <if test="cjdw!=null and cjdw!='' ">
+	      and cjdw =#{cjdw}
+	 </if>
+    </where>
+	UNION ALL (
+	SELECT TO_CHAR (ecshsj, 'YYYY-MM-DD') as fzsj,shbz
+	FROM OEUSER.TBL_OFFE_EVDI 
+	<where>
+	    and  shbz in('1','2','3','4')
+	    <if test="shrxm!=null and shrxm!=''">
+	      and ecshr =#{shrxm}
+	    </if>
+		<if test="tjkssj!=null and tjkssj!=''">
+	    <![CDATA[ and ecshsj >=to_date(#{tjkssj},'yyyy-mm-dd HH24:mi:ss')]]>
+		</if>
+		<if test="tjjssj!=null and tjjssj!=''">
+	    <![CDATA[ and ecshsj <=to_date(#{tjjssj},'yyyy-mm-dd HH24:mi:ss')]]>
+		</if>
+		 <if test="cjdw!=null and cjdw!='' ">
+	      and cjdw =#{cjdw}
+	     </if>
+	</where>
+	)
+	)
+	GROUP BY fzsj order by fzsj
+</select>
+	
+	<!--查询个人工作信息根据违法行为分组 -->
+	<select id="statsListByWfxw" resultType="com.cist.personalstats.model.PersonalStats" parameterType="java.util.HashMap">
+	select (select wfxw_name from illegal_behavior where wfxw_code=t.wfxw) as wfxw,
+		count(case when shbz='1' then 1 else null end ) as cstg,
+		count(case when shbz='3' then 1 else null end ) as cszf,
+		count(case when shbz='2' then 1 else null end ) as fstg,
+		count(case when shbz='4' then 1 else null end ) as fszf,
+		count(0) as shzs from OEUSER.TBL_OFFE_EVDI t  where shbz in('1','3','2','4')  
+	    <if test="tjkssj!=null and tjkssj!=''">
+	    <![CDATA[ and ecshsj >=to_date(#{tjkssj},'yyyy-mm-dd HH24:mi:ss')]]>
+	    <![CDATA[ and shsj >=to_date(#{tjkssj},'yyyy-mm-dd HH24:mi:ss')]]>
+	    </if>
+	    <if test="tjjssj!=null and tjjssj!=''">
+	    <![CDATA[ and ecshsj <=to_date(#{tjjssj},'yyyy-mm-dd HH24:mi:ss')]]>
+	    <![CDATA[ and shsj <=to_date(#{tjjssj},'yyyy-mm-dd HH24:mi:ss')]]>
+	    </if>
+	    group by wfxw
+	</select>
+</mapper>

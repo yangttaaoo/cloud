@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cist.illegalUpload.mapper.IllegalUploadMapper">
+   <select id="automaticupload" resultType="int">
+   select t.fc_code from SYS_FRM_CODE t where t.fct_code='WFSJ'
+   </select>
+   <select id="getfctcode" resultType="string" parameterType="java.util.HashMap">
+   select t.fc_name from SYS_FRM_CODE t where t.fct_code=#{fct_code} and t.fc_code=#{fc_code}
+   </select>
+   	<update id="updateOffzt" parameterType="java.util.List">
+	    update oeuser.TBL_OFFE_EVDI t set t.shbz = 13 where t.wfpk in
+	     <foreach collection="list" item="item"  open="(" separator="," close=")">  
+		        	#{item.WFPK}  
+		 </foreach> 
+	</update>
+		<select id="queryAutoOffeInfo" resultType="com.cist.illegalUpload.domain.Tbloffeevdi">
+		select * from 
+		(select a.*,rownum as rn from oeuser.tbl_offe_evdi a where (a.shbz=13 or a.shbz=2) and a.wfsj<![CDATA[>=]]>to_date('2017-01-01 00:00:00','yyyy-mm-dd hh24:mi:ss') and
+		 not exists (select * from cistsys.TBL_RED_INFO r where a.hphm=r.hphm and a.hpzl=r.hpzl and a.wfsj<![CDATA[<=]]>r.yxsj and r.clzt=2))b
+		 where b.rn<![CDATA[<=]]>30
+	</select>
+		<update id="updateOffEdv" parameterType="com.cist.illegalUpload.domain.Tbloffeevdi">
+	    update oeuser.TBL_OFFE_EVDI t set t.shbz = #{SHBZ},t.scsj=sysdate,t.scdm=#{SCDM} where t.WFPK = #{WFPK}
+	</update>
+</mapper>

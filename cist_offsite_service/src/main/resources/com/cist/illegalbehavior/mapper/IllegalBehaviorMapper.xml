@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cist.illegalbehavior.mapper.IllegalBehaviorMapper">
+
+	<!-- 违法行为占比统计 -->
+	<select id="selectWfxw" resultType="com.cist.illegalbehavior.model.TblWfxwXwStat"
+		parameterType="java.util.HashMap">
+		select WFXWMC,max(wfxwzs)wfxwzs from TBL_WFXW_XW_STAT where 
+		<![CDATA[ tjsj>=#{kssj} and tjsj<=#{jssj} ]]>
+		group by WFXWMC
+	</select>
+
+	<!-- 车辆类型违法占比统计 -->
+	<select id="selectCar" resultType="com.cist.illegalbehavior.model.TblWfxwClflStat"
+		parameterType="java.util.HashMap">
+		select CLLXMC,max(WFXWZS)wfxwzs from TBL_WFXW_CLFL_STAT where 
+		<![CDATA[ tjsj>=#{kssj} and tjsj<=#{jssj} ]]>
+		group by CLLXMC
+	</select>
+	<!-- 重点车辆违法行为统计 -->
+	<select id="selectKeyVehicles" resultType="com.cist.illegalbehavior.model.TblWfxwZdcllStat"
+		parameterType="java.util.HashMap">
+		select WFXWMC,max(WFXWZS)wfxwzs from TBL_WFXW_ZDCL_STAT where
+		<if test=" carName !=null and carName !=''">
+			CLLXMC=#{carName}
+		</if>
+		<![CDATA[ and tjsj>=#{kssj} and tjsj<=#{jssj} ]]>
+		group by WFXWMC
+	</select>
+	<select id="selectByWfxw" resultType="com.cist.illegalbehavior.model.TblOffeVioWfxwStat"
+		parameterType="java.util.HashMap">
+		select * from TBL_OFFE_VIO_WFXW_STAT where
+		<![CDATA[ tjsj>=#{kssj} and tjsj<=#{jssj} ]]>
+
+		<if test="glbm !=null and glbm !='' and glbm !='null' ">
+			and glbm=#{glbm}
+		</if>
+	</select>
+	
+	<select id="selectByWfdd" resultType="com.cist.illegalbehavior.model.TblWfxwWfddStat"
+		parameterType="java.util.HashMap">
+		select WFDDMC,sum(CJZS)cjzs,sum(yxs)yxs,sum(wxs)wxs,listagg(WFXWTJ,'@') within group(order by WFXWTJ)wfxwtj from TBL_WFXW_WFDD_STAT where
+		<![CDATA[ tjsj>=#{kssj} and tjsj<=#{jssj} ]]>
+		<if test="wfdd!=null and wfdd!='' and wfdd!='null'">
+		and wfddmc=#{wfdd}
+		</if>
+		group by WFDDMC
+	</select>
+	   <select id="selectSysfrmCode" resultType="com.cist.illegalbehavior.model.Sys_frm_code" parameterType="java.lang.String">
+    select * from SYS_FRM_CODE
+    where
+    FCT_CODE=#{fct_code}
+  </select>
+  
+  	<select id="selectList" resultType="com.cist.illegalbehavior.model.TblOffeVioWfxwStat"
+		parameterType="java.util.HashMap">
+		   select glbm,listagg(WFXWTJ,'@') within group(order by WFXWTJ)wfxwtj from TBL_OFFE_VIO_WFXW_STAT
+		  where 
+		  <![CDATA[ tjsj>=#{kssj} and tjsj<=#{jssj} ]]>
+		   <if test="glbm !=null and glbm !='' and glbm !='null' ">
+			 and glbm=#{glbm}
+		</if>
+		
+		    group by glbm
+	</select>
+
+
+</mapper>

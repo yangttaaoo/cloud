@@ -1,0 +1,73 @@
+package com.cist.myDuty.myAssess.service.impl;
+
+import java.util.HashMap;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.cist.configManage.areaPlan.model.TempModel;
+import com.cist.frame.page.PageInfo;
+import com.cist.myDuty.myAssess.mapper.MyAssessMapper;
+import com.cist.myDuty.myAssess.model.FeedbackResponse;
+import com.cist.myDuty.myAssess.model.GpsRecord;
+import com.cist.myDuty.myAssess.model.OffSiteQuery;
+import com.cist.myDuty.myAssess.model.ReportStreet;
+import com.cist.myDuty.myAssess.model.SignIn;
+import com.cist.myDuty.myAssess.service.MyAssessService;
+@Service
+public class MyAssessServiceImpl implements MyAssessService{
+	@Autowired
+	private MyAssessMapper  mapper;
+
+	@Override
+	public Object queryAssesspageList(HashMap<String, Object> paramMap, PageInfo pageInfo) {
+		// TODO Auto-generated method stub
+		return mapper.queryAssessList(paramMap);
+	}
+
+	@Override
+	public List<TempModel> queryAssessItem() {
+		// TODO Auto-generated method stub
+		return mapper.queryAssessItem();
+	}
+
+	@Override
+	public int addfeedback(HashMap<String, Object> paramMap) {
+		// TODO Auto-generated method stub
+		return mapper.addfeedback(paramMap);
+	}
+
+	@Override
+	public FeedbackResponse queryHaveFeedback(HashMap<String, Object> paramMap) {
+		// TODO Auto-generated method stub
+		return mapper.queryHaveFeedback(paramMap);
+	}
+
+	@Override
+	public ReportStreet queryReportStreet(HashMap<String, Object> paramMap) {
+		// TODO Auto-generated method stub
+		return mapper.queryReportStreet(paramMap);
+	}
+
+	@Override
+	public Object queryOffSiteQuerypageList(HashMap<String, Object> paramMap, PageInfo pageInfo) {
+		// TODO Auto-generated method stub
+		return mapper.getOffSiteQuerybyUserId(paramMap);
+	}
+
+	@Override
+	public List<SignIn> querySignIn(HashMap<String, Object> paramMap) {
+		// TODO Auto-generated method stub
+		return mapper.querySignIn(paramMap);
+	}
+
+	@Override
+	public List<GpsRecord> queryTrackPlayback(HashMap<String, Object> paramMap) {
+		// TODO Auto-generated method stub
+		return mapper.queryTrackPlayback(paramMap);
+	}
+	
+	
+	
+}

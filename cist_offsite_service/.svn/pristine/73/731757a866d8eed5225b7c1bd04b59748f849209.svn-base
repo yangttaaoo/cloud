@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cist.audit.mapper.AuditMapper" >
+	<select id="querypol" resultType="com.cist.audit.model.PoliceInfo">
+		select j.*,g.tbvg_job,g.tbvg_wfxw,g.tbvg_pk from (select c.sypi_name,c.sypi_code,c.sypi_pk from SYS_POLICE_INFO c,SYS_USER_AUTHORITY t where c.sypi_pk=t.sypi_pk and symi_pk = 23) j LEFT OUTER JOIN (select *from TBL_VERIFY_GROUP where tbvg_btype = 1) g on j.sypi_pk = g.sypi_pk 
+	</select>
+	<select id="querywfxw" resultType="com.cist.audit.model.OffeInfo">
+		select t.tboc_code,t.tboc_name from TBL_OFFE_CATE t
+	</select>
+	<select id="querv" resultType="com.cist.audit.model.PoliceInfo">
+		select sypi_pk from TBL_VERIFY_GROUP t where t.tbvg_btype = 1
+	</select>
+	
+	<insert id="addaudie" parameterType="java.util.HashMap">
+	   INSERT INTO TBL_VERIFY_GROUP
+            (
+             TBVG_PK,
+             SYPI_PK,
+             TBVG_BTYPE,
+             TBVG_JOB,
+             TBVG_WFXW)
+       VALUES (
+            cistsys.SEQ_TBVG_PK.nextval,
+            #{sypi_pk},
+        	1,
+            #{shsl,jdbcType=INTEGER},
+        	#{wflx,jdbcType=VARCHAR})
+	</insert>
+	
+	<update id="editaudit"  parameterType="java.util.HashMap">
+       UPDATE TBL_VERIFY_GROUP SET 
+       <if test="shsl  != null and sbsl  != ''">
+       	TBVG_JOB= #{shsl},
+       </if>
+       <if test="shsl  == null or sbsl  == ''">
+       	TBVG_JOB = null,
+       </if>
+       <if test="wflx  == null or wflx  == ''">
+       	TBVG_WFXW = null
+       </if>
+        <if test="wflx  != null and wflx  != ''">
+       	TBVG_WFXW=#{wflx,jdbcType=VARCHAR}
+       </if>   
+             
+       where SYPI_PK = #{sypi_pk} and TBVG_BTYPE = 1
+     </update>
+     
+     <select id="depart_infolist" resultType="com.cist.device.model.DeptInfo" parameterType="java.lang.Integer">
+		select t.dept_pk,t.dept_code,t.dept_name as name,t.DEPT_SUPERIOR from sys_depart_info t 
+		<where>
+		  <if test="_parameter  == null or _parameter  == ''">
+		     t.DEPT_SUPERIOR is null
+		   </if>
+		     <if test="_parameter  != null and _parameter  != ''">
+		     t.DEPT_SUPERIOR=#{_parameter}
+		   </if>
+		</where>
+	</select>
+	
+	 <select id="Monitorpoint" resultType="com.cist.device.model.DeptInfo" parameterType="string">
+   		select t.ROIM_CODE as dept_code,t.ROIM_NAME as name from C_ROAD_ITEM t  where t.dept_code=#{_parameter}
+   	</select>
+   	
+   	<select id="azdw" resultType="com.cist.device.model.DeptInfo" parameterType="string">
+   		select t.BELONGED_ROAD_ID as dept_code,t.ROAD_NAME as name  from JCSJ_DEVICE t  where t.BELONGED_ROAD_ID=#{_parameter} and ROAD_NAME is not null and BELONGED_ROAD_ID is not null group by ROAD_NAME,BELONGED_ROAD_ID
+   	</select>
+   	
+   	<select id="Device" resultType="com.cist.device.model.DeptInfo" parameterType="string">
+   		select t.PK_ID as dept_code,t.DEVICE_NAME as name from JCSJ_DEVICE t  where t.ROAD_NAME=#{_parameter}  and VALIDITY_DATE >= sysdate 
+   	</select>
+   	
+   	<select id="querygoulist" resultType="com.cist.audit.model.DeviceGroup">
+   		select t.TBGE_PK,t.TBGE_NAME,t.DVC_PK from TBL_GROUP_EQU t where t.tbge_type = 1
+   	</select>
+   	<select id="queryusergroud" resultType="com.cist.audit.model.DeviceGroup" parameterType="string">
+   		select t.TBGE_PK from TBL_AUDITOR_GROUP t where t.tbvg_pk = #{_parameter}
+   	</select>
+   	<select id="querydept" resultType="com.cist.audit.model.DeviceGroup" parameterType="string">
+   		select t.device_name from JCSJ_DEVICE t where t.pk_id = #{_parameter}
+   	</select>
+   	
+   	<insert id="addgroup" parameterType="java.util.HashMap">
+	   INSERT INTO TBL_GROUP_EQU
+            (
+             TBGE_PK,
+             TBGE_NAME,
+             DVC_PK,
+             TBGE_TYPE)
+       VALUES (
+            cistsys.SEQ_GROUP_EQU.nextval,
+            #{fzmc},
+            #{sblb,jdbcType=VARCHAR},
+        	1)
+	</insert>
+	
+	<delete id="delPol" parameterType="java.util.HashMap">
+		DELETE FROM TBL_AUDITOR_VIO WHERE TBVG_PK = #{tbvg_pk}
+	</delete>
+	<delete id="delUserGroud" parameterType="java.util.HashMap">
+		DELETE FROM TBL_AUDITOR_GROUP WHERE TBVG_PK = #{tbvg_pk}
+	</delete>
+	<insert id="addUserGroud" parameterType="java.util.HashMap">
+	   INSERT INTO TBL_AUDITOR_GROUP
+            (
+             TBVG_PK,
+             TBGE_PK)
+       VALUES (
+            #{tbvg_pk},
+        	#{tbge_pk})
+	</insert>
+	<insert id="addPolGroud" parameterType="java.util.HashMap">
+	   INSERT INTO TBL_AUDITOR_VIO
+            (
+             TBVG_PK,
+             DVC_PK)
+       VALUES (
+            #{tbvg_pk},
+        	#{dvc_pk})
+	</insert>
+	
+<insert id="addauthority" parameterType="java.util.HashMap" >
+    <selectKey keyProperty="id" resultType="java.lang.Integer" order="BEFORE">  
+            select  cistsys.SEQ_TBVG_PK.nextval from dual  
+    </selectKey>
+    	insert into TBL_VERIFY_GROUP
+    	(
+    	TBVG_PK,
+    	SYPI_PK,
+    	TBVG_BTYPE
+    	)
+    	values
+    	 (
+    	 #{id,jdbcType=DECIMAL}, 
+    	 #{sypi_pk,jdbcType=VARCHAR},
+    	 1
+    	 )
+  </insert>
+  
+  
+   <select id="usergroud" resultType="com.cist.audit.model.PoliceInfo" parameterType="java.lang.Integer">
+		select t.tbge_pk from TBL_AUDITOR_GROUP t where t.tbvg_pk = #{_parameter}
+	</select>
+	
+	 <select id="polgroud" resultType="com.cist.audit.model.PoliceInfo" parameterType="java.lang.Integer">
+		select t.dvc_pk,y.device_name as dvc_name from TBL_AUDITOR_VIO t,JCSJ_DEVICE y where t.dvc_pk = y.pk_id and t.tbvg_pk = #{_parameter} and y.VALIDITY_DATE >= sysdate
+	</select>
+	
+	<delete id="delgoulist" parameterType="java.util.HashMap">
+		DELETE FROM TBL_GROUP_EQU WHERE TBGE_PK = #{pk}
+	</delete>
+	
+	<select id="querysbsl" resultType="com.cist.audit.model.DeviceGroup">
+		select i.sypi_pk,case when j.dvc_type is null then 0 else j.dvc_type end as dvc_type from 
+	(select j.*,g.tbvg_job,g.tbvg_wfxw,g.tbvg_pk from (select c.sypi_name,c.sypi_code,c.sypi_pk from SYS_POLICE_INFO c,SYS_USER_AUTHORITY t where c.sypi_pk=t.sypi_pk and symi_pk = 23) j LEFT OUTER JOIN (select *from TBL_VERIFY_GROUP where tbvg_btype = 1) g on j.sypi_pk = g.sypi_pk) i 
+	LEFT OUTER JOIN
+	(select y.tbvg_pk,count(y.tbvg_pk) as dvc_type from TBL_AUDITOR_VIO y,jcsj_device h where y.dvc_pk != 0 and h.validity_date>=sysdate and y.dvc_pk=h.pk_id group by y.tbvg_pk) j on j.tbvg_pk = i.tbvg_pk 
+	</select>
+	
+	<delete id="deldve">
+		DELETE FROM TBL_AUDITOR_VIO WHERE DVC_PK = '0'
+	</delete>
+	
+	<select id="querytbvg" resultType="com.cist.audit.model.PoliceInfo" parameterType="string">
+		select t.TBVG_PK from TBL_VERIFY_GROUP t where t.sypi_pk = #{_parameter} and t.tbvg_btype = 1
+	</select>
+	
+	<select id="querywsb" resultType="com.cist.audit.model.PoliceInfo">
+		select y.tbvg_pk,y.sypi_pk from TBL_AUDITOR_VIO t,TBL_VERIFY_GROUP y where t.tbvg_pk = y.tbvg_pk and t.dvc_pk=0 and y.tbvg_btype=1
+	</select>
+	
+	
+	<select id="querypol2" resultType="com.cist.audit.model.PoliceInfo">
+		select j.*,g.tbvg_job,g.tbvg_wfxw,g.tbvg_pk from (select c.sypi_name,c.sypi_code,c.sypi_pk from SYS_POLICE_INFO c,SYS_USER_AUTHORITY t where c.sypi_pk=t.sypi_pk and symi_pk = 24) j LEFT OUTER JOIN (select *from TBL_VERIFY_GROUP where tbvg_btype = 2) g on j.sypi_pk = g.sypi_pk 
+	</select>
+	
+	<select id="querysbsl2" resultType="com.cist.audit.model.DeviceGroup">
+		select i.sypi_pk,case when j.dvc_type is null then 0 else j.dvc_type end as dvc_type from 
+	(select j.*,g.tbvg_job,g.tbvg_wfxw,g.tbvg_pk from (select c.sypi_name,c.sypi_code,c.sypi_pk from SYS_POLICE_INFO c,SYS_USER_AUTHORITY t where c.sypi_pk=t.sypi_pk and symi_pk = 24) j LEFT OUTER JOIN (select *from TBL_VERIFY_GROUP where tbvg_btype = 2) g on j.sypi_pk = g.sypi_pk) i 
+	LEFT OUTER JOIN
+	(select y.tbvg_pk,count(y.tbvg_pk) as dvc_type from TBL_AUDITOR_VIO y,jcsj_device h where y.dvc_pk != 0 and h.validity_date>=sysdate and y.dvc_pk=h.pk_id group by y.tbvg_pk) j on j.tbvg_pk = i.tbvg_pk 
+	</select>
+	
+	<select id="querywsb2" resultType="com.cist.audit.model.PoliceInfo">
+		select y.tbvg_pk,y.sypi_pk from TBL_AUDITOR_VIO t,TBL_VERIFY_GROUP y where t.tbvg_pk = y.tbvg_pk and t.dvc_pk=0 and y.tbvg_btype=2
+	</select>
+	
+	<select id="querv2" resultType="com.cist.audit.model.PoliceInfo">
+		select sypi_pk from TBL_VERIFY_GROUP t where t.tbvg_btype = 2
+	</select>
+	
+	<select id="querytbvg2" resultType="com.cist.audit.model.PoliceInfo" parameterType="string">
+		select t.TBVG_PK from TBL_VERIFY_GROUP t where t.sypi_pk = #{_parameter} and t.tbvg_btype = 2
+	</select>
+	
+	
+	<insert id="addauthority2" parameterType="java.util.HashMap" >
+    <selectKey keyProperty="id" resultType="java.lang.Integer" order="BEFORE">  
+            select  cistsys.SEQ_TBVG_PK.nextval from dual  
+    </selectKey>
+    	insert into TBL_VERIFY_GROUP
+    	(
+    	TBVG_PK,
+    	SYPI_PK,
+    	TBVG_BTYPE
+    	)
+    	values
+    	 (
+    	 #{id,jdbcType=DECIMAL}, 
+    	 #{sypi_pk,jdbcType=VARCHAR},
+    	 2
+    	 )
+  </insert>
+  
+  <update id="editaudit2"  parameterType="java.util.HashMap">
+       UPDATE TBL_VERIFY_GROUP SET 
+       <if test="shsl  != null and sbsl  != ''">
+       	TBVG_JOB= #{shsl},
+       </if>
+       <if test="shsl  == null or sbsl  == ''">
+       	TBVG_JOB = null,
+       </if>
+       <if test="wflx  == null or wflx  == ''">
+       	TBVG_WFXW = null
+       </if>
+        <if test="wflx  != null and wflx  != ''">
+       	TBVG_WFXW=#{wflx,jdbcType=VARCHAR}
+       </if>   
+             
+       where SYPI_PK = #{sypi_pk} and TBVG_BTYPE = 2
+     </update>
+     
+     <insert id="addaudie2" parameterType="java.util.HashMap">
+	   INSERT INTO TBL_VERIFY_GROUP
+            (
+             TBVG_PK,
+             SYPI_PK,
+             TBVG_BTYPE,
+             TBVG_JOB,
+             TBVG_WFXW)
+       VALUES (
+            cistsys.SEQ_TBVG_PK.nextval,
+            #{sypi_pk},
+        	2,
+            #{shsl,jdbcType=INTEGER},
+        	#{wflx,jdbcType=VARCHAR})
+	</insert>
+	
+	<select id="querygoulist2" resultType="com.cist.audit.model.DeviceGroup">
+   		select t.TBGE_PK,t.TBGE_NAME,t.DVC_PK from TBL_GROUP_EQU t where t.tbge_type = 2
+   	</select>
+   	
+   	<insert id="addgroup2" parameterType="java.util.HashMap">
+	   INSERT INTO TBL_GROUP_EQU
+            (
+             TBGE_PK,
+             TBGE_NAME,
+             DVC_PK,
+             TBGE_TYPE)
+       VALUES (
+            cistsys.SEQ_GROUP_EQU.nextval,
+            #{fzmc},
+            #{sblb,jdbcType=VARCHAR},
+        	2)
+	</insert>
+	
+</mapper>

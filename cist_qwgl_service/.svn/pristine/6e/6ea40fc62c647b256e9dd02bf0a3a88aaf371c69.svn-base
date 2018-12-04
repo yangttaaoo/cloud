@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cist.feedback.mapper.FeedbackMapper">
+
+ <resultMap id="BaseResultMap" type="com.cist.feedback.model.QwCompanyAssessment">
+    <result column="PK_ID" jdbcType="DECIMAL" property="pk_id" />
+    <result column="FK_DEPT_ID" jdbcType="DECIMAL" property="fk_dept_id" />
+    <result column="DATA_SOURCES_TYPE" jdbcType="CHAR" property="data_sources_type" />
+    <result column="ASSESSMENT_TYPE" jdbcType="CHAR" property="assessment_type" />
+    <result column="START_DATE" jdbcType="TIMESTAMP" property="start_date" />
+    <result column="END_DATE" jdbcType="TIMESTAMP" property="end_date" />
+    <result column="EXPLAIN" jdbcType="VARCHAR" property="explain" />
+    <result column="INPUT_PERSON" jdbcType="DECIMAL" property="input_person" />
+    <result column="INPUT_TIME" jdbcType="TIMESTAMP" property="input_time" />
+    <result column="VERIFY_STATUS" jdbcType="CHAR" property="verify_status" />
+    <result column="FK_VERIFY_PERSON_ID" jdbcType="DECIMAL" property="fk_verify_person_id" />
+    <result column="VERIFY_TIME" jdbcType="TIMESTAMP" property="verify_time" />
+    <result column="RECORD_INVALID_REASON" jdbcType="VARCHAR" property="record_invalid_reason" />
+    <result column="VERIFY_NOT_PASS_REASON" jdbcType="VARCHAR" property="verify_not_pass_reason" />
+         <collection property="pdlm" ofType="com.cist.feedback.model.QwCompanyAssessmentMetrics"
+                    javaType="java.util.List" select="selectPdlmList"
+                    column="pk_id">
+        </collection>
+  </resultMap>
+  
+  <!--根据勤务考核id查询对应的评定栏目  -->
+  <select id="selectPdlmList" resultType="com.cist.feedback.model.QwCompanyAssessmentMetrics" parameterType="java.lang.Integer">
+  select * from QW_COMPANY_ASSESSMENT_METRICS where
+  fk_comp_assessment_id=#{pk_id}
+  </select>
+  
+	<!-- 查询数据 -->
+	<select id="list" resultType="com.cist.feedback.model.QwCompanyAssessment"
+		parameterType="java.util.HashMap">
+ 		select t.*,t1.*
+from QW_COMPANY_ASSESSMENT t 
+left join
+ (select listagg(t2.explain_type,',') within group(order by t2.explain_type)explain_type,t2.fk_assessment_id
+  from QW_APPRAISE_FEEDBACK_RESPONSE t2   group by t2.fk_assessment_id) t1 on t.pk_id=t1.fk_assessment_id
+		<where>
+			<if test=" fk_dept_id != null and fk_dept_id !=''">
+				and FK_DEPT_ID=#{fk_dept_id} 
+			</if>
+			<if test=" assessment_type != null and assessment_type !=''">
+				and assessment_type=#{assessment_type} 
+			</if>
+			<if test=" input_time_start != null and input_time_start !=''">
+				 <![CDATA[and input_time>=to_date(#{input_time_start},'yyyy-mm-dd HH24:mi:ss')]]>
+			</if>	
+           <if test=" input_time_end != null and input_time_end !=''">
+				 <![CDATA[and input_time<=to_date(#{input_time_end},'yyyy-mm-dd HH24:mi:ss')]]>
+			</if>	
+			and verify_status='1'
+		</where>
+	</select>
+	<!--更新数据 -->
+	<update id="update" 
+		parameterType="java.util.HashMap">
+		update QW_I_C_METRICS 
+		<trim prefix="set" suffixOverrides=",">
+		<if test=" fk_dept_id !=null and fk_dept_id !='' ">
+		fk_dept_id=#{fk_dept_id},
+		</if>
+		<if test=" metrics_type !=null and metrics_type !='' ">
+		metrics_type=#{metrics_type},
+		</if>
+		<if test=" fk_user_id !=null and fk_user_id !='' ">
+		fk_user_id=#{fk_user_id},
+		</if>
+		<if test=" evaluate_date_type !=null and evaluate_date_type !='' ">
+		evaluate_date_type=#{evaluate_date_type},
+		</if>
+		<if test=" evaluate_date !=null and evaluate_date !='' ">
+		evaluate_date=#{evaluate_date_type},
+		</if>
+		<if test=" remarks !=null and remarks !='' ">
+		remarks=#{remarks},
+		</if>
+		</trim>
+		where PK_ID=#{pk_id}
+	</update>	
+	<!--保存单位考核指标 -->
+	<insert id="save">
+	<selectKey keyProperty="pk" resultType="java.lang.Integer" order="BEFORE">  
+            select cistsys.SEQ_QW_I_C_METRICS_PK.NEXTVAL as pk from dual  
+        </selectKey> 
+		insert into QW_I_C_METRICS
+		
+		<trim prefix="(" suffixOverrides="," suffix=")">
+		pk_id,
+		<if test=" fk_dept_id !=null and fk_dept_id !='' ">
+		fk_dept_id,
+		</if>
+		<if test=" metrics_type !=null and metrics_type !='' ">
+		metrics_type,
+		</if>
+		<if test=" fk_user_id !=null and fk_user_id !='' ">
+		fk_user_id,
+		</if>
+		<if test=" evaluate_date_type !=null and evaluate_date_type !='' ">
+		evaluate_date_type,
+		</if>
+		<if test=" evaluate_date !=null and evaluate_date !='' ">
+		evaluate_date,
+		</if>
+		<if test=" remarks !=null and remarks !='' ">
+		remarks,
+		</if>
+		</trim>
+		
+		<trim prefix="values(" suffixOverrides="," suffix=")">
+		
+		<if test=" fk_dept_id !=null and fk_dept_id !='' ">
+		fk_dept_id=#{fk_dept_id},
+		</if>
+		<if test=" metrics_type !=null and metrics_type !='' ">
+		metrics_type=#{metrics_type},
+		</if>
+		<if test=" fk_user_id !=null and fk_user_id !='' ">
+		fk_user_id=#{fk_user_id},
+		</if>
+		<if test=" evaluate_date_type !=null and evaluate_date_type !='' ">
+		evaluate_date_type=#{evaluate_date_type},
+		</if>
+		<if test=" evaluate_date !=null and evaluate_date !='' ">
+		evaluate_date=#{evaluate_date_type},
+		</if>
+		<if test=" remarks !=null and remarks !='' ">
+		remarks=#{remarks},
+		</if>
+		</trim>
+	</insert>
+	
+		<!--保存单位考核指标 -->
+	<insert id="saveZb">
+		insert into QW_EVALUATE_METRICS
+		
+		<trim prefix="(" suffixOverrides="," suffix=")">
+		pk_id,
+		<if test=" pk !=null and pk !='' ">
+		FK_RELATION_ID,
+		</if>
+		<if test=" fk_topic_id !=null and fk_topic_id !='' ">
+		FK_TOPIC_ID,
+		</if>
+		<if test=" metrics_num !=null and metrics_num !='' ">
+		METRICS_NUM,
+		</if>
+		</trim>
+		
+		<trim prefix="values(" suffixOverrides="," suffix=")">
+		SEQ_QW_EVALUATE_METRICS_PK.NEXTVAL
+		<if test=" pk !=null and pk !='' ">
+		fk_relation_id=#{pk},
+		</if>
+		<if test=" fk_topic_id !=null and fk_topic_id !='' ">
+		fk_topic_id=#{fk_topic_id},
+		</if>
+		<if test=" fk_user_id !=null and fk_user_id !='' ">
+		fk_user_id=#{fk_user_id},
+		</if>
+		<if test=" metrics_num !=null and metrics_num !='' ">
+		metrics_num=#{metrics_num},
+		</if>
+		</trim>
+	</insert>
+	<!--删除数据 -->
+	<delete id="delete" parameterType="java.util.HashMap">
+		delete from QW_I_C_METRICS where PK_ID=#{pk_id}
+	</delete>
+
+	<!-- 管理部门树 -->
+	<select id="depart_infolist" resultType="com.cist.feedback.model.DeptInfo"
+		parameterType="java.lang.Integer">
+		select t.dept_pk,t.dept_code,t.dept_name as name,t.DEPT_SUPERIOR from
+		sys_depart_info t
+		<where>
+			<if test="_parameter  == null or _parameter  == ''">
+				t.DEPT_SUPERIOR is null
+			</if>
+			<if test="_parameter  != null and _parameter  != ''">
+				t.DEPT_SUPERIOR=#{_parameter}
+			</if>
+		</where>
+	</select>
+
+	<!-- 管理部门树 -->
+	<select id="selectBaseData" resultType="com.cist.feedback.model.Sys_frm_code"
+		parameterType="java.util.HashMap">
+		select * from
+		SYS_FRM_CODE t
+		where
+		t.FCT_CODE=#{fct_code}
+		<if test="fc_code !=null and fc_code!='' and fc_code!='null'">
+			and t.FC_CODE=#{fc_code}
+		</if>
+
+	</select>
+</mapper>

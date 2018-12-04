@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper
+	namespace="com.cist.serviceconfig.illegalconfig.mapper.IllegalConfigMapper">
+
+
+	<select id="selectNameCode" resultType="com.cist.recheck.model.TblOffeCateInfo"
+		parameterType="java.util.HashMap">
+		select * from tbl_offe_cate
+		<where>
+			<if test="tboc_name != null and tboc_name !=''">
+				and TBOC_NAME like '%'||#{tboc_name}||'%'
+			</if>
+
+			<if test="tboc_code != null and tboc_code !=''">
+				and TBOC_CODE like '%'||#{tboc_code}||'%'
+			</if>	
+		</where>
+		order by tboc_pk desc
+	</select>
+
+	<!-- <select id="queryForm" resultType="com.cist.recheck.model.TblOffeCateInfo"> 
+		select * from tbl_offe_cate t </select> -->
+
+	<!-- <select id="selectNameCode" resultType="com.cist.recheck.model.TblOffeCateInfo"> 
+		select TBOC_CODE,TBOC_NAME,TBOC_LEGAL from tbl_offe_cate t <where> <if test="tboc_name 
+		!= null and tboc_name !=''"> and TBOC_NAME = #{tboc_name} </if> <if test="tboc_code 
+		!= null and tboc_code !=''"> and TBOC_CODE = #{tboc_code} </if> </where> 
+		</select> -->
+
+	<update id="updateWfxw" parameterType="java.util.HashMap">
+		update tbl_offe_cate
+		<set>
+			<if test="tboc_code != null and tboc_code !=''">
+				TBOC_CODE = #{tboc_code},
+			</if>
+			<if test="tboc_name != null and tboc_name !=''">
+				TBOC_NAME = #{tboc_name},
+			</if>
+			<if test="tboc_short_name != null and tboc_short_name !=''">
+				TBOC_SHORT_NAME = #{tboc_short_name},
+			</if>
+			<if test="tboc_points != null and tboc_points !=''">
+				TBOC_POINTS = #{tboc_points},
+			</if>
+			<if test="tboc_fines != null and tboc_fines !=''">
+				TBOC_FINES = #{tboc_fines},
+			</if>
+			<if test="tboc_legal != null and tboc_legal !=''">
+				TBOC_LEGAL = #{tboc_legal},
+			</if>
+			<if test="tboc_desc != null and tboc_desc !=''">
+				tboc_desc = #{tboc_desc,jdbcType=VARCHAR}
+			</if>
+
+		</set>
+		where TBOC_PK = #{tboc_pk,jdbcType=DECIMAL}
+	</update>
+
+	<insert id="insertWfxw" parameterType="java.util.HashMap">
+		insert into tbl_offe_cate
+		(
+		tboc_pk,
+		tboc_code,
+		tboc_name,
+		tboc_short_name,
+		tboc_points,
+		tboc_fines,
+		tboc_legal,
+		tboc_desc)
+		values
+		(
+		cistsys.SEQ_TBL_OFFE_CATE.nextval,
+		#{tboc_code,jdbcType=VARCHAR},
+		#{tboc_name,jdbcType=VARCHAR},
+		#{tboc_short_name,jdbcType=VARCHAR},
+		#{tboc_points,jdbcType=VARCHAR},
+		#{tboc_fines,jdbcType=VARCHAR},
+		#{tboc_legal,jdbcType=VARCHAR},
+		#{tboc_desc,jdbcType=VARCHAR}
+		)
+
+	</insert>
+
+	<select id="verifyCode" resultType="com.cist.recheck.model.TblOffeCateInfo"
+		parameterType="java.util.HashMap">
+		select *
+		from
+		tbl_offe_cate
+		where
+
+		TBOC_CODE=#{tboc_code}
+
+
+	</select>
+
+
+
+
+	<delete id="deleteWfxw" parameterType="java.util.HashMap">
+		DELETE FROM
+		cistsys.tbl_offe_cate t
+		WHERE t.tboc_pk = #{pk}
+
+	</delete>
+
+	<!-- 批量删除 -->
+	<delete id="deleteAll" parameterType="java.util.HashMap">
+		delete FROM cistsys.tbl_offe_cate
+		WHERE tboc_pk in
+		<foreach item="pk" collection="array" open="(" separator=","
+			close=")">
+			#{pk}
+		</foreach>
+	</delete>
+
+
+</mapper>

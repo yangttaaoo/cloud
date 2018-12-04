@@ -1,0 +1,648 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cist.illegal.mapper.IllegalMapper">
+
+  <!--查询限行违法数据是否存在  -->
+    <select id="selectRestriction" resultType="com.cist.offsite.invalidtrial.model.TblOffeEvdiInfo" parameterType="java.util.HashMap">
+     select * from OEUSER.TBL_OFFE_EVDI
+     where 
+    <![CDATA[  and trunc(WFSJ) =trunc(sysdate)]]>
+     and HPZL=#{hpzl},
+     and HPHM=#{hphm},
+     and wfxw='1344'
+     and SHBZ ='1'
+   </select>
+<!--特殊车辆库  -->
+<insert id="insertBus">
+		insert into C_VEH_BUS
+		<trim prefix="(" suffixOverrides="," suffix=")">
+			PK,
+			HPZL,
+			HPHM,
+			<if test=" cllx !=null and cllx !=''">
+			CLLX,
+			</if>
+			<if test=" syxz !=null and syxz !=''">
+			SYXZ,
+			</if>
+			
+			<if test=" clyt !=null and clyt !=''">
+				CLYT,
+			</if>
+			<if test=" clbz !=null and clbz !=''">
+				CLBZ,
+			</if>
+			
+			<if test=" sxrqdate !=null and sxrqdate !=''">
+				SXRQ,
+			</if>
+			<if test=" yxqzdate !=null and yxqzdate !=''">
+				YXQZ,
+			</if>
+
+			<if test="clms !='' and clms!=null">
+				CLMS,
+			</if>
+		</trim>
+		<trim prefix="values(" suffixOverrides="," suffix=")">
+			cistsys.SEQ_C_VEH_BUS_PK.NEXTVAL,
+			#{hpzl},
+			#{hphm},
+			<if test=" cllx !=null and cllx !=''">
+			#{cllx},
+			</if>
+			<if test=" syxz !=null and syxz !=''">
+			#{syxz},
+			</if>
+			
+			<if test=" clyt !=null and clyt !=''">
+				#{clyt},
+			</if>
+			<if test=" clbz !=null and clbz !=''">
+				#{clbz},
+			</if>
+
+			<if test=" sxrqdate !=null and sxrqdate !=''">
+				to_date(#{sxrqdate},'yyyy-MM-dd'),
+			</if>
+			<if test=" yxqzdate !=null and yxqzdate !=''">
+				to_date(#{yxqzdate},'yyyy-MM-dd'),
+			</if>
+			<if test="clms !='' and clms!=null">
+				#{clms},
+			</if>
+
+		</trim>
+	</insert>
+<!-- 判断该车辆在同一地点同一时间，在数据库中是否已存在有效违法数据，如存在该条违法数据自动作废； -->
+     <select id="selectValid" resultType="com.cist.illegal.model.TBL_OFFE_EVDI" parameterType="java.util.HashMap">
+     select * from OEUSER.TBL_OFFE_EVDI
+     where hphm=#{hphm}
+    <![CDATA[  and WFSJ > to_date(#{wfsj},'yyyy-mm-dd HH24:mi:ss')-5/24/60/60 ]]>
+      <![CDATA[  and WFSJ < to_date(#{wfsj},'yyyy-mm-dd HH24:mi:ss')+5/24/60/60 ]]>
+     and WFDD=#{wfdd}
+     and SHBZ in('1')
+   </select>
+   <!--判断界面类表中该条违法数据状态与数据库该条数据状态是否一致，否则提交失败  -->
+    <select id="selectStatus" resultType="com.cist.illegal.model.TBL_OFFE_EVDI" parameterType="java.util.HashMap">
+     select * from OEUSER.TBL_OFFE_EVDI
+     where wfpk=#{wfpk}
+     and SHBZ in('0','15')
+   </select>
+	<!-- 根据条件查询基础数据 -->
+	<select id="queryfrms" parameterType="java.util.HashMap"
+	resultType="com.cist.illegal.model.SYS_FRM_CODE">
+	select * from SYS_FRM_CODE
+	<where>
+		<if test="fct_code != null and fct_code != ''">
+			and fct_code = #{fct_code}
+		</if>
+		<if test="fc_code != null and fc_code != ''">
+			and fc_code = #{fc_code}
+		</if>
+	</where>
+	</select>
+	<!-- 查询六合一信息 -->
+	<select id="selectCarInfo" parameterType="java.util.HashMap"
+	resultType="com.cist.illegal.model.TBL_OFFE_EVDI">
+	select * from OEUSER.TBL_OFFE_EVDI
+	where WFPK=#{wfpk}
+	</select>
+<!-- 更新六合一信息 -->
+	<update id="updateCarInfo" parameterType="java.util.HashMap">
+	update  OEUSER.TBL_OFFE_EVDI
+	<trim prefix="set" suffixOverrides=",">
+			<if test=" syxz != null and syxz !='' ">
+			syxz = #{syxz},
+			</if>
+			<if test=" fdjh != null and fdjh !='' ">
+			fdjh = #{fdjh},
+			</if>
+			<if test=" fzjg != null and fzjg !='' ">
+			fzjg = #{fzjg},
+			</if>
+			<if test=" clytName != null and clytName !='' ">
+			clyt = #{clytName},
+			</if>
+			<if test=" zsxxdz != null and zsxxdz !='' ">
+			zsxxdz = #{zsxxdz},
+			</if>
+			<if test=" csysName != null and csysName !='' ">
+			csysname = #{csysName},
+			</if>
+			<if test=" clxh != null and clxh !='' ">
+			clxh = #{clxh},
+			</if>
+			<if test=" syxzName != null and syxzName !='' ">
+			syxzname = #{syxzName},
+			</if>
+			<if test=" ztName != null and ztName !='' ">
+			clztname = #{ztName},
+			</if>
+			<if test=" dwbh != null and dwbh !='' ">
+			dwbh = #{dwbh},
+			</if>
+			<if test=" dwmc != null and dwmc !='' ">
+			dwmc = #{dwmc},
+			</if>
+			<if test=" yxqzName != null and yxqzName !='' ">
+			jyyxqz = #{yxqzName},
+			</if>
+			<if test=" qzbfqzName != null and qzbfqzName !='' ">
+			bfrq = #{qzbfqzName},
+			</if>
+			<if test=" cllxName != null and cllxName !='' ">
+			cllxname = #{cllxName},
+			</if>			
+			<if test=" clpp1 != null and clpp1 !='' ">
+			clpp1 = #{clpp1},
+			</if>	
+			<if test=" syr != null and syr !='' ">
+			jdcsyr = #{syr},
+			</if>	
+			<if test=" lxdh != null and lxdh !='' ">
+			syrdh = #{lxdh},
+			</if>	
+			<if test=" hpzlName != null and hpzlName !='' ">
+			hpzlname = #{hpzlName},
+			</if>			
+			<if test=" clsbdh != null and clsbdh !='' ">
+			clsbdm = #{clsbdh},
+			</if>
+			<if test=" clyt != null and clyt !='' ">
+			clyt_lhy = #{clyt},
+			</if>	
+			<if test=" gender != null and gender !='' ">
+			xb = #{gender},
+			</if>		
+			<if test=" cwkc != null and cwkc !='' ">
+			clwlc = #{cwkc},
+			</if>	
+			<if test=" cwkc != null and cwkc !='' ">
+			clwlc = #{cwkc},
+			</if>
+			<if test=" djrqName != null and djrqName !='' ">
+			DJRQ = #{djrqName},
+			</if>
+
+			LHYFLAG='1',
+		</trim>
+	where WFPK=#{wfpk}
+	</update>
+	<!-- 查询违法数据 -->
+	<select id="queryevdi" parameterType="java.util.HashMap"
+	resultType="com.cist.illegal.model.TBL_OFFE_EVDI">
+		<!-- select t.*,(select dept_name from SYS_DEPART_INFO where dept_code = t.cjdw) dept_name,
+		(select device_name from JCSJ_DEVICE where device_num=t.sbbh) tbei_name,
+		c.tboc_name,c.tboc_points,c.tboc_fines
+		 from OEUSER.TBL_OFFE_EVDI t left join TBL_OFFE_CATE c on c.tboc_code = t.wfxw -->
+		 select * from OEUSER.TBL_OFFE_EVDI t
+		<where>
+			<if test="hphm != null and hphm != ''">
+				and t.hphm like '%'||#{hphm}||'%'
+			</if>
+			<if test="hpzl != null and hpzl != ''">
+				and t.hpzl = #{hpzl}
+			</if>
+			<if test="wfxw != null and wfxw !=''">
+				and t.wfxw in
+				<foreach item="k" collection="wfxw" open="(" separator="," close=")">
+		           		 #{k}
+		        	</foreach>
+			</if>
+			<if test="wfkssj!=null and wfkssj!=''">
+				<![CDATA[ and t.WFSJ >=to_date(#{wfkssj},'yyyy-mm-dd HH24:mi:ss')]]>
+			</if>
+			<if test="wfjssj!=null and wfjssj!=''">
+				<![CDATA[and t.WFSJ <= to_date(#{wfjssj},'yyyy-mm-dd HH24:mi:ss') ]]>
+			</if>
+			    <choose>
+        <when test="sxbz!=null and sxbz!='null' and sxbz!=''">
+            and t.shbz =#{sxbz}
+        </when>
+        <otherwise>
+            and t.shbz in('0','15')
+        </otherwise>
+        </choose>
+			<if test="zplx != null and zplx != '' and sbbh.size()>0">
+				and ( zplx = #{zplx} or sbbh in
+			    	<foreach item="w" collection="sbbh" open="(" separator="," close=")">
+		           		 #{w}
+		        	</foreach>
+		        	)
+			</if>
+			<if test="zplx !=null and zplx != '' and sbbh.size()>0">
+				and zplx = #{zplx}
+			</if>
+			<if test="sbbh.size()>0 and zplx == null">
+				and sbbh in
+			    	<foreach item="w" collection="sbbh" open="(" separator="," close=")">
+		           		 #{w}
+		        	</foreach>
+			</if>
+		</where>
+		order by t.wfpk desc
+	</select>
+	<!-- 查询上传违法数据 -->
+	<select id="queryupload" parameterType="java.util.HashMap"
+	resultType="com.cist.illegal.model.TBL_OFFE_EVDI">
+		<!-- select t.*,(select dept_name from SYS_DEPART_INFO where dept_code = t.cjdw) dept_name,
+		(select device_name from JCSJ_DEVICE where device_num=t.sbbh) tbei_name,
+		c.tboc_name,c.tboc_points,c.tboc_fines
+		 from OEUSER.TBL_OFFE_EVDI t left join TBL_OFFE_CATE c on c.tboc_code = t.wfxw -->
+		 select * from OEUSER.TBL_OFFE_EVDI t
+		<where>
+			<if test="hphm != null and hphm != ''">
+				and t.hphm like '%'||#{hphm}||'%'
+			</if>
+			<if test="hpzl != null and hpzl != ''">
+				and t.hpzl = #{hpzl}
+			</if>
+			<if test="wfxw != null and wfxw != ''">
+				and t.wfxw = #{wfxw}
+			</if>
+			<!-- <if test="wfkssj!=null">
+				and t.wfsj &gt; #{wfkssj}
+			</if>
+			<if test="wfjssj!=null">
+				and t.wfsj &lt; #{wfjssj}
+			</if> -->
+			<if test="wfkssj!=null and wfkssj!=''">
+				<![CDATA[ and t.WFSJ >=to_date(#{wfkssj},'yyyy-mm-dd HH24:mi:ss')]]>
+			</if>
+			<if test="wfjssj!=null and wfjssj!=''">
+				<![CDATA[and t.WFSJ <= to_date(#{wfjssj},'yyyy-mm-dd HH24:mi:ss') ]]>
+			</if>
+			<if test="shbz != null and shbz != ''">
+				and t.shbz = #{shbz}
+			</if>
+			<if test="cjdw != null and cjdw != ''">
+				and t.cjdw = #{cjdw}
+			</if>
+			<if test="shbz == null or shbz == ''">
+				and t.shbz in ('2','7','8','9','13')
+			</if>
+		</where>
+		order by t.wfsj desc
+	</select>
+	<!--查询车牌号  -->
+	<select id="queryPlateKeris" resultType="com.cist.illegal.model.C_plate_keris">
+		select * from C_PLATE_KERIS
+	</select>
+	<!-- 查询违法行为信息 -->
+	<select id="selectwfxw" parameterType="java.util.HashMap"
+	resultType="com.cist.illegal.model.TBL_OFFE_CATE">
+		select * from TBL_OFFE_CATE
+		<where>
+			<if test="tboc_code!=null and tboc_code!=''">
+				and tboc_code = #{tboc_code}
+			</if>
+		</where>
+	</select>
+	<!-- 更新违法数据信息 -->
+	<update id="updateIllegal" parameterType="java.util.HashMap">
+	update oeuser.TBL_OFFE_EVDI 
+		<trim prefix="set" suffixOverrides=",">
+			<if test="hphm!=null">hphm = #{hphm,jdbcType=VARCHAR},</if>
+			<if test="hpzl!=null">hpzl = #{hpzl,jdbcType=CHAR},</if>
+			<if test="hpys!=null">hpys = #{hpys,jdbcType=CHAR},</if>
+			<if test="wfxw!=null">wfxw = #{wfxw,jdbcType=VARCHAR},</if>
+			<if test="shbz!=null">shbz = #{shbz,jdbcType=INTEGER},</if>
+			<if test="csr!=null">csr = #{csr,jdbcType=VARCHAR},</if>
+			<if test="cszfbz!=null">cszfbz=#{cszfbz,jdbcType=VARCHAR},</if>
+			<if test="shbj!=null">cssj=sysdate,</if>
+			<if test="shbj==null">scsj=sysdate,</if>
+		</trim>
+		where wfpk = #{wfpk,jdbcType=INTEGER}
+	</update>
+	<!-- 初审上一条 -->
+	<select id="selectUpperByWfpk" resultType="com.cist.illegal.model.TBL_OFFE_EVDI"
+	parameterType="java.util.HashMap">
+	<!-- select t.*,(select dept_name from SYS_DEPART_INFO where dept_code = t.cjdw) dept_name,
+		(select device_name from JCSJ_DEVICE where device_num=t.sbbh) tbei_name,
+		c.tboc_name,c.tboc_points,c.tboc_fines
+		 from OEUSER.TBL_OFFE_EVDI t left join TBL_OFFE_CATE c on c.tboc_code = t.wfxw -->
+		 select * from OEUSER.TBL_OFFE_EVDI t
+		  where wfpk = (
+       select p.j from (
+              select k.wfpk, lead(k.wfpk, 1, 0) over(order by k.wfpk) as j
+                       from  (
+                             select * from OEUSER.TBL_OFFE_EVDI
+                             <where>
+									<!-- 判断车牌号码是否为空-->
+									<if test="hphm!=null and hphm!=''">
+										and lower(hphm) like lower('%'||#{hphm}||'%')
+									</if>
+									<!-- 判断号牌种类 -->
+									<if test="hpzl!=null and hpzl!='' and hpzl!='null'">
+										and hpzl = #{hpzl}
+									</if>
+									<!-- 判断违法地点 -->
+									<if test="wfdd!=null and wfdd!=''">
+										and wfdd like '%'||#{wfdd}||'%'
+									</if>
+									<!-- 判断违法行为 -->
+									<if test="wfxw!=null and wfxw!='' and wfxw!='null'">
+										and wfxw in
+											<foreach item="k" collection="wfxw" open="(" separator="," close=")">
+		           								 #{k}
+		        							</foreach>
+									</if>
+									<!-- 判断违法时间 Mybatis3.3.0中不能拿时间类型的与''做比较， and wfkssj!=''-->
+									<!-- <if test="wfkssj!=null">
+										and wfsj &gt; #{wfkssj}
+									</if>
+									<if test="wfjssj!=null">
+										and wfsj &lt; #{wfjssj}
+									</if> -->
+									<if test="wfkssj!=null and wfkssj!=''  and wfkssj!='null'">
+								    <![CDATA[ and WFSJ >=to_date(#{wfkssj},'yyyy-mm-dd HH24:mi:ss')]]>
+							        </if>
+							        <if test="wfjssj!=null and wfjssj!=''  and wfjssj!='null'">
+								    <![CDATA[and WFSJ <= to_date(#{wfjssj},'yyyy-mm-dd HH24:mi:ss') ]]>
+							        </if>
+									<if test="zplx != null and zplx != '' and sbbh.size()>0">
+				and ( zplx = #{zplx} or sbbh in
+			    	<foreach item="w" collection="sbbh" open="(" separator="," close=")">
+		           		 #{w}
+		        	</foreach>
+		        	)
+			</if>
+			<if test="zplx !=null and zplx != '' and sbbh.size()>0">
+				and zplx = #{zplx}
+			</if>
+			<if test="sbbh.size()>0 and zplx == null and zplx !=''">
+				and sbbh in
+			    	<foreach item="w" collection="sbbh" open="(" separator="," close=")">
+		           		 #{w}
+		        	</foreach>
+			</if>
+		<choose>
+        <when test="sxbz!=null and sxbz!='null' and sxbz!=''">
+            and SHBZ =#{sxbz}
+        </when>
+        <otherwise>
+            and SHBZ in('0','15')
+        </otherwise>
+        </choose>
+                             </where>
+                              ) k
+       ) p where p.wfpk =#{wfpk,jdbcType=INTEGER}
+)
+	
+	
+	</select>
+	<!-- 初审下一条 -->
+	<select id="selectNextByWfpk" resultType="com.cist.illegal.model.TBL_OFFE_EVDI"
+	parameterType="java.util.HashMap">
+<!-- 	select t.*,(select dept_name from SYS_DEPART_INFO where dept_code = t.cjdw) dept_name,
+		(select device_name from JCSJ_DEVICE where device_num=t.sbbh) tbei_name,
+		c.tboc_name,c.tboc_points,c.tboc_fines
+		 from OEUSER.TBL_OFFE_EVDI t left join TBL_OFFE_CATE c on c.tboc_code = t.wfxw -->
+		 select * from OEUSER.TBL_OFFE_EVDI t
+		  where wfpk = (
+       select p.j from (
+              select k.wfpk, lead(k.wfpk, 1, 0) over(order by k.wfpk desc) as j
+                       from  (
+                             select * from OEUSER.TBL_OFFE_EVDI m
+                             <where>
+								<if test="hphm != null and hphm != ''">
+									and m.hphm like '%'||#{hphm}||'%'
+								</if>
+								<if test="hpzl != null and hpzl != ''">
+									and m.hpzl = #{hpzl}
+								</if>
+								<if test="wfxw != null and wfxw != ''">
+									and m.wfxw in
+											<foreach item="k" collection="wfxw" open="(" separator="," close=")">
+		           								 #{k}
+		        							</foreach>
+								</if>
+								<if test="wfkssj!=null and wfkssj!=''">
+									<![CDATA[ and m.WFSJ >=to_date(#{wfkssj},'yyyy-mm-dd HH24:mi:ss')]]>
+								</if>
+								<if test="wfjssj!=null and wfjssj!=''">
+									<![CDATA[and m.WFSJ <= to_date(#{wfjssj},'yyyy-mm-dd HH24:mi:ss') ]]>
+								</if>
+								<if test="zplx != null and zplx != '' and sbbh.size()>0">
+				and ( zplx = #{zplx} or sbbh in
+			    	<foreach item="w" collection="sbbh" open="(" separator="," close=")">
+		           		 #{w}
+		        	</foreach>
+		        	)
+			</if>
+			<if test="zplx !=null and zplx != '' and sbbh.size()>0">
+				and zplx = #{zplx}
+			</if>
+			<if test="sbbh.size()>0 and zplx == null and zplx !=''">
+				and sbbh in
+			    	<foreach item="w" collection="sbbh" open="(" separator="," close=")">
+		           		 #{w}
+		        	</foreach>
+			</if>
+		<choose>
+        <when test="sxbz!=null and sxbz!='null' and sxbz!=''">
+            and SHBZ =#{sxbz}
+        </when>
+        <otherwise>
+            and SHBZ in('0','15')
+        </otherwise>
+        </choose>
+							</where>
+                              ) k
+       ) p where p.wfpk =#{wfpk,jdbcType=INTEGER}
+)
+	
+	
+	</select>
+	<!-- 添加特殊车辆信息 -->
+	<insert id="addveh" parameterType="java.util.HashMap">
+		insert into c_veh_bus
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			pk,hpzl,hphm,
+			<if test="cllx !=null and cllx !=''">
+			cllx,
+			</if>
+			<if test="syxz !=null and syxz !=''">
+			syxz,
+			</if>
+			<if test="clyt !=null and clyt !=''">
+			clyt,
+			</if>
+			<if test="clbz !=null and clbz !=''">
+			clbz,
+			</if>
+			<if test="sxrq !=null and sxrq !=''">
+			sxrq,
+			</if>
+			<if test="yxqz !=null and yxqz !=''">
+			yxqz,
+			</if>
+			<if test="clms !=null and clms !=''">
+			clms,
+			</if>
+		</trim>
+		<trim prefix="values(" suffix=")" suffixOverrides=",">
+			seq_c_veh_bus_pk.nextval,#{hpzl},#{hphm},
+			<if test="cllx !=null and cllx !=''">
+			#{cllx},
+			</if>
+			<if test="syxz !=null and syxz !=''">
+			#{syxz},
+			</if>
+			<if test="clyt !=null and clyt !=''">
+			#{clyt},
+			</if>
+			<if test="clbz !=null and clbz !=''">
+			#{clbz},
+			</if>
+			<if test="sxrq !=null and sxrq !=''">
+			sysdate,
+			</if>
+			<if test="yxqz !=null and yxqz !=''">
+			to_date(#{yxqz},'yyyy-mm-dd HH24:mi:ss'),
+			</if>
+			<if test="clms !=null and clms !=''">
+			#{clms},
+			</if>
+		</trim>
+	</insert>
+	<!-- 添加日志信息 -->
+	<insert id="addlog" parameterType="java.util.HashMap">
+		insert into TBL_OFFE_OPT_LOG
+		  (
+		  TOOL_PK,
+		  TOOL_USER,
+		  TOOL_IP,
+		  TOOL_TIME,
+		  TOOL_DEPT_CODE,
+		  TOOL_TYPE,
+		  TOOL_RESULT,
+		  TOOL_SIGN,
+		  TOOL_WFXH,
+		  TOOL_SRC,
+		  TOOL_DEST
+		 )
+		  values(
+		 cistsys.SEQ_IMGNAME_PK.NEXTVAL,
+		  #{tool_user},
+		  #{tool_ip},
+		  sysdate,
+		  #{tool_dept_code},
+		  #{tool_type},
+		  #{tool_result},
+		  #{tool_sign},
+		  #{wfxh},
+		  #{tool_src,jdbcType=CLOB},
+		  #{tool_dest,jdbcType=CLOB}
+		  )
+	</insert>
+	<!-- 今日工作量 -->
+	<select id="queryjrgzl" parameterType="java.lang.String" resultType="int">
+		select count(*) from OEUSER.TBL_OFFE_EVDI t where trunc(sysdate)=trunc(t.cssj) and t.shbz in ('1','3')
+		and csr = #{sypi_pk}
+	</select>
+	<!-- 查询违法数据有效期 -->
+	<select id="sycivalue" resultType="int" parameterType="java.util.HashMap">
+   		select t.syci_value from SYS_CONFIG t where t.syci_pk=6
+   </select>
+   <!-- 违法数据有效期内多少违法数据 -->
+    <select id="auditnumber" resultType="int" parameterType="java.util.HashMap">
+    select count(*) from oeuser.tbl_offe_evdi t where t.shbz in('0','15') and t.wfsj BETWEEN 
+		     to_date(#{wfkssj},'yyyy-mm-dd hh24:mi:ss') and to_date(#{wfjssj},'yyyy-mm-dd hh24:mi:ss')
+		     <if test="tboc_code != null and tboc_code !=''">
+		     	and wfxw in
+				<foreach item="w" collection="tboc_code" open="(" separator="," close=")">
+		           	#{w}
+		        </foreach>
+		     </if>
+		     <if test="zplx != null and zplx != '' and sbbh.size()>0">
+				and ( zplx = #{zplx} or sbbh in
+			    	<foreach item="w" collection="sbbh" open="(" separator="," close=")">
+		           		 #{w}
+		        	</foreach>
+		        	)
+			</if>
+			<if test="zplx !=null and zplx != '' and sbbh.size()>0">
+				and zplx = #{zplx}
+			</if>
+			<if test="sbbh.size()>0 and zplx == null and zplx !=''">
+				and sbbh in
+			    	<foreach item="w" collection="sbbh" open="(" separator="," close=")">
+		           		 #{w}
+		        	</foreach>
+			</if>
+   </select>
+   <!-- 根据警员查询违法行为权限信息 -->
+   <select id="querywfxwqxbysypi" parameterType="java.lang.String"
+   resultType="com.cist.illegal.model.TBL_VERIFY_GROUP">
+   		select * from TBL_VERIFY_GROUP where tbvg_btype='1' and sypi_pk = #{sypi_pk}
+   </select>
+   <!-- 查询设备权限 -->
+   <select id="querydevbysypi"  parameterType="java.lang.Integer"
+   resultType="java.lang.String">
+   select listagg(dvc_pk,',') WITHIN  GROUP(ORDER BY dvc_pk) wfxw_id from TBL_AUDITOR_VIO where tbvg_pk=#{tbvg_pk}
+   </select>
+   
+   <!-- 根据权限查询违法行为信息 -->
+	<select id="querywfxw" parameterType="java.util.HashMap"
+	resultType="com.cist.illegal.model.TBL_OFFE_CATE">
+		select * from TBL_OFFE_CATE
+		<where>
+			<if test="tboc_code!=null and tboc_code!=''">
+				and tboc_code in
+				<foreach item="w" collection="tboc_code" open="(" separator="," close=")">
+		           	#{w}
+		        </foreach>
+			</if>
+		</where>
+	</select>
+	<!-- 根据设备id查询设备编号 -->
+	<select id="querysbbhbysbpk" parameterType="java.util.HashMap" resultType="java.lang.String">
+		select listagg(DEVICE_NUM,',') WITHIN  GROUP(ORDER BY pk_id) sbbh from JCSJ_DEVICE where pk_id in
+		<foreach item="w" collection="sb_pk" open="(" separator="," close=")">
+		     #{w}
+		</foreach>
+	</select>
+	<!-- 初审中统计权限下总条数 -->
+	<select id="querycsnum" parameterType="java.util.HashMap" resultType="int">
+		select count(*) from OEUSER.TBL_OFFE_EVDI
+		<where>
+			<if test="wfxw != null and wfxw != ''">
+				and wfxw in
+				<foreach item="k" collection="wfxw" open="(" separator="," close=")">
+		           		 #{k}
+		        	</foreach>
+			</if>
+			<if test="zplx != null and zplx != '' and sbbh != null and sbbh != ''">
+				and ( zplx = #{zplx} or sbbh in
+			    	<foreach item="w" collection="sbbh" open="(" separator="," close=")">
+		           		 #{w}
+		        	</foreach>
+		        	)
+			</if>
+			<if test="zplx !=null and zplx != '' and sbbh == null">
+				and zplx = #{zplx}
+			</if>
+			<if test="sbbh != null and sbbh != '' and zplx == null">
+				and sbbh in
+			    	<foreach item="w" collection="sbbh" open="(" separator="," close=")">
+		           		 #{w}
+		        	</foreach>
+			</if>
+			and SHBZ in ('0','15')
+		</where>
+	</select>
+	
+	<!--  -->
+	<select id="querydatabywfpk" parameterType="java.lang.String" resultType="com.cist.illegal.model.TBL_OFFE_EVDI">
+		<!-- select t.*,(select dept_name from SYS_DEPART_INFO where dept_code = t.cjdw) dept_name,
+		(select device_name from JCSJ_DEVICE where device_num=t.sbbh) tbei_name,
+		c.tboc_name,c.tboc_points,c.tboc_fines
+		 from OEUSER.TBL_OFFE_EVDI t left join TBL_OFFE_CATE c on c.tboc_code = t.wfxw  -->
+		 select * from OEUSER.TBL_OFFE_EVDI t
+		 where wfpk = #{wfpk}
+		<!-- select * from OEUSER.TBL_OFFE_EVDI where wfpk= -->
+	</select>        
+</mapper>

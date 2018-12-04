@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cist.serviceconfig.unlimitedcar.mapper.UnlimitedCarMapper">
+<!-- 查询不限行车辆信息 -->
+ <select id="selectNoCar" resultType="com.cist.serviceconfig.unlimitedcar.model.CarManage"
+ parameterType="java.util.HashMap">
+   select *from tbl_car_white_info 
+    <where>
+    <if test="hphm!=null and hphm!=''">
+     twi_plate_no=#{hphm}
+    </if>
+    <if test="hpzl!=null and hpzl!=''">
+      and twi_plate_type=#{hpzl}
+    </if>
+    <if test="cllx!=null and cllx!=''">
+      twi_type_code=#{cllx}
+    </if>
+    <if test="clzt!=null and clzt!=''">
+        
+    </if>   
+    </where>
+ </select>
+   <!--增加不限行管理信息 -->
+  <insert id="insertInfo" resultType="com.cist.serviceconfig.unlimitedcar.model.CarManage"
+   parameterType="java.util.HashMap">
+   insert into tbl_car_white_info (twi_plate_no,twi_plate_type,twi_desc,twi_type_code,twi_s_date,twi_e_date) 
+   values(#{hphm},#{hpzl},#{desc},#{cllx},#{kssj},#{jssj})
+  </insert>
+  <!-- 批量删除 -->
+	<delete id="deleteCarManage" parameterType="java.util.HashMap">
+		delete FROM tbl_car_white_info  
+		WHERE 
+		fileencryption_id in
+		<foreach item="pk" collection="fileencryption_id" open="(" separator="," close=")">
+            #{pk}
+        </foreach>
+	</delete> 
+    <!-- 查询详情 -->
+	<select id="selectById" resultType="com.cist.serviceconfig.unlimitedcar.model.CarManage"
+	 parameterType="java.lang.Integer">
+	  select *from tbl_car_white_info where twi_pk=#{pk}
+	</select> 
+    <!--更新数据 -->
+    <update id="updateById" resultType="com.cist.serviceconfig.unlimitedcar.model.CarManage"
+	 parameterType="java.lang.Integer">
+	 update tbl_car_white_info set  twi_plate_no=#{hphm},twi_plate_type=#{hpzl},
+	 twi_desc=#{desc},twi_type_code=#{cllx},twi_s_date=#{kssj},twi_e_date=#{jssj}
+	 where twi_pk=#{pk}
+	 </update>
+</mapper>

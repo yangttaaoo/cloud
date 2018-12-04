@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper
+	namespace="com.cist.intervalVelocity.mapper.IntervalVelocityMapper">
+	<delete id="delDevByQJCS" parameterType="java.util.HashMap">
+	delete from jcsj_device where pk_id=#{pk_id} and  fk_device_type=#{fk_device_type}
+	</delete>
+	<!-- 获取设备类型为卡口的信息 -->
+	<select id="getKKInfoList"
+		resultType="com.cist.devRegister.model.Device"
+		parameterType="java.util.HashMap">
+		select d.* from jcsj_device d
+		join jcsj_device_have_function h
+		on
+		d.pk_id=h.device_id
+		where d.FK_DEVICE_TYPE =( select f.fc_code code
+		from SYS_FRM_CODE f join
+		SYS_FRM_CODE_TYPE t on f.FCT_CODE=t.FCT_CODE
+		where t.FCT_CODE='M001'
+		and f.fc_name='卡口') and h.FK_HAVE_FUNCTION=(
+		select f.fc_pk pk
+		from
+		SYS_FRM_CODE f join SYS_FRM_CODE_TYPE t on
+		f.FCT_CODE=t.FCT_CODE
+		where
+		t.FCT_CODE='G999'
+		and f.fc_name='区间测速'
+		)
+		<if test="deviceName !=null and deviceName !=''">and d.device_name like '%'||#{deviceName}||'%'</if>
+		<if test="deviceNum !=null and deviceNum !=''">and d.device_num=#{deviceNum}</if>
+		<if test="belongedRoadId !=null and belongedRoadId !=''">and d.belonged_road_id=#{belongedRoadId}</if>
+	</select>
+	<!-- 为添加的区间测速备案添加参数 -->
+	<insert id="addIntervalParam" parameterType="java.util.HashMap">
+		insert into JCSJ_INTERVAL_VELOCITY_PARAM(
+		device_id,spacing
+		<if test="speed_limit_big_car !=null and speed_limit_big_car !=''">,speed_limit_big_car</if>
+		<if
+			test="speed_limit_small_car !=null and speed_limit_small_car !=''">,speed_limit_small_car</if>
+
+		)values(#{pk_id},#{spacing}
+		<if test="speed_limit_big_car !=null and speed_limit_big_car !=''">,#{speed_limit_big_car}</if>
+		<if
+			test="speed_limit_small_car !=null and speed_limit_small_car !=''">,#{speed_limit_small_car}</if>
+		)
+
+	</insert>
+		<!-- 区间测速备案更新参数 -->
+	<update id="updateIntervalParam" parameterType="java.util.HashMap">
+	
+	update  JCSJ_INTERVAL_VELOCITY_PARAM set 
+	spacing=#{spacing}
+		<if test="speed_limit_big_car !=null and speed_limit_big_car !=''">,speed_limit_big_car=#{speed_limit_big_car}</if>
+		<if
+			test="speed_limit_small_car !=null and speed_limit_small_car !=''">,speed_limit_small_car=#{speed_limit_small_car}</if>
+	where 	device_id=#{pk_id}
+	</update>
+	<insert id="addDevConnectBayonet"
+		parameterType="java.util.HashMap">
+		insert into
+		JCSJ_DEVICE_INTERVAL_VELOCITY(device_id,relevance_device_id)
+		SELECT A.*
+		FROM(
+		<foreach collection="bayonetIds" item="list" index="index"
+			separator="UNION ALL">
+			SELECT
+			#{pk_id} device_id,
+			#{list} relevance_device_id
+			FROM dual
+		</foreach>
+		)A
+	</insert>
+	<delete id="delDevConnectBayonet"  parameterType="java.util.HashMap">
+	delete from JCSJ_DEVICE_INTERVAL_VELOCITY  where device_id=#{pk_id} and relevance_device_id in
+	<foreach collection="list" open="(" close=")" index="index" item="id" separator=",">
+	#{id}
+	
+	</foreach>
+	
+	</delete>
+	<delete id="deleteParam"  parameterType="java.util.HashMap">
+	delete from JCSJ_INTERVAL_VELOCITY_PARAM  where device_id=#{pk_id}
+	</delete>
+		<delete id="deleteConnect"  parameterType="java.util.HashMap">
+	delete from JCSJ_DEVICE_INTERVAL_VELOCITY  where device_id=#{pk_id}
+	</delete>
+	<select id="getDevConnectBayonet" parameterType="java.util.HashMap" resultType="java.lang.Integer">
+	select relevance_device_id  from JCSJ_DEVICE_INTERVAL_VELOCITY where  device_id  = #{pk_id}
+	</select>
+	
+	<select id="queryList" resultType="com.cist.intervalVelocity.model.IntervalVelocity" parameterType="java.util.HashMap">
+	select d.pk_id pk_id ,d.fk_dept_id,d.create_person,d.create_time,d.enable_date,d.validity_date,d.contacts_person,d.contacts_num,d.remarks
+,d.fk_device_type,d.device_name,d.device_num,p.spacing,p.speed_limit_big_car,p.speed_limit_small_car,wm_concat(v.RELEVANCE_DEVICE_ID) relevance_device_id from   JCSJ_DEVICE d  join JCSJ_INTERVAL_VELOCITY_PARAM p on d.pk_id=p.device_id and d.fk_device_type='QJCS'  join JCSJ_DEVICE_INTERVAL_VELOCITY v
+on v.device_id=d.pk_id  GROUP BY d.pk_id,d.fk_dept_id,d.create_person,d.create_time,d.enable_date,d.validity_date,d.contacts_person,d.contacts_num,d.remarks
+,d.fk_device_type,d.device_name,d.device_num,p.spacing,p.speed_limit_big_car,p.speed_limit_small_car
+HAVING 1=1
+		<if test="deptId !=null and deptId !='' "> and fk_dept_id=#{deptId}</if>
+		<if test="devName !=null and devName !='' ">and device_name like '%'||#{devName}||'%'</if>
+		<if test="create_time_start !=null and create_time_start !='' ">and enable_date &gt;= to_date(#{
+			create_time_start},'yyyy-mm-dd HH24:mi:ss')
+			and enable_date &lt;= to_date(#{ create_time_end},'yyyy-mm-dd
+			HH24:mi:ss')
+		</if>
+	</select>
+	
+	  <select id="queryDeviceById" parameterType="java.util.HashMap"  resultType="com.cist.intervalVelocity.model.IntervalVelocity">
+		select d.kilometre_num,d.BELONGED_ROAD_ID,d.direction,d.pk_id pk_id ,d.fk_dept_id,d.create_person,d.create_time,d.enable_date,d.validity_date,d.contacts_person,d.contacts_num,d.remarks,d.xzqh
+,d.fk_device_type,d.device_name,d.device_num,p.spacing,p.speed_limit_big_car,p.speed_limit_small_car,wm_concat(v.RELEVANCE_DEVICE_ID) relevance_device_id from   JCSJ_DEVICE d  join JCSJ_INTERVAL_VELOCITY_PARAM p on d.pk_id=p.device_id and d.fk_device_type='QJCS'  join JCSJ_DEVICE_INTERVAL_VELOCITY v
+on v.device_id=d.pk_id  GROUP BY d.pk_id,d.fk_dept_id,d.create_person,d.create_time,d.enable_date,d.validity_date,d.contacts_person,d.contacts_num,d.remarks,d.xzqh
+,d.fk_device_type,d.device_name,d.device_num,p.spacing,p.speed_limit_big_car,p.speed_limit_small_car,d.direction,d.BELONGED_ROAD_ID,d.kilometre_num
+HAVING  d.pk_id=#{pk_id}
+  </select>
+  
+  
+   <select id="queryDeviceList"  parameterType="java.util.HashMap"  resultType="com.cist.devRegister.model.DeviceList">
+   select pk_id,device_name,device_num,road_name,device_type_name,dept_name,validity_date from VM_DEVICE   v
+    where v.device_type_name = '区间测速'
+     <if test="deptId !=null and deptId !='' "> and  v.fk_dept_id=#{deptId}</if>
+      <if test="create_time_start !=null and create_time_start !='' ">and  v.enable_date &gt;= to_date(#{ create_time_start},'yyyy-mm-dd HH24:mi:ss')
+      and v.enable_date &lt;= to_date(#{ create_time_end},'yyyy-mm-dd HH24:mi:ss')
+  </if> 
+   <if test="devName !=null and devName !='' ">and  v.device_name like '%'||#{devName}||'%'</if> 
+      <if test="belonged_road_id !=null and belonged_road_id !='' ">and  v.belonged_road_id=#{belonged_road_id}</if> 
+      <if test="kilometre_num !=null and kilometre_num !='' ">and  v.kilometre_num=#{kilometre_num}</if>
+   </select>
+	
+	<select id="getCheckKKDevice" parameterType="java.util.HashMap" resultType="com.cist.devRegister.model.Device" >
+	select * from jcsj_device d where d.pk_id in 
+	<foreach collection="list" index="index" item="device_id" open="(" close=")" separator=",">
+	#{device_id}
+	 </foreach>
+	</select>
+</mapper>
+	

@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cist.dataquery.mapper.DataQueryMapper">
+	
+	<select id="selectDataById" resultType="com.cist.offsite.invalidtrial.model.TblOffeEvdiInfo"
+		parameterType="java.util.HashMap">
+		select * from OEUSER.TBL_OFFE_EVDI where WFPK = #{wfpk,jdbcType=DECIMAL}
+	</select>
+	
+	
+	<select id="selectPolice" resultType="com.cist.dataquery.model.Syspoliceinfo" >
+		select SYPI_NAME from sys_police_info WHERE SYPI_PK = #{SYPI_PK}
+	</select>
+	
+	
+	<select id="findData" resultType="com.cist.dataquery.model.Oeuser"
+		parameterType="java.util.HashMap">
+		select * from Oeuser.TBL_OFFE_EVDI t
+		<where>
+			<if test="hphm!=null and hphm!=''">
+				lower(t.hphm) like lower('%'||#{hphm}||'%')
+
+			</if>
+			<if test="hpzl!=null and hpzl!='' and hpzl!='null'">
+				and t.HPZL =#{hpzl}
+			</if>
+			<if test="wfdd!=null and wfdd!=''">
+				and t.WFDD like '%'||#{wfdd}||'%'
+			</if>
+			<if test="wfxw!=null and wfxw!='' and wfxw!='null'">
+				and t.WFXW =#{wfxw}
+			</if>
+			<if test="wfkssj!=null and wfkssj!='' and wfkssj!='null'">
+		    <![CDATA[ and t.WFKSSJ >=to_date(#{wfkssj},'yyyy-mm-dd HH24:mi:ss')]]>
+			</if>
+			<if test="wfjssj!=null and wfjssj!=''and wfjssj!='null'">
+		    <![CDATA[and t.WFJSSJ <= to_date(#{wfjssj},'yyyy-mm-dd HH24:mi:ss') ]]>
+			</if>
+			<if test="sbbh!=null and sbbh!=''">
+				and t.sbbh in
+				<foreach item="w" collection="sbbh" open="(" separator=","
+					close=")">
+					#{w}
+				</foreach>
+			</if>
+			<if test="shbz!=null and shbz!=''">
+				and t.SHBZ =#{shbz}
+			</if>
+			and t.SHBZ in(0,1,2,3,4,7,8,11)
+		</where>
+		order by t.wfsj desc
+	</select>
+	
+	
+	<select id="selectAll" resultType="com.cist.dataquery.model.Excels"
+		parameterType="java.util.HashMap">
+		select * from Oeuser.TBL_OFFE_EVDI
+		<where>
+			rownum &lt; 101
+			<if test="hphm!=null and hphm!=''">
+				and lower(hphm) like lower('%'||#{hphm}||'%')
+				<!-- HPHM like '%'||#{hphm}||'%' -->
+			</if>
+			<if test="hpzl!=null and hpzl!='' and hpzl!='null'">
+				and HPZL =#{hpzl}
+			</if>
+			<if test="wfdd!=null and wfdd!=''">
+				and WFDD like '%'||#{wfdd}||'%'
+			</if>
+			<if test="wfxw!=null and wfxw!='' and wfxw!='null'">
+				and WFXW =#{wfxw}
+			</if>
+			<if test="wfkssj!=null and wfkssj!='' and wfkssj!='null'">
+		   <![CDATA[ and WFKSSJ >=to_date(#{wfkssj},'yyyy-mm-dd HH24:mi:ss')]]>
+			</if>
+			<if test="wfjssj!=null and wfjssj!='' and wfjssj!='null'">
+		    <![CDATA[and WFJSSJ <= to_date(#{wfjssj},'yyyy-mm-dd HH24:mi:ss') ]]>
+			</if>
+			<if test="sbbh!=null and sbbh!=''">
+				and SBBH =#{sbbh}
+			</if>
+			<if test="shbz!=null and shbz!=''">
+				and SHBZ =#{shbz}
+			</if>
+			and SHBZ in(0,1,2,3,4,7,8,11)
+		</where>
+		order by wfsj desc
+
+	</select>
+
+	<select id="selectwf" resultType="com.cist.dataquery.model.Tbl_offe_cate"
+		parameterType="java.util.HashMap">
+		select *from Tbl_offe_cate where tboc_code=#{tboc_code}
+
+	</select>
+	
+	
+	<select id="selectDanwei" resultType="com.cist.dataquery.model.SYS_depart_info"
+		parameterType="java.util.HashMap">
+		select dept_code,dept_name from sys_depart_info s where
+		s.dept_code=#{dept_code}
+	</select>
+	
+	
+	<select id="selectSbbhName" resultType="com.cist.dataquery.model.Device"
+		parameterType="java.util.HashMap">
+		select device_name from jcsj_device v where v.device_num=#{device_num}
+	</select>
+
+
+	<select id="selectHpzl" resultType="com.cist.redinfo.model.Sys_frm_code">
+		select fc_code,fc_name from sys_frm_code where fct_code='C001'
+
+	</select>
+
+
+
+	<select id="selectLog" resultType="com.cist.dataquery.model.Tbl_Log"
+		parameterType="java.util.HashMap">
+		select * from tbl_offe_opt_log where tool_wfxh=#{wfxh}
+	</select>
+	
+	
+</mapper>

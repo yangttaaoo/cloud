@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper
+	namespace="com.cist.roadsection.mapper.RoadSectionMapper">
+	
+	<!-- 行政区划名称查询-->
+<select id="selectKreis" resultType="com.cist.roadsection.model.CKreisCode">
+		select *  from C_KREIS_CODE
+		<where>
+		<if test=" tbek_code !=null and tbek_code !=''">
+		TBEK_CODE =#{tbek_code}
+		</if>
+		</where>
+	</select>
+	<!-- 查询路肩类型-->
+<select id="selectLjlx" resultType="com.cist.roadsection.model.Sys_frm_code">
+		 select * from SYS_FRM_CODE
+    where
+    FCT_CODE='R008'
+		<if test=" dept_code !=null and dept_code !=''">
+		and  FC_CODE=#{roim_ljlx}
+		</if>
+	</select>
+	<!-- 管理部门名称查询-->
+<select id="selectDept" resultType="com.cist.roadsection.model.SysDepartInfo">
+		 select DEPT_NAME,DEPT_CODE  from SYS_DEPART_INFO 
+		<where>
+		<if test=" dept_code !=null and dept_code !=''">
+		 DEPT_CODE=#{dept_code}
+		</if>
+		</where>
+	</select>
+	<!-- 行政区划下级-->
+<select id="kreisList" resultType="com.cist.roadsection.model.CKreisCode">
+		select *  from C_KREIS_CODE
+		<where>
+		<if test=" _parameter !=null and _parameter !=''">
+		TBEK_PARENT =#{_parameter}
+		</if>
+		</where>
+	</select>
+<!-- 顶级行政区划 或上级行政区划-->
+<select id="kreis" resultType="com.cist.roadsection.model.CKreisCode">
+		select *  from C_KREIS_CODE
+		<where>
+		<if test=" tbek_parent==null">
+		TBEK_PARENT is NULL
+		</if>
+		<if test=" tbek_parent !=null and tbek_parent !=''">
+		TBEK_PARENT =#{tbek_parent}
+		</if>
+		</where>
+	</select>
+	   <select id="selectSysFrmCode" resultType="com.cist.roadsection.model.Sys_frm_code" parameterType="java.lang.String">
+    select * from SYS_FRM_CODE
+    where
+    FCT_CODE=#{fct_code}
+  </select>
+	 <select id="list" resultType="com.cist.roadsection.model.CRoadItemInfo" parameterType="java.util.HashMap" >
+    select *
+    from VW_C_ROAD_ITEM t
+    <where>
+	<if test="roim_code !=null and roim_code !='' and roim_code !='null'">
+		and roim_code like '%'||#{roim_code}||'%'
+	</if>
+	<if test="roim_name !=null and roim_name !='' and roim_name !='null'">
+     and roim_name like '%'||#{roim_name}||'%'
+	</if> 
+	<if test="dept_code !=null and dept_code !='' ">
+     and dept_code =#{dept_code}
+	</if> 
+	
+    </where>
+     order by t.ROIM_PK desc
+  </select>
+	<select id="depart_infolist" resultType="com.cist.roadsection.model.DeptInfo"
+		parameterType="java.lang.Integer">
+		select t.dept_pk,t.dept_code,t.dept_name as name,t.DEPT_SUPERIOR from
+		sys_depart_info t
+		<where>
+			<if test="_parameter  == null or _parameter  == ''">
+				t.DEPT_SUPERIOR is null
+			</if>
+			<if test="_parameter  != null and _parameter  != ''">
+				t.DEPT_SUPERIOR=#{_parameter}
+			</if>
+		</where>
+	</select>
+   
+    <delete id="delete" parameterType="java.util.HashMap" >
+    delete from C_ROAD_ITEM
+    where ROIM_PK in
+		<foreach item="items" collection="roim_pk" open="(" separator="," close=")">
+            #{items}
+        </foreach>
+  </delete>
+  
+  <!--  保存道路信息-->
+	<insert id="save"  parameterType="java.util.Map">
+
+	insert into C_ROAD_ITEM
+ (
+		roim_pk,
+		dept_code,
+		tbek_code,
+		roim_type,
+		roim_code,
+		roim_name,
+			roim_ldlx,
+			roim_qsmc,
+			roim_jsmc,
+			roim_lc,
+			roim_qs,
+			roim_js,
+			roim_xqlc,
+			roim_lmlx,
+			roim_lmjg,
+			roim_cds,
+			roim_tcrq,
+			roim_lflc,
+			roim_sjss,
+			roim_lykd,
+			roim_ljlx,
+			roim_lkpddj,
+			roim_pic
+		)
+		VALUES (
+			SEQ_C_ROAD_ITEM_ROIM_PK.NEXTVAL,
+			#{dept_code,jdbcType=VARCHAR},
+			#{tbek_code,jdbcType=VARCHAR},
+			#{roim_type,jdbcType=VARCHAR},
+			#{roim_code,jdbcType=VARCHAR},
+			#{roim_name,jdbcType=VARCHAR},
+			#{roim_ldlx,jdbcType=VARCHAR},
+			#{roim_qsmc,jdbcType=VARCHAR},
+			#{roim_jsmc,jdbcType=VARCHAR},
+			#{roim_lc,jdbcType=VARCHAR},
+			#{roim_qs,jdbcType=VARCHAR},
+			#{roim_js,jdbcType=VARCHAR},
+			#{roim_xqlc,jdbcType=VARCHAR},
+			#{roim_lmlx,jdbcType=VARCHAR},
+			#{roim_lmjg,jdbcType=VARCHAR},
+			#{roim_cds,jdbcType=VARCHAR},
+			#{roim_tcrq,jdbcType=VARCHAR},
+			#{roim_lflc,jdbcType=VARCHAR},
+			#{roim_sjss,jdbcType=VARCHAR},
+			#{roim_lykd,jdbcType=VARCHAR},
+			#{roim_ljlx,jdbcType=VARCHAR},
+			#{roim_lkpddj,jdbcType=VARCHAR},
+			#{roim_pic,jdbcType=VARCHAR}
+	      )
+	</insert>
+	 <!--  更新道路基本信息-->
+	<update id="update"  parameterType="java.util.Map">
+
+	update  C_ROAD_ITEM 
+	SET
+		dept_code=#{dept_code,jdbcType=VARCHAR},
+		tbek_code=#{tbek_code,jdbcType=VARCHAR},
+		roim_type=#{roim_type,jdbcType=VARCHAR},
+		roim_code=#{roim_code,jdbcType=VARCHAR},
+		roim_name=#{roim_name,jdbcType=VARCHAR},
+			roim_ldlx=#{roim_ldlx,jdbcType=VARCHAR},
+			roim_qsmc=#{roim_qsmc,jdbcType=VARCHAR},
+			roim_jsmc=#{roim_jsmc,jdbcType=VARCHAR},
+			roim_lc=#{roim_lc,jdbcType=VARCHAR},
+			roim_qs=#{roim_qs,jdbcType=VARCHAR},
+			roim_js=#{roim_js,jdbcType=VARCHAR},
+			roim_xqlc=#{roim_xqlc,jdbcType=VARCHAR},
+			roim_lmlx=#{roim_lmlx,jdbcType=VARCHAR},
+			roim_lmjg=#{roim_lmjg,jdbcType=VARCHAR},
+			roim_cds=#{roim_cds,jdbcType=VARCHAR},
+			roim_tcrq=#{roim_tcrq,jdbcType=VARCHAR},
+			roim_lflc=#{roim_lflc,jdbcType=VARCHAR},
+			roim_sjss=#{roim_sjss,jdbcType=VARCHAR},
+			roim_lykd=#{roim_lykd,jdbcType=VARCHAR},
+		<if test="roim_pic!=null and roim_pic!=''">
+		    roim_pic=#{roim_pic,jdbcType=VARCHAR},
+		 </if>
+			roim_ljlx=#{roim_ljlx,jdbcType=VARCHAR},
+			
+			roim_lkpddj=#{roim_lkpddj,jdbcType=VARCHAR}
+			
+        where  roim_pk=#{roim_pk}
+	</update>
+	 <select id="getroimcode" resultType="int" parameterType="java.util.Map">
+	   select count(*) from C_ROAD_ITEM t WHERE t.ROIM_CODE=#{roim_code}
+	   	<if test="yuanroim_code!=null and yuanroim_code!=''">
+		   and t.ROIM_CODE!=#{yuanroim_code}
+		 </if>
+	    
+	</select>
+	</mapper>
+	

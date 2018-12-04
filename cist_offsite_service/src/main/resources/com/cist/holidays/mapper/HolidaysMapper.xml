@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cist.holidays.mapper.HolidaysMapper">
+	<select id="queryList"
+		resultType="com.cist.holidays.model.Holidays"
+		parameterType="java.util.HashMap">
+
+		SELECT * FROM sys_holiday_info where 1=1
+		<if
+			test="year !=null and year !='' and  year != 'null'">
+			AND syhi_holiday LIKE '%'||#{year}||'%'
+		</if>
+	</select>
+	<insert id="insert" parameterType="java.util.HashMap">
+		INSERT INTO
+		sys_holiday_info(syhi_pk,syhi_name
+		<if test="syhi_desc !='' and syhi_desc !=null">,syhi_desc</if>
+		,syhi_holiday,syhi_stime,syhi_etime
+		<if test="syhi_work_day !='' and syhi_work_day !=null">,syhi_work_day</if>
+		)
+			VALUES(sys_holiday_info_pk.nextval,#{syhi_name}
+		<if test="syhi_desc !='' and syhi_desc !=null">,#{syhi_desc}</if>
+		,#{syhi_holiday},to_date(#{syhi_stime},'yyyy-mm-dd HH24:mi:ss'),to_date(#{syhi_etime},'yyyy-mm-dd HH24:mi:ss')
+		<if test="syhi_work_day !='' and syhi_work_day !=null">,#{syhi_work_day}</if>)
+	</insert>
+	<update id="update" parameterType="java.util.HashMap">
+		UPDATE sys_holiday_info SET syhi_name=#{syhi_name}
+		<if test="syhi_desc !='' and syhi_desc !=null">,syhi_desc=#{syhi_desc}</if>
+		,syhi_holiday=#{syhi_holiday},syhi_stime=to_date(#{syhi_stime},'yyyy-mm-dd HH24:mi:ss')
+		,syhi_etime=to_date(#{syhi_etime},'yyyy-mm-dd HH24:mi:ss')
+		<if test="syhi_work_day !='' and syhi_work_day !=null">,syhi_work_day=#{syhi_work_day}</if>
+
+		WHERE syhi_pk=#{syhi_pk}
+	</update>
+	<delete id="delete" parameterType="java.util.List">
+		DELETE FROM sys_holiday_info  WHERE syhi_pk IN 
+		<foreach collection="list" index="index" close=")" open="(" separator="," item="id">
+		#{id}
+		</foreach>
+	</delete>
+</mapper>

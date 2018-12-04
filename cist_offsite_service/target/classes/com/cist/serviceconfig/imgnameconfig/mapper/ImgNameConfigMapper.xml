@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cist.serviceconfig.imgnameconfig.mapper.ImgNameConfigMapper">
+	<!-- 条件查询违法图片文件名配置-->
+	<select id="list" parameterType="java.util.HashMap"
+	resultType="com.cist.serviceconfig.imgnameconfig.model.TblOffeImgExp">
+		select * from TBL_OFFE_IMG_EXP 
+		<where>
+		<if test="tbie_name !=null and tbie_name !='' and tbie_name !='null'">
+	      and tbie_name like '%'||#{tbie_name}||'%'
+	     </if>
+	     <if test="tbie_type !=null and tbie_type !=''">
+	      and tbie_type =#{tbie_type}
+	     </if>
+		</where>
+	</select>
+	<!-- 批量删除图片文件名配置 -->
+	<delete id="delete" parameterType="java.util.HashMap">
+		delete FROM TBL_OFFE_IMG_EXP 
+		WHERE 
+		tbie_pk in
+		<foreach item="items" collection="tbie_pk" open="(" separator="," close=")">
+            #{items}
+        </foreach>
+	</delete> 
+	
+	<!-- 查询设备类型下拉框的值-->
+	<select id="selectSblx" parameterType="java.util.HashMap"
+	resultType="com.cist.serviceconfig.imgnameconfig.model.Sys_frm_code">
+		select * from SYS_FRM_CODE
+		<where>
+		<if test="sblx !=null and sblx !='' and sblx!='null'">
+	      and fc_code =#{sblx}
+	     </if>
+	     <if test="sbname !=null and sbname!='' and sbname!='null' ">
+	      and SBNAME =#{sbname}
+	     </if>
+	     and FCT_CODE='W001'
+		</where>
+	</select>
+	<!-- 查询可选项的下拉框值-->
+	<select id="selectKxx" parameterType="java.util.HashMap"
+	resultType="com.cist.serviceconfig.imgnameconfig.model.Sys_frm_code">
+		select * from SYS_FRM_CODE
+		where FCT_CODE='P001'
+	</select>
+	<!-- 查询所有设备类型下拉框的值-->
+	<select id="selectSblxList" parameterType="java.util.HashMap"
+	resultType="com.cist.serviceconfig.imgnameconfig.model.Sys_frm_code">
+		select * from SYS_FRM_CODE
+		where FCT_CODE='W001'
+	</select>
+	<!-- 条件查询违法图片文件名配置-->
+	<select id="selectDeptName" parameterType="java.util.HashMap"
+	resultType="com.cist.offsite.invalidtrial.model.SysDepartInfo">
+		select dept_name as deptName from SYS_DEPART_INFO 
+		<where>
+	     <if test="cjbm !=null and cjbm !='' and cjbm !='null'">
+	      and dept_pk =#{cjbm}
+	     </if>
+		</where>
+	</select>
+	<!--更新模板  -->
+	 <update id="update" parameterType="java.util.HashMap">
+    update TBL_OFFE_IMG_EXP
+    <set>
+      <if test="tbie_name != null and tbie_name !='' ">
+        tbie_name = #{tbie_name},
+      </if>
+      <if test="tbie_type != null and tbie_type != 'null' ">
+        tbie_type = #{tbie_type},
+      </if>
+      <if test="tbie_split != null and tbie_split !='' ">
+        tbie_split = #{tbie_split},
+      </if>
+      <if test="tbie_format != null and tbie_format !='' ">
+        tbie_format = #{tbie_format},
+      </if>
+      <if test="tbie_example != null and tbie_example !='' ">
+        tbie_example = #{tbie_example},
+      </if>
+      <if test="tbie_content != null and tbie_content !='' ">
+        tbie_content = #{tbie_content},
+      </if>
+      <if test="tbie_desc != null and tbie_desc !='' ">
+        tbie_desc = #{tbie_desc},
+      </if>
+    </set>
+    where tbie_pk = #{tbie_pk}
+  </update>
+  <!--删除 -->
+  <delete id="deleteByMbpk" parameterType="java.util.HashMap">
+    delete from TBL_OFFE_IMG_EXP
+    where tbie_pk = #{tbie_pk}
+  </delete>
+	<!-- 保存模板 -->
+	<insert id="save" parameterType="java.util.HashMap" >
+	insert into TBL_OFFE_IMG_EXP (
+	tbie_pk
+	 <if test="tbie_name != null and tbie_name !=''">
+        ,tbie_name
+      </if>
+      <if test="tbie_type != null and tbie_type !=''">
+        ,tbie_type
+      </if>
+      <if test="tbie_split != null and tbie_split !=''">
+        ,tbie_split
+      </if>
+      <if test="tbie_format != null and tbie_format !=''">
+        ,tbie_format
+      </if>
+      <if test="tbie_example != null and tbie_example !=''">
+        ,tbie_example
+      </if>
+      <if test="tbie_content != null and tbie_content !=''">
+        ,tbie_content
+      </if>
+      <if test="tbie_desc != null and tbie_desc !=''">
+        ,tbie_desc
+      </if>
+      )
+      values(
+      SEQ_IMGNAME_PK.NEXTVAL
+      <if test="tbie_name != null and tbie_name !=''">
+        ,#{tbie_name}
+      </if>
+      <if test="tbie_type != null and tbie_type !=''">
+        ,#{tbie_type}
+      </if>
+      <if test="tbie_split != null and tbie_split !=''">
+        ,#{tbie_split}
+      </if>
+      <if test="tbie_format != null and tbie_format !=''">
+        ,#{tbie_format}
+      </if>
+      <if test="tbie_example != null and tbie_example !=''">
+        ,#{tbie_example}
+      </if>
+      <if test="tbie_content != null and tbie_content !=''">
+        ,#{tbie_content}
+      </if>
+      <if test="tbie_desc != null and tbie_desc !=''">
+        ,#{tbie_desc}
+      </if>
+      )
+  </insert>
+</mapper>

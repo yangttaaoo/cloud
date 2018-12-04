@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cist.speedillegal.mapper.SpeedIllegalmapper">
+	
+	<!-- 查询所有超速违法代码 -->
+	<select id="queryspeed"
+	resultType="com.cist.speedillegal.model.TBL_OFFE_SPEED_INFO">
+		select * from TBL_OFFE_SPEED_INFO order by pk
+	</select>
+	<update id="updatespeed" parameterType="java.util.HashMap">
+	  	UPDATE TBL_OFFE_SPEED_INFO 
+		SET tbsi_wfdm=
+		<foreach collection="speedillegal" item="item" index="index" 
+        separator=" " open="case pk" close="end">
+        when #{item.pk} then #{item.tbsi_wfdm}
+    </foreach>
+		
+	</update>
+</mapper>

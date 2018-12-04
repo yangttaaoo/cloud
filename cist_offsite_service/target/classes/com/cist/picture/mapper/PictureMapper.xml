@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cist.picture.mapper.PictureMapper" >
+
+   <select id="querylistpageList" resultType="com.cist.picture.model.Tbl_offe_evdi" parameterType="java.util.HashMap">
+   select * from oeuser.tbl_offe_evdi t
+   <where>
+          t.SHBZ=0
+           <if test="hphm!=null and hphm!=''">
+		     and t.hphm like '%'||#{hphm}||'%'
+		   </if>
+		   <if test="hpzl!=null and hpzl!=''">
+		     and t.hpzl=#{hpzl}
+		   </if>
+		    <if test="wfxw!=null and wfxw!=''">
+		     and t.wfxw=#{wfxw}
+		   </if>
+           <if test="wfkssj != null and wfkssj != '' and wfjssj != null and wfjssj != ''">
+		     and t.wfsj BETWEEN 
+		     to_date(#{wfkssj},'yyyy-mm-dd hh24:mi:ss') and to_date(#{wfjssj},'yyyy-mm-dd hh24:mi:ss')
+		   </if>
+		   	<if test="sbbh!=null and sbbh!=''">
+		     and t.sbbh in
+			    <foreach item="w" collection="sbbh" open="(" separator="," close=")">
+		            #{w}
+		        </foreach>
+		   </if>
+   </where>
+   </select>
+   <select id="quantity" resultType="int">
+   select count(*) from oeuser.tbl_offe_evdi t where  t.SHBZ=0
+   </select>
+   <select id="auditnumber" resultType="int" parameterType="java.util.HashMap">
+    select count(*) from oeuser.tbl_offe_evdi t where t.shbz=0 and t.wfsj BETWEEN 
+		     to_date(#{wfkssj},'yyyy-mm-dd hh24:mi:ss') and to_date(#{wfjssj},'yyyy-mm-dd hh24:mi:ss')
+   </select>
+   <select id="getjintiri" resultType="int" parameterType="java.util.HashMap">
+select count(*) from OEUSER.TBL_OFFE_EVDI t where trunc(sysdate)=trunc(t.SXSJ) and t.shbz in (15,16)
+   </select>
+   <select id="sycivalue" resultType="int" parameterType="java.util.HashMap">
+   select t.syci_value from SYS_CONFIG t where t.syci_pk=6
+   </select>
+   <update id="updateTbloffeevdi" parameterType="java.util.HashMap">
+    update oeuser.tbl_offe_evdi t set 
+    t.SHBZ=#{radioValue},
+    t.SXR=#{SXR},
+     t.SXSJ=#{SXSJ}
+     where t.wfpk
+     in
+	    <foreach item="w" collection="wfpk" open="(" separator="," close=")">
+            #{w}
+        </foreach>
+   </update>
+   <select id="plateTypeList" resultType="com.cist.picture.model.C_plate_type">
+ select t.fc_pk as pk,T.FC_CODE code ,T.FC_NAME AS name from SYS_FRM_CODE t where t.fct_code='C001'
+   </select>
+   <select id="tblOffeCateList" resultType="com.cist.picture.model.Tbl_offe_cate">
+   select * from TBL_OFFE_CATE t
+   </select>
+      <select id="tblOffeCate" resultType="com.cist.picture.model.Tbl_offe_cate" parameterType="java.util.HashMap">
+   select * from TBL_OFFE_CATE t where t.tboc_code=#{tboc_code}
+   </select>
+   <select id="depart_infolist" resultType="com.cist.picture.model.Depart_info" parameterType="java.lang.Integer">
+select t.dept_pk,t.dept_code,t.dept_name as name,t.DEPT_SUPERIOR from sys_depart_info t 
+<where>
+		  <if test="_parameter  == null or _parameter  == ''">
+		     t.DEPT_SUPERIOR is null
+		   </if>
+		     <if test="_parameter  != null and _parameter  != ''">
+		     t.DEPT_SUPERIOR=#{_parameter}
+		   </if>
+</where>
+   </select>
+   <select id="Monitorpoint" resultType="com.cist.picture.model.Depart_info" parameterType="string">
+   select t.tbmp_id as dept_code,t.tbmp_dept_code,t.tbmp_azdz as name,t.tbmp_azdz from c_monitor_point t  where t.tbmp_dept_code=#{_parameter}
+   </select>
+   <select id="acquisition" resultType="com.cist.picture.model.Depart_info" parameterType="string">
+   select t.tbei_code as tbmp_azdz,t.tbec_dept_id,t.tbei_name as name from vw_dev_info t where t.tbec_dept_id=#{_parameter}
+   </select>
+ 	<resultMap type="com.cist.picture.model.MenuDetails" id="resultMenuDetails">
+		<id property="FUN_ID" column="SYMI_PK"/>
+		<result property="FUN_CODE" column="SYMI_CODE"/>
+		<result property="FUN_NAME" column="SYMI_NAME"/>
+		<result property="FUN_URL" column="SYMI_URL"/>
+		<result property="FUN_PIC_URL" column="SYMI_PIC_URL"/>
+		<result property="FUN_TUG" column="SYMI_TUG"/>
+		<result property="FUN_PARENT" column="SYMI_PARENT"/>
+		<result property="FUN_TYPE" column="SYMI_TYPE"/>
+	</resultMap>
+   <!-- 查询用户菜单及功能权限 -->
+	<select id="queryAccountAuthorityForList" parameterType="int" resultMap="resultMenuDetails">
+		select SYMI_PK,SYMI_CODE,SYMI_NAME,SYMI_URL,SYMI_PIC_URL,SYMI_TUG,SYMI_PARENT,SYMI_TYPE,SYMI_STATUS from cistsys.SYS_MODULE_INFO
+	   		where SYMI_PK in (
+	          select symi_pk from sys_user_authority where sypi_pk= #{police_code}
+	          union 
+	          select symi_pk from sys_role_auth where syri_pk in(select syri_pk from sys_user_role where sypi_pk = #{police_code})
+	    ) AND SYMI_STATUS = 1
+	</select>
+	<select id="clickdepartinfo" resultType="com.cist.picture.model.Depart_info" parameterType="string">
+	select t.ROIM_CODE as tbec_kkbh ,t.roim_name as tbei_name from C_ROAD_ITEM t where t.dept_code in (select t.dept_code from SYS_DEPART_INFO t where t.dept_pk=#{dept_pk})
+	</select>
+	<select id="kakou" resultType="com.cist.picture.model.Depart_info" parameterType="java.util.HashMap">
+	    select t.DEVICE_NUM as Tbec_kkbh,t.DEVICE_NAME as tbei_name from JCSJ_DEVICE t 
+	    <where>
+	    <![CDATA[ 
+	     t.belonged_road_id=#{tbec_kkbh} and t.validity_date >= sysdate and t.road_name is not null ]]>
+	      <if test="tbvg_btype  != null and tbvg_btype  != ''"> 
+	     and t.pk_id in(
+	     select c.dvc_pk from TBL_AUDITOR_VIO c where c.tbvg_pk in (
+select t.tbvg_pk from  TBL_VERIFY_GROUP t where t.sypi_pk=#{sypi_pk} and t.tbvg_btype=#{tbvg_btype}
+		 
+
+)
+	     )
+	     </if>
+	     </where>
+	</select>
+	<select id="yijicdepartinfo" resultType="com.cist.picture.model.Depart_info" parameterType="java.util.HashMap">
+		         select t.ROIM_CODE as tbec_kkbh ,t.roim_name as tbei_name from C_ROAD_ITEM t where t.roim_code in (
+select t.belonged_road_id from JCSJ_DEVICE t where t.device_num in
+<foreach item="w" collection="dept_pk" open="(" separator="," close=")">
+		            #{w}
+		        </foreach>
+group by t.belonged_road_id
+ )
+	</select>
+		<select id="kakouxiabu" resultType="com.cist.picture.model.Depart_info" parameterType="java.util.HashMap">
+	      select t.DEVICE_NUM as Tbec_kkbh,t.DEVICE_NAME as tbei_name from JCSJ_DEVICE t where 
+	      t.belonged_road_id=#{tbec_kkbh} and
+	      t.DEVICE_NUM in
+	      <foreach item="w" collection="dept_pk" open="(" separator="," close=")">
+		            #{w}
+		        </foreach>
+	</select>
+	
+</mapper>
