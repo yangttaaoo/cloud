@@ -1,0 +1,42 @@
+package com.cist.home.service;
+
+import java.util.HashMap;
+import java.util.List;
+
+import com.cist.home.model.DeviceInfo;
+import com.cist.home.model.EventFlowInfo;
+import com.cist.home.model.EventInfo;
+import com.cist.home.model.GpsRecord;
+import com.cist.home.model.Jcsj_police_res_person;
+import com.cist.home.model.Jcsj_police_resources;
+import com.cist.home.model.Tbl_car_reco;
+import com.cist.home.model.Zhdd_event_acceptance;
+import com.cist.home.model.Zhdd_event_personnel;
+import com.cist.home.model.Zhdd_event_result;
+import com.cist.home.model.Zhdd_sms_template;
+import com.cist.home.model.Zhdd_work_flow;
+
+public interface HomeService {
+	List<DeviceInfo> DeviceList();
+	List<EventInfo> EventList(HashMap<String, Object> map);
+	Jcsj_police_res_person PoliceList(HashMap<String, Object> map);
+	List<EventInfo> EventPoliceList(HashMap<String, Object> map);
+	EventInfo EventFlowList(HashMap<String, Object> map);
+	List<EventFlowInfo> EventResultList(HashMap<String, Object> map);
+	List<GpsRecord> gpsRecordList(HashMap<String, Object> map);
+	public Integer addzhddeventacceptance(HashMap<String, Object> map);
+	public Integer updatezhddeventinformation(HashMap<String, Object> map);
+	public List<Jcsj_police_res_person> jcsj_police_res_personpageliist(HashMap<String, Object> map);
+	public List<Zhdd_work_flow> zhdd_work_flow(HashMap<String, Object> map);
+	public List<Zhdd_sms_template> zhdd_sms_template(HashMap<String, Object> map);
+	public Integer addzhddeventdispatch(HashMap<String, Object> map);
+	public Integer addzhdd_event_personnel(List<Zhdd_event_personnel> policList);
+	public Integer updatezhddeventinf(HashMap<String, Object> map);
+	public Zhdd_event_acceptance shhoulixishij(HashMap<String, Object> map);
+	public List<Zhdd_event_acceptance> shhoulixi(HashMap<String, Object> map);
+	public Zhdd_event_result eventresult(HashMap<String, Object> map);
+	public Jcsj_police_resources jcsjpolice_resperson(HashMap<String, Object> map);
+	public Jcsj_police_res_person Jcsjpoliceresperson(HashMap<String, Object> map);
+	public Tbl_car_reco tbl_car_reco(HashMap<String, Object> map);
+	public List<EventFlowInfo> eventflowinfolist(HashMap<String, Object> map);
+}

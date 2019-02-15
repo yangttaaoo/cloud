@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cist.alarm.config.mapper.ConfigMapper">
+	<select id="selectData">
+		select * from JTYW_ALARM_THRESHOLD
+	</select>
+	<insert id="addData" parameterType="java.util.HashMap">
+		insert into JTYW_ALARM_THRESHOLD (pk_id,temperature,voltage,broken_net,power_off) 
+		values( 
+		cistsys.SEQ_JTYW_ALARM_THRESHOLD.nextval,
+		#{temper},
+		#{voltage},
+		#{net},
+		#{power}
+		) 
+	</insert>
+</mapper>

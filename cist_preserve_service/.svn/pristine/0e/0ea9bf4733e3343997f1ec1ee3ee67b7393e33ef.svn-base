@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cist.wobacklog.mapper.WoBacklogMapper">
+
+	<!--查询待办工单操作日志 -->
+	<select id="selectLog" resultType="com.cist.wobacklog.model.VwJtywLog" parameterType="java.util.HashMap">
+		select * from VW_JTYW_LOG 
+		<where>
+		<if test="fk_job_num != null and fk_job_num !='' ">
+		FK_JOB_NUM=#{fk_job_num}
+		</if>
+		</where>
+		order by fk_job_status asc
+	</select>
+	<!--查询待办工单故障设备信息 -->
+	<select id="selectDev" resultType="com.cist.wobacklog.model.JtywJobProcess" parameterType="java.util.HashMap">
+		select * from VW_JTYW_JOB_DEV where
+		job_num=#{fk_job_num}
+	</select>
+	<!--查询待办工单 -->
+	<select id="list" resultType="com.cist.wobacklog.model.VwJtywDbgd" parameterType="java.util.HashMap">
+		select * from VW_JTYW_DBGD t 
+		<where>
+		<if test="job_status != null and job_status !=''">
+		job_status=#{job_status}
+		</if>
+		<if test="job_status==1 ">
+		or job_status=0
+		</if>
+		<if test="search !=null and search!='' and search!='null'">
+		and  job_name like '%'||#{search}||'%'
+		</if>
+		</where>
+	</select>
+	<!--查询我的待办工单 ，和本周待办工单-->
+	<select id="selectCount" resultType="com.cist.wobacklog.model.VwJtywDbgd" parameterType="java.util.HashMap">
+		select sum(case when JOB_STATUS ='2' then 1 else 0 end) allCount,
+		 sum(case when JOB_STATUS ='3' and <![CDATA[COMPLETE_TIME >= to_date(#{weekStart},'yyyy-mm-dd HH24:mi:ss') and  COMPLETE_TIME <= to_date(#{weekEnd},'yyyy-mm-dd HH24:mi:ss')]]> then 1 else 0 end) weekCount 
+		 from VW_JTYW_DBGD t
+	</select>
+	<!--查询本周完成工单的平均分钟数-->
+	<select id="selectAvg" resultType="com.cist.wobacklog.model.VwJtywDbgd"
+		parameterType="java.util.HashMap">
+		select  case when avg((to_date(to_char(DISTRIBUTION_TIME,'yyyy-mm-dd
+    hh24:mi:ss'),'yyyy-mm-dd
+    hh24:mi:ss')-to_date(to_char(receive_time,'yyyy-mm-dd
+    hh24:mi:ss'),'yyyy-mm-dd hh24:mi:ss'))*24*60)is null then 0 else avg((to_date(to_char(DISTRIBUTION_TIME,'yyyy-mm-dd
+    hh24:mi:ss'),'yyyy-mm-dd
+    hh24:mi:ss')-to_date(to_char(receive_time,'yyyy-mm-dd
+    hh24:mi:ss'),'yyyy-mm-dd hh24:mi:ss'))*24*60)end avg
+		FROM VW_JTYW_DBGD t
+		<where>
+<![CDATA[and  COMPLETE_TIME >= to_date(#{weekStart},'yyyy-mm-dd HH24:mi:ss') 
+		and  COMPLETE_TIME <= to_date(#{weekEnd},'yyyy-mm-dd HH24:mi:ss')]]>
+		</where>
+	</select>
+	<!--将工单在工单表中设为已完成-->
+	<update id="updatePercent">
+	update JTYW_JOB_ORDER
+	<set>
+	complete_percentage=#{complete_percentage}
+	<if test="complete_percentage=='100' ">
+	,job_status='3'
+	</if>
+	</set>
+	<where>
+	and pk_id=#{pk_id}
+	</where>
+	</update>
+	<!--工单流程操作 -->
+	<insert id="insertPercent">
+	insert into  JTYW_JOB_PROCESS
+	 <trim prefix="(" suffix=")" suffixOverrides="," >
+          pk_id,
+          <if test="job_num !=null and job_num !=''">
+          fk_job_num,
+          </if>   
+          <if test="fk_d_operator_id !=null and fk_d_operator_id !='' ">
+          fk_d_operator_id,
+          </if>   
+           <if test="distribution_time !=null and distribution_time !='' and distribution_time !='null'">
+          distribution_time,
+          </if> 
+           <if test="fk_r_operator_id !=null and fk_r_operator_id !='' ">
+          fk_r_operator_id,
+          </if> 
+           <if test="receive_time !=null and receive_time !='' and receive_time !='null'">
+          receive_time,
+          </if> 
+           <if test="fk_c_operator_id !=null and fk_c_operator_id !=''">
+          fk_c_operator_id,
+          </if> 
+          <if test="complete_time !=null and complete_time !=''">
+          complete_time,
+          </if> 
+          <if test="fk_job_status !=null and fk_job_status !=''">
+          fk_job_status,
+          </if> 
+      </trim>
+       <trim prefix="values (" suffix=")" suffixOverrides="," >
+      SEQ_SJGX_INTERFACE_USE_APPLY.nextval,
+         <if test="job_num !=null and job_num !='' ">
+          #{job_num},
+          </if>   
+          <if test="fk_d_operator_id !=null and fk_d_operator_id !=''">
+          #{fk_d_operator_id},
+          </if>   
+           <if test="distribution_time !=null and distribution_time !='' and distribution_time !='null'">
+          to_date(#{distribution_time},'yyyy-mm-dd hh24:mi:ss'),
+          </if> 
+           <if test="fk_r_operator_id !=null and fk_r_operator_id !='' ">
+          #{fk_r_operator_id},
+          </if> 
+           <if test="receive_time !=null and receive_time !='' and receive_time !='null'">
+           to_date(#{receive_time},'yyyy-mm-dd hh24:mi:ss'),
+          </if> 
+           <if test="fk_c_operator_id !=null and fk_c_operator_id !=''">
+          #{fk_c_operator_id},
+          </if> 
+          <if test="complete_time !=null and complete_time !=''">
+          sysdate,
+          </if> 
+          <if test="fk_job_status !=null and fk_job_status !=''">
+         #{fk_job_status},
+          </if> 
+      </trim>
+	</insert>
+	<!--工单流程操作 -->
+	<insert id="insertReceive">
+	insert into  JTYW_JOB_PROCESS
+	 <trim prefix="(" suffix=")" suffixOverrides="," >
+          pk_id,
+          <if test="job_num !=null and job_num !=''">
+          fk_job_num,
+          </if>   
+          <if test="fk_d_operator_id !=null and fk_d_operator_id !='' ">
+          fk_d_operator_id,
+          </if>   
+           <if test="distribution_time !=null and distribution_time !='' and distribution_time !='null'">
+          distribution_time,
+          </if> 
+           <if test="fk_r_operator_id !=null and fk_r_operator_id !='' ">
+          fk_r_operator_id,
+          </if> 
+           <if test="receive_time !=null and receive_time !='' and receive_time !='null'">
+          receive_time,
+          </if> 
+          <if test="fk_job_status !=null and fk_job_status !=''">
+          fk_job_status,
+          </if> 
+      </trim>
+       <trim prefix="values (" suffix=")" suffixOverrides="," >
+      SEQ_SJGX_INTERFACE_USE_APPLY.nextval,
+         <if test="job_num !=null and job_num !='' ">
+          #{job_num},
+          </if>   
+          <if test="fk_d_operator_id !=null and fk_d_operator_id !=''">
+          #{fk_d_operator_id},
+          </if>   
+           <if test="distribution_time !=null and distribution_time !='' and distribution_time !='null'">
+          to_date(#{distribution_time},'yyyy-mm-dd hh24:mi:ss'),
+          </if> 
+           <if test="fk_r_operator_id !=null and fk_r_operator_id !='' ">
+          #{fk_r_operator_id},
+          </if> 
+           <if test="receive_time !=null and receive_time !='' and receive_time !='null'">
+          sysdate,
+          </if>           
+          <if test="fk_job_status !=null and fk_job_status !=''">
+         #{fk_job_status},
+          </if> 
+      </trim>
+	</insert>
+	
+	<!--将工单在工单表中设为已接收 -->
+	<update id="update">
+	update JTYW_JOB_ORDER
+	<set>
+	job_status='2'
+	</set>
+	<where>
+	and pk_id=#{pk_id}
+	</where>
+	</update>
+	<!--更新接收任务的操作人信息及时间-->
+	<update id="updateReceive">
+	update JTYW_JOB_PROCESS
+	<set>
+	<if test="fk_r_operator_id !=null and fk_r_operator_id !=''">
+	fk_r_operator_id=#{fk_r_operator_id}
+	</if>
+	RECEIVE_TIME=sysdate
+	</set>
+	<where>
+	FK_JOB_NUM=#{fk_job_num}
+	</where>
+	</update>
+</mapper>

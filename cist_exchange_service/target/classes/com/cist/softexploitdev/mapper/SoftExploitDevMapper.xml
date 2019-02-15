@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cist.softexploitdev.mapper.SoftExploitDevMapper" >
+	<!-- 查询接口开发单位信息 -->
+	<select id="querylist" parameterType="java.util.HashMap" 
+	resultType="com.cist.visitinterface.model.SjgxDevCompany">
+		select * from SJGX_DEV_COMPANY 
+		<where>
+			<if test="dev_comp_name!=null and dev_comp_name!=''">
+				and dev_comp_name like '%'||#{dev_comp_name}||'%' 
+			</if>
+			<if test="dev_comp_contacts!=null and dev_comp_contacts!=''">
+				and dev_comp_contacts like '%'||#{dev_comp_contacts}||'%'
+			</if>
+			<if test="dev_comp_contacts_num!=null and dev_comp_contacts_num!=''">
+				and dev_comp_contacts_num like '%'||#{dev_comp_contacts_num}||'%'
+			</if>
+		</where>
+	</select>
+	<!-- 添加接口开发单位信息 -->
+	<insert id="add" parameterType="java.util.HashMap">
+		insert into SJGX_DEV_COMPANY(pk_id,fk_dept_id,dev_comp_name,dev_comp_address,dev_comp_describe,
+		dev_comp_contacts,dev_comp_contacts_num)
+		values(#{pk_id},#{fk_dept_id},#{dev_comp_name},#{dev_comp_address},#{dev_comp_describe},
+		#{dev_comp_contacts},#{dev_comp_contacts_num})
+	</insert>
+	<!-- 查询pk_id最大值 -->
+	<select id="queryid" resultType="java.lang.Integer">
+		select max(pk_id) from SJGX_DEV_COMPANY 
+	</select>
+	<!-- 更新接口开发单位 -->
+	<update id="update" parameterType="java.util.HashMap">
+		update SJGX_DEV_COMPANY
+		<trim prefix="set" suffixOverrides=",">
+			<if test="fk_dept_id!=null">fk_dept_id = #{fk_dept_id,jdbcType=INTEGER},</if>
+			<if test="dev_comp_name!=null">dev_comp_name = #{dev_comp_name,jdbcType=VARCHAR},</if>
+			<if test="dev_comp_address!=null">dev_comp_address = #{dev_comp_address,jdbcType=VARCHAR},</if>
+			<if test="dev_comp_describe!=null">dev_comp_describe = #{dev_comp_describe,jdbcType=VARCHAR},</if>
+			<if test="dev_comp_contacts!=null">dev_comp_contacts = #{dev_comp_contacts,jdbcType=VARCHAR},</if>
+			<if test="dev_comp_contacts_num!=null">dev_comp_contacts_num = #{dev_comp_contacts_num,jdbcType=VARCHAR},</if>
+		</trim>
+		where pk_id=#{pk_id}
+	</update>
+	<!-- 删除接口开发单位 -->
+	<delete id="del"  parameterType="java.util.HashMap">
+		delete from SJGX_DEV_COMPANY where pk_id in
+		<foreach item="w" collection="pk_id" open="(" separator="," close=")">
+		       #{w}
+		 </foreach>
+	</delete>
+</mapper>

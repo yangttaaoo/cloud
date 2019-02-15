@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cist.dept.mapper.DeptMapper" >
+    <select id="querylistpageList" resultType="com.cist.dept.model.Sysmoduleinfo" parameterType="java.util.HashMap">
+    select * from SYS_DEPART_INFO t
+    <where>
+     
+          <if test="deptsuperior!=null and deptsuperior!=''">
+		   and  t.dept_superior=#{deptsuperior}
+		   </if>
+		  <if test="deptcode!=null and deptcode!=''">
+		   and  t.dept_code like '%'||#{deptcode}||'%'
+		   </if>
+		    <if test="deptname!=null and deptname!=''">
+		   and  t.dept_name like '%'||#{deptname}||'%'
+		   </if>
+    </where>
+    ORDER BY t.dept_pk DESC
+    </select>
+    <select id="sysdepttype" resultType="com.cist.dept.model.Sysdepttype">
+     select* from SYS_FRM_CODE t where t.fct_code='BMJB'
+    </select>
+    <delete id="delSysmoduleinfo" parameterType="java.util.Map">
+    DELETE FROM SYS_DEPART_INFO t WHERE t.dept_pk
+    in
+			    <foreach item="w" collection="dept_pk" open="(" separator="," close=")">
+		            #{w}
+		        </foreach>
+    </delete>
+       <select id="depart_infolist" resultType="com.cist.dept.model.Depart_info" parameterType="java.lang.Integer">
+select t.dept_pk,t.dept_code,t.dept_name as name,t.DEPT_SUPERIOR from sys_depart_info t 
+<where>
+		  <if test="_parameter  == null or _parameter  == ''">
+		     t.DEPT_SUPERIOR is null
+		   </if>
+		     <if test="_parameter  != null and _parameter  != ''">
+		     t.DEPT_SUPERIOR=#{_parameter}  
+		   </if>
+</where>
+   </select>
+
+          <select id="departcho" resultType="com.cist.dept.model.Depart_info" parameterType="java.util.Map">
+select t.dept_pk,t.dept_code,t.dept_name as name,t.DEPT_SUPERIOR from sys_depart_info t 
+<where>
+		     <if test="dept_superior  != null and dept_superior  != ''">
+		   and  t.DEPT_SUPERIOR=#{dept_superior}  
+		   </if>
+		       <if test="dept_pk  != null and  dept_pk.size > 0">
+		   and  t.dept_pk in
+		    <foreach item="w" collection="dept_pk" open="(" separator="," close=")">
+		            #{w}
+		        </foreach>
+		   </if>
+</where>
+   </select>
+   
+   <insert id="addDepart_info" parameterType="java.util.Map">
+   INSERT INTO SYS_DEPART_INFO
+    (dept_pk, 
+    dept_superior,
+     dept_code,
+     dept_name, 
+     dept_allname,
+     sydt_pk, 
+     dept_head,
+     dept_tel,
+     dept_addr
+         )
+     VALUES
+      (
+      SEQ_DEPART_INFO.nextval, 
+    #{dept_superior},
+     #{dept_code},
+     #{dept_name}, 
+     #{dept_allname},
+     #{sydt_pk}, 
+     #{dept_head,jdbcType=VARCHAR},
+     #{dept_tel,jdbcType=VARCHAR},
+     #{dept_addr,jdbcType=VARCHAR}
+      )
+   </insert>
+   <select id="selectdept_code" resultType="int" parameterType="java.util.Map">
+    select count(*) from SYS_DEPART_INFO t 
+    <where>
+         <if test="itselfdept_code!=null and itselfdept_code!=''">
+		     and t.dept_code!=#{itselfdept_code}
+		 </if>
+		 <if test="dept_code!=null and dept_code!=''">
+		    and  t.dept_code=#{dept_code}
+		 </if>
+    </where>
+   </select>
+   <update id="updateDepart_info" parameterType="java.util.Map">
+     UPDATE SYS_DEPART_INFO SET 
+     	    dept_superior=#{dept_superior,jdbcType=VARCHAR},
+     dept_code=#{dept_code,jdbcType=VARCHAR},
+     dept_name=#{dept_name,jdbcType=VARCHAR},
+     dept_allname=#{dept_allname,jdbcType=VARCHAR},
+     sydt_pk=#{sydt_pk,jdbcType=VARCHAR}, 
+     dept_head=#{dept_head,jdbcType=VARCHAR},
+     dept_tel=#{dept_tel,jdbcType=VARCHAR},
+     dept_addr=#{dept_addr,jdbcType=VARCHAR}
+    <where>
+    		 dept_pk=#{dept_pk}
+    </where>
+   </update>
+   <insert id="addbumenquanx" parameterType="List">
+   BEGIN
+
+    <foreach collection="list" item="item" index="index"    separator="">
+       INSERT INTO SYS_DATA_AUTHORITY(SYPI_PK,DEPT_PK,DEPT_PK_LEV)
+       values
+       (
+     #{item.sypi_pk,jdbcType=VARCHAR},
+     #{item.dept_pk,jdbcType=VARCHAR},
+     #{item.dept_pk_lev,jdbcType=VARCHAR});
+       
+    </foreach>
+COMMIT;  
+    END;  
+    </insert>
+    <delete id="deldeptauthority" parameterType="java.util.Map">
+    DELETE FROM SYS_DATA_AUTHORITY WHERE SYPI_PK = #{sypi_pk}
+    </delete>
+    <select id="sDepartinfo" parameterType="java.util.Map" resultType="com.cist.dept.model.Depart_info">
+   select t.dept_pk,t.dept_code,t.dept_name as name,t.DEPT_SUPERIOR from sys_depart_info t 
+   where t.dept_pk in(
+   select t.dept_pk from SYS_DEPART_INFO t 
+left join SYS_POLICE_INFO c
+on t.dept_pk=c.sypi_dept
+where c.sypi_pk in 
+   <foreach item="w" collection="sypi_pk" open="(" separator="," close=")">
+		            #{w}
+		        </foreach>
+group by t.dept_pk
+   ) 
+      <if test="Dept_pk  != null and Dept_pk  != ''">
+		and     t.DEPT_SUPERIOR=#{Dept_pk}  
+		   </if>
+    </select>
+    <select id="selectdepuser" parameterType="java.util.Map" resultType="com.cist.dept.model.Depart_info">
+   select t.sypi_code as isuser,t.sypi_name as name,t.sypi_pk as dept_pk from SYS_POLICE_INFO t
+    where t.sypi_dept=#{sypi_dept} and t.sypi_pk in
+     <foreach item="w" collection="sypi_pk" open="(" separator="," close=")">
+		            #{w}
+		        </foreach>
+    </select>
+    <delete id="delSysdataauthoritytemp">
+    DELETE FROM SYS_DATA_AUTHORITY_TEMP
+    </delete>
+    <insert id="addSysdataauthoritytemp" parameterType="List">
+       BEGIN
+
+    <foreach collection="list" item="item" index="index"    separator="">
+       INSERT INTO SYS_DATA_AUTHORITY_TEMP(dept_pk,dept_level)
+       values
+       (
+     #{item.dept_pk,jdbcType=VARCHAR},
+     #{item.dept_level,jdbcType=VARCHAR});
+       
+    </foreach>
+COMMIT;  
+    END;  
+    </insert>
+    <select id="selectleve" resultType="com.cist.dept.model.Sysdataauthoritytemp">
+    <![CDATA[ 
+    select * from SYS_DATA_AUTHORITY_TEMP k where k.dept_level in(
+select c.dept_level from (select * from SYS_DATA_AUTHORITY_TEMP t
+order by t.dept_level )c where rownum <= 1
+) ]]>
+    </select>
+       <select id="departinfolist" resultType="com.cist.dept.model.Depart_info" parameterType="List">
+   select t.dept_pk,t.dept_code,t.dept_name as name,t.DEPT_SUPERIOR from sys_depart_info t where
+    t.DEPT_SUPERIOR in
+        <foreach item="w" collection="list" open="(" separator="," close=")">
+		            #{w}
+		        </foreach>
+  
+   </select>
+          <select id="departinfolistpk" resultType="com.cist.dept.model.Depart_info" parameterType="List">
+   select t.dept_pk,t.dept_code,t.dept_name as name,t.DEPT_SUPERIOR from sys_depart_info t where
+    t.dept_pk in
+        <foreach item="w" collection="list" open="(" separator="," close=")">
+		            #{w}
+		        </foreach>
+  
+   </select>
+   
+   <select id="shangji" resultType="string" parameterType="string">
+   select t.dept_superior from SYS_DEPART_INFO t where t.dept_pk=#{dept_pk}
+   </select>
+</mapper>

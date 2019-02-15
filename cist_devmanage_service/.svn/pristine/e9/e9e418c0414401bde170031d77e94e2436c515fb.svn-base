@@ -1,0 +1,57 @@
+package com.cist.realTimeMonitor.service;
+
+import java.util.HashMap;
+import java.util.List;
+
+import com.cist.realTimeMonitor.model.DeptDeviceTree;
+import com.cist.realTimeMonitor.model.VideoDeviceStatus;
+import com.cist.realTimeMonitor.model.VideoDeviceTypeStatus;
+import com.fasterxml.jackson.core.JsonProcessingException;
+
+public interface RealTimeMonitorService {
+	/**
+	 * 查询部门设备Tree
+	 * 
+	 * @return
+	 * @throws JsonProcessingException 
+	 */
+	public  HashMap<String, Object> initDeptDeviceTree() throws JsonProcessingException;
+	/**
+	 * 初始化部门设备Tree子节点
+	 * 
+	 * @return
+	 */
+	public int getchildrenNode(List<DeptDeviceTree> deptList, List<DeptDeviceTree> DeviceList,
+			DeptDeviceTree parentDept, int sizeNum);
+	/**
+	 * 设置顶级部门的标题
+	 * 
+	 * @return
+	 */
+	public void setTopDeptTitle(DeptDeviceTree dept, List<DeptDeviceTree> DeviceList);
+	/**
+	 * 根据部门Id查询管理的设备中具有视频功能的设备类型List
+	 * 
+	 * @param paramMap
+	 * @return
+	 */
+	public List<DeptDeviceTree> queryDeviceType(String deptId);
+	/**
+	 * 查询设备节点
+	 * 
+	 * @param 部门节点对象
+	 */
+	public int initDeviceTree(DeptDeviceTree dept,List<DeptDeviceTree> DeviceList);
+	/**
+	 * 视频设备分类统计(根据视频设备类型分组统计离线在线数)
+	 * @param paramMap
+	 * @return
+	 */
+	public List<VideoDeviceTypeStatus>  queryStatusTotalByVideoDeviceType(HashMap<String,Object> paramMap);
+	/**
+	 * 视频设备在线统计(根据视频设备统计离线在线数)
+	 * @param paramMap
+	 * @return
+	 */
+	public List<VideoDeviceStatus>  queryStatusTotalByVideoDevice(HashMap<String,Object> paramMap);
+}

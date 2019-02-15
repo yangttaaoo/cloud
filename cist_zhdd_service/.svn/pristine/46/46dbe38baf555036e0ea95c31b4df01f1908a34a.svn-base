@@ -1,0 +1,79 @@
+package com.cist.tqrw.model;
+
+import java.io.Serializable;
+import java.util.Date;
+/**
+ * 特勤任务路线
+ * @author Administrator
+ *
+ */
+public class MissionRoute implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8444177626070532849L;
+	private Integer pk_id;
+	private Integer fk_mission_id;//任务ID
+	private Integer s_longitude;//起点经度
+	private Date s_latitude;//起点纬度
+	private String e_longitude;//终点经度
+	private Integer e_latitude;//终点纬度
+	private Date route_line;//路线
+
+	public Integer getPk_id() {
+		return pk_id;
+	}
+
+	public void setPk_id(Integer pk_id) {
+		this.pk_id = pk_id;
+	}
+
+	public Integer getFk_mission_id() {
+		return fk_mission_id;
+	}
+
+	public void setFk_mission_id(Integer fk_mission_id) {
+		this.fk_mission_id = fk_mission_id;
+	}
+
+	public Integer getS_longitude() {
+		return s_longitude;
+	}
+
+	public void setS_longitude(Integer s_longitude) {
+		this.s_longitude = s_longitude;
+	}
+
+	public Date getS_latitude() {
+		return s_latitude;
+	}
+
+	public void setS_latitude(Date s_latitude) {
+		this.s_latitude = s_latitude;
+	}
+
+	public String getE_longitude() {
+		return e_longitude;
+	}
+
+	public void setE_longitude(String e_longitude) {
+		this.e_longitude = e_longitude;
+	}
+
+	public Integer getE_latitude() {
+		return e_latitude;
+	}
+
+	public void setE_latitude(Integer e_latitude) {
+		this.e_latitude = e_latitude;
+	}
+
+	public Date getRoute_line() {
+		return route_line;
+	}
+
+	public void setRoute_line(Date route_line) {
+		this.route_line = route_line;
+	}
+
+}

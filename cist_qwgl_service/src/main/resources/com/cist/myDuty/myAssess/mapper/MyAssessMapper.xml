@@ -139,7 +139,7 @@
 		resultType="com.cist.myDuty.myAssess.model.QwAssessmentAttachment"
 		parameterType="java.util.HashMap">
 		select * from QW_ASSESSMENT_ATTACHMENT where
-		(constraint='wdkhfj' or constraint='wdfkfj' or constraint='wdhffj') and
+		(constraint='KHLR' or constraint='wdfkfj' or constraint='wdhffj') and
 		fk_relation_id=#{fk_relation_id}
 
 	</select>

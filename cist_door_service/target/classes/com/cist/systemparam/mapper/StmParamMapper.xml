@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cist.systemparam.mapper.StmParamMapper" >
+  
+	<select id="queryCfg" resultType="com.cist.systemparam.model.Sys_config">
+		select * from sys_config t
+	</select>
+	
+		<update id="updateCfg"  parameterType="java.util.Map">
+		update sys_config 
+		<set>
+			<if test="syci_key != null and syci_key !=''">
+				syci_key = #{syci_key},
+			</if>
+			<if test="syci_name != null and syci_name !=''">
+				syci_name = #{syci_name},
+			</if>
+			<if test="syci_value != null and syci_value !=''">
+				syci_value = #{syci_value},
+			</if>
+			<if test="syci_des != null and syci_des !=''">
+				syci_des = #{syci_des},
+			</if>
+			
+		</set>
+		where syci_pk = #{syci_pk,jdbcType=INTEGER}
+	</update>
+	
+</mapper>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cist.selectdve.mapper.SelectDveMapper">
+
+
+	
+	<select id="queryList" resultType="com.cist.dveallot.model.Vw_dev_info">
+	
+		select t.fk_device_type,t.direction,t.road_name,j.* 
+		from 
+			JTYW_DEVICE_ALLOT j
+		inner join 
+		 jcsj_device t
+		on 
+			t.device_num=j.FK_DEVICE_ID   
+      	inner join 
+		jtyw_maintenance_company g
+   		 on j.fk_comp_id=g.pk_id
+   		 inner join 
+   		 jtyw_maintenance_group c
+    	on c.pk_id=j.fk_comp_id
+    
+   
+		<where>
+			<if test="fk_comp_id !=null and fk_comp_id !='' ">
+			and j.fk_comp_id=#{fk_comp_id}
+			</if>
+			<if test="fk_group_id !=null and fk_group_id !='' ">
+			and j.fk_group_id=#{fk_group_id}
+			</if>
+			and
+    
+     		 t.fk_device_type not in('KK','QJCS')
+		</where>
+	</select>
+	
+	
+
+</mapper>

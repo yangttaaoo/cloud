@@ -1,0 +1,372 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cist.home.mapper.HomeMapper">
+	<select id="DeviceList" resultMap="mapDeviceInfo">
+   	 select * from JCSJ_DEVICE t 
+left join JCSJ_DEVICE_STATUS_BASIC c on t.pk_id=c.fk_device_id
+ WHERE T.FK_DEVICE_TYPE IN('KKSB','DJ') and c.status=1
+   	</select> 
+   	 <resultMap type="com.cist.home.model.DeviceInfo" id="mapDeviceInfo">
+	    <id property="pk_id" column="pk_id"/>
+	    <collection property="jcsj_device_camera_gb28181" column="pk_id" ofType="com.cist.home.model.Jcsj_device_camera_gb28181" select="cameradata"/>
+	</resultMap>
+  <select id="cameradata" parameterType="java.util.HashMap" resultType="com.cist.home.model.Jcsj_device_camera_gb28181">
+         select * from JCSJ_DEVICE_CAMERA_GB28181 t where t.device_id=#{pk_id}
+   </select>
+   	<select id="gpsRecordList" resultType="com.cist.home.model.GpsRecord">
+   <!-- 	select * from QW_GPS_RECORD t  -->
+   		  	select t.*,( select RYFL from JCSJ_POLICE_RES_PERSON c where c.rybh=t.ywbh) as jytype from VW_QW_GPS_RECORD t 
+   	</select> 
+   		<select id="jcsjpolice_resperson" resultType="com.cist.home.model.Jcsj_police_resources">
+select (select c.dept_name from SYS_DEPART_INFO c where c.dept_pk=t.fk_dept_id) as fk_dept_name,
+(select p.sypi_name from SYS_POLICE_INFO p where p.sypi_pk=t.create_person) as create_personname,
+(select fc_name from SYS_FRM_CODE  where fct_code='C110' and fc_code=t.car_brand) as car_brandname,
+(select fc_name from SYS_FRM_CODE  where fct_code='JW02' and fc_code=t.CAR_PURPOSE) as car_purposename,
+(select fc_name from SYS_FRM_CODE  where fct_code='C002' and fc_code=t.car_type) as car_typename
+,t.* from JCSJ_POLICE_RESOURCES t where t.pk_id=(select d.pk_id from VW_PR_CAR_GPS d where d.device_code=#{device_code})
+   	</select> 
+   	   		<select id="Jcsjpoliceresperson" resultType="com.cist.home.model.Jcsj_police_res_person">
+select 
+(select dept_name from SYS_DEPART_INFO  where dept_code=c.GLBM) as fk_dept_name,
+(select fc_name from SYS_FRM_CODE  where fct_code='JW06' and fc_code=c.zw) as car_brandname,
+(select fc_name from SYS_FRM_CODE  where fct_code='JW04' and fc_code=c.YWGW) as ywgwname,
+(select fc_name from SYS_FRM_CODE  where fct_code='SY01' and fc_code=c.XB) as xbname,
+c.* from JCSJ_POLICE_RES_PERSON c where c.rybh=#{device_code}
+   	</select> 
+<select id="tbl_car_reco" resultType="com.cist.home.model.Tbl_car_reco">
+select * from (
+select t.*,(select count(*) from TBL_CAR_RECO  where SBBH=#{sbbh}) as counts from TBL_CAR_RECO t where t.SBBH=#{sbbh}
+order by t.GCPK desc
+) c where rownum=1
+   	</select> 
+   	<!--  and trunc(t.ALARM_TIME) = trunc(sysdate) 接警-->
+   	<select id="EventList" resultType="com.cist.home.model.EventInfo" parameterType="java.util.HashMap">
+   select t.*,(select c.event_source_name from ZHDD_EVENT_SOURCE c where c.pk_id=t.fk_event_source_id) as event_source_name,
+(select b.event_type_name from ZHDD_EVENT_TYPE b where b.pk_id=t.fk_event_type_id) as event_type_name
+ from ZHDD_EVENT_INFORMATION t 
+ where  t.EVENT_STATUS != '3' and t.EVENT_CURRENT_STATUS = 4
+  <if test="bumenfkdeptid.size() > 0"> 
+  and t.fk_dept_id in 
+   	 <foreach item="w" collection="bumenfkdeptid" open="(" separator="," close=")">
+		            #{w}
+		</foreach>
+		</if>
+   	</select>
+   	  	<select id="EventListchu" resultType="com.cist.home.model.EventInfo" parameterType="java.util.HashMap">
+ select * from (
+  select t.*,(select c.event_source_name from ZHDD_EVENT_SOURCE c where c.pk_id=t.fk_event_source_id) as event_source_name,
+(select b.event_type_name from ZHDD_EVENT_TYPE b where b.pk_id=t.fk_event_type_id) as event_type_name
+ from ZHDD_EVENT_INFORMATION t 
+ where  t.EVENT_STATUS != '3' 
+ and t.pk_id in(select g.fk_event_id from ZHDD_EVENT_ACCEPTANCE g)
+)t
+where t.pk_id  not in(select c.fk_event_id from ZHDD_EVENT_FLOW c)
+and t.pk_id  not in(select g.fk_event_id from ZHDD_EVENT_RESULT g)
+ <if test="bumenfkdeptid.size() > 0"> 
+ and t.fk_dept_id in 
+   	 <foreach item="w" collection="bumenfkdeptid" open="(" separator="," close=")">
+		            #{w}
+		</foreach>
+		</if>
+   	</select>
+   	   	  	<select id="EventListchuu" resultType="com.cist.home.model.EventInfo" parameterType="java.util.HashMap">
+ select * from (
+  select t.*,(select c.event_source_name from ZHDD_EVENT_SOURCE c where c.pk_id=t.fk_event_source_id) as event_source_name,
+(select b.event_type_name from ZHDD_EVENT_TYPE b where b.pk_id=t.fk_event_type_id) as event_type_name
+ from ZHDD_EVENT_INFORMATION t 
+ where  t.EVENT_STATUS != '3' 
+ and t.pk_id in(select g.fk_event_id from ZHDD_EVENT_ACCEPTANCE g)
+)t
+where t.pk_id   in(select c.fk_event_id from ZHDD_EVENT_FLOW c)
+or t.pk_id   in(select g.fk_event_id from ZHDD_EVENT_RESULT g)
+ <if test="bumenfkdeptid.size() > 0"> 
+ and t.fk_dept_id in 
+   	 <foreach item="w" collection="bumenfkdeptid" open="(" separator="," close=")">
+		            #{w}
+		</foreach>
+		</if>
+   	</select>
+   	  	<select id="EventListquan" resultType="com.cist.home.model.EventInfo" parameterType="java.util.HashMap">
+select t.*,(select c.event_source_name from ZHDD_EVENT_SOURCE c where c.pk_id=t.fk_event_source_id) as event_source_name,
+(select b.event_type_name from ZHDD_EVENT_TYPE b where b.pk_id=t.fk_event_type_id) as event_type_name,
+(select count(*)  from ZHDD_EVENT_FLOW c where c.fk_event_id=t.pk_id) as startid
+ from ZHDD_EVENT_INFORMATION t 
+ where  t.EVENT_STATUS != '3'
+ <if test="bumenfkdeptid.size() > 0"> 
+  and t.fk_dept_id in 
+   	 <foreach item="w" collection="bumenfkdeptid" open="(" separator="," close=")">
+		            #{w}
+		</foreach>
+		</if>
+   	</select>
+   	
+   		<!-- 添加受理信息 -->
+	<insert id="addzhddeventacceptance" parameterType="java.util.HashMap">
+		insert into ZHDD_EVENT_ACCEPTANCE(
+				    pk_id,
+			        fk_event_id,
+			        fk_acceptance_dept_id,
+			        fk_acceptance_person_id,
+			        acceptance_time,
+			        acceptance_state,
+			        fk_forward_dept_id,
+			        forward_time
+				) values(
+					SEQ_SJSL_PK_ID.nextval,
+					#{fk_event_id,jdbcType=VARCHAR},
+					#{fk_acceptance_dept_id,jdbcType=VARCHAR},
+					#{fk_acceptance_person_id,jdbcType=VARCHAR},
+					sysdate,
+					#{acceptance_state,jdbcType=VARCHAR},
+					#{fk_forward_dept_id,jdbcType=VARCHAR},
+					sysdate
+				)
+	</insert>
+	<update id="updatezhddeventinformation" parameterType="java.util.HashMap">
+		update ZHDD_EVENT_INFORMATION 
+		set FK_DEPT_ID = #{fk_dept_id,jdbcType=VARCHAR}
+		where pk_id = #{pk_id}
+	</update>
+		<update id="updatezhddeventinf" parameterType="java.util.HashMap">
+		update ZHDD_EVENT_INFORMATION 
+		set event_current_status = #{event_current_status,jdbcType=VARCHAR},event_preselection=#{event_preselection,jdbcType=VARCHAR}
+		where pk_id = #{pk_id}
+	</update>
+	
+   	<select id="PoliceList" resultType="com.cist.home.model.Jcsj_police_res_person" parameterType="java.util.HashMap">
+   	  select * from JCSJ_POLICE_RES_PERSON t  where t.rybh='4008'
+   	</select>
+   	<select id="jcsj_police_res_personpageliist" resultType="com.cist.home.model.Jcsj_police_res_person" parameterType="java.util.HashMap">
+   	  select * from JCSJ_POLICE_RES_PERSON t 
+   	  <where>
+   	      <if test="glbm!=null and glbm!=''">
+   	      and t.GLBM=(select k.dept_code from SYS_DEPART_INFO k where k.dept_pk=#{glbm})
+		    </if>
+		     <if test="xm!=null and xm!=''">
+				and t.XM like '%'||#{xm}||'%'
+		    </if>
+		    
+		     <if test="jinyuanbh != null and jinyuanbh.size > 0">
+		    and   t.rybh in
+             <foreach item="w" collection="jinyuanbh" open="(" separator="," close=")">
+		            #{w}
+		        </foreach>
+		     </if>
+   	  </where>
+   	</select>
+   	<select id="zzclsjjy" resultType="string" parameterType="java.util.HashMap">
+   	select c.rybh from JCSJ_POLICE_RES_PERSON c where c.id in(select h.fk_person_id from ZHDD_EVENT_PERSONNEL h where h.fk_event_id  not in(select FK_EVENT_ID from ZHDD_EVENT_RESULT))
+   	</select>
+   	 <select id="shijianid" resultType="int" parameterType="java.util.HashMap">
+   select c.fk_event_id from ZHDD_EVENT_PERSONNEL c where c.FK_PERSON_ID=(select v.id from JCSJ_POLICE_RES_PERSON v where v.rybh=#{rybh}) and c.fk_event_id not in (select FK_EVENT_ID from ZHDD_EVENT_RESULT)</select>
+   	
+   	<select id="EventPoliceList" resultType="com.cist.home.model.EventInfo" parameterType="java.util.HashMap">
+   	  select b.*,y.dispatch_time,t.fk_person_id from ZHDD_EVENT_PERSONNEL t,ZHDD_EVENT_DISPATCH y,ZHDD_EVENT_INFORMATION b
+   	  <where>
+   	    t.fk_event_id = b.pk_id and t.fk_event_dispatch_id = y.pk_id and fk_person_id = '4008'
+   	  </where>
+   	</select>
+   	<select id="EventFlowList" resultType="com.cist.home.model.EventInfo" parameterType="java.util.HashMap">
+   	  select b.*,t.event_source_name,h.event_type_name from ZHDD_EVENT_INFORMATION b,ZHDD_EVENT_SOURCE t,ZHDD_EVENT_TYPE h   
+   	  <where>
+   	  b.fk_event_source_id  = t.pk_id and b.fk_event_type_id = h.pk_id and b.pk_id = #{pk_id}
+   	  </where>
+   	</select>
+   	   	<select id="eventinfojy" resultType="com.cist.home.model.EventInfo" parameterType="java.util.HashMap">
+  select * from ZHDD_EVENT_INFORMATION k where k.pk_id=(
+    select c.fk_event_id from ZHDD_EVENT_PERSONNEL c where c.FK_PERSON_ID=(select v.id from JCSJ_POLICE_RES_PERSON v where v.rybh=#{rybh}) and c.fk_event_id not in (select FK_EVENT_ID from ZHDD_EVENT_RESULT)
+   )
+   	</select>
+   	
+     	<select id="EventResultList" resultType="com.cist.home.model.EventFlowInfo" parameterType="java.util.HashMap">
+   	  select b.*,t.sypi_name from ZHDD_EVENT_FLOW b,SYS_POLICE_INFO t
+   	  <where>
+   	   b.fk_complete_person_id = t.sypi_pk and b.FK_EVENT_ID = #{pk_id}
+   	  </where>
+   	  ORDER BY b.complete_time
+   	</select>
+   	<select id="zhdd_work_flow" resultMap="getZhdd_work_flow" parameterType="java.util.HashMap">
+   	    select * from ZHDD_WORK_FLOW
+   	</select>
+   	<resultMap type="com.cist.home.model.Zhdd_work_flow" id="getZhdd_work_flow">
+	    <id property="pk_id" column="pk_id"/>
+	    <collection property="zhdd_work_flow_detail" column="pk_id" ofType="com.cist.home.model.Zhdd_work_flow_detail"  select="getzhdd_work_flow_detail"/>
+   	</resultMap>
+   	 	<select id="getzhdd_work_flow_detail" resultType="com.cist.home.model.Zhdd_work_flow_detail" parameterType="java.util.HashMap">
+   	    select * from ZHDD_WORK_FLOW_DETAIL where FK_WORK_FLOW_ID=#{pk_id}
+   	</select>
+   	 <select id="zhdd_sms_template" resultType="com.cist.home.model.Zhdd_sms_template" parameterType="java.util.HashMap">
+   	select * from ZHDD_SMS_TEMPLATE
+   	</select>
+   	   	<insert id="addzhddeventresult" parameterType="com.cist.home.model.Zhdd_event_result">
+   	insert into ZHDD_EVENT_RESULT(
+				    pk_id,
+			        fk_event_id,
+			        fk_submitier_id,
+			        submit_time,
+			        processing_results
+				) values(
+					#{pk_id},
+					#{fk_event_id,jdbcType=VARCHAR},
+					#{fk_submitter_id,jdbcType=VARCHAR},
+					sysdate,
+					#{processing_results,jdbcType=VARCHAR}
+				)
+   	</insert>
+   	  	<update id="updatezhddeventresult" parameterType="com.cist.home.model.Zhdd_event_result">
+   	       update ZHDD_EVENT_RESULT
+   	       set 
+   	       PROCESSING_RESULTS=#{processing_results,jdbcType=VARCHAR},
+   	       submit_time=sysdate
+   	       where pk_id=#{pk_id}
+   	</update>
+   	<insert id="addEventFlowInfo" parameterType="com.cist.home.model.EventFlowInfo">
+   	insert into ZHDD_EVENT_FLOW(
+				    pk_id,
+			        fk_event_id,
+			        feedback_contents,
+			        complete_time,
+			        fk_complete_person_id,
+			        work_flow_name
+				) values(
+					#{pk_id},
+					#{fk_event_id,jdbcType=VARCHAR},
+					#{feedback_contents,jdbcType=VARCHAR},
+					sysdate,
+					#{fk_complete_person_id,jdbcType=VARCHAR},
+					#{work_flow_name,jdbcType=VARCHAR}
+				)
+   	</insert>
+   	 	<insert id="addattachment" parameterType="com.cist.home.model.Zhdd_event_attachment">
+   	insert into ZHDD_EVENT_ATTACHMENT(
+				    pk_id,
+			        fk_event_id,
+			        attachment_name,
+			        attachment_suffix,
+			        attachment_size,
+			        attachment_source,
+			        commit_time,
+			        remarks
+				) values(
+					#{pk_id},
+					#{fk_event_id,jdbcType=VARCHAR},
+					#{attachment_name,jdbcType=VARCHAR},
+					#{attachment_suffix,jdbcType=VARCHAR},
+					#{attachment_size,jdbcType=VARCHAR},
+					#{attachment_source,jdbcType=VARCHAR},
+					sysdate,
+					#{remarks,jdbcType=VARCHAR}
+				)
+   	</insert>
+   	<update id="updateEventFlowInfo" parameterType="com.cist.home.model.EventFlowInfo">
+   	       update ZHDD_EVENT_FLOW
+   	       set 
+   	       feedback_contents=#{feedback_contents,jdbcType=VARCHAR},
+   	       complete_time=sysdate,
+   	       fk_complete_person_id=#{fk_complete_person_id,jdbcType=VARCHAR}
+   	       where pk_id=#{pk_id}
+   	</update>
+   	   		<!-- 4.7. 事件调度信息 -->
+	<insert id="addzhddeventdispatch" parameterType="java.util.HashMap">
+	  <selectKey resultType="int" order="BEFORE" keyProperty="pk_id_p">   
+            select SEQ_ZHDD_EVENT_DISPATCH.nextval as pk_id_p from dual
+        </selectKey> 
+		insert into ZHDD_EVENT_DISPATCH(
+				    pk_id,
+			        fk_event_id,
+			        fk_dispatch_person_id,
+			        dispatch_time,
+			        sms_contents,
+			        fk_work_flow_id,
+			        event_time
+				) values(
+					#{pk_id_p},
+					#{fk_event_id,jdbcType=VARCHAR},
+					#{fk_dispatch_person_id,jdbcType=VARCHAR},
+					sysdate,
+					#{sms_contents,jdbcType=VARCHAR},
+					#{fk_work_flow_id,jdbcType=VARCHAR},
+					 to_date(#{event_time},'yyyy-mm-dd HH24:mi:ss')
+				)
+	</insert>
+	<insert id="addzhdd_event_personnel" parameterType="list" useGeneratedKeys="false" >
+    insert into ZHDD_EVENT_PERSONNEL
+    (pk_id, fk_event_id,fk_event_dispatch_id,fk_person_id)
+    SELECT SEQ_ZHDD_EVENT_PERSONNEL.nextval,a.* FROM (
+      <foreach collection="list" item="item" separator="union all">
+        SELECT
+        #{item.fk_event_id,jdbcType=VARCHAR},#{item.fk_event_dispatch_id,jdbcType=VARCHAR},#{item.fk_person_id,jdbcType=VARCHAR}
+        FROM dual
+      </foreach>
+    ) a
+ </insert>
+<select id="shhoulixishij" resultType="com.cist.home.model.Zhdd_event_acceptance" parameterType="java.util.HashMap">
+   	select '接到报警' as ms,t.jjy_name,t.ALARM_TIME from ZHDD_EVENT_INFORMATION t where t.pk_id=#{pk_id}
+   	</select>
+   	<select id="acceptance" resultType="com.cist.home.model.EventInfo" parameterType="java.util.HashMap">
+   	select * from ZHDD_EVENT_INFORMATION t where t.pk_id=#{pk_id}
+   	</select>
+   	 	<select id="sysfrmcode" resultType="com.cist.home.model.Sysfrmcode" parameterType="java.util.HashMap">
+   select * from SYS_FRM_CODE t where t.fct_code=#{fct_code} order by t.fc_num
+   	</select>
+   	
+   <select id="shhoulixi" resultType="com.cist.home.model.Zhdd_event_acceptance" parameterType="java.util.HashMap">
+  select (select p.dept_name from SYS_DEPART_INFO p where p.dept_pk=c.FK_ACCEPTANCE_DEPT_ID) as fk_acceptance_deptname,
+(select p.dept_name from SYS_DEPART_INFO p where p.dept_pk=c.FK_FORWARD_DEPT_ID) as zfdwname,
+(select sypi_name from SYS_POLICE_INFO where sypi_pk=c.FK_ACCEPTANCE_PERSON_ID) as czrname,
+c.* from ZHDD_EVENT_ACCEPTANCE c where c.fk_event_id=#{pk_id} order by c.pk_id
+   	</select>
+   	 <select id="eventresult" resultType="com.cist.home.model.Zhdd_event_result" parameterType="java.util.HashMap">
+   	select * from ZHDD_EVENT_RESULT where FK_EVENT_ID=#{pk_id}
+   	</select>
+   	 	 <select id="eventflowinfolist" resultType="com.cist.home.model.EventFlowInfo" parameterType="java.util.HashMap">
+   	 	 select c.*,(select t.sypi_name from SYS_POLICE_INFO t where t.sypi_pk=c.fk_complete_person_id) as personname from ZHDD_EVENT_FLOW c where  c.fk_event_id=#{pk_id} order by c.pk_id
+
+   	</select>
+   	
+   		 <select id="eventflowinfov" resultType="com.cist.home.model.EventFlowInfo" parameterType="java.util.HashMap">
+   	 	 select * from (
+select t.*, t.rowid from ZHDD_EVENT_FLOW t 
+where t.fk_event_id=#{pk_id}
+order by t.pk_id desc
+) t where rownum=1
+   	</select>
+   	 <select id="xiafashijian" resultType="int" parameterType="java.util.HashMap">
+   	 select t.fk_event_id from ZHDD_EVENT_ACCEPTANCE t where t.acceptance_state=1
+   	</select>
+   	 <select id="selectattachment" resultType="com.cist.home.model.Zhdd_event_attachment" parameterType="java.util.HashMap">
+   select * from ZHDD_EVENT_ATTACHMENT t where t.fk_event_id=#{pk_id} and t.attachment_suffix in('jpg','jpeg','png','bmp')
+   	</select>
+   	<delete id="delattachment" parameterType="java.util.HashMap">
+   	 delete from zhdd_event_attachment where pk_id
+   	 in
+   	  <foreach item="w" collection="attachmentpk" open="(" separator="," close=")">
+		            #{w}
+		</foreach>
+   	</delete>
+   	<select id="selectyinpin" resultType="com.cist.home.model.Zhdd_event_attachment" parameterType="java.util.HashMap">
+   select * from 
+ (
+    select * from ZHDD_EVENT_ATTACHMENT t where t.fk_event_id=#{pk_id} and t.attachment_suffix not in('jpg','jpeg','png','bmp')
+    order by t.commit_time 
+ )
+    where  rownum=1
+   	</select>
+   		 <select id="zhdd_event_resultjieguo" resultType="com.cist.home.model.Zhdd_event_result" parameterType="java.util.HashMap">
+   	 	 select * from ZHDD_EVENT_RESULT where FK_EVENT_ID=#{fk_event_id}
+   	</select>
+   	<update id="updatejwd" parameterType="java.util.HashMap">
+   	   update  ZHDD_EVENT_INFORMATION 
+   	   set 
+   	   longitude=#{longitude},
+	   latitude=#{latitude}
+   	   where pk_id=#{pk_id}
+   	</update>
+   	<select id="shangjibumenpk" resultType="int" parameterType="java.util.HashMap">
+   	select * from SYS_DEPART_INFO t where t.dept_superior in 
+   	 <foreach item="w" collection="bumenpk" open="(" separator="," close=")">
+		            #{w}
+		</foreach>
+   	</select>
+</mapper>
+

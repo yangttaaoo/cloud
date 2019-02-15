@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sbzc.mappers.JcsjPoliceRespersonMapper" >
+  <resultMap id="BaseResultMap" type="com.sbzc.model.JcsjPoliceResperson" >
+    <result column="ID" property="id" jdbcType="DECIMAL" />
+    <result column="GLBM" property="glbm" jdbcType="VARCHAR" />
+    <result column="RYBH" property="rybh" jdbcType="VARCHAR" />
+    <result column="XM" property="xm" jdbcType="VARCHAR" />
+    <result column="SFZHM" property="sfzhm" jdbcType="VARCHAR" />
+    <result column="XB" property="xb" jdbcType="VARCHAR" />
+    <result column="YWGW" property="ywgw" jdbcType="VARCHAR" />
+    <result column="RYFL" property="ryfl" jdbcType="CHAR" />
+    <result column="FJLX" property="fjlx" jdbcType="VARCHAR" />
+    <result column="BZLX" property="bzlx" jdbcType="VARCHAR" />
+    <result column="ZJ" property="zj" jdbcType="VARCHAR" />
+    <result column="ZW" property="zw" jdbcType="VARCHAR" />
+    <result column="ZT" property="zt" jdbcType="CHAR" />
+    <result column="BGDH" property="bgdh" jdbcType="VARCHAR" />
+    <result column="YDDH" property="yddh" jdbcType="VARCHAR" />
+    <result column="DTH" property="dth" jdbcType="VARCHAR" />
+    <result column="ZHH" property="zhh" jdbcType="VARCHAR" />
+    <result column="VWH" property="vwh" jdbcType="VARCHAR" />
+  </resultMap>
+  <insert id="insert" parameterType="com.sbzc.model.JcsjPoliceResperson" >
+    insert into JCSJ_POLICE_RES_PERSON (ID, GLBM, RYBH, 
+      XM, SFZHM, XB, YWGW, 
+      RYFL, FJLX, BZLX, ZJ, 
+      ZW, ZT, BGDH, YDDH, 
+      DTH, ZHH, VWH)
+    values (#{id,jdbcType=DECIMAL}, #{glbm,jdbcType=VARCHAR}, #{rybh,jdbcType=VARCHAR}, 
+      #{xm,jdbcType=VARCHAR}, #{sfzhm,jdbcType=VARCHAR}, #{xb,jdbcType=VARCHAR}, #{ywgw,jdbcType=VARCHAR}, 
+      #{ryfl,jdbcType=CHAR}, #{fjlx,jdbcType=VARCHAR}, #{bzlx,jdbcType=VARCHAR}, #{zj,jdbcType=VARCHAR}, 
+      #{zw,jdbcType=VARCHAR}, #{zt,jdbcType=CHAR}, #{bgdh,jdbcType=VARCHAR}, #{yddh,jdbcType=VARCHAR}, 
+      #{dth,jdbcType=VARCHAR}, #{zhh,jdbcType=VARCHAR}, #{vwh,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.sbzc.model.JcsjPoliceResperson" >
+    insert into JCSJ_POLICE_RES_PERSON
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="glbm != null" >
+        GLBM,
+      </if>
+      <if test="rybh != null" >
+        RYBH,
+      </if>
+      <if test="xm != null" >
+        XM,
+      </if>
+      <if test="sfzhm != null" >
+        SFZHM,
+      </if>
+      <if test="xb != null" >
+        XB,
+      </if>
+      <if test="ywgw != null" >
+        YWGW,
+      </if>
+      <if test="ryfl != null" >
+        RYFL,
+      </if>
+      <if test="fjlx != null" >
+        FJLX,
+      </if>
+      <if test="bzlx != null" >
+        BZLX,
+      </if>
+      <if test="zj != null" >
+        ZJ,
+      </if>
+      <if test="zw != null" >
+        ZW,
+      </if>
+      <if test="zt != null" >
+        ZT,
+      </if>
+      <if test="bgdh != null" >
+        BGDH,
+      </if>
+      <if test="yddh != null" >
+        YDDH,
+      </if>
+      <if test="dth != null" >
+        DTH,
+      </if>
+      <if test="zhh != null" >
+        ZHH,
+      </if>
+      <if test="vwh != null" >
+        VWH,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=DECIMAL},
+      </if>
+      <if test="glbm != null" >
+        #{glbm,jdbcType=VARCHAR},
+      </if>
+      <if test="rybh != null" >
+        #{rybh,jdbcType=VARCHAR},
+      </if>
+      <if test="xm != null" >
+        #{xm,jdbcType=VARCHAR},
+      </if>
+      <if test="sfzhm != null" >
+        #{sfzhm,jdbcType=VARCHAR},
+      </if>
+      <if test="xb != null" >
+        #{xb,jdbcType=VARCHAR},
+      </if>
+      <if test="ywgw != null" >
+        #{ywgw,jdbcType=VARCHAR},
+      </if>
+      <if test="ryfl != null" >
+        #{ryfl,jdbcType=CHAR},
+      </if>
+      <if test="fjlx != null" >
+        #{fjlx,jdbcType=VARCHAR},
+      </if>
+      <if test="bzlx != null" >
+        #{bzlx,jdbcType=VARCHAR},
+      </if>
+      <if test="zj != null" >
+        #{zj,jdbcType=VARCHAR},
+      </if>
+      <if test="zw != null" >
+        #{zw,jdbcType=VARCHAR},
+      </if>
+      <if test="zt != null" >
+        #{zt,jdbcType=CHAR},
+      </if>
+      <if test="bgdh != null" >
+        #{bgdh,jdbcType=VARCHAR},
+      </if>
+      <if test="yddh != null" >
+        #{yddh,jdbcType=VARCHAR},
+      </if>
+      <if test="dth != null" >
+        #{dth,jdbcType=VARCHAR},
+      </if>
+      <if test="zhh != null" >
+        #{zhh,jdbcType=VARCHAR},
+      </if>
+      <if test="vwh != null" >
+        #{vwh,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+</mapper>

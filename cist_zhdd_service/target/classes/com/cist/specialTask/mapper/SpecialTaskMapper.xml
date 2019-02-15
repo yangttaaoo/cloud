@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cist.specialTask.mapper.SpecialTaskMapper">
+
+	<!--特勤任务分页列表查询 -->
+	<select id="list"
+		resultType="com.cist.specialTask.model.ZhddSpecialMission"
+		parameterType="java.util.HashMap">
+		select * from VW_ZHDD_SPECIAL_MISSION
+		<where>
+			<if test=" mission_name !=null and mission_name !='' ">
+				and mission_name like '%'||#{mission_name}||'%'
+			</if>
+			<if
+				test=" fk_create_founder_id !=null and fk_create_founder_id !='' ">
+				and fk_create_founder_id =#{fk_create_founder_id}
+			</if>
+			<if test=" mission_status !=null and mission_status !='' ">
+				and mission_status =#{mission_status}
+			</if>
+		</where>
+		order by create_time desc
+	</select>
+
+	<!--特勤任务等级列表 -->
+	<select id="selectGrade"
+		resultType="com.cist.specialTask.model.ZhddMissionGrade"
+		parameterType="java.util.HashMap">
+		select * from ZHDD_MISSION_GRADE
+	</select>
+
+	<!--查询警车列表 -->
+	<select id="selectPoliceCar"
+		resultType="com.cist.specialTask.model.JcsjPoliceResources"
+		parameterType="java.util.HashMap">
+		select * from JCSJ_POLICE_RESOURCES
+		where
+		RESOURCES_TYPE='1'
+	</select>
+	<!--查询任务的参与者 -->
+	<select id="selectParticipant"
+		resultType="com.cist.specialTask.model.ZhddMissionParticipant"
+		parameterType="java.util.HashMap">
+		select * from ZHDD_MISSION_PARTICIPANT
+		where
+		FK_MISSION_ID=#{pk_id}
+	</select>
+	
+		<!--查询任务的参与者中人 -->
+	<select id="selecteParPolice"
+		resultType="com.cist.specialTask.model.JcsjPoliceResPerson"
+		parameterType="java.util.HashMap">
+		select  t1.* from ZHDD_MISSION_PARTICIPANT t
+		left join JCSJ_POLICE_RES_PERSON t1
+		on t.fk_participant_id=t1.id
+		where
+		FK_MISSION_ID=#{pk_id}
+		and participant_type='0'
+	</select>
+	
+			<!--查询任务的参与者中车 -->
+	<select id="selecteParCar"
+		resultType="com.cist.specialTask.model.JcsjPoliceResources"
+		parameterType="java.util.HashMap">
+		select t1.pk_id,t1.car_num from ZHDD_MISSION_PARTICIPANT t
+		left join JCSJ_POLICE_RESOURCES t1
+		on t.fk_participant_id=t1.pk_id
+		where
+		FK_MISSION_ID=#{pk_id}
+		and participant_type='1'
+	</select>
+	
+				<!--查询任务的参与者中设备 -->
+	<select id="selecteParDevice"
+		resultType="com.cist.specialTask.model.JcsjDeviceInfo"
+		parameterType="java.util.HashMap">
+		select t1.pk_id,t1.device_num,t1.device_name,t2.device_gb_serial,t2.device_gb_code,t2.device_gb_channel,t1.longitude,t1.latitude from ZHDD_MISSION_PARTICIPANT t
+    left join JCSJ_DEVICE t1
+    on t.fk_participant_id=t1.pk_id
+    left join JCSJ_DEVICE_CAMERA_GB28181 t2
+    on t1.pk_id=t2.DEVICE_ID
+		where
+		FK_MISSION_ID=#{pk_id}
+		and participant_type='2'
+	</select>
+
+	<!--查询任务的参与者 -->
+	<select id="selectRoute"
+		resultType="com.cist.specialTask.model.ZhddMissionRoute"
+		parameterType="java.util.HashMap">
+		select * from ZHDD_MISSION_ROUTE
+		where
+		FK_MISSION_ID=#{pk_id}
+	</select>
+
+	<!--查询警员信息列表 -->
+	<select id="selectPolice"
+		resultType="com.cist.specialTask.model.JcsjPoliceResPerson"
+		parameterType="java.util.HashMap">
+		select * from JCSJ_POLICE_RES_PERSON
+	</select>
+
+	<!--查询道路信息列表 -->
+	<select id="selectRoad"
+		resultType="com.cist.specialTask.model.CRoadItemInfo"
+		parameterType="java.util.HashMap">
+		select * from C_ROAD_ITEM
+		<where>
+
+			<foreach item="items" collection="roadList">
+				or roim_name like '%'||#{items}||'%'
+			</foreach>
+		</where>
+	</select>
+	<!--查询设备信息列表 -->
+	<select id="selectDevice"
+		resultType="com.cist.specialTask.model.JcsjDeviceInfo"
+		parameterType="java.util.HashMap">
+		select d.* from Jcsj_device d where d.fk_device_type not
+		in('KK','QJCS') and (d.pk_id
+		in(
+		select f.device_id from JCSJ_DEVICE_HAVE_FUNCTION f where f.FK_HAVE_FUNCTION
+		=(select f.fc_pk pk from
+		SYS_FRM_CODE f join SYS_FRM_CODE_TYPE t on f.FCT_CODE=t.FCT_CODE where
+		t.FCT_CODE='G999' and f.fc_code='SP')) or d.fk_device_type = 'JK' )
+         <if test="codeList !=null and codeList.size()>0">
+         and BELONGED_ROAD_ID in
+		<foreach item="items" collection="codeList" open="("
+			separator="," close=")">
+			#{items.roim_code}
+		</foreach>
+         </if>
+		
+	</select>
+
+
+	<!--特勤任务删除 级联删除任务参与者和任务路线 -->
+	<delete id="delete" parameterType="java.util.HashMap">
+		delete from ZHDD_SPECIAL_MISSION
+		where PK_ID in
+		<foreach item="items" collection="pkList" open="("
+			separator="," close=")">
+			#{items}
+		</foreach>
+	</delete>
+	<!--特勤任务删除 级联删除任务参与者和任务路线 -->
+	<delete id="deleteRoute" parameterType="java.util.HashMap">
+
+		delete from ZHDD_MISSION_ROUTE
+		where FK_MISSION_ID in
+		<foreach item="items" collection="pkList" open="("
+			separator="," close=")">
+			#{items}
+		</foreach>
+	</delete>
+	<!--特勤任务删除 级联删除任务参与者和任务路线 -->
+	<delete id="deleteParticipant" parameterType="java.util.HashMap">
+
+		delete from ZHDD_MISSION_PARTICIPANT
+		where FK_MISSION_ID in
+		<foreach item="items" collection="pkList" open="("
+			separator="," close=")">
+			#{items}
+		</foreach>
+	</delete>
+	<insert id="save" parameterType="java.util.HashMap">
+		<selectKey resultType="Long" order="BEFORE"
+			keyProperty="pk_id">
+			select cistsys.SEQ_ZHDD_SPECIAL_MISSION.NEXTVAL as pk_id from dual
+		</selectKey>
+		insert into ZHDD_SPECIAL_MISSION
+		<trim prefix="(" suffixOverrides="," suffix=")">
+			PK_ID,
+			FK_DEPT_ID,
+			FK_CREATE_FOUNDER_ID,
+			CREATE_TIME,
+			MISSION_NAME,
+			FK_MISSION_GRADE_ID,
+			MISSION_START_TIME,
+			MISSION_END_TIME,
+			mission_status,
+			<if test=" mission_describe !=null and mission_describe !=''">
+				MISSION_DESCRIBE,
+			</if>
+		</trim>
+		<trim prefix="values(" suffixOverrides="," suffix=")">
+			#{pk_id},
+			#{fk_dept_id},
+			#{fk_create_founder_id},
+			SYSDATE,
+			#{mission_name},
+			#{fk_mission_grade_id},
+			to_date(#{mission_start_time},'yyyy-mm-dd hh24:mi:ss'),
+			to_date(#{mission_end_time},'yyyy-mm-dd hh24:mi:ss'),
+			#{mission_status},
+			<if test=" mission_describe !=null and mission_describe !=''">
+				#{mission_describe},
+			</if>
+		</trim>
+	</insert>
+	<!--特勤任务路线 -->
+	<insert id="insertRoute" parameterType="java.util.HashMap">
+		insert into ZHDD_MISSION_ROUTE
+		<trim prefix="(" suffixOverrides="," suffix=")">
+			PK_ID,
+			FK_MISSION_ID,
+			S_LONGITUDE,
+			S_LATITUDE,
+			E_LONGITUDE,
+			E_LATITUDE,
+			ROUTE_LINE
+		</trim>
+		select cistsys.SEQ_ZHDD_MISSION_ROUTE.NEXTVAL, cd.* from(
+		<foreach item="dv" index="index" collection="lineList"
+			separator="union all">
+			SELECT
+			#{pk_id},
+			#{dv.s_longitude},
+			#{dv.s_latitude},
+			#{dv.e_longitude},
+			#{dv.e_latitude},
+			#{dv.route_line}
+			FROM DUAL
+		</foreach>
+		)cd
+	</insert>
+	<!--特勤任务参与者 -->
+	<insert id="insertParticipant" parameterType="java.util.HashMap">
+		insert into ZHDD_MISSION_PARTICIPANT
+		<trim prefix="(" suffixOverrides="," suffix=")">
+			PK_ID,
+			FK_MISSION_ID,
+			PARTICIPANT_TYPE,
+			FK_PARTICIPANT_ID
+		</trim>
+		select cistsys.SEQ_ZHDD_MISSION_PARTICIPANT.NEXTVAL, cd.* from(
+		<foreach item="dv" index="index" collection="list"
+			separator="union all">
+			SELECT
+			#{pk_id},
+			#{dv.participant_type},
+			#{dv.fk_participant_id}
+			FROM DUAL
+		</foreach>
+		)cd
+	</insert>
+	<update id="update" parameterType="java.util.HashMap">
+		update ZHDD_SPECIAL_MISSION
+		<trim prefix="set" suffixOverrides=",">
+			<if test=" mission_name !=null and mission_name !=''">
+				mission_name=#{mission_name},
+			</if>
+			<if
+				test=" fk_mission_grade_id !=null and fk_mission_grade_id !=''">
+				fk_mission_grade_id=#{fk_mission_grade_id},
+			</if>
+			<if test=" mission_start_time !=null and mission_start_time !=''">
+
+				mission_start_time=to_date(#{mission_start_time},'yyyy-mm-dd
+				hh24:mi:ss'),
+			</if>
+			<if test=" mission_end_time !=null and mission_end_time !=''">
+				mission_end_time=to_date(#{mission_end_time},'yyyy-mm-dd
+				hh24:mi:ss'),
+			</if>
+			<if test=" mission_describe !=null and mission_describe !=''">
+				mission_describe=#{mission_describe},
+			</if>
+		</trim>
+		<where>
+			PK_ID=#{pk_id}
+		</where>
+	</update>
+</mapper>

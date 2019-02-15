@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cist.videopatrol.mapper.VideoPatrolMapper">
+	<!-- 查询视频巡逻方案 -->
+	<select id="querycruise" parameterType="java.util.HashMap"
+		resultType="com.cist.videopatrol.model.TBL_VIO_CRUISE_CASE">
+		<!-- select * from TBL_VIO_CRUISE_CASE -->
+		select * from TBL_VIO_CRUISE_CASE t where <![CDATA[t.vcc_start_time<=sysdate and t.vcc_end_time>=sysdate]]>
+	</select>
+	<select id="selectPatrol" parameterType="java.util.HashMap"
+		resultType="com.cist.videopatrol.model.TBL_VIO_CRUISE_CASE">
+		select * from tbl_VIO_CRUISE_CASE t
+		left join
+		tbl_VIO_CRUISE_CONFIG t1 on t.vcc_pk = t1.vcc_pk
+		left join
+		cistsys.jcsj_device t2 on t1.pk_id = t2.pk_id
+		left join
+		JCSJ_DEVICE_CAMERA_GB28181 t3 on t3.device_id=t2.pk_id
+	</select>
+	<!-- 根据条件查询视频巡逻方案摄像机表 -->
+	<select id="querycruiseconf" parameterType="java.util.HashMap"
+		resultType="com.cist.videopatrol.model.TBL_VIO_CRUISE_CONFIG">
+		select * from vw_spxljk_info
+		<where>
+			<if test="vcc_pk!=null and vcc_pk!=''">
+				and vcc_pk = #{vcc_pk}
+			</if>
+		</where>
+	</select>
+	<select id="querydev" parameterType="java.util.HashMap"
+		resultType="com.cist.patrolplan.model.Tbl_Dev_Info">
+		select * from JCSJ_DEVICE
+		<where>
+			<if test="dvc_pk!=null and dvc_pk!=''">
+				and device_num=#{dvc_pk,jdbcType=INTEGER}
+			</if>
+		</where>
+	</select>
+	<select id="queryinfo" parameterType="java.util.HashMap"
+		resultType="com.cist.videopatrol.model.TBL_VIO_CRUISE_CONFIG">
+		select * from vw_spxljk_info k
+		<where>
+			<if test="vcc_pk!=null and vcc_pk!=''">
+				and k.vcc_pk = #{vcc_pk}
+			</if>
+			<!-- <if test="dvc_pk!=null and dvc_pk!=''"> and k.dvc_pk=#{dvc_pk,jdbcType=INTEGER} 
+				</if> -->
+			<!-- <if test="zt!=null and zt!=''"> and k.DVC_STATUS = #{zt} </if> -->
+		</where>
+	</select>
+	<!-- 查询视频画面数量 -->
+	<select id="queryvideonum" parameterType="java.util.HashMap"
+		resultType="com.cist.videopatrol.model.SYS_FRM_CODE">
+		select * from sys_frm_code where fct_code='D007'
+	</select>
+	<!--查询地图缩放级别等配置信息 -->
+	<select id="queryMineMapBaseConfig"
+		resultType="com.cist.realTimeMonitor.model.SYS_CONFIG"
+		parameterType="java.util.HashMap">
+		select * from SYS_CONFIG where syci_key=#{configKey}
+	</select>
+	<resultMap id="BaseResultMap"
+		type="com.cist.videopatrol.model.TBL_VIO_CRUISE_CASE">
+		<id column="vcc_pk" property="vcc_pk" jdbcType="DECIMAL" />
+		<result column="vcc_name" property="vcc_name"
+			jdbcType="VARCHAR" />
+		<result column="vcc_type" property="vcc_type"
+			jdbcType="VARCHAR" />
+		<result column="vcc_duration" property="vcc_duration"
+			jdbcType="VARCHAR" />
+		<result column="vcc_time" property="vcc_time"
+			jdbcType="VARCHAR" />
+		<result column="vcc_start_time" property="vcc_start_time"
+			jdbcType="TIMESTAMP" />
+		<result column="vcc_end_time" property="vcc_end_time"
+			jdbcType="TIMESTAMP" />
+		<result column="vcc_remark" property="vcc_remark"
+			jdbcType="VARCHAR" />
+		<result column="dept_pk" property="dept_pk" jdbcType="VARCHAR" />
+		<result column="vcc_duration_unit" property="vcc_duration_unit"
+			jdbcType="VARCHAR" />
+		<result column="vvc_patrol_type" property="vvc_patrol_type"
+			jdbcType="VARCHAR" />
+		<collection property="camera" column="vcc_pk"
+			ofType="com.cist.videopatrol.model.SPJK_VIO_CRUISE_CONFIG">
+			<!-- javaType="ArrayList" -->
+			<id column="vcf_pk" property="vcf_pk" />
+			<result column="vcf_num" property="vcf_num" jdbcType="DECIMAL" />
+			<result column="device_num" property="device_num"
+				jdbcType="VARCHAR" />
+			<result column="vcf_prest_sign" property="vcf_prest_sign"
+				jdbcType="DECIMAL" />
+			<result column="vcf_rest_sign" property="vcf_rest_sign"
+				jdbcType="DECIMAL" />
+			<result column="pk_id" property="pk_id" jdbcType="DECIMAL" />
+			<result column="vcf_stop_time" property="vcf_stop_time"
+				jdbcType="DECIMAL" />
+			<result column="device_gb_serial" property="device_gb_serial"
+				jdbcType="VARCHAR" />
+			<result column="device_gb_code" property="device_gb_code"
+				jdbcType="VARCHAR" />
+			<result column="device_gb_channel"
+				property="device_gb_channel" jdbcType="VARCHAR" />
+			<result column="device_gb_ptz" property="device_gb_ptz"
+				jdbcType="VARCHAR" />
+			<result column="latitude" property="latitude"
+				jdbcType="DECIMAL" />
+			<result column="longitude" property="longitude"
+				jdbcType="DECIMAL" />
+			<result column="road_name" property="road_name"
+				jdbcType="VARCHAR" />
+		</collection>
+	</resultMap>
+	<!--首页根据巡逻分类查询巡逻方案集合以及对应的摄像机信息  -->
+	<select id="selectPatrolList" parameterType="java.util.HashMap"
+		resultMap="BaseResultMap">
+		select
+		t.*,
+		t1.vcf_pk,
+		t1.vcc_pk vc_pk,
+		t1.pk_id,
+		t1.vcf_num,
+		t1.vcf_prest_sign,
+		t1.vcf_rest_sign,
+		t1.vcf_stop_time,
+		t2.road_name,
+		t2.longitude,
+		t2.latitude,
+		t3.device_id,
+		t3.device_gb_serial,
+		t3.device_gb_code,
+		t3.device_gb_channel,
+		t3.device_gb_ptz
+		from
+		tbl_VIO_CRUISE_CASE t
+		left join tbl_VIO_CRUISE_CONFIG t1 on t.vcc_pk =
+		t1.vcc_pk
+		left join cistsys.jcsj_device t2 on t1.pk_id = t2.pk_id
+		left
+		join JCSJ_DEVICE_CAMERA_GB28181 t3 on t3.device_id=t2.pk_id
+		
+		where t.VVC_PATROL_TYPE=#{vvc_patrol_type}
+	</select>
+</mapper>

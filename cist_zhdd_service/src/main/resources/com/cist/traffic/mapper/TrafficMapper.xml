@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cist.traffic.mapper.TrafficMapper">
+<!--查询警员在线率  -->
+ <select id="selectOnpolice" resultType="com.cist.traffic.model.Traffic">
+   select count(case when sfqj='1' then 1 else null end ) as jyzx,
+    count(case when sfqj='0' then 1 else null end ) as jyqj, count(0) as
+    ryzs from sys_police_info 
+  </select>
+<!--查询今日交通事件数量  -->
+<select id="selectTodayTrafficNumber" resultType="com.cist.traffic.model.Traffic" parameterType="java.util.HashMap">
+  select to_char(alarm_time, 'yyyy-mm-dd') as yjsj, count(0) as
+    sjzs from zhdd_event_information 
+    where to_char(alarm_time,'yyyy-mm-dd')=to_char(sysdate,'yyyy-mm-dd')  
+    group by to_char(alarm_time, 'yyyy-mm-dd') 
+</select> 
+
+<!--查询交通事件数量总数  -->
+<select id="selectNowTrafficNumber" resultType="com.cist.traffic.model.Traffic">
+  select  count(0) as
+    sjzss from zhdd_event_information  
+</select>
+<!--查询日均交通数量  --> 
+<select id="selectAvgTrafficNumber" resultType="com.cist.traffic.model.Traffic" parameterType="java.util.HashMap">
+   select to_char(alarm_time, 'yyyy-mm') as yjsj, count(0) as
+    rjzs from zhdd_event_information  
+    <where> 
+    <if test="time1!=null and time1!='' and time1!='null'">
+		   <![CDATA[ and t.alarm_time>=to_date(#{time1},'yyyy-mm-dd')]]>
+	  </if>
+	 <if test="time2!=null and time2!='' and time2!='null'">
+		   <![CDATA[and t.alarm_time<= to_date(#{time2},'yyyy-mm-dd') ]]>
+	 </if> 
+	 </where>
+	  group by to_char(alarm_time, 'yyyy-mm') 
+	  order by to_char(alarm_time, 'yyyy-mm') ASC NULLS LAST
+</select>
+<!--同周比  --> 
+<select id="selectMondayTrafficNumber" resultType="com.cist.traffic.model.Traffic" parameterType="java.util.HashMap">
+   select * from zhdd_event_information  
+    <where> 
+    <if test="time!=null and time!='' and time1!='null'">
+		   <![CDATA[ and t.alarm_time=to_date(#{time},'yyyy-mm-dd HH24:mi:ss')]]>
+	  </if>
+	 </where>
+</select>
+<!--查询施工占道总数  -->
+<select id="selectSgzdToal" resultType="com.cist.traffic.model.Traffic" parameterType="java.util.HashMap">
+   select count(0) as sfzd from SGZD_CONSTRUCTION_INFO
+       <where>
+		   <if test="zrsj!=null and zrsj!=''">
+				<![CDATA[ and start_date >=to_date(#{zrsj},'yyyy-mm-dd HH24:mi:ss')]]>
+			</if>
+			<if test="zrsj1!=null and zrsj!=''">
+				<![CDATA[and end_date <= to_date(#{zrsj1},'yyyy-mm-dd HH24:mi:ss') ]]>
+			</if>
+		</where>
+</select>
+
+<!-- 查询单个事件数量 -->
+<select id="selectOneNumber" resultType="com.cist.traffic.model.Event">
+  select count(1) numbers,event_address from zhdd_event_information  group by  event_address
+</select>
+</mapper>

@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sbzc.mappers.JcbkControlBayonetMapper">
+  <resultMap id="BaseResultMap" type="com.sbzc.model.JcbkControlBayonet">
+    <result column="PK" jdbcType="DECIMAL" property="pk" />
+    <result column="KKBH" jdbcType="VARCHAR" property="kkbh" />
+    <result column="KKMC" jdbcType="VARCHAR" property="kkmc" />
+    <result column="DLMC" jdbcType="VARCHAR" property="dlmc" />
+    <result column="FXLX" jdbcType="CHAR" property="fxlx" />
+    <result column="SBFX" jdbcType="VARCHAR" property="sbfx" />
+    <result column="XSFX" jdbcType="VARCHAR" property="xsfx" />
+    <result column="JD" jdbcType="DECIMAL" property="jd" />
+    <result column="WD" jdbcType="DECIMAL" property="wd" />
+    <result column="ENABLE" jdbcType="CHAR" property="enable" />
+    <result column="MS" jdbcType="VARCHAR" property="ms" />
+    <result column="GLBM" jdbcType="VARCHAR" property="glbm" />
+  </resultMap>
+  <insert id="insert" parameterType="com.sbzc.model.JcbkControlBayonet">
+    insert into JCBK_CONTROL_BAYONET (PK, KKBH, KKMC, 
+      DLMC, FXLX, SBFX, XSFX, 
+      JD, WD, ENABLE, MS, 
+      GLBM)
+    values (#{pk,jdbcType=DECIMAL}, #{kkbh,jdbcType=VARCHAR}, #{kkmc,jdbcType=VARCHAR}, 
+      #{dlmc,jdbcType=VARCHAR}, #{fxlx,jdbcType=CHAR}, #{sbfx,jdbcType=VARCHAR}, #{xsfx,jdbcType=VARCHAR}, 
+      #{jd,jdbcType=DECIMAL}, #{wd,jdbcType=DECIMAL}, #{enable,jdbcType=CHAR}, #{ms,jdbcType=VARCHAR}, 
+      #{glbm,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.sbzc.model.JcbkControlBayonet">
+    insert into JCBK_CONTROL_BAYONET
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="pk != null">
+        PK,
+      </if>
+      <if test="kkbh != null">
+        KKBH,
+      </if>
+      <if test="kkmc != null">
+        KKMC,
+      </if>
+      <if test="dlmc != null">
+        DLMC,
+      </if>
+      <if test="fxlx != null">
+        FXLX,
+      </if>
+      <if test="sbfx != null">
+        SBFX,
+      </if>
+      <if test="xsfx != null">
+        XSFX,
+      </if>
+      <if test="jd != null">
+        JD,
+      </if>
+      <if test="wd != null">
+        WD,
+      </if>
+      <if test="enable != null">
+        ENABLE,
+      </if>
+      <if test="ms != null">
+        MS,
+      </if>
+      <if test="glbm != null">
+        GLBM,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="pk != null">
+        #{pk,jdbcType=DECIMAL},
+      </if>
+      <if test="kkbh != null">
+        #{kkbh,jdbcType=VARCHAR},
+      </if>
+      <if test="kkmc != null">
+        #{kkmc,jdbcType=VARCHAR},
+      </if>
+      <if test="dlmc != null">
+        #{dlmc,jdbcType=VARCHAR},
+      </if>
+      <if test="fxlx != null">
+        #{fxlx,jdbcType=CHAR},
+      </if>
+      <if test="sbfx != null">
+        #{sbfx,jdbcType=VARCHAR},
+      </if>
+      <if test="xsfx != null">
+        #{xsfx,jdbcType=VARCHAR},
+      </if>
+      <if test="jd != null">
+        #{jd,jdbcType=DECIMAL},
+      </if>
+      <if test="wd != null">
+        #{wd,jdbcType=DECIMAL},
+      </if>
+      <if test="enable != null">
+        #{enable,jdbcType=CHAR},
+      </if>
+      <if test="ms != null">
+        #{ms,jdbcType=VARCHAR},
+      </if>
+      <if test="glbm != null">
+        #{glbm,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <resultMap id="BaseResultMap" type="com.sbzc.model.JcbkControlBayonet">
+    <result column="PK" jdbcType="DECIMAL" property="pk" />
+    <result column="KKBH" jdbcType="VARCHAR" property="kkbh" />
+    <result column="KKMC" jdbcType="VARCHAR" property="kkmc" />
+    <result column="DLMC" jdbcType="VARCHAR" property="dlmc" />
+    <result column="FXLX" jdbcType="CHAR" property="fxlx" />
+    <result column="SBFX" jdbcType="VARCHAR" property="sbfx" />
+    <result column="XSFX" jdbcType="VARCHAR" property="xsfx" />
+    <result column="JD" jdbcType="DECIMAL" property="jd" />
+    <result column="WD" jdbcType="DECIMAL" property="wd" />
+    <result column="ENABLE" jdbcType="CHAR" property="enable" />
+    <result column="MS" jdbcType="VARCHAR" property="ms" />
+    <result column="GLBM" jdbcType="VARCHAR" property="glbm" />
+  </resultMap>
+  <insert id="insert" parameterType="com.sbzc.model.JcbkControlBayonet">
+    insert into JCBK_CONTROL_BAYONET (PK, KKBH, KKMC, 
+      DLMC, FXLX, SBFX, XSFX, 
+      JD, WD, ENABLE, MS, 
+      GLBM)
+    values (#{pk,jdbcType=DECIMAL}, #{kkbh,jdbcType=VARCHAR}, #{kkmc,jdbcType=VARCHAR}, 
+      #{dlmc,jdbcType=VARCHAR}, #{fxlx,jdbcType=CHAR}, #{sbfx,jdbcType=VARCHAR}, #{xsfx,jdbcType=VARCHAR}, 
+      #{jd,jdbcType=DECIMAL}, #{wd,jdbcType=DECIMAL}, #{enable,jdbcType=CHAR}, #{ms,jdbcType=VARCHAR}, 
+      #{glbm,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.sbzc.model.JcbkControlBayonet">
+    insert into JCBK_CONTROL_BAYONET
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="pk != null">
+        PK,
+      </if>
+      <if test="kkbh != null">
+        KKBH,
+      </if>
+      <if test="kkmc != null">
+        KKMC,
+      </if>
+      <if test="dlmc != null">
+        DLMC,
+      </if>
+      <if test="fxlx != null">
+        FXLX,
+      </if>
+      <if test="sbfx != null">
+        SBFX,
+      </if>
+      <if test="xsfx != null">
+        XSFX,
+      </if>
+      <if test="jd != null">
+        JD,
+      </if>
+      <if test="wd != null">
+        WD,
+      </if>
+      <if test="enable != null">
+        ENABLE,
+      </if>
+      <if test="ms != null">
+        MS,
+      </if>
+      <if test="glbm != null">
+        GLBM,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="pk != null">
+        #{pk,jdbcType=DECIMAL},
+      </if>
+      <if test="kkbh != null">
+        #{kkbh,jdbcType=VARCHAR},
+      </if>
+      <if test="kkmc != null">
+        #{kkmc,jdbcType=VARCHAR},
+      </if>
+      <if test="dlmc != null">
+        #{dlmc,jdbcType=VARCHAR},
+      </if>
+      <if test="fxlx != null">
+        #{fxlx,jdbcType=CHAR},
+      </if>
+      <if test="sbfx != null">
+        #{sbfx,jdbcType=VARCHAR},
+      </if>
+      <if test="xsfx != null">
+        #{xsfx,jdbcType=VARCHAR},
+      </if>
+      <if test="jd != null">
+        #{jd,jdbcType=DECIMAL},
+      </if>
+      <if test="wd != null">
+        #{wd,jdbcType=DECIMAL},
+      </if>
+      <if test="enable != null">
+        #{enable,jdbcType=CHAR},
+      </if>
+      <if test="ms != null">
+        #{ms,jdbcType=VARCHAR},
+      </if>
+      <if test="glbm != null">
+        #{glbm,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+</mapper>

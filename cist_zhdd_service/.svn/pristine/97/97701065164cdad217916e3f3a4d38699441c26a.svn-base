@@ -1,0 +1,53 @@
+package com.cist.tqrw.model;
+
+import java.io.Serializable;
+
+/**
+ * 特勤任务参与者
+ * 
+ * @author Administrator
+ *
+ */
+public class MissionParticipant implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4987684126243689469L;
+	private Integer pk_id;
+	private Integer fk_mission_id;// 任务ID
+	private Integer participant_type;// 参与者类型（0人1车2设备）
+	private Integer fk_participant_id;// 参与者ID
+
+	public Integer getPk_id() {
+		return pk_id;
+	}
+
+	public void setPk_id(Integer pk_id) {
+		this.pk_id = pk_id;
+	}
+
+	public Integer getFk_mission_id() {
+		return fk_mission_id;
+	}
+
+	public void setFk_mission_id(Integer fk_mission_id) {
+		this.fk_mission_id = fk_mission_id;
+	}
+
+	public Integer getParticipant_type() {
+		return participant_type;
+	}
+
+	public void setParticipant_type(Integer participant_type) {
+		this.participant_type = participant_type;
+	}
+
+	public Integer getFk_participant_id() {
+		return fk_participant_id;
+	}
+
+	public void setFk_participant_id(Integer fk_participant_id) {
+		this.fk_participant_id = fk_participant_id;
+	}
+
+}

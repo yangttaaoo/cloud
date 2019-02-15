@@ -1,0 +1,343 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cist.personalentry.mapper.PersonalEntryMapper">
+	<select id="depart_infolist" resultType="com.cist.personalentry.model.DeptInfo" parameterType="java.lang.Integer">
+		select t.dept_pk,t.dept_code,t.dept_name as name,t.DEPT_SUPERIOR from sys_depart_info t 
+		<where>
+		  <if test="_parameter  == null or _parameter  == ''">
+		     t.DEPT_SUPERIOR is null
+		   </if>
+		     <if test="_parameter  != null and _parameter  != ''">
+		     t.DEPT_SUPERIOR=#{_parameter}
+		   </if>
+		</where>
+   	</select>
+   	
+   	
+   	<select id="police_infolist" resultType="com.cist.personalentry.model.PoliceInfo" parameterType="java.lang.Integer">
+		select t.dept_pk,t.dept_code,t.dept_name as name,t.DEPT_SUPERIOR from sys_depart_info t 
+		<where>
+		  <if test="_parameter  == null or _parameter  == ''">
+		     t.DEPT_SUPERIOR is null
+		   </if>
+		     <if test="_parameter  != null and _parameter  != ''">
+		     t.DEPT_SUPERIOR=#{_parameter}
+		   </if>
+		</where>
+	</select>
+	
+	<select id="Police" resultType="com.cist.personalentry.model.PoliceInfo" parameterType="java.lang.Integer">
+   		select c.sypi_pk as dept_code,c.sypi_name as name,c.sypi_code from SYS_POLICE_INFO c,(select distinct k.sypi_pk from SYS_USER_AUTHORITY k where symi_pk = 23 or  symi_pk = 24 ) t where c.sypi_pk=t.sypi_pk and c.sypi_dept =#{_parameter}
+   </select>
+   
+   <select id="findDatapageList" resultType="com.cist.personalentry.model.Oeuser"
+		parameterType="java.util.HashMap">
+		select * from (select *from Oeuser.tbl_offe_evdi k 
+		<where>
+		1=1
+		<if test="shry!=null and shry!=''">
+		 and k.csr=#{shry} or k.fsr=#{shry}
+		</if>
+		</where>
+		) t
+		<where>
+			 t.SHBZ in(1,2,3,4,7,8,11)
+			<if test="wfkssj!=null and wfkssj!=''">
+		    <![CDATA[ and t.WFKSSJ >=to_date(#{wfkssj},'yyyy-mm-dd HH24:mi:ss')]]>
+			</if>
+			<if test="wfjssj!=null and wfjssj!=''">
+		    <![CDATA[and t.WFJSSJ <= to_date(#{wfjssj},'yyyy-mm-dd HH24:mi:ss') ]]>
+			</if>
+		</where>
+		order by t.wfsj desc
+	</select>
+	
+	<select id="AppraiseList" resultType="com.cist.personalentry.model.AppraiseInfo">
+      select *from QW_APPRAISE_TOPIC t where t.ENABLED_STATE = 1
+   	</select>
+   	<select id="RegulationsList" resultType="com.cist.personalentry.model.RegulationsInfo" parameterType="java.util.HashMap">
+      select *from QW_APPRAISE_REGULATIONS t 
+      <where>
+      	t.ENABLED_STATE = 1
+      	<if  test="khlm!=null and khlm!=''">
+      	  and t.FK_APPRAISE_TOPIC_ID = #{khlm}
+      	</if>
+      </where>
+       
+   	</select>
+   	
+   	<select id="IndivInfopageList" resultType="com.cist.personalentry.model.IndividualInfo" parameterType="java.util.HashMap">
+      select t.*,y.sypi_name as fk_user_name,to_char(t.input_time,'yyyy-mm-dd HH24:mi:ss') as input_time_name,to_char(t.start_date,'yyyy-mm-dd HH24:mi:ss') as start_date_name,to_char(t.end_date,'yyyy-mm-dd HH24:mi:ss') as end_date_name,k.dept_name as fk_dept_name from QW_INDIVIDUAL_ASSESSMENT t,SYS_POLICE_INFO y,sys_depart_info k
+      <where>
+      	t.fk_user_id = y.sypi_pk and t.fk_dept_id = k.dept_code
+      	<if  test="khry!=null and khry!=''">
+      	  and y.sypi_name LIKE '%'||#{khry}||'%'
+      	</if>
+      	<if  test="ssbm!=null and ssbm!=''">
+      	  and y.fk_dept_id = #{ssbm}
+      	</if>
+      	<if  test="shzt!=null and shzt!=''">
+      	  and t.verify_status = #{shzt}
+      	</if>
+      </where>
+       
+   	</select>
+   	
+   	<select id="getAttachment" resultType="com.cist.personalentry.model.IndividualInfo" parameterType="java.lang.Integer">
+   	  select t.pk_id as att_pk_id,t.FK_RELATION_ID,t.ATTACHMENT_SOURCE from QW_ASSESSMENT_ATTACHMENT t
+   	  <where>
+   	  		t.CONSTRAINT = 'KHLR' and t.FK_RELATION_ID=#{_parameter}
+   	  </where>
+   	</select>
+   	
+   	<select id="khtsList" resultType="java.lang.Integer" parameterType="java.util.HashMap">
+   	 select sum(t.tbvg_job) as khts from TBL_VERIFY_GROUP t 
+   	  <where>
+   	  1=1
+   	  		<if test="sypi_pk!=null and sypi_pk!=''">
+   	  			and t.sypi_pk=#{sypi_pk}
+   	  		</if>
+   	  </where>
+   	</select>
+   	
+   	<select id="shtsList" resultType="java.lang.Integer" parameterType="java.util.HashMap">
+   	 select  count(*) from oeuser.TBL_OFFE_EVDI t  
+   	  <where>
+   	  1=1
+   	  		<if test="sypi_pk!=null and sypi_pk!=''">
+   	  			and (t.csr = #{sypi_pk} or t.fsr = #{sypi_pk})
+   	  		</if>
+   	  		<if test="bbsj!=null and bbsj!=''">
+   	  			<![CDATA[ and (t.cssj =to_date(#{bbsj},'yyyy-mm-dd') or t.fssj =to_date(#{bbsj},'yyyy-mm-dd'))]]>
+   	  		</if>
+   	  </where>
+   	</select>
+   	
+   	<select id="UserList" resultType="java.lang.String" parameterType="java.lang.String">
+   	 select t.SYPI_NAME from SYS_POLICE_INFO t  
+   	  <where>
+ 		t.sypi_pk=#{_parameter}
+   	  </where>
+   	</select>
+   	
+   	<insert id="addpersonaloffice" parameterType="java.util.HashMap">
+   	<selectKey keyProperty="id" resultType="java.lang.Integer" order="BEFORE">  
+            select  cistsys.SEQ_INDIVIDUAL_ASSESSMENT.nextval from dual  
+    </selectKey>
+	   INSERT INTO QW_INDIVIDUAL_ASSESSMENT
+            (
+             PK_ID,
+             FK_DEPT_ID,
+             DATA_SOURCES_TYPE,
+             ASSESSMENT_TYPE,
+             FK_USER_ID,
+             ASSESSMENT_NUM,
+             VERIFY_NUM,
+             FK_TOPIC_ID,
+             FK_REGULATIONS_ID,
+             EXPLAIN,
+             INPUT_PERSON,
+             INPUT_TIME,
+             VERIFY_STATUS,
+             START_DATE,
+             END_DATE
+             )
+       VALUES (
+            #{id,jdbcType=DECIMAL},
+        	#{fk_dept_id},
+            #{khryid},
+            2,
+        	#{preparation_khr},
+            #{khts},
+            #{shts},
+            #{khlm},
+        	#{khtl},
+        	#{remarks,jdbcType=VARCHAR},
+        	#{khryid},
+        	sysdate,
+        	0,
+        	to_date(#{state_date},'yyyy-mm-dd HH24:mi:ss'),
+        	to_date(#{end_date},'yyyy-mm-dd HH24:mi:ss')
+        	)
+	</insert>
+	
+	<insert id="addpersonalreport" parameterType="java.util.HashMap">
+   	<selectKey keyProperty="id" resultType="java.lang.Integer" order="BEFORE">  
+            select  cistsys.SEQ_INDIVIDUAL_ASSESSMENT.nextval from dual  
+    </selectKey>
+	   INSERT INTO QW_INDIVIDUAL_ASSESSMENT
+            (
+             PK_ID,
+             FK_DEPT_ID,
+             DATA_SOURCES_TYPE,
+             ASSESSMENT_TYPE,
+             FK_USER_ID,
+             FK_REPORT_ID,
+             FK_PATROL_AREA_ID,
+             FK_PATROL_AREA_NAME,
+             OWN_GUNS,
+             FK_REPORT_NAME,
+             FK_TOPIC_ID,
+             FK_REGULATIONS_ID,
+             EXPLAIN,
+             INPUT_PERSON,
+             INPUT_TIME,
+             VERIFY_STATUS,
+             START_DATE,
+             END_DATE
+             )
+       VALUES (
+            #{id,jdbcType=DECIMAL},
+        	#{fk_dept_id},
+            #{khryid},
+            1,
+        	#{preparation_khr},
+            #{qwbbid},
+            #{qwqyid},
+            #{preparation_qy},
+            #{sfpq},
+            #{qwbb},
+            #{khlm},
+        	#{khtl},
+        	#{remarks,jdbcType=VARCHAR},
+        	#{khryid},
+        	sysdate,
+        	0,
+        	to_date(#{state_date},'yyyy-mm-dd HH24:mi:ss'),
+        	to_date(#{end_date},'yyyy-mm-dd HH24:mi:ss')
+        	)
+	</insert>
+	
+	<insert id="addattachment" parameterType="java.util.HashMap">
+	   INSERT INTO QW_ASSESSMENT_ATTACHMENT
+            (
+             PK_ID,
+             FK_RELATION_ID,
+             ATTACHMENT_NAME,
+             ATTACHMENT_SUFFIX,
+             ATTACHMENT_SOURCE,
+             FK_COMMIT_PERSON_ID,
+             ATTACHMENT_SIZE,
+             CONSTRAINT
+             )
+       VALUES (
+       		cistsys.SEQ_ASSESSMENT_ATTACHMENT.nextval,
+            #{id,jdbcType=DECIMAL},
+            #{photo_name,jdbcType=VARCHAR},
+           	#{photo_hz,jdbcType=VARCHAR},
+           	#{photo_dz,jdbcType=VARCHAR},
+           	#{khryid},
+           	#{size},
+           	'KHLR'
+        	)
+	</insert>
+	
+	<delete id="deleteAttachment" parameterType="java.util.HashMap">
+	DELETE FROM QW_ASSESSMENT_ATTACHMENT WHERE CONSTRAINT = 'KHLR' and FK_RELATION_ID in 
+		<foreach item="w" collection="pk_id" open="(" separator="," close=")">
+		            #{w}
+		        </foreach>
+	</delete>
+	
+	<delete id="deletepersonalentry" parameterType="java.util.HashMap">
+	DELETE FROM QW_INDIVIDUAL_ASSESSMENT WHERE  PK_ID in 
+		<foreach item="w" collection="pk_id" open="(" separator="," close=")">
+		            #{w}
+		        </foreach>
+	</delete>
+	
+	<update id="editpersonaloffice"  parameterType="java.util.HashMap">
+       UPDATE QW_INDIVIDUAL_ASSESSMENT SET 
+             FK_DEPT_ID=#{fk_dept_id},
+             DATA_SOURCES_TYPE=#{khryid},
+             ASSESSMENT_TYPE=2,
+             FK_USER_ID=#{preparation_khr},
+             ASSESSMENT_NUM=#{khts},
+             VERIFY_NUM=#{shts},
+             FK_TOPIC_ID=#{khlm},
+             FK_REGULATIONS_ID=#{khtl},
+             EXPLAIN=#{remarks,jdbcType=VARCHAR},
+             START_DATE=to_date(#{state_date},'yyyy-mm-dd HH24:mi:ss'),
+             END_DATE=to_date(#{end_date},'yyyy-mm-dd HH24:mi:ss')
+       where pk_id = #{pk_id}
+     </update>
+     
+     <update id="editpersonalreport"  parameterType="java.util.HashMap">
+       UPDATE QW_INDIVIDUAL_ASSESSMENT SET 
+             FK_DEPT_ID=#{fk_dept_id},
+             DATA_SOURCES_TYPE=#{khryid},
+             ASSESSMENT_TYPE=1,
+             FK_USER_ID=#{preparation_khr},
+             FK_REPORT_ID=#{qwbbid},
+             FK_PATROL_AREA_ID=#{qwqyid},
+             OWN_GUNS=#{sfpq},
+             FK_REPORT_NAME=#{qwbb,jdbcType=VARCHAR},
+             FK_PATROL_AREA_NAME=#{preparation_qy,jdbcType=VARCHAR},
+             FK_TOPIC_ID=#{khlm},
+             FK_REGULATIONS_ID=#{khtl},
+             EXPLAIN=#{remarks,jdbcType=VARCHAR},
+             START_DATE=to_date(#{state_date},'yyyy-mm-dd HH24:mi:ss'),
+             END_DATE=to_date(#{end_date},'yyyy-mm-dd HH24:mi:ss')
+       where pk_id = #{pk_id}
+     </update>
+     
+     <insert id="addLog" parameterType="java.util.HashMap">
+	   INSERT INTO QW_OPERATION_LOG
+            (
+             PK_ID,
+             FK_RELATION_ID,
+             DATA_BEFORE,
+             DATA_AFTER,
+             EDIT_REASON,
+             EDIT_TIME,
+             FK_EDIT_USER_ID,
+             IP_ADDRESS,
+             BUSINESS_TYPE)
+       VALUES (
+       		cistsys.SEQ_QW_OPERATION_LOG.nextval,
+       		#{pk_id},
+        	#{history,jdbcType=VARCHAR},
+            #{data,jdbcType=VARCHAR},
+            #{bjyy,jdbcType=VARCHAR},
+        	sysdate,
+        	#{khryid},
+            #{ip,jdbcType=VARCHAR},
+        	1)
+	</insert>
+	
+	<select id="reportpageList" resultType="com.cist.personalentry.model.ReportInfo" parameterType="java.util.HashMap">
+    	select *from (select x.pk_id,t.fk_user_id,to_char(x.report_period_type,'yyyy-mm-dd') as report_date,to_char(m.work_shift_start_time,'yyyy-mm-dd HH24:mi:ss') as start_date,to_char(m.work_shift_end_time,'yyyy-mm-dd HH24:mi:ss') as end_date,u.sypi_name,x.report_type,o.dept_name from
+ QW_REPORT_WALK_RELATION t,QW_REPORT x,QW_REPORT_STREET m,sys_police_info u,sys_depart_info o where  t.fk_report_id = x.pk_id and x.pk_id = m.fk_report_id and t.fk_user_id = u.sypi_pk and x.fk_dept_id = o.dept_pk
+union all
+select x.pk_id,t.fk_user_id,to_char(x.report_period_type,'yyyy-mm-dd') as report_date,to_char(m.work_shift_start_time,'yyyy-mm-dd HH24:mi:ss') as start_date,to_char(m.work_shift_end_time,'yyyy-mm-dd HH24:mi:ss') as end_date,u.sypi_name,x.report_type,o.dept_name from
+ QW_REPORT_CAR_RELATION t,QW_REPORT_CAR_PATROL y,QW_REPORT x,QW_REPORT_STREET m,sys_police_info u,sys_depart_info o where t.fk_car_patrol_id = y.pk_id and y.fk_report_id = x.pk_id and x.pk_id = m.fk_report_id and t.fk_user_id = u.sypi_pk and x.fk_dept_id = o.dept_pk
+union all
+select x.pk_id,t.fk_user_id,to_char(x.report_period_type,'yyyy-mm-dd') as report_date,to_char(y.work_shift_start_time,'yyyy-mm-dd HH24:mi:ss') as start_date,to_char(y.work_shift_end_time,'yyyy-mm-dd HH24:mi:ss') as end_date,u.sypi_name,x.report_type,o.dept_name from 
+QW_REPORT_DUTY_RELATION t,QW_REPORT_DUTY y,QW_REPORT x,sys_police_info u,sys_depart_info o where t.fk_report_id = x.pk_id and y.fk_report_id = x.pk_id and t.fk_user_id = u.sypi_pk and x.fk_dept_id = o.dept_pk
+union all
+select x.pk_id,t.fk_user_id,to_char(x.report_period_type,'yyyy-mm-dd') as report_date,to_char(y.work_start_time,'yyyy-mm-dd HH24:mi:ss') as start_date,to_char(y.work_end_time,'yyyy-mm-dd HH24:mi:ss') as end_date,u.sypi_name,x.report_type,o.dept_name from 
+QW_REPORT_ALARM_RELATION t,QW_REPORT_ALARM y,QW_REPORT x,sys_police_info u,sys_depart_info o where t.fk_report_alarm_id = y.pk_id and y.fk_report_id = x.pk_id and t.fk_user_id = u.sypi_pk and x.fk_dept_id = o.dept_pk
+union all
+select x.pk_id,t.fk_user_id,to_char(x.report_period_type,'yyyy-mm-dd') as report_date,to_char(y.work_start_time,'yyyy-mm-dd HH24:mi:ss') as start_date,to_char(y.work_end_time,'yyyy-mm-dd HH24:mi:ss') as end_date,u.sypi_name,x.report_type,o.dept_name from 
+QW_REPORT_OFFICE_RELATION t,QW_REPORT_OFFICE y,QW_REPORT x,sys_police_info u,sys_depart_info o where t.fk_report_office_id = y.pk_id and y.fk_report_id = x.pk_id and t.fk_user_id = u.sypi_pk and x.fk_dept_id = o.dept_pk) h
+      <where>
+      1=1
+      		<if test="bbkssj!=null and bbkssj!=''">
+		    <![CDATA[ and to_date(h.report_date,'yyyy-mm-dd') >=to_date(#{bbkssj},'yyyy-mm-dd')]]>
+			</if>
+			<if test="bbjssj!=null and bbjssj!=''">
+		    <![CDATA[ and to_date(h.report_date,'yyyy-mm-dd') <=to_date(#{bbjssj},'yyyy-mm-dd')]]>
+			</if>
+			<if  test="bbry!=null and bbry!=''">
+      	 	 and y.sypi_name LIKE '%'||#{bbry}||'%'
+      		</if>
+      </where>
+   	</select>
+   	
+   	<select id="getAreaname" resultType="com.cist.personalentry.model.ReportInfo" parameterType="java.lang.Integer">
+   	 select t.AREA_NAME,t.ARMED_FORCES_TYPE,t.FK_PATROL_AREA_ID from QW_REPORT_STREET t  
+   	  <where>
+ 		t.FK_REPORT_ID=#{_parameter}
+   	  </where>
+   	</select>
+</mapper>

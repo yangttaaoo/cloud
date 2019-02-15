@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cist.workorderstats.mapper.WorkOrderStatsMapper">
+	<!--统计今天,上周，上月，去年同期增量 -->
+	<select id="selectAvgMonth" resultType="com.cist.workorderstats.model.JtywJobOrderInfo">
+		select
+		<if test="lastYear !=null and lastYear !='' and lastYear !='null'">
+		sum(case when t1.job_status is not null and
+		to_char(t1.COMPLETE_TIME_LIMIT,'yyyy') =#{year} then 1 else 0
+		end)count,
+		sum(case when t1.job_status is not null and
+		to_char(t1.COMPLETE_TIME_LIMIT,'yyyy') = #{lastYear} then 1 else 0
+		end)lastCount
+		</if>
+		<if test="lastMonth !=null and lastMonth !='' and lastMonth !='null'">
+		sum(case when t1.job_status is not null and
+		to_char(t1.COMPLETE_TIME_LIMIT,'yyyy-MM') =#{month} then 1 else 0
+		end)count,
+		sum(case when t1.job_status is not null and
+		to_char(t1.COMPLETE_TIME_LIMIT,'yyyy-MM') = #{lastMonth} then 1 else 0
+		end)lastCount
+		</if>
+		<if test="lastWeekStart !=null and lastWeekStart !='' and lastWeekStart !='null'">
+		sum(case when t1.job_status is not null 
+		<![CDATA[and  COMPLETE_TIME_LIMIT >= to_date(#{weekStart},'yyyy-mm-dd HH24:mi:ss') 
+		and  COMPLETE_TIME_LIMIT <= to_date(#{weekEnd},'yyyy-mm-dd HH24:mi:ss')]]>
+		 then 1 else 0
+		end)count,
+		sum(case when t1.job_status is not null 
+		<![CDATA[ and  COMPLETE_TIME_LIMIT >= to_date(#{lastWeekStart},'yyyy-mm-dd HH24:mi:ss') 
+		and  COMPLETE_TIME_LIMIT <= to_date(#{lastWeekEnd},'yyyy-mm-dd HH24:mi:ss')]]>
+		 then 1 else 0
+		end)lastCount
+		</if>
+		<if test="lastDay !=null and lastDay !='' and lastDay !='null'">
+		sum(case when t1.job_status is not null and
+		to_char(t1.COMPLETE_TIME_LIMIT,'yyyy-MM-dd') =#{day} then 1 else 0
+		end)count,
+		sum(case when t1.job_status is not null and
+		to_char(t1.COMPLETE_TIME_LIMIT,'yyyy-MM-dd') = #{lastDay} then 1 else 0
+		end)lastCount
+		</if>
+		from JTYW_JOB_ORDER t1
+	</select>
+	<!--统计工单总数、完成数量、未完成数量 -->
+	<select id="selectCount" resultType="com.cist.workorderstats.model.JtywJobOrderInfo">
+		select sum(case when t.job_status is not null then 1 else 0 end)count,
+		sum(case when t.job_status='3' then 1 else 0 end)wccount,
+		<![CDATA[sum(case when t.COMPLETE_TIME_LIMIT< sysdate and t.job_status!='3' then 1 else 0 end)wwccount]]>
+		from JTYW_JOB_ORDER t
+	</select>
+	<!--统计每个公司的完成数量和未完成数量-->
+	<select id="selectCompany" resultType="com.cist.workorderstats.model.JtywJobOrderInfo">
+		select t1.COMP_NAME,
+		sum(case when t1.job_status='3' then 1 else 0 end)wccount,
+		<![CDATA[sum(case when t1.COMPLETE_TIME_LIMIT<sysdate and t1.job_status!='3' then 1 else 0 end)wwccount ]]>
+		from (select t.*,c.* from JTYW_JOB_ORDER t left join JTYW_MAINTENANCE_COMPANY c on t.fk_company_id=c.pk_id)t1
+		<where>
+		<!-- 获取今天的信息统计 -->
+		<if test="day !=null and day !='' and day !='null'">
+		 <![CDATA[ and  to_char(COMPLETE_TIME_LIMIT,'yyyy-MM-dd')=#{day}]]>
+		</if>
+		<!-- 获取本周的信息统计 -->
+		<if test="weekStart !=null and weekStart !='' and weekStart !='null'">
+		 <![CDATA[ and  COMPLETE_TIME_LIMIT >= to_date(#{weekStart},'yyyy-mm-dd HH24:mi:ss')]]>
+		</if>
+		<if test="weekEnd !=null and weekEnd !='' and weekEnd !='null'">
+		 <![CDATA[ and  COMPLETE_TIME_LIMIT <= to_date(#{weekEnd},'yyyy-mm-dd HH24:mi:ss')]]>
+		</if>
+		<!-- 获取本月的信息统计 -->
+		<if test="month !=null and month !='' and month !='null'">
+		 <![CDATA[ and  to_char(COMPLETE_TIME_LIMIT,'yyyy-MM')=#{month}]]>
+		</if>
+		<!-- 获取本年的信息统计 -->
+		<if test="year !=null and year !='' and year !='null'">
+		 <![CDATA[ and  to_char(COMPLETE_TIME_LIMIT,'yyyy')=#{year}]]>
+		</if>
+		<!-- 根据选择开始时间和结束时间查询统计信息 -->
+		<if test="complete_start !=null and complete_start !='' and complete_start!='null'">
+		 <![CDATA[ and COMPLETE_TIME_LIMIT >=to_date(#{complete_start},'yyyy-mm-dd HH24:mi:ss')]]>
+		</if>
+		<if test="complete_end !=null and complete_end !='' and complete_end !='null'">
+		 <![CDATA[ and COMPLETE_TIME_LIMIT <= to_date(#{complete_end},'yyyy-mm-dd HH24:mi:ss')]]>
+		</if>
+		</where>
+		 group by t1.COMP_NAME
+	</select>
+	<!--统计每个公司的工单占比 -->
+	<select id="selectPercent" resultType="com.cist.workorderstats.model.JtywJobOrderInfo">
+		select c.COMP_NAME,count(t.fk_company_id)oCount from JTYW_JOB_ORDER t left join
+		JTYW_MAINTENANCE_COMPANY c on t.fk_company_id=c.pk_id group by
+		c.COMP_NAME,t.fk_company_id
+	</select>
+</mapper>

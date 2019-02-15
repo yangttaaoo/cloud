@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cist.police.mapper.PoliceMapper" >
+    <select id="selectSyspoliceinfo" resultType="com.cist.police.model.Syspoliceinfo" parameterType="java.util.Map">
+   select *
+           from sys_police_info p
+          left join sys_depart_info d on(d.dept_pk = p.sypi_dept)
+          <where>
+          <if test="sypi_status  != null and sypi_status  != ''">
+		      and  p.sypi_status=#{sypi_status}  
+		   </if>
+		        <if test="sypi_name  != null and sypi_name  != ''">
+		      and  p.sypi_name like '%'||#{sypi_name}||'%'
+		   </if>
+		        <if test="deptsuperior  != null and deptsuperior  != ''">
+		      and  p.sypi_dept=#{deptsuperior}  
+		   </if>
+          </where>
+          ORDER BY p.sypi_pk DESC
+    </select>
+    <select id="selectRole" resultType="com.cist.role.model.RoleInfo" parameterType="java.util.Map">
+    select * from SYS_ROLE_INFO 
+    <where>
+     		<if test="sypi_pk  != null and sypi_pk  != ''">
+		      sypi_pk=#{sypi_pk}  
+		   </if>
+    </where>
+    </select>
+    <select id="selectSyspolicetype" resultType="com.cist.police.model.Syspolicetype">
+      select* from SYS_FRM_CODE t where t.fct_code='RYLX'
+    </select>
+        <select id="sSyspoliceinfo" resultType="com.cist.police.model.Syspoliceinfo">
+   select * from SYS_POLICE_INFO t where t.sypi_dept=#{sypi_dept}
+    </select>
+    
+        <select id="selectSyspost" resultType="com.cist.police.model.Syspost">
+   select* from SYS_FRM_CODE t where t.fct_code='JYZW'
+    </select>
+          <select id="selectSyspolicestatus" resultType="com.cist.police.model.Syspolicestatus">
+    select * from sys_police_status t
+    </select>
+    <insert id="addSyspoliceinfo"  parameterType="java.util.Map"  >
+       <selectKey resultType="int" order="BEFORE" keyProperty="SYPI_PK">   
+            select SEQ_POLICE_INFO.nextval as SYPI_PK from dual
+        </selectKey> 
+     INSERT INTO SYS_POLICE_INFO
+    (SYPI_PK, 
+    SYPI_CODE,
+     SYPI_NAME,
+     SYPI_SEX, 
+     SYPI_POST,
+     SYPI_DEPT,
+     SYPI_TEL,
+     SYPI_MOBIAL,
+     SYPI_CALLER,
+     SYPI_KIND,
+     SYPI_STATUS,
+     SYPI_V_NO,
+     SYPI_ID,
+     SYPI_INTER,
+     SYPI_IPS,
+     SYPI_IPE,
+     SYPI_MAC,
+     SYPI_FIXEDIP1,
+     SYPI_FIXEDIP2,
+     SYPI_FIXEDIP3,
+     SYPI_PVP,
+     SYPI_COMP,
+     SYPI_AVP
+         )
+     VALUES
+      (
+      #{SYPI_PK},
+     #{sypi_code,jdbcType=VARCHAR},
+     #{sypi_name,jdbcType=VARCHAR},
+     #{sypi_sex,jdbcType=VARCHAR}, 
+     #{sypi_post,jdbcType=VARCHAR},
+     #{sypi_dept,jdbcType=VARCHAR},
+     #{sypi_tel,jdbcType=VARCHAR},
+     #{sypi_mobial,jdbcType=VARCHAR},
+     #{sypi_caller,jdbcType=VARCHAR},
+     #{sypi_kind,jdbcType=VARCHAR},
+     #{sypi_status,jdbcType=VARCHAR},
+     #{sypi_v_no,jdbcType=VARCHAR},
+     #{sypi_id,jdbcType=VARCHAR},
+     #{sypi_inter,jdbcType=VARCHAR},
+     #{sypi_ips,jdbcType=VARCHAR},
+     #{sypi_ipe,jdbcType=VARCHAR},
+     #{sypi_mac,jdbcType=VARCHAR},
+     #{sypi_fixedip1,jdbcType=VARCHAR},
+     #{sypi_fixedip2,jdbcType=VARCHAR},
+     #{sypi_fixedip3,jdbcType=VARCHAR},
+     #{sypi_pvp},
+     123456,
+     #{sypi_avp}
+      )
+    </insert>
+    <update id="updateSyspoliceinfo" parameterType="java.util.Map">
+    UPDATE SYS_POLICE_INFO SET 
+    	SYPI_CODE=#{sypi_code,jdbcType=VARCHAR},
+     SYPI_NAME=#{sypi_name,jdbcType=VARCHAR},
+     SYPI_SEX=#{sypi_sex,jdbcType=VARCHAR}, 
+     SYPI_POST=#{sypi_post,jdbcType=VARCHAR},
+     SYPI_DEPT=#{sypi_dept,jdbcType=VARCHAR},
+     SYPI_TEL=#{sypi_tel,jdbcType=VARCHAR},
+     SYPI_MOBIAL=#{sypi_mobial,jdbcType=VARCHAR},
+     SYPI_CALLER=#{sypi_caller,jdbcType=VARCHAR},
+     SYPI_KIND=#{sypi_kind,jdbcType=VARCHAR},
+     SYPI_STATUS=#{sypi_status,jdbcType=VARCHAR},
+     SYPI_V_NO=#{sypi_v_no,jdbcType=VARCHAR},
+     SYPI_ID=#{sypi_id,jdbcType=VARCHAR},
+     SYPI_INTER=#{sypi_inter,jdbcType=VARCHAR},
+     SYPI_IPS=#{sypi_ips,jdbcType=VARCHAR},
+     SYPI_IPE=#{sypi_ipe,jdbcType=VARCHAR},
+     SYPI_MAC=#{sypi_mac,jdbcType=VARCHAR},
+     SYPI_FIXEDIP1=#{sypi_fixedip1,jdbcType=VARCHAR},
+     SYPI_FIXEDIP2=#{sypi_fixedip2,jdbcType=VARCHAR},
+     SYPI_FIXEDIP3=#{sypi_fixedip3,jdbcType=VARCHAR},
+     SYPI_PVP=#{sypi_pvp},
+     SYPI_AVP=#{sypi_avp}
+    WHERE sypi_pk = #{sypi_pk}
+    </update>
+    <insert id="addsysuserauthority" parameterType="List" >
+BEGIN
+
+    <foreach collection="list" item="item" index="index"    separator="">
+       INSERT INTO SYS_USER_AUTHORITY(SYPI_PK,SYMI_PK)
+       values
+       (
+     #{item.sypi_pk,jdbcType=VARCHAR},
+     #{item.symi_pk,jdbcType=VARCHAR});
+       
+    </foreach>
+COMMIT;  
+    END;  
+    </insert>
+
+       <insert id="addbumenquanx" parameterType="List">
+   BEGIN
+
+    <foreach collection="list" item="item" index="index"    separator="">
+       INSERT INTO SYS_USER_DATAQX(SYPI_PK,SYPI_PKX)
+       values
+       (
+     #{item.sypi_pk,jdbcType=VARCHAR},
+     #{item.sypi_pks,jdbcType=VARCHAR});
+       
+    </foreach>
+COMMIT;  
+    END;  
+    </insert>
+    <delete id="deluserdataqx" parameterType="java.util.Map">
+    DELETE FROM SYS_USER_DATAQX WHERE SYPI_PK = #{sypi_pk}
+    </delete>
+        <delete id="deluserpolise" parameterType="java.util.Map">
+    DELETE FROM SYS_POLICE_INFO WHERE SYPI_PK
+       in
+			    <foreach item="w" collection="sypi_pk" open="(" separator="," close=")">
+		            #{w}
+		        </foreach>
+    </delete>
+    
+    <delete id="delusersq" parameterType="java.util.Map">
+    DELETE FROM SYS_USER_AUTHORITY WHERE SYPI_PK = #{sypi_pk}
+    </delete>
+    <select id="selectSysuserauthority" parameterType="java.util.Map" resultType="com.cist.police.model.Sysuserauthority">
+     select * from SYS_USER_AUTHORITY t where t.sypi_pk=#{sypi_pk}
+    </select>
+        <select id="selectSysuserauthorityleve" parameterType="java.util.Map" resultType="com.cist.police.model.Sysuserauthority">
+<!--     select t.symi_pk,t.symi_parent from SYS_MODULE_INFO t where t.symi_pk in(
+select t.symi_parent from SYS_MODULE_INFO t where t.symi_pk 
+in 
+  <foreach item="w" collection="datakey" open="(" separator="," close=")">
+		            #{w.symi_pk}
+		        </foreach>
+and t.symi_level=4
+) -->
+    select t.symi_pk,t.symi_parent from SYS_MODULE_INFO t where t.symi_pk in
+  <foreach item="w" collection="datakey" open="(" separator="," close=")">
+		            #{w.symi_pk}
+		        </foreach>
+and t.symi_level=3
+    </select>
+        <select id="deptdataauthority" parameterType="java.util.Map" resultType="com.cist.police.model.Sysuserauthority">
+   select t.sypi_pk,t.dept_pk as symi_pk,t.dept_pk_lev from SYS_DATA_AUTHORITY t  where t.sypi_pk=#{sypi_pk}
+    </select>
+    <select id="zijiedian" parameterType="java.util.Map" resultType="int">
+     select count(*) from SYS_DEPART_INFO t where t.dept_superior=#{dept_pk}
+    </select>
+    <select id="sysuserdataqx" parameterType="java.util.Map" resultType="com.cist.police.model.Sysuserdataqx">
+    select * from SYS_USER_DATAQX t
+where t.sypi_pk=#{sypi_pk}
+    
+    </select>
+    <update id="updatwpwd" parameterType="java.util.Map">
+       UPDATE SYS_POLICE_INFO SET 
+       SYPI_COMP=123456
+         WHERE sypi_pk = #{sypi_pk}
+    </update>
+</mapper>

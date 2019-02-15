@@ -7,7 +7,7 @@
 		select * from VW_PERSONAGEASSESS_INFO t
 		<where>
 			<if test="fk_dept_id !=null and fk_dept_id !=''">
-				and fk_dept_id = #{fk_dept_id}
+				and dept_pk = #{fk_dept_id}
 			</if>
 			<if test="sypi_name != null and sypi_name !=''">
 				and sypi_name like '%'||#{sypi_name}||'%'
@@ -81,5 +81,10 @@
   	<select id="queryequip" parameterType="java.util.HashMap"
   	resultType="com.cist.qwgl.jzgl.model.Qw_equip_info">
   		select * from QW_EQUIP_INFO where fk_report_id = #{fk_report_id}
+  	</select>
+  	<!-- 根据勤务报备id查询界面勤务报备id -->
+  	<select id="queryjmqwbyqwbb" parameterType="java.util.HashMap"
+  	resultType="java.lang.String">
+  		select pk_id from QW_REPORT_STREET where fk_report_id = #{jmqwbbid}
   	</select>
 </mapper>

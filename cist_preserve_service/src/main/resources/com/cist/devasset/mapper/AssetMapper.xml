@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cist.devasset.mapper.AssetMapper">
+
+	<select id="queryAsset" resultType="com.cist.devasset.model.Vw_jtyw_sbzc_info">
+		select * from vw_jtyw_sbzc_info
+		<where>
+			
+			<if test="sblx !=null and sblx !='' ">
+				and sblx=#{sblx}
+			</if>
+			<if test="asset_name !=null and asset_name !='' ">
+				and asset_name=#{asset_name}
+
+			</if>
+		</where>
+	</select>
+
+	<select id="queryList" resultType="com.cist.devasset.model.Vw_jtyw_sbzc_info">
+		select * from vw_jtyw_sbzc_info
+		
+	</select>
+
+	<select id="queryType" resultType="com.cist.devasset.model.Jtyw_sbzc_sbtype">
+		select * from 	jtyw_sbzc_sbtype
+	</select>
+
+	<select id="queryCsname" resultType="com.cist.devasset.model.Jtyw_sbzc_cs">
+		select * from 	jtyw_sbzc_cs
+	</select>
+
+	<insert id="insertAsset" parameterType="java.util.Map">
+		insert into jtyw_jksbzc_plan
+		(
+		pk_id,
+		asset_name,
+		asset_num,
+		deploy_time,
+		vendor,
+		device_type,
+		device_model,
+		install_site,
+		remarks
+		)
+		values
+		(
+		cistsys.SEQ_STICK_MAG.nextval,
+		#{asset_name},
+		#{asset_num},
+		to_date(#{deploy_time},'YYYY-MM-DD HH24:MI:SS'),
+		#{vendor},
+		#{device_type},
+		#{device_model},
+		#{install_site},
+		#{remarks}
+		)
+
+	</insert>
+
+	<delete id="deleteAsset" parameterType="java.util.Map">
+		DELETE FROM
+		cistsys.jtyw_jksbzc_plan t
+		WHERE t.pk_id=#{pk_id}
+	</delete>
+
+
+	<update id="updateAsset" parameterType="java.util.Map">
+		update jtyw_jksbzc_plan
+		<set>
+			<if test="asset_name != null and asset_name !=''">
+				asset_name = #{asset_name},
+			</if>
+			<if test="asset_num != null and asset_num !=''">
+				asset_num = #{asset_num},
+			</if>
+			<if test="deploy_time != null and deploy_time !=''">
+				deploy_time =to_date(#{deploy_time},'YYYY-MM-DD HH24:MI:SS'),
+			</if>
+			<if test="vendor != null and vendor !=''">
+				vendor = #{vendor},
+			</if>
+			<if test="device_type != null and device_type !=''">
+				device_type = #{device_type},
+			</if>
+			<if test="device_model != null and device_model !=''">
+				device_model = #{device_model},
+			</if>
+			<if test="install_site != null and install_site !=''">
+				install_site = #{install_site},
+			</if>
+			<if test="remarks != null and remarks !=''">
+				remarks = #{remarks},
+			</if>
+		</set>
+		where pk_id = #{pk_id}
+	</update>
+
+
+	<!-- 批量删除 -->
+	<delete id="deleteAll" parameterType="java.util.HashMap">
+		delete FROM cistsys.jtyw_jksbzc_plan
+		WHERE pk_id in
+		<foreach item="pk" collection="array" open="(" separator=","
+			close=")">
+			#{pk}
+		</foreach>
+	</delete>
+
+	
+</mapper>

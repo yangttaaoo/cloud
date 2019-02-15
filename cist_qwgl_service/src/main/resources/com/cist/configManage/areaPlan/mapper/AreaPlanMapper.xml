@@ -13,6 +13,14 @@
 	select dept_pk pk,dept_code key ,dept_name title from  sys_depart_info  where dept_superior=#{deptId} 
 
 	</select>
+	<select id="queryAreaList" parameterType="java.util.HashMap"
+		resultType="com.cist.configManage.areaPlan.model.PatrolArea">
+	select a.*,a.area_name title from  qw_patrol_area  a  where  1=1 
+	<if test="area_name !=null and area_name !=''">
+	 and a.area_name like '%'||#{area_name}||'%'
+	</if>
+
+	</select>
 	<select id="queryTopLevelArea" parameterType="java.util.HashMap"
 		resultType="com.cist.configManage.areaPlan.model.PatrolArea">
 select b.name area_type_name,c.dept_name fk_dept_name, a.*,a.pk_id key,a.area_name title from  qw_patrol_area  a  left join 

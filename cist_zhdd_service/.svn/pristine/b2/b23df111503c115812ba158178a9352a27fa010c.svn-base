@@ -1,0 +1,12 @@
+package com.cist.eventmanagement.mapper;
+
+import java.util.HashMap;
+import java.util.List;
+
+import com.cist.eventmanagement.model.VW_EVENT_INFO;
+
+public interface EventManagementMapper {
+	public List<VW_EVENT_INFO> queryeventinfo(HashMap<String,Object> map);
+	public Integer deleteeventinfo(HashMap<String,Object> map);
+	public Integer updateeventinfo(HashMap<String,Object> map);
+}

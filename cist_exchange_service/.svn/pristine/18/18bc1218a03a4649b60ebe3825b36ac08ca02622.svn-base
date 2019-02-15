@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cist.interfaceapply.mapper.InterApplyMapper" >
+ 
+ <select id="devCompanyName" resultType="com.cist.interfaceapply.model.SjgxInterfaceList" parameterType="java.util.HashMap" >
+  select interface_id,dev_company_name，dev_company_id from SJGX_INTERFACE_LIST t
+  <where>
+  <if test="fk_use_apply_id !=null and fk_use_apply_id != ''">
+  fk_use_apply_id=#{fk_use_apply_id}
+  </if>
+  </where>
+  </select>
+  <select id="selectTInterface" resultType="com.cist.interfaceapply.model.SjgxInterface" parameterType="java.util.HashMap" >
+    select *
+    from SJGX_INTERFACE
+  </select>
+  <select id="selectDeptName" resultType="com.cist.interfaceapply.model.VwDeptList" parameterType="java.util.HashMap" >
+    select *
+    from VW_DEPT_LIST
+    <where>
+    <if test="dept_code !=null and dept_code !=''">
+    dept_code=#{dept_code}
+    </if>
+    </where>
+  </select>
+  <select id="selectDevCompanyName" resultType="com.cist.interfaceapply.model.SjgxDevCompany" parameterType="java.util.HashMap" >
+    select *
+    from SJGX_DEV_COMPANY
+    <where>
+    PK_ID in
+    <foreach item="items" collection="dev_company_id" open="(" separator="," close=")">
+            #{items}
+        </foreach>
+    </where>
+  </select>
+  <select id="list" resultType="com.cist.interfaceapply.model.SjgxInterfaceUseApply" parameterType="java.util.HashMap" >
+  select t.* ,t2.dev_name dev_company_name,t2.interface_id interface_id_str,t2.dev_company_id dev_company_id_str
+    from SJGX_INTERFACE_USE_APPLY t
+    right join (select t1.fk_use_apply_id fk_use_apply_id, listagg(t1.dev_company_name,'、') within group(order by t1.dev_company_name)dev_name
+    ,listagg(t1.interface_id,',') within group(order by t1.interface_id)interface_id
+    ,listagg(t1.dev_company_id,',') within group(order by t1.dev_company_id)dev_company_id
+    from cistsys.sjgx_interface_list t1 
+    where t1.fk_use_apply_id is not null
+    <if test="dev_company_id !=null and dev_company_id !=''">
+	and t1.dev_company_id =#{dev_company_id}
+	</if> 
+	 group by t1.fk_use_apply_id)t2
+    on t.pk_id=t2.fk_use_apply_id
+    <where>
+	<if test="fk_used_id !=null and fk_used_id !='' and fk_used_id !='null'">
+		and t.fk_used_id=#{fk_used_id}
+	</if>
+	<if test="start_date !=null and start_date !='' and start_date !='null'">
+          <![CDATA[ and t.start_date >=to_date(#{start_date},'yyyy-mm-dd HH24:mi:ss')]]>
+	</if>
+	<if test="end_date !=null and end_date !='' and end_date !='null'">
+          <![CDATA[ and t.end_date <=to_date(#{end_date},'yyyy-mm-dd HH24:mi:ss')]]>
+	</if> 
+
+<!-- 	<if test="dev_company_id !=null and dev_company_id !=''">
+	where t1.dev_company_id=#{dev_company_id}
+      and PK_ID in (select FK_USE_APPLY_ID from SJGX_INTERFACE_LIST where DEV_COMPANY_ID=#{dev_company_id})
+       regexp_like(dev_company_id,'^'||#{dev_company_id}||'$|^'||#{dev_company_id}||'+|,+'||#{dev_company_id}||',+|,+'||#{dev_company_id}||'$') 
+	</if>  -->
+	
+	
+    </where>
+    order by start_date desc
+  </select>
+   <select id="selectDevCompany" resultType="com.cist.interfaceapply.model.SjgxDevCompany" parameterType="java.util.HashMap" >
+    select *
+    from SJGX_DEV_COMPANY
+  </select>
+   <select id="selectDept" resultType="com.cist.interfaceapply.model.VwDeptList" parameterType="java.util.HashMap" >
+    select *
+    from VW_DEPT_LIST
+  </select>
+  <delete id="delete" parameterType="java.util.HashMap" >
+    delete from SJGX_INTERFACE_USE_APPLY
+    where PK_ID in
+		<foreach item="items" collection="pk_id" open="(" separator="," close=")">
+            #{items}
+        </foreach>
+  </delete>
+  
+  <!-- 批量插入接口使用列表 -->
+   <insert id="saveList" parameterType="java.util.HashMap" useGeneratedKeys="false" >
+	insert into SJGX_INTERFACE_LIST
+		    (pk_id,
+			fk_use_apply_id,
+			interface_id,
+			interface_name,
+			connect_limit,
+			dev_company_id,
+			dev_company_name)
+	select SEQ_SJGX_INTERFACE_USE_APPLY.nextval, cd.* from(
+	<foreach item="item" index="index" collection="array" separator="union all"> 
+    SELECT  
+           #{pk_id},
+          #{item.pk_id},
+          #{item.interface_name},
+          #{item.highest_connect_limit},
+          #{item.fk_dev_company_id},
+          #{item.dev_company_name}
+      FROM DUAL 
+    </foreach>
+    )cd
+  </insert>
+  <insert id="save" parameterType="java.util.HashMap" >
+<selectKey resultType="java.lang.Integer" order="BEFORE" keyProperty="pk_id">
+        SELECT SEQ_SJGX_INTERFACE_USE_APPLY.nextval FROM DUAL
+    </selectKey>
+    insert into SJGX_INTERFACE_USE_APPLY
+     <trim prefix="(" suffix=")" suffixOverrides="," >
+          pk_id,
+          apply_date,
+          <if test="fk_used_id !=null and fk_used_id !='' and fk_used_id !='null'">
+          fk_used_id,
+          </if>   
+           <if test="start_date !=null and start_date !='' and start_date !='null'">
+          start_date,
+          </if> 
+           <if test="end_date !=null and end_date !='' and end_date !='null'">
+          end_date,
+          </if> 
+           <if test="ip_range !=null and ip_range !='' and ip_range !='null'">
+          ip_range,
+          </if> 
+           <if test="func_description !=null and func_description !=''">
+          func_description,
+          </if> 
+      </trim>
+       <trim prefix="values (" suffix=")" suffixOverrides="," >
+       #{pk_id},
+       sysdate,
+      <if test="fk_used_id != null and fk_used_id != '' " >
+        #{fk_used_id},
+      </if>
+      <if test="start_date != null and start_date != ''" >
+        <![CDATA[ to_date(#{start_date},'yyyy-mm-dd HH24:mi:ss')]]>,
+      </if>
+      <if test="end_date != null and end_date != ''" >
+      <![CDATA[ to_date(#{end_date},'yyyy-mm-dd HH24:mi:ss')]]>,
+      </if>
+      <if test="ip_range != null and ip_range != ''" >
+       #{ip_range},
+      </if>
+      <if test="func_description != null and func_description != ''" >
+        #{func_description},
+      </if>
+      </trim>
+  </insert>
+   <update id="updateInterface" parameterType="com.cist.interfaceapply.model.SjgxInterfaceUseApply" >
+    begin
+    delete from SJGX_INTERFACE_LIST
+    
+    where FK_USE_APPLY_ID=#{pk_id}
+    ;
+    insert into SJGX_INTERFACE_LIST
+		    (pk_id,
+			fk_use_apply_id,
+			interface_id,
+			interface_name,
+			connect_limit,
+			dev_company_id,
+			dev_company_name)
+	select SEQ_SJGX_INTERFACE_USE_APPLY.nextval, cd.* from(
+	<foreach item="item" index="index" collection="array" separator="union all"> 
+    SELECT  
+           #{pk_id},
+          #{item.pk_id},
+          #{item.interface_name},
+          #{item.highest_connect_limit},
+          #{item.fk_dev_company_id},
+          #{item.dev_company_name}
+      FROM DUAL 
+    </foreach>
+    )cd
+    ;
+    end;
+  </update>
+  <update id="update" parameterType="com.cist.interfaceapply.model.SjgxInterfaceUseApply" >
+    update SJGX_INTERFACE_USE_APPLY
+    <set >
+      <if test="fk_used_id !=null and fk_used_id !=''">
+          fk_used_id=#{fk_used_id},
+          </if>   
+           <if test="start_date !=null and start_date !=''">
+            <![CDATA[ start_date=to_date(#{start_date},'yyyy-mm-dd HH24:mi:ss')]]>,
+          </if> 
+           <if test="end_date !=null and end_date !=''">
+         <![CDATA[ end_date=to_date(#{end_date},'yyyy-mm-dd HH24:mi:ss')]]>, 
+          </if> 
+           <if test="ip_range !=null and ip_range !=''">
+          ip_range=#{ip_range},
+          </if> 
+           <if test="func_description !=null and func_description !=''">
+          func_description=#{func_description},
+          </if> 
+           <if test="fk_interface_list_id !=null and fk_interface_list_id !=''">
+          fk_interface_list_id=#{fk_interface_list_id},
+          </if> 
+           <if test="dev_company_id !=null and dev_company_id !=''">
+         dev_company_id=#{dev_company_id},
+          </if> 
+    </set>
+    where PK_ID = #{pk_id}
+  </update>
+  
+   <select id="depart_infolist" resultType="com.cist.interfaceapply.model.DeptInfo" parameterType="java.lang.Integer">
+select t.dept_pk,t.dept_code,t.dept_name as name,t.DEPT_SUPERIOR from sys_depart_info t 
+<where>
+		  <if test="_parameter  == null or _parameter  == ''">
+		     t.DEPT_SUPERIOR is null
+		   </if>
+		     <if test="_parameter  != null and _parameter  != ''">
+		     t.DEPT_SUPERIOR=#{_parameter}
+		   </if>
+</where>
+   </select>
+</mapper>

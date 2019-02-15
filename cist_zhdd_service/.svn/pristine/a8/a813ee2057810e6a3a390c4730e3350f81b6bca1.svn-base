@@ -1,0 +1,20 @@
+package com.cist.smsmodule.service;
+
+import java.util.HashMap;
+import java.util.List;
+
+import com.cist.frame.page.PageInfo;
+import com.cist.smsmodule.modle.DeptInfo;
+
+public interface SmsService {
+	//查询所有的数据
+	 Object selectDatapageList(HashMap<String,Object> map,PageInfo page);
+	  //增加数据
+	  Integer addData(HashMap<String,Object> map);
+	  //修改数据
+	  Integer updateData(HashMap<String,Object> map);
+	  //删除数据
+	  Integer deleteDate(HashMap<String,Object> map);
+	  //部门
+	  List<DeptInfo> depart_infolist(Integer dept_superior);
+}

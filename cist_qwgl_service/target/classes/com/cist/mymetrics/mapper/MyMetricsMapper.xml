@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cist.mymetrics.mapper.MyMetricsMapper">
+
+<!-- 查询登录人的个人指标 -->
+	<select id="selectOwnMetrics" resultType="com.cist.pdgrzb.model.Qw_I_C_Metricr"
+		parameterType="java.util.HashMap">
+select r.FK_DEPT_ID,r.EVALUATE_DATE_TYPE,r.FK_USER_ID,
+wmsys.wm_concat(r.metrics_num) allsocre,r.sypi_name,wmsys.wm_concat(r.fk_topic_id) topicids,r.evaluate_date_end,r.pk_id,r.remarks from (select t.FK_DEPT_ID,t.EVALUATE_DATE_TYPE,t.FK_USER_ID,
+q.metrics_num,di.sypi_name,q.fk_topic_id,t.evaluate_date_end,t.pk_id,t.remarks
+ from QW_I_C_METRICS t inner join  QW_EVALUATE_METRICS q on t.pk_id=q.fk_relation_id
+ inner join sys_police_info di on di.sypi_pk=t.fk_user_id and t.METRICS_TYPE=1) r
+ <where>
+			<!-- 当前人的id-->
+			<if test="fk_user_id != null and fk_user_id !=''">
+				and r.FK_USER_ID=#{fk_user_id}
+			</if>
+			<if test="evaluate_date_type !=null and evaluate_date_type !=''">
+				and r.EVALUATE_DATE_TYPE=#{evaluate_date_type}
+			</if>
+		</where>
+  group by r.fk_dept_id,r.evaluate_date_type,r.fk_user_id,r.sypi_name,r.evaluate_date_end,r.pk_id,r.remarks
+	</select>
+	<!-- 查询栏目下条例的总分分数 -->
+	<select id="selectRegulations" resultType="com.cist.mymetrics.model.Regulations" parameterType="java.util.HashMap">
+		select t.assessment_rules,t.assessment_num from QW_APPRAISE_REGULATIONS t where t.FK_APPRAISE_TOPIC_ID = #{id}
+	</select>
+	
+	 <select id="depart_infolist" resultType="com.cist.pdgrzb.model.Depart_info" parameterType="java.lang.Integer">
+
+select t.dept_pk,t.dept_code,t.dept_name as name,t.DEPT_SUPERIOR from sys_depart_info t 
+<where>
+		  <if test="_parameter  == null or _parameter  == ''">
+		     t.DEPT_SUPERIOR is null
+		   </if>
+		     <if test="_parameter  != null and _parameter  != ''">
+		     t.DEPT_SUPERIOR=#{_parameter}
+		   </if>
+</where>
+
+   </select>
+   
+   
+ <select id="depart_infolists" resultType="com.cist.pdgrzb.model.DeptInfo" parameterType="java.lang.Integer">
+select t.dept_pk,t.dept_code,t.dept_name as name,t.DEPT_SUPERIOR from sys_depart_info t 
+<where>
+		  <if test="_parameter  == null or _parameter  == ''">
+		     t.DEPT_SUPERIOR is null
+		   </if>
+		     <if test="_parameter  != null and _parameter  != ''">
+		     t.DEPT_SUPERIOR=#{_parameter}
+		   </if>
+</where>
+</select>
+ 
+ 
+
+
+</mapper>

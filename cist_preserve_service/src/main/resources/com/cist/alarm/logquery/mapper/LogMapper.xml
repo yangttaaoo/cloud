@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cist.alarm.logquery.mapper.LogMapper">
+<!-- 查询所有数据 -->
+<select id="selectData" resultType="com.cist.alarm.logquery.model.Alarm_log">
+   select * from jtyw_alarm_log
+   <where>
+    <if test="type!=null and type!=''">
+     type=#{type}
+    </if>
+    <if test="push!=null and push!=''">
+     and push=#{push}
+    </if> 
+    <if test="time1!=null and time1!=''">
+     <![CDATA[and time>=to_date(#{time1},'yyyy-mm-dd HH24:mi:ss')]]>
+    </if>
+    <if test="time2!=null and time2!=''">
+      <![CDATA[and time<=to_date(#{time2},'yyyy-mm-dd HH24:mi:ss')]]>
+    </if>
+   </where>
+   </select>
+   <!-- 批量删除 -->
+	<delete id="deleteAll">
+		delete from jtyw_alarm_log    
+		WHERE log_pk in
+		<foreach item="pk" collection="array" open="(" separator="," close=")">
+            #{pk}
+        </foreach>  
+	</delete> 
+	
+	<!-- 单一删除 -->
+	<delete id="deleteOne">
+	delete FROM jtyw_alarm_log 
+	where log_pk=#{pk}
+	</delete>
+ </mapper>

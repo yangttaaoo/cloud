@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cist.dveallot.mapper.DveAllotMapper">
+
+	<select id="querylist" resultType="com.cist.dveallot.model.Jtyw_device_allot">
+		select * from vw_jtyw_device_allot
+	</select>
+	
+	<select id="queryComp" resultType="com.cist.opsflow.model.Jtyw_company">
+		select * from jtyw_maintenance_company
+	</select>
+	
+	<select id="queryGroup" resultType="com.cist.opsvdt.model.Jtyw_group">
+		select * from jtyw_maintenance_group
+	</select>
+	
+	<select id="queryInfo" resultType="com.cist.dveallot.model.Vw_dev_info">
+
+		
+		select t.fk_device_type,t.direction,t.road_name,j.* 
+		from 
+					JTYW_DEVICE_ALLOT j
+         
+		inner join 
+	 jcsj_device t
+      
+		on 
+			t.device_num=j.FK_DEVICE_ID   
+		
+		
+		<where>
+			<if test="road_name !=null and road_name !='' ">
+			and t.road_name=#{road_name}
+			</if>
+			<if test="device_name !=null and device_name !='' ">
+			and t.device_name=#{device_name}
+			</if>
+			<if test="fk_device_type !=null and fk_device_type !='' ">
+			and t.fk_device_type=#{fk_device_type}
+			</if>
+
+			and
+			t.fk_device_type not in('KK','QJCS')
+		</where>
+		
+		
+	</select>
+	
+	
+	<select id="selectDevList" resultType="com.cist.dveallot.model.Sys_frm_code" parameterType="java.lang.String">
+    select * from SYS_FRM_CODE
+    where
+    FCT_CODE=#{fct_code}
+  </select>
+	
+	
+	<select id="queryRoad" resultType="com.cist.dveallot.model.C_road_item">
+		select * from c_road_item 
+	</select>
+	
+	<select id="skGroupName" resultType="com.cist.opsvdt.model.Jtyw_group">
+		select *  from jtyw_maintenance_group
+		<where>
+		<if test="pk_id !=null and pk_id !='' ">
+		and pk_id=#{pk_id}
+		</if>
+		
+		</where>
+	</select>
+
+	
+	<insert id="addList" parameterType="java.util.Map">
+		insert into jtyw_device_allot
+		(
+		pk_id,
+		fk_device_id,
+		fk_comp_id,
+		fk_group_id
+		
+		)
+    	select SEQ_STICK_MAG.nextval, cd.* from(
+	<foreach item="item" index="index" collection="array" separator="union all"> 
+    SELECT  
+          #{item},
+          #{fk_comp_id},
+          #{fk_group_id}
+      FROM DUAL 
+    </foreach>
+    )cd
+    	
+    	
+	</insert>
+
+</mapper>

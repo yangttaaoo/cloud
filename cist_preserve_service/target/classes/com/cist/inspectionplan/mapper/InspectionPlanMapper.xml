@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cist.inspectionplan.mapper.InspectionPlanMapper" >
+	<select id="inslistpageList" resultType="com.cist.inspectionplan.model.InspectionInfo" parameterType="java.util.HashMap">
+   		select t.*,to_char(t.inspection_start_time,'yyyy-mm-dd HH24:mi:ss')as start_time,to_char(t.inspection_end_time,'yyyy-mm-dd HH24:mi:ss')as end_time from JTYW_INSPECTION_PLAN t
+    		<where>
+	   			1=1
+	    		<if test="xjmc !=null and xjmc !=''">
+	    		and t.INSPECTION_NAME like '%'||#{xjmc}||'%'
+	    		</if>
+	    		<if test="kssj!=null and kssj!=''">
+		    	<![CDATA[and t.INSPECTION_START_TIME >=to_date(#{kssj},'yyyy-mm-dd HH24:mi:ss')]]>
+	        	</if>
+	       	 	<if test="jssj!=null and jssj!=''">
+		    	<![CDATA[and t.INSPECTION_END_TIME <=to_date(#{jssj},'yyyy-mm-dd HH24:mi:ss')]]>
+	        	</if>
+	    	</where>
+   </select>
+   
+   <select id="maintservice" resultType="com.cist.inspectionplan.model.MaintenanceInfo">
+   		select t.pk_id as key,t.comp_name as  title from JTYW_MAINTENANCE_COMPANY t ORDER BY key
+   </select>
+   
+   <select id="roadservice" resultType="com.cist.inspectionplan.model.RoadInfo">
+   		select t.ROIM_CODE,t.ROIM_NAME from C_ROAD_ITEM t
+   </select>
+   
+   <select id="devicelistpageList" resultType="com.cist.inspectionplan.model.DeviceInfo" parameterType="java.util.HashMap">
+   		select * from JCSJ_DEVICE t
+    		<where>
+	   			1=1
+	    		<if test="fk_device_type != 'QB'">
+	    		and t.fk_device_type = #{fk_device_type}
+	    		</if>
+	    		<if test="road_code!=null and road_code!=''">
+		    	and t.BELONGED_ROAD_ID = #{road_code}
+	        	</if>
+	       	 	<if test="device_name !=null and device_name !=''">
+	    		and t.device_name like '%'||#{device_name}||'%'
+	    		</if>
+	    	</where>
+   </select>
+   
+   <insert id="insadd" parameterType="java.util.HashMap" >
+    <selectKey keyProperty="id" resultType="java.lang.Integer" order="BEFORE">  
+            select cistsys.SEQ_INS_PK.nextval from dual  
+    </selectKey>
+    	insert into JTYW_INSPECTION_PLAN
+    	(
+    	PK_ID,
+    	FK_DEPT_ID,
+    	FK_PLANNERS_ID,
+    	INSPECTION_NUM,
+    	INSPECTION_NAME,
+    	INSPECTION_START_TIME,
+    	INSPECTION_END_TIME,
+    	INSPECTION_CONTENTS,
+    	REMARKS
+    	)
+    	values
+    	 (
+    	 #{id,jdbcType=DECIMAL}, 
+    	 1,
+    	 4015,
+    	 #{xjbh},
+    	 #{xjmc,jdbcType=VARCHAR},
+    	 to_date(#{kssj},'yyyy-mm-dd HH24:mi:ss'),
+    	 to_date(#{jssj},'yyyy-mm-dd HH24:mi:ss'),
+    	 #{xjnr,jdbcType=VARCHAR},
+    	 #{bz,jdbcType=VARCHAR}
+    	 )
+  </insert>
+  
+  <insert id="gsadd" parameterType="java.util.HashMap" >
+    	insert into JTYW_INSPECTION_COMPANY_LIST
+    	(
+    	PK_ID,
+    	INSPECTION_NUM,
+    	FK_COMPANY_ID
+    	)
+    	values
+    	 (
+    	 cistsys.SEQ_INSCOM_PK.nextval, 
+    	 #{id},
+    	 #{gspk}
+    	 )
+  </insert>
+  <insert id="sbadd" parameterType="java.util.HashMap" >
+    	insert into JTYW_INSPECTION_DEVICE_LIST
+    	(
+    	PK_ID,
+    	INSPECTION_NUM,
+    	FK_DEVICE_ID
+    	)
+    	values
+    	 (
+    	 cistsys.SEQ_INSDEV_PK.nextval, 
+    	 #{id},
+    	 #{sbpk}
+    	 )
+  </insert>
+  
+  <select id="quemaint" resultType="com.cist.inspectionplan.model.MaintenanceInfo" parameterType="java.lang.Integer">
+   		select t.FK_COMPANY_ID as title from JTYW_INSPECTION_COMPANY_LIST t where INSPECTION_NUM=#{_parameter} ORDER BY title
+   </select>
+   
+    <select id="quedev" resultType="com.cist.inspectionplan.model.DeviceInfo" parameterType="java.lang.Integer">
+   		select t.FK_DEVICE_ID as device_num from JTYW_INSPECTION_DEVICE_LIST t where INSPECTION_NUM=#{_parameter}
+   </select>
+   
+    <select id="queuser" resultType="com.cist.inspectionplan.model.UserInfo" parameterType="java.lang.Integer">
+   		select t.sypi_name as name from SYS_POLICE_INFO t where sypi_pk=#{_parameter}
+   </select>
+   
+   <update id="insedit"  parameterType="java.util.HashMap">
+       UPDATE JTYW_INSPECTION_PLAN SET 
+             INSPECTION_NUM=#{inspection_num},
+             INSPECTION_NAME=#{inspection_name,jdbcType=VARCHAR},
+             INSPECTION_START_TIME=to_date(#{start_time},'yyyy-mm-dd HH24:mi:ss'),
+             INSPECTION_END_TIME=to_date(#{end_time},'yyyy-mm-dd HH24:mi:ss'),
+             INSPECTION_CONTENTS=#{inspection_contents,jdbcType=VARCHAR},
+             REMARKS=#{remarks,jdbcType=VARCHAR}
+       where pk_id = #{pk_id}
+     </update>
+     
+     <delete id="delgs" parameterType="java.util.HashMap">
+		DELETE FROM JTYW_INSPECTION_COMPANY_LIST WHERE INSPECTION_NUM = #{pk_id}
+	</delete>
+	
+	<delete id="delsb" parameterType="java.util.HashMap">
+		DELETE FROM JTYW_INSPECTION_DEVICE_LIST WHERE INSPECTION_NUM = #{pk_id}
+	</delete>
+	
+	<delete id="delIns" parameterType="java.util.HashMap">
+		DELETE FROM JTYW_INSPECTION_PLAN WHERE pk_id = #{pk_id}
+	</delete>
+	
+	<delete id="delInsmax" parameterType="java.util.Map">
+		DELETE FROM JTYW_INSPECTION_PLAN WHERE pk_id in 
+		<foreach item="w" collection="pk_id" open="(" separator="," close=")">
+		            #{w}
+		        </foreach>
+	</delete>
+	
+	<delete id="delgsmax" parameterType="java.util.Map">
+		DELETE FROM JTYW_INSPECTION_COMPANY_LIST WHERE INSPECTION_NUM in 
+		<foreach item="w" collection="pk_id" open="(" separator="," close=")">
+		            #{w}
+		        </foreach>
+	</delete>
+	
+	<delete id="delsbmax" parameterType="java.util.Map">
+		DELETE FROM JTYW_INSPECTION_DEVICE_LIST WHERE INSPECTION_NUM in 
+		<foreach item="w" collection="pk_id" open="(" separator="," close=")">
+		            #{w}
+		        </foreach>
+	</delete>
+</mapper>

@@ -407,7 +407,7 @@ select t.dept_pk,t.dept_code,t.dept_name as name,t.DEPT_SUPERIOR from sys_depart
   </select>
 	<select id="list" resultMap="BaseResultMap" parameterType="java.util.HashMap" >
     select *
-    from VW_C_ROAD_SEGITEM t
+    from C_ROAD_SEGITEM t
     <where>
 	<if test="lkdm !=null and lkdm !='' and lkdm !='null'">
 		and lkdm like '%'||#{lkdm}||'%'

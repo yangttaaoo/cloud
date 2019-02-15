@@ -58,7 +58,7 @@
   </select>
 	 <select id="list" resultType="com.cist.roadsection.model.CRoadItemInfo" parameterType="java.util.HashMap" >
     select *
-    from VW_C_ROAD_ITEM t
+    from C_ROAD_ITEM t
     <where>
 	<if test="roim_code !=null and roim_code !='' and roim_code !='null'">
 		and roim_code like '%'||#{roim_code}||'%'

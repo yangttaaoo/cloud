@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cist.logquery.loginsystem.mapper.LoginMapper">
+
+<select id="selectData" resultType="com.cist.logquery.loginsystem.model.Sys_login_log" 
+parameterType="java.util.HashMap">
+    select count(1) numbers,t.username,t.dept_name,max(t.login_time) as login_time,t.user_cn
+    from vw_sys_login_log t 
+    <where>
+      <if test="user!=null and user!=''">
+       (t.username=#{user} or t.user_cn= #{user})
+      </if>
+      <if test="time1!=null and time1!='' and time1!='null'">
+		   <![CDATA[ and t.login_time>=to_date(#{time1},'yyyy-mm-dd HH24:mi:ss')]]>
+	  </if>
+	 <if test="time2!=null and time2!='' and time2!='null'">
+		   <![CDATA[and t.login_time<= to_date(#{time2},'yyyy-mm-dd HH24:mi:ss') ]]>
+	 </if>
+	 </where>
+	 group by t.username,t.user_cn,t.dept_name
+</select>
+  <select id="selectOne"  resultType="com.cist.logquery.loginsystem.model.Sys_login_log" 
+  parameterType="java.util.HashMap" >
+     select * from  vw_sys_login_log t
+    <where> 
+    t.username=#{names}
+     <if test="time1!=null and time1!='' and time1!='null'">
+		   <![CDATA[ and t.login_time>=to_date(#{time1},'yyyy-mm-dd HH24:mi:ss')]]>
+	  </if>
+	 <if test="time2!=null and time2!='' and time2!='null'">
+		   <![CDATA[and t.login_time<= to_date(#{time2},'yyyy-mm-dd HH24:mi:ss') ]]>
+	 </if>
+	 </where>
+  </select>
+    <!-- 批量删除 -->
+	<delete id="deleteAll">
+		delete from sys_login_log    
+		WHERE user_pk in
+		<foreach item="pk" collection="array" open="(" separator="," close=")">
+            #{pk}
+        </foreach>  
+	</delete> 
+</mapper>

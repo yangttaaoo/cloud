@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cist.inspectionexamine.mapper.InspectionExamineMapper" >
+	<select id="insexapageList" resultType="com.cist.inspectionplan.model.InspectionInfo" parameterType="java.util.HashMap">
+   		select t.*,to_char(t.inspection_start_time,'yyyy-mm-dd HH24:mi:ss')as start_time,to_char(t.inspection_end_time,'yyyy-mm-dd HH24:mi:ss')as end_time from JTYW_INSPECTION_PLAN t
+    		<where>
+	   			1=1
+	    		<if test="xjmc !=null and xjmc !=''">
+	    		and t.INSPECTION_NAME like '%'||#{xjmc}||'%'
+	    		</if>
+	    		<if test="kssj!=null and kssj!=''">
+		    	<![CDATA[and t.INSPECTION_START_TIME >=to_date(#{kssj},'yyyy-mm-dd HH24:mi:ss')]]>
+	        	</if>
+	       	 	<if test="jssj!=null and jssj!=''">
+		    	<![CDATA[and t.INSPECTION_END_TIME <=to_date(#{jssj},'yyyy-mm-dd HH24:mi:ss')]]>
+	        	</if>
+	    	</where>
+   </select>
+   
+   <select id="quemaint" resultType="com.cist.inspectionexamine.model.Maintenance" parameterType="java.util.HashMap">
+   		select t.comp_name,t.comp_address,t.comp_contacts from JTYW_MAINTENANCE_COMPANY t,JTYW_INSPECTION_COMPANY_LIST j where t.pk_id=j.fk_company_id and j.inspection_num = #{pk_id}
+   </select>
+   <select id="querydev" resultType="com.cist.inspectionexamine.model.Device" parameterType="java.util.HashMap">
+   		select j.CONTACTS_PERSON,j.DEVICE_NAME,j.DEVICE_NUM,j.ROAD_NAME from JTYW_INSPECTION_DEVICE_LIST t,JCSJ_DEVICE j where t.fk_device_id = j.pk_id and t.inspection_num = #{pk_id}
+   </select>
+   
+   <update id="insexa"  parameterType="java.util.HashMap">
+       UPDATE JTYW_INSPECTION_PLAN SET 
+             CHECK_STATUS=#{shzt},
+             CHECK_REVIEWER_ID=#{shr}
+       where pk_id = #{pk_id}
+     </update>
+</mapper>

@@ -19,7 +19,7 @@
 <!-- 根据条件查询返回集合 -->
 	<select id="list" resultType="com.cist.orbit.model.TblCarRecoInfo"
 		parameterType="java.util.HashMap">
-		select * from VW_TBL_CAR_RECO
+		select * from JCBK_CAR_RECO
 		<where>
 			<if test=" hpzl != null and hpzl !=''">
 				and hpzl = #{hpzl}

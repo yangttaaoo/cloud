@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper
+	namespace="com.cist.realTimeMonitor.mapper.RealTimeMonitorMapper">
+
+	<select id="queryTopLevelDept"
+		resultType="com.cist.realTimeMonitor.model.DeptDeviceTree">
+		select dept_pk pk,dept_code key ,dept_name title from
+		sys_depart_info where
+		dept_superior is null
+
+	</select>
+	<select id="querySubLevelDept" parameterType="java.lang.Long"
+		resultType="com.cist.realTimeMonitor.model.DeptDeviceTree">
+		select dept_pk pk,dept_code key ,dept_name title from
+		sys_depart_info where
+		dept_superior=#{deptId}
+
+	</select>
+	<select id="queryDeviceType"
+		resultType="com.cist.realTimeMonitor.model.DeptDeviceTree"
+		parameterType="java.lang.String">
+
+
+		select
+		d.fk_dept_id,d.fk_device_type,d.fk_dept_id||'-'||d.fk_device_type
+		key,
+
+		(select f.fc_name name from SYS_FRM_CODE f join SYS_FRM_CODE_TYPE t on
+		f.FCT_CODE=t.FCT_CODE where t.FCT_CODE='M001' and f.fc_code=
+		d.fk_device_type) title
+
+
+		from Jcsj_device d where d.fk_device_type not
+		in('KK','QJCS') and (d.pk_id
+		in(
+		select f.device_id from
+		JCSJ_DEVICE_HAVE_FUNCTION f where f.FK_HAVE_FUNCTION
+		=(select f.fc_pk
+		pk from
+		SYS_FRM_CODE f join SYS_FRM_CODE_TYPE t on
+		f.FCT_CODE=t.FCT_CODE where
+		t.FCT_CODE='G999' and f.fc_code='SP')) or
+		d.fk_device_type = 'JK' )
+		and d.fk_dept_id=#{deptId}
+
+		group by
+		d.fk_dept_id,d.fk_device_type
+
+	</select>
+
+
+	<select id="queryVideoDevice"
+		resultType="com.cist.realTimeMonitor.model.DeptDeviceTree"
+		parameterType="java.util.HashMap">
+	SELECT
+    DECODE(b.status,0,d.device_name||'(离线)',1,d.device_name||'(在线)',null,d.device_name||'(离线)')
+    title, nvl(b.status,0) status,
+    d.device_num key,d.longitude,d.latitude,g.device_gb_serial,
+    g.device_gb_code,g.device_gb_channel,g.device_gb_ptz FROM
+    (SELECT
+    d.pk_id,d.device_name,fk_device_type,d.fk_dept_id,d.longitude,d.latitude,d.device_num
+    FROM
+    JCSJ_DEVICE d WHERE
+    d.fk_device_type not in('KK','QJCS') AND
+    (d.pk_id
+    IN(
+    SELECT f.device_id FROM
+    JCSJ_DEVICE_HAVE_FUNCTION f WHERE
+    f.FK_HAVE_FUNCTION
+    =(SELECT f.fc_pk
+    pk from
+    SYS_FRM_CODE f JOIN
+    SYS_FRM_CODE_TYPE t ON
+    f.FCT_CODE=t.FCT_CODE WHERE
+    t.FCT_CODE='G999' AND
+    f.fc_code='SP')) OR
+    d.fk_device_type = 'JK' ) and
+    d.fk_dept_id=#{dept_id}
+    AND d.fk_device_type=#{device_type_code})
+    d
+    LEFT JOIN JCSJ_DEVICE_CAMERA_GB28181 g ON g.device_id=d.pk_id
+   
+    LEFT JOIN
+    JCSJ_DEVICE_STATUS_BASIC b ON b.fk_device_id=d.pk_id
+		
+	</select>
+
+	<select id="queryStatusTotalByVideoDevice"
+		resultType="com.cist.realTimeMonitor.model.VideoDeviceStatus"
+		parameterType="java.util.HashMap">
+
+	  select b.status_name,
+    SUM(case when b.status=1 then 1 else 0 end)
+    video_online_total,
+    SUM(case when b.status=0 then 1 else 0 end)
+    video_offline_total
+
+    from video_device_status_count b group by b.status,b.status_name
+	</select>
+	<select id="queryStatusTotalByVideoDeviceType"
+		resultType="com.cist.realTimeMonitor.model.VideoDeviceTypeStatus"
+		parameterType="java.util.HashMap">
+
+	select  b.fc_name device_type_name, sum(case when b.status=1 then 1 else 0 end) device_type_online_total,sum(case when b.status=0 then 1 else 0 end) device_type_offline_total
+
+from video_device_status_count b   group by b.fc_name
+
+	</select>
+</mapper>

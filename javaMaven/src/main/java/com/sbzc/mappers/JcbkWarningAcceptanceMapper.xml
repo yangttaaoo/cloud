@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sbzc.mappers.JcbkWarningAcceptanceMapper" >
+  <resultMap id="BaseResultMap" type="com.sbzc.model.JcbkWarningAcceptance" >
+    <result column="PK_ID" property="pkId" jdbcType="DECIMAL" />
+    <result column="FK_WARNING_ID" property="fkWarningId" jdbcType="DECIMAL" />
+    <result column="FK_ACCEPTANCE_DEPT_ID" property="fkAcceptanceDeptId" jdbcType="DECIMAL" />
+    <result column="FK_ACCEPTANCE_PERSON_ID" property="fkAcceptancePersonId" jdbcType="DECIMAL" />
+    <result column="ACCEPTANCE_TIME" property="acceptanceTime" jdbcType="TIMESTAMP" />
+    <result column="ACCEPTANCE_STATE" property="acceptanceState" jdbcType="CHAR" />
+    <result column="WXYY" property="wxyy" jdbcType="VARCHAR" />
+    <result column="FK_FORWARD_DEPT_ID" property="fkForwardDeptId" jdbcType="VARCHAR" />
+    <result column="FORWARD_TIME" property="forwardTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <insert id="insert" parameterType="com.sbzc.model.JcbkWarningAcceptance" >
+    insert into JCBK_WARNING_ACCEPTANCE (PK_ID, FK_WARNING_ID, FK_ACCEPTANCE_DEPT_ID, 
+      FK_ACCEPTANCE_PERSON_ID, ACCEPTANCE_TIME, 
+      ACCEPTANCE_STATE, WXYY, FK_FORWARD_DEPT_ID, 
+      FORWARD_TIME)
+    values (#{pkId,jdbcType=DECIMAL}, #{fkWarningId,jdbcType=DECIMAL}, #{fkAcceptanceDeptId,jdbcType=DECIMAL}, 
+      #{fkAcceptancePersonId,jdbcType=DECIMAL}, #{acceptanceTime,jdbcType=TIMESTAMP}, 
+      #{acceptanceState,jdbcType=CHAR}, #{wxyy,jdbcType=VARCHAR}, #{fkForwardDeptId,jdbcType=VARCHAR}, 
+      #{forwardTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.sbzc.model.JcbkWarningAcceptance" >
+    insert into JCBK_WARNING_ACCEPTANCE
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="pkId != null" >
+        PK_ID,
+      </if>
+      <if test="fkWarningId != null" >
+        FK_WARNING_ID,
+      </if>
+      <if test="fkAcceptanceDeptId != null" >
+        FK_ACCEPTANCE_DEPT_ID,
+      </if>
+      <if test="fkAcceptancePersonId != null" >
+        FK_ACCEPTANCE_PERSON_ID,
+      </if>
+      <if test="acceptanceTime != null" >
+        ACCEPTANCE_TIME,
+      </if>
+      <if test="acceptanceState != null" >
+        ACCEPTANCE_STATE,
+      </if>
+      <if test="wxyy != null" >
+        WXYY,
+      </if>
+      <if test="fkForwardDeptId != null" >
+        FK_FORWARD_DEPT_ID,
+      </if>
+      <if test="forwardTime != null" >
+        FORWARD_TIME,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="pkId != null" >
+        #{pkId,jdbcType=DECIMAL},
+      </if>
+      <if test="fkWarningId != null" >
+        #{fkWarningId,jdbcType=DECIMAL},
+      </if>
+      <if test="fkAcceptanceDeptId != null" >
+        #{fkAcceptanceDeptId,jdbcType=DECIMAL},
+      </if>
+      <if test="fkAcceptancePersonId != null" >
+        #{fkAcceptancePersonId,jdbcType=DECIMAL},
+      </if>
+      <if test="acceptanceTime != null" >
+        #{acceptanceTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="acceptanceState != null" >
+        #{acceptanceState,jdbcType=CHAR},
+      </if>
+      <if test="wxyy != null" >
+        #{wxyy,jdbcType=VARCHAR},
+      </if>
+      <if test="fkForwardDeptId != null" >
+        #{fkForwardDeptId,jdbcType=VARCHAR},
+      </if>
+      <if test="forwardTime != null" >
+        #{forwardTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+</mapper>

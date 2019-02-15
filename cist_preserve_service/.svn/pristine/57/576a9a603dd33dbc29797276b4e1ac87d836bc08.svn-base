@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cist.opsflow.mapper.OpsFlowMapper">
+
+	<select id="quertAll" resultType="com.cist.opsflow.model.Jtyw_company">
+		select * from jtyw_maintenance_company
+		<where>
+			<if test="comp_name !=null and comp_name !='' ">
+				and comp_name=#{comp_name}
+
+			</if>
+			<if test="comp_contacts !=null and comp_contacts !='' ">
+				and comp_contacts=#{comp_contacts}
+
+			</if>
+
+		</where>
+	</select>
+
+	<insert id="insertOps" parameterType="java.util.Map">
+		insert into jtyw_maintenance_company
+		(
+		pk_id,
+		comp_name,
+		comp_contacts,
+		comp_contacts_num,
+		comp_address,
+		comp_describe,
+		fk_dept_id
+		)
+		values
+		(
+		cistsys.SEQ_STICK_MAG.nextval,
+		#{comp_name,jdbcType=VARCHAR},
+		#{comp_contacts,jdbcType=VARCHAR},
+		#{comp_contacts_num,jdbcType=VARCHAR},
+		#{comp_address,jdbcType=VARCHAR},
+		#{comp_describe,jdbcType=VARCHAR},
+		#{fk_dept_id,jdbcType=INTEGER}
+		)
+
+	</insert>
+
+	<delete id="deleteOps" parameterType="java.util.Map">
+		DELETE FROM
+		cistsys.jtyw_maintenance_company t
+		WHERE t.pk_id=#{pk_id}
+	</delete>
+
+
+	<update id="updateOps" parameterType="java.util.Map">
+		update jtyw_maintenance_company
+		<set>
+			<if test="comp_name != null and comp_name !=''">
+				comp_name = #{comp_name},
+			</if>
+			<if test="comp_contacts != null and comp_contacts !=''">
+				comp_contacts = #{comp_contacts},
+			</if>
+			<if test="comp_contacts_num != null and comp_contacts_num !=''">
+				comp_contacts_num = #{comp_contacts_num},
+			</if>
+			<if test="comp_address != null and comp_address !=''">
+				comp_address = #{comp_address},
+			</if>
+			<if test="comp_describe != null and comp_describe !=''">
+				comp_describe = #{comp_describe},
+			</if>
+			<if test="fk_dept_id != null and fk_dept_id !=''">
+				fk_dept_id = #{fk_dept_id},
+			</if>
+		</set>
+		where pk_id = #{pk_id}
+	</update>
+
+
+	<!-- 批量删除 -->
+	<delete id="deleteAll" parameterType="java.util.HashMap">
+		delete FROM cistsys.jtyw_maintenance_company
+		WHERE pk_id in
+		<foreach item="pk" collection="array" open="(" separator=","
+			close=")">
+			#{pk}
+		</foreach>
+	</delete>
+
+	<select id="depart_infolist" resultType="com.cist.opsflow.model.DeptInfo"
+		parameterType="java.lang.Integer">
+		select t.dept_pk,t.dept_code,t.dept_name as name,t.DEPT_SUPERIOR from
+		sys_depart_info t
+		<where>
+			<if test="_parameter  == null or _parameter  == ''">
+				t.DEPT_SUPERIOR is null
+			</if>
+			<if test="_parameter  != null and _parameter  != ''">
+				t.DEPT_SUPERIOR=#{_parameter}
+			</if>
+		</where>
+	</select>
+
+</mapper>

@@ -1,0 +1,130 @@
+/**  
+
+* <p>Title: ConfigUrlBean.java</p>  
+
+* <p>Description: </p>    
+
+* @author zah  
+
+* @date 2018年9月28日  
+
+* @version 1.0  
+
+*/
+package com.cist.configUrl.model;
+
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
+
+/**
+ * @ClassName: ConfigUrlBean
+ * @Description: TODO(这里用一句话描述这个类的作用)
+ * @author Administrator
+ * @date 2018年9月28日
+ * 
+ */
+@Component("configUrlBean")
+@ConfigurationProperties(prefix="cist.pro")
+public class ConfigUrlBean {
+
+	private String picFtpUrl = "192.168.0.111";
+	private String picFtpPort = "21";
+	private String picHttpurl = "192.168.0.111";
+	private String picHttpPort = "8070";
+	private String ftpUser = "adminftp";
+	private String ftpPwd = "123456";
+
+	private String httpUser = "adminhttp";
+
+	private String httpPwd = "123456";
+
+	public String getFtpPwd() {
+		return ftpPwd;
+	}
+
+	public String getFtpUser() {
+		return ftpUser;
+	}
+
+	public String getHttpPwd() {
+		return httpPwd;
+	}
+
+	public String getHttpUser() {
+		return httpUser;
+	}
+
+	/**
+	 * @return the picFtpPort
+	 */
+	public String getPicFtpPort() {
+		return picFtpPort;
+	}
+
+	/**
+	 * @return the picFtpUrl
+	 */
+	public String getPicFtpUrl() {
+		return picFtpUrl;
+	}
+	/**
+	 * @return the picHttpPort
+	 */
+	public String getPicHttpPort() {
+		return picHttpPort;
+	}
+	/**
+	 * @return the picHttpurl
+	 */
+	public String getPicHttpurl() {
+		return picHttpurl;
+	}
+
+	public void setFtpPwd(String ftpPwd) {
+		this.ftpPwd = ftpPwd;
+	}
+
+	public void setFtpUser(String ftpUser) {
+		this.ftpUser = ftpUser;
+	}
+
+	public void setHttpPwd(String httpPwd) {
+		this.httpPwd = httpPwd;
+	}
+
+	public void setHttpUser(String httpUser) {
+		this.httpUser = httpUser;
+	}
+
+	/**
+	 * @param picFtpPort
+	 *            the picFtpPort to set
+	 */
+	public void setPicFtpPort(String picFtpPort) {
+		this.picFtpPort = picFtpPort;
+	}
+
+	/**
+	 * @param picFtpUrl
+	 *            the picFtpUrl to set
+	 */
+	public void setPicFtpUrl(String picFtpUrl) {
+		this.picFtpUrl = picFtpUrl;
+	}
+
+	/**
+	 * @param picHttpPort
+	 *            the picHttpPort to set
+	 */
+	public void setPicHttpPort(String picHttpPort) {
+		this.picHttpPort = picHttpPort;
+	}
+
+	/**
+	 * @param picHttpurl
+	 *            the picHttpurl to set
+	 */
+	public void setPicHttpurl(String picHttpurl) {
+		this.picHttpurl = picHttpurl;
+	}
+}

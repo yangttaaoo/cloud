@@ -8,15 +8,21 @@
 		parameterType="java.util.Map">
 
  
- select t.FK_DEPT_ID ,t.EVALUATE_DATE_TYPE,t.FK_USER_ID,t.pk_id,t.remarks,
+<!--  select t.FK_DEPT_ID ,t.EVALUATE_DATE_TYPE,t.FK_USER_ID,t.pk_id,t.remarks,
 q.METRICS_NUM,q.fk_topic_id,
 
 po.sypi_pk,po.sypi_name,po.sypi_code,t.evaluate_date_end,t.evaluate_date_start
- from QW_I_C_METRICS t 
- inner join 
+ from 
+ QW_I_C_METRICS t 
+ left join 
  QW_EVALUATE_METRICS q 
  on t.pk_id=q.fk_relation_id  
- inner join sys_police_info po on po.sypi_pk=t.fk_user_id
+ left join sys_police_info po on po.sypi_pk=t.fk_user_id -->
+ 
+  select t.FK_DEPT_ID ,t.EVALUATE_DATE_TYPE,t.FK_USER_ID,t.pk_id,t.remarks,
+t.evaluate_date_end,t.evaluate_date_start
+ from QW_I_C_METRICS t 
+
  
 		<where>
 			<if test="fk_dept_id !=null and fk_dept_id !=''">
@@ -25,8 +31,8 @@ po.sypi_pk,po.sypi_name,po.sypi_code,t.evaluate_date_end,t.evaluate_date_start
 
 
 			
-		<if test="sypi_name !=null and sypi_name !='' ">
-				and po.sypi_code=#{sypi_name} or po.sypi_name=#{sypi_name}
+		<if test="fk_user_id !=null and fk_user_id !='' ">
+				and  t.fk_user_id=#{fk_user_id}
 			</if>
 			
 			<if test="fk_user_id != null and fk_user_id !=''">
@@ -49,9 +55,14 @@ po.sypi_pk,po.sypi_name,po.sypi_code,t.evaluate_date_end,t.evaluate_date_start
 
 
 
-	<!-- <select id="selectSysFrmCode" resultType="com.cist.khpdgl.model.Sys_frm_code" 
-		parameterType="java.lang.String"> select * from SYS_FRM_CODE where FCT_CODE=#{fct_code} 
-		</select> -->
+ <select id="queryNum" resultType="com.cist.pdgrzb.model.NumIndex" 
+		parameterType="java.lang.Integer"> 
+			select t.fk_relation_id ,sum(t.metrics_num) num from qw_evaluate_metrics t 
+     where t.fk_relation_id=#{pk_id}
+    
+    group by t.fk_relation_id
+		
+		</select> 
 
 
 
@@ -88,13 +99,13 @@ po.sypi_pk,po.sypi_name,po.sypi_code,t.evaluate_date_end,t.evaluate_date_start
 			</if>
 			
 		</set>
-		where fk_relation_id=#{fk_relation_id,jdbcType=DECIMAL}
+		where pk_id=#{fk_relation_id,jdbcType=DECIMAL}
 	</update>
 
 
 
 	<insert id="insertPerson" parameterType="java.util.Map">
-<selectKey resultType="java.lang.Integer" order="BEFORE" keyProperty="FK_RELATION_ID">
+<selectKey resultType="java.lang.Integer" order="BEFORE" keyProperty="pk">
         SELECT cistsys.SEQ_TXZ_PERMIT.nextval FROM DUAL
     </selectKey>
 		insert into
@@ -110,10 +121,11 @@ po.sypi_pk,po.sypi_name,po.sypi_code,t.evaluate_date_end,t.evaluate_date_start
 		remarks
 		
 		)
-		values
+		
+values
 		(
-		#{FK_RELATION_ID},
-		#{fk_user_id},
+		#{pk},
+		#{arrays},
 		#{fk_dept_id},
 		#{metrics_type},
 		#{evaluate_date_type},
@@ -135,7 +147,8 @@ po.sypi_pk,po.sypi_name,po.sypi_code,t.evaluate_date_end,t.evaluate_date_start
 		fk_topic_id,
 		METRICS_NUM
 		)
-		values
+		
+	values
 		(
 		cistsys.SEQ_TXZ_PERMIT.nextval,
 		#{FK_RELATION_ID},
@@ -155,6 +168,14 @@ po.sypi_pk,po.sypi_name,po.sypi_code,t.evaluate_date_end,t.evaluate_date_start
 
 	</delete>
 
+	<delete id="deletePersons" parameterType="java.util.Map" >
+		DELETE FROM
+		QW_EVALUATE_METRICS
+		WHERE FK_RELATION_ID = #{pk_id}
+
+	</delete>
+
+
 	<!-- 批量删除 -->
 	<delete id="deletePersonAll" parameterType="java.util.Map" >
 		delete FROM QW_I_C_METRICS
@@ -165,7 +186,14 @@ po.sypi_pk,po.sypi_name,po.sypi_code,t.evaluate_date_end,t.evaluate_date_start
 		</foreach>
 	</delete>
 
-
+<delete id="deletePersonAlls" parameterType="java.util.Map" >
+		delete FROM QW_EVALUATE_METRICS
+		WHERE FK_RELATION_ID in
+		<foreach item="pks" collection="array" open="(" separator=","
+			close=")">
+			#{pks}
+		</foreach>
+	</delete>
 
 
 	 <select id="depart_infolist" resultType="com.cist.pdgrzb.model.Depart_info" parameterType="java.lang.Integer">
@@ -198,9 +226,8 @@ select t.dept_pk,t.dept_code,t.dept_name as name,t.DEPT_SUPERIOR from sys_depart
  
  
  <select id="selectPerson" resultType="com.cist.pdgrzb.model.Depart_info" parameterType="java.lang.Integer">
-select sypi_pk dept_pk,sypi_name name from sys_police_info t  where sypi_dept=#{_parameter}
+select sypi_pk dept_pk,sypi_name name , 'true' flag from sys_police_info t  where sypi_dept=#{_parameter}
 
 </select>
-
 
 </mapper>

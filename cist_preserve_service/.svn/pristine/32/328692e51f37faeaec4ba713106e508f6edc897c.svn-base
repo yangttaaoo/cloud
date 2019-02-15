@@ -1,0 +1,4 @@
+#项目部署名
+server.context-path=/preserve
+server.port=8908
+spring.application.name=service-preserve

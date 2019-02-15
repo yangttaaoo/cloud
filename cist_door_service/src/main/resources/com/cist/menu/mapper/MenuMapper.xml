@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cist.menu.mapper.MenuMapper" >
+    <select id="selectMenu" resultType="com.cist.menu.model.Menu" parameterType="java.util.Map">
+    select * from sys_module_info t where t.SYMI_PARENT=#{symi_parent} and t.SYMI_LEVEL in(2,3,4) and  t.SYMI_STATUS=1
+    </select>
+        <select id="selectMenuwid" resultType="com.cist.menu.model.Menu" parameterType="java.util.Map">
+    select * from sys_module_info t 
+    <where>
+     		<if test="symi_level!=null and symi_level!=''">
+		   and  t.symi_level=#{symi_level}
+		   </if>
+		   <if test="symi_parent!=null and symi_parent!=''">
+		   and  t.symi_parent=#{symi_parent}
+		   </if>
+    </where>
+  
+    </select>
+    <select id="selectMenuwper" resultType="com.cist.menu.model.Menu" parameterType="java.util.Map">
+     select * from sys_module_info t 
+     <where>
+		     <if test="symi_parent!=null and symi_parent!=''">
+		  and t.symi_parent=#{symi_parent}
+		   </if>
+     </where>
+    </select>
+    <select id="selectMenushang" resultType="com.cist.menu.model.Menu" parameterType="java.util.Map">
+    select (select c.symi_name from SYS_MODULE_INFO c where c.symi_pk=t.symi_parent) as names,t.symi_name,t.symi_pk from SYS_MODULE_INFO t
+ where t.symi_level=3 and t.symi_pk  in
+			    <foreach item="w" collection="datakey" open="(" separator="," close=")">
+		            #{w}
+		        </foreach>
+    </select>
+</mapper>

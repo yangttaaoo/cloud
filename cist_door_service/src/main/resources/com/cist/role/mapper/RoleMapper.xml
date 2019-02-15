@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cist.role.mapper.RoleMapper" >
+
+   <select id="roleInfopageList" resultType="com.cist.role.model.RoleInfo" parameterType="java.util.HashMap">
+   select * from SYS_ROLE_INFO t
+    <where>
+    1=1
+	    <if test="syri_name !=null and syri_name !=''" >
+	    and t.syri_name LIKE '%'||#{syri_name}||'%'
+	    </if>
+	    <if test="syri_flag !=null and syri_flag !='' and syri_flag !=2 " >
+	    and t.syri_flag = #{syri_flag}
+	    </if>
+	    </where>
+   </select>
+   
+   <insert id="addSyspoliceinfo"  parameterType="java.util.Map"  >
+       <selectKey resultType="int" order="BEFORE" keyProperty="SYPI_PK">   
+            select cistsys.SEQ_ROLE_INFO.nextval as SYPI_PK from dual
+        </selectKey> 
+     INSERT INTO SYS_ROLE_INFO
+    (SYRI_PK, 
+     SYRI_NAME,
+     SYRI_FLAG,
+     REMARK, 
+     SYRI_BUIDER,
+     DEPT_PK
+         )
+     VALUES
+      (
+     #{SYPI_PK},
+     #{syri_name,jdbcType=VARCHAR},
+     #{syri_flag,jdbcType=CHAR},
+     #{remark,jdbcType=VARCHAR}, 
+     #{syri_buider,jdbcType=VARCHAR},
+     #{dept_pk,jdbcType=INTEGER}
+      )
+    </insert>
+    
+    <insert id="addsysuserauthority" parameterType="List" >
+BEGIN
+
+    <foreach collection="list" item="item" index="index"    separator="">
+       INSERT INTO SYS_ROLE_AUTH(SYRI_PK,SYMI_PK)
+       values
+       (
+     #{item.sypi_pk,jdbcType=VARCHAR},
+     #{item.symi_pk,jdbcType=VARCHAR});
+       
+    </foreach>
+COMMIT;  
+    END;  
+    </insert>
+    
+    <insert id="addbumenquanx" parameterType="List">
+   BEGIN
+
+    <foreach collection="list" item="item" index="index"    separator="">
+       INSERT INTO SYS_ROLE_DATAQX(SYPI_PK,SYPI_PKX)
+       values
+       (
+     #{item.sypi_pk,jdbcType=INTEGER},
+     #{item.sypi_pks,jdbcType=INTEGER});
+       
+    </foreach>
+COMMIT;  
+    END;  
+    </insert>
+    
+    <insert id="addDept" parameterType="List">
+   BEGIN
+
+    <foreach collection="list" item="item" index="index"    separator="">
+       INSERT INTO SYS_ROLE_DEPT(SYPI_PK,DEPT_PK,DEPT_PK_LEV)
+       values
+       (
+     #{item.sypi_pk,jdbcType=VARCHAR},
+     #{item.dept_pk,jdbcType=VARCHAR},
+     #{item.dept_pk_lev,jdbcType=VARCHAR});
+       
+    </foreach>
+COMMIT;  
+    END;  
+    </insert>
+    
+    <delete id="deluserpolise" parameterType="java.util.Map">
+    DELETE FROM SYS_ROLE_INFO WHERE SYRI_PK
+       in
+			    <foreach item="w" collection="sypi_pk" open="(" separator="," close=")">
+		            #{w}
+		        </foreach>
+    </delete>
+ 	<delete id="delusersq" parameterType="java.util.Map">
+    DELETE FROM SYS_ROLE_AUTH WHERE SYRI_PK = #{sypi_pk}
+    </delete>
+    <delete id="deluserdataqx" parameterType="java.util.Map">
+    DELETE FROM SYS_ROLE_DATAQX WHERE SYPI_PK = #{sypi_pk}
+    </delete>
+    <delete id="deldeptauthority" parameterType="java.util.Map">
+    DELETE FROM SYS_ROLE_DEPT WHERE SYPI_PK = #{sypi_pk}
+    </delete>
+    
+    	<select id="selectSysuserauthority" parameterType="java.util.Map" resultType="com.cist.role.model.Sysroleauthority">
+     		select * from SYS_ROLE_AUTH t where t.syri_pk=#{syri_pk}
+    	</select>
+        <select id="selectSysuserauthorityleve" parameterType="java.util.Map" resultType="com.cist.role.model.Sysroleauthority">
+    		select t.symi_pk,t.symi_parent from SYS_MODULE_INFO t where t.symi_pk in(
+			select t.symi_parent from SYS_MODULE_INFO t where t.symi_pk 
+				in 
+  		<foreach item="w" collection="datakey" open="(" separator="," close=")">
+		            #{w.symi_pk}
+		        </foreach>
+			and t.symi_level=4
+				)
+    	</select>
+    	<select id="deptdataauthority" parameterType="java.util.Map" resultType="com.cist.role.model.Sysroleauthority">
+   			select t.sypi_pk,t.dept_pk as symi_pk,t.dept_pk_lev from SYS_ROLE_DEPT t  where t.sypi_pk=#{syri_pk}
+    	</select>
+    	<select id="sysuserdataqx" parameterType="java.util.Map" resultType="com.cist.role.model.Sysroledataqx">
+    		select * from SYS_ROLE_DATAQX t where t.sypi_pk=#{syri_pk}
+    	</select>
+    	
+    	<update id="updateSysroleinfo" parameterType="java.util.Map">
+		    UPDATE SYS_ROLE_INFO SET 
+		     SYRI_NAME=#{syri_name,jdbcType=VARCHAR},
+		     SYRI_FLAG=#{syri_flag,jdbcType=CHAR},
+		     REMARK=#{remark,jdbcType=VARCHAR}, 
+		     SYRI_BUIDER=#{syri_buider,jdbcType=VARCHAR},
+		     DEPT_PK=#{dept_pk,jdbcType=INTEGER}
+		    WHERE SYRI_PK = #{sypi_pk}
+		 </update>
+</mapper>

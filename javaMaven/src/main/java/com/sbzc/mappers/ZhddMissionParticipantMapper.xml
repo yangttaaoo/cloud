@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sbzc.mappers.ZhddMissionParticipantMapper" >
+  <resultMap id="BaseResultMap" type="com.sbzc.model.ZhddMissionParticipant" >
+    <result column="PK_ID" property="pkId" jdbcType="DECIMAL" />
+    <result column="FK_MISSION_ID" property="fkMissionId" jdbcType="DECIMAL" />
+    <result column="PARTICIPANT_TYPE" property="participantType" jdbcType="CHAR" />
+    <result column="FK_PARTICIPANT_ID" property="fkParticipantId" jdbcType="DECIMAL" />
+  </resultMap>
+  <insert id="insert" parameterType="com.sbzc.model.ZhddMissionParticipant" >
+    insert into ZHDD_MISSION_PARTICIPANT (PK_ID, FK_MISSION_ID, PARTICIPANT_TYPE, 
+      FK_PARTICIPANT_ID)
+    values (#{pkId,jdbcType=DECIMAL}, #{fkMissionId,jdbcType=DECIMAL}, #{participantType,jdbcType=CHAR}, 
+      #{fkParticipantId,jdbcType=DECIMAL})
+  </insert>
+  <insert id="insertSelective" parameterType="com.sbzc.model.ZhddMissionParticipant" >
+    insert into ZHDD_MISSION_PARTICIPANT
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="pkId != null" >
+        PK_ID,
+      </if>
+      <if test="fkMissionId != null" >
+        FK_MISSION_ID,
+      </if>
+      <if test="participantType != null" >
+        PARTICIPANT_TYPE,
+      </if>
+      <if test="fkParticipantId != null" >
+        FK_PARTICIPANT_ID,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="pkId != null" >
+        #{pkId,jdbcType=DECIMAL},
+      </if>
+      <if test="fkMissionId != null" >
+        #{fkMissionId,jdbcType=DECIMAL},
+      </if>
+      <if test="participantType != null" >
+        #{participantType,jdbcType=CHAR},
+      </if>
+      <if test="fkParticipantId != null" >
+        #{fkParticipantId,jdbcType=DECIMAL},
+      </if>
+    </trim>
+  </insert>
+</mapper>

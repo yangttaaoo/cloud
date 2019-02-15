@@ -1,0 +1,47 @@
+package com.cist.tqrw.controller;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.cist.frame.page.PageInfo;
+import com.cist.tqrw.model.MissionGrade;
+import com.cist.tqrw.model.SpecialMission;
+import com.cist.tqrw.service.TqrwService;
+
+@RestController
+@RequestMapping("tqrw")
+public class TqrwController {
+	@Autowired
+	private TqrwService tService;
+	
+	@RequestMapping("allist")
+	public PageInfo<SpecialMission> allist(@RequestBody HashMap<String, Object> map){
+		PageInfo pInfo = new PageInfo();
+		pInfo.setPageNum(Integer.parseInt(map.get("currentPage").toString()));
+		pInfo.setPageSize(Integer.parseInt(map.get("pageSize").toString()));
+		PageInfo<SpecialMission> pageInfo = (PageInfo<SpecialMission>) tService.selectAllpageList(map, pInfo);
+		return pageInfo;
+	}
+	@RequestMapping("selectcount")
+	public Integer selectcount(){
+		return tService.selectCount();
+	}
+	@RequestMapping("grades")
+	public List<MissionGrade> grades(){
+		return tService.selectGrades();
+	}
+	@RequestMapping("getpolice")
+	public Map<String, Object> selsectpolice(){
+		HashMap<String, Object> map = new HashMap<>();
+		map.put("police", tService.selectPolice());
+		map.put("policecar", tService.selectPoliceCar());
+		return map;
+	}
+
+}

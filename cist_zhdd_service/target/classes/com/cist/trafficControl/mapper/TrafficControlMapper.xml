@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper
+	namespace="com.cist.trafficControl.mapper.TrafficControlMapper">
+	<!-- 获取交通管制规则 -->
+	<select id="getTrafficControlRule"
+		resultType="com.cist.trafficControl.model.TempModel">
+		select RULE_NAME label,PK_ID value from
+		ZHDD_TRAFFIC_CONTROL_RULE
+	</select>
+
+	<insert id="insert" parameterType="java.util.HashMap">
+		insert into
+		ZHDD_TRAFFIC_CONTROL(pk_id,fk_dept_id,fk_create_founder_id,create_time,control_name,control_route,control_start_time,control_end_time,verify_status
+		<if test="control_rule !=null and control_rule!=''">
+			,control_rule
+		</if>
+		<if test="control_describe !=null and control_describe !=''">
+			,control_describe
+		</if>)
+		values(SEQ_ZHDD_TRAFFIC_CONTROL.nextval,#{fk_dept_id},#{fk_create_founder_id},SYSDATE,#{control_name},
+		#{control_route,jdbcType=BLOB},to_date(#{control_start_time},'yyyy-mm-dd
+		HH24:mi:ss'),to_date(#{control_end_time},'yyyy-mm-dd HH24:mi:ss'),0
+		<if test="control_rule !=null and control_rule!=''">
+			,#{control_rule}
+		</if>
+		<if test="control_describe !=null and control_describe !=''">
+			,#{control_describe}
+		</if>
+		)
+	</insert>
+	
+	<select id="queryTrafficControlList" parameterType="java.util.HashMap" resultType="com.cist.trafficControl.model.TrafficControl">
+	select
+	c.*,
+(case when c.CONTROL_START_TIME&gt;SYSDATE then '未开始' 
+	when c.CONTROL_START_TIME&lt;=SYSDATE and c.CONTROL_END_TIME&lt;SYSDATE then '管制中' 
+	when c.CONTROL_START_TIME&lt;=SYSDATE and c.CONTROL_END_TIME&gt;=SYSDATE then '过期' end) status,
+	decode(verify_status,0,'审核中',1,'通过',2,'未通过') verify_status_name,
+	(case when c.verify_status=0 then 1 else 2 end) nzCurrent
+	,p.sypi_name fk_create_founder_name,i.sypi_name fk_verify_person_name
+from ZHDD_TRAFFIC_CONTROL  c left join  SYS_POLICE_INFO p on p.sypi_pk=c.fk_create_founder_id 
+	 left join SYS_POLICE_INFO i on c.fk_verify_person_id=i.sypi_pk
+	 where 1=1
+	 <if test="control_name !=null and control_name !=''">and control_name like '%'||#{control_name}||'%' </if>
+	  <if test="control_start_time !=null and control_start_time !=''">
+	  and  c.control_end_time &gt;= to_date(#{ control_start_time},'yyyy-mm-dd HH24:mi:ss')
+      and c.control_end_time &lt;= to_date(#{ control_end_time},'yyyy-mm-dd HH24:mi:ss')
+	   </if>
+	</select>
+	<update id="update" parameterType="java.util.HashMap">
+	update ZHDD_TRAFFIC_CONTROL set  control_name=#{control_name},control_route=#{control_route,jdbcType=BLOB}
+	,control_start_time=to_date(#{control_start_time},'yyyy-mm-dd HH24:mi:ss'),control_end_time=to_date(#{control_end_time},'yyyy-mm-dd HH24:mi:ss')
+	,control_describe=#{control_describe}  where pk_id=#{pk_id}
+	</update>
+	<delete id="delete" parameterType="java.util.HashMap">
+	delete from ZHDD_TRAFFIC_CONTROL where pk_id in 
+	<foreach collection="list" close=")" open="(" index="index" item="id" separator=",">
+	#{id}
+	</foreach>
+	
+	</delete>
+</mapper>
+	

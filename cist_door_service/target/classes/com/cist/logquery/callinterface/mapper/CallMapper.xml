@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cist.logquery.callinterface.mapper.CallMapper">
+<select id="selecteAll"  resultType="com.cist.logquery.callinterface.model.Interface"
+parameterType="java.util.HashMap">
+   select * from sys_imp_log t
+   <where>
+     <if test="name!=null and name!=''">
+        t.syil_code=#{name}
+     </if>
+     <if test="ip!=null and ip!=''">
+      t.syil_rip=#{ip}
+     </if>
+     <if test="time1!=null and time1!=''">
+       <![CDATA[and t.syil_rtime>=to_date(#{time1},'yyyy-mm-dd HH24:mi:ss')]]>
+     </if>
+     <if test="time2!=null and time2!=''">
+     <![CDATA[and t.syil_rtime<=to_date(#{time2},'yyyy-mm-dd HH24:mi:ss')]]>
+     </if>
+   </where>
+</select>
+<!-- 批量删除 -->
+	<delete id="deleteAll">
+		delete FROM sys_imp_log    
+		WHERE syil_pk in
+		<foreach item="pk" collection="array" open="(" separator="," close=")">
+            #{pk}
+        </foreach>  
+	</delete> 
+	<!-- 单一删除 -->
+	<delete id="deleteOne">
+	delete FROM sys_imp_log
+	where syil_pk=#{pk}
+	</delete>
+	
+	<select id="selecteType" resultType="com.cist.logquery.callinterface.model.CallType">
+	   select interface_num,interface_name  from sjgx_interface
+	</select>
+</mapper>

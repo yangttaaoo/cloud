@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sbzc.mappers.JcbkWarningAttachmentMapper" >
+  <resultMap id="BaseResultMap" type="com.sbzc.model.JcbkWarningAttachment" >
+    <id column="PK_ID" property="pkId" jdbcType="DECIMAL" />
+    <result column="FK_WARNING_ID" property="fkWarningId" jdbcType="DECIMAL" />
+    <result column="ATTACHMENT_NAME" property="attachmentName" jdbcType="VARCHAR" />
+    <result column="ATTACHMENT_SUFFIX" property="attachmentSuffix" jdbcType="VARCHAR" />
+    <result column="ATTACHMENT_SIZE" property="attachmentSize" jdbcType="VARCHAR" />
+    <result column="ATTACHMENT_SOURCE" property="attachmentSource" jdbcType="VARCHAR" />
+    <result column="COMMIT_TIME" property="commitTime" jdbcType="TIMESTAMP" />
+    <result column="REMARKS" property="remarks" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    PK_ID, FK_WARNING_ID, ATTACHMENT_NAME, ATTACHMENT_SUFFIX, ATTACHMENT_SIZE, ATTACHMENT_SOURCE, 
+    COMMIT_TIME, REMARKS
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.math.BigDecimal" >
+    select 
+    <include refid="Base_Column_List" />
+    from JCBK_WARNING_ATTACHMENT
+    where PK_ID = #{pkId,jdbcType=DECIMAL}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.math.BigDecimal" >
+    delete from JCBK_WARNING_ATTACHMENT
+    where PK_ID = #{pkId,jdbcType=DECIMAL}
+  </delete>
+  <insert id="insert" parameterType="com.sbzc.model.JcbkWarningAttachment" >
+    insert into JCBK_WARNING_ATTACHMENT (PK_ID, FK_WARNING_ID, ATTACHMENT_NAME, 
+      ATTACHMENT_SUFFIX, ATTACHMENT_SIZE, ATTACHMENT_SOURCE, 
+      COMMIT_TIME, REMARKS)
+    values (#{pkId,jdbcType=DECIMAL}, #{fkWarningId,jdbcType=DECIMAL}, #{attachmentName,jdbcType=VARCHAR}, 
+      #{attachmentSuffix,jdbcType=VARCHAR}, #{attachmentSize,jdbcType=VARCHAR}, #{attachmentSource,jdbcType=VARCHAR}, 
+      #{commitTime,jdbcType=TIMESTAMP}, #{remarks,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.sbzc.model.JcbkWarningAttachment" >
+    insert into JCBK_WARNING_ATTACHMENT
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="pkId != null" >
+        PK_ID,
+      </if>
+      <if test="fkWarningId != null" >
+        FK_WARNING_ID,
+      </if>
+      <if test="attachmentName != null" >
+        ATTACHMENT_NAME,
+      </if>
+      <if test="attachmentSuffix != null" >
+        ATTACHMENT_SUFFIX,
+      </if>
+      <if test="attachmentSize != null" >
+        ATTACHMENT_SIZE,
+      </if>
+      <if test="attachmentSource != null" >
+        ATTACHMENT_SOURCE,
+      </if>
+      <if test="commitTime != null" >
+        COMMIT_TIME,
+      </if>
+      <if test="remarks != null" >
+        REMARKS,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="pkId != null" >
+        #{pkId,jdbcType=DECIMAL},
+      </if>
+      <if test="fkWarningId != null" >
+        #{fkWarningId,jdbcType=DECIMAL},
+      </if>
+      <if test="attachmentName != null" >
+        #{attachmentName,jdbcType=VARCHAR},
+      </if>
+      <if test="attachmentSuffix != null" >
+        #{attachmentSuffix,jdbcType=VARCHAR},
+      </if>
+      <if test="attachmentSize != null" >
+        #{attachmentSize,jdbcType=VARCHAR},
+      </if>
+      <if test="attachmentSource != null" >
+        #{attachmentSource,jdbcType=VARCHAR},
+      </if>
+      <if test="commitTime != null" >
+        #{commitTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="remarks != null" >
+        #{remarks,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.sbzc.model.JcbkWarningAttachment" >
+    update JCBK_WARNING_ATTACHMENT
+    <set >
+      <if test="fkWarningId != null" >
+        FK_WARNING_ID = #{fkWarningId,jdbcType=DECIMAL},
+      </if>
+      <if test="attachmentName != null" >
+        ATTACHMENT_NAME = #{attachmentName,jdbcType=VARCHAR},
+      </if>
+      <if test="attachmentSuffix != null" >
+        ATTACHMENT_SUFFIX = #{attachmentSuffix,jdbcType=VARCHAR},
+      </if>
+      <if test="attachmentSize != null" >
+        ATTACHMENT_SIZE = #{attachmentSize,jdbcType=VARCHAR},
+      </if>
+      <if test="attachmentSource != null" >
+        ATTACHMENT_SOURCE = #{attachmentSource,jdbcType=VARCHAR},
+      </if>
+      <if test="commitTime != null" >
+        COMMIT_TIME = #{commitTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="remarks != null" >
+        REMARKS = #{remarks,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where PK_ID = #{pkId,jdbcType=DECIMAL}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.sbzc.model.JcbkWarningAttachment" >
+    update JCBK_WARNING_ATTACHMENT
+    set FK_WARNING_ID = #{fkWarningId,jdbcType=DECIMAL},
+      ATTACHMENT_NAME = #{attachmentName,jdbcType=VARCHAR},
+      ATTACHMENT_SUFFIX = #{attachmentSuffix,jdbcType=VARCHAR},
+      ATTACHMENT_SIZE = #{attachmentSize,jdbcType=VARCHAR},
+      ATTACHMENT_SOURCE = #{attachmentSource,jdbcType=VARCHAR},
+      COMMIT_TIME = #{commitTime,jdbcType=TIMESTAMP},
+      REMARKS = #{remarks,jdbcType=VARCHAR}
+    where PK_ID = #{pkId,jdbcType=DECIMAL}
+  </update>
+</mapper>

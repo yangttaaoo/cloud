@@ -1,0 +1,375 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cist.eventmanagement.mapper.EventManagementMapper">
+	<!-- 查询事件详细信息 -->
+	<select id="queryeventinfo" resultType="com.cist.eventmanagement.model.VW_EVENT_INFO"
+		parameterType="java.util.HashMap">
+		select * from vw_event_info
+		<where>
+			<if test="alarm_person !=null and alarm_person !=''">
+				and alarm_person like '%'||#{alarm_person}||'%'
+			</if>
+			<if test="alarm_person_telephone !=null and alarm_person_telephone !=''">
+				and alarm_person_telephone like '%'||#{alarm_person_telephone}||'%'
+			</if>
+			<if test="event_address !=null and event_address !=''">
+				and event_address like '%'||#{event_address}||'%'
+			</if>
+			<if test="zt !=null and zt !=''">
+				and zt = #{zt}
+			</if>
+			<if test="kssj!=null and kssj!=''">
+				<![CDATA[ and alarm_time >=to_date(#{kssj},'yyyy-mm-dd HH24:mi:ss')]]>
+			</if>
+			<if test="jssj!=null and jssj!=''">
+				<![CDATA[and alarm_time <= to_date(#{jssj},'yyyy-mm-dd HH24:mi:ss') ]]>
+			</if>
+		</where>
+		 order by pk_id
+	</select>
+	<!-- 删除事件 -->
+	<delete id="deleteeventinfo" parameterType="java.util.HashMap">
+		delete from ZHDD_EVENT_INFORMATION where event_status!='2' and pk_id in
+		 <foreach item="w" collection="list" open="(" separator="," close=")">
+		       #{w}
+		 </foreach> 
+	</delete>
+	<!-- 更新事件(作废、归档)-->
+	<update id="updateeventinfo" parameterType="java.util.HashMap">
+		update ZHDD_EVENT_INFORMATION 
+		<trim prefix="set" suffixOverrides=",">
+			<if test="event_status!=null">event_status = #{event_status,jdbcType=VARCHAR},</if>
+		</trim>
+		where pk_id = #{pk_id,jdbcType=INTEGER}
+	</update>
+
+	<select id="depart_infolist" resultType="com.cist.eventmanagement.model.DeptInfo"
+		parameterType="java.lang.Integer">
+		select t.dept_pk,t.dept_code,t.dept_name as name,t.DEPT_SUPERIOR from
+		sys_depart_info t
+		<where>
+			<if test="_parameter  == null or _parameter  == ''">
+				t.DEPT_SUPERIOR is null
+			</if>
+			<if test="_parameter  != null and _parameter  != ''">
+				t.DEPT_SUPERIOR=#{_parameter}
+			</if>
+		</where>
+	</select>
+	<!-- 根据条件查询事件来源信息 -->
+	<select id="querysjly" parameterType="java.util.HashMap"
+	resultType="com.cist.eventmanagement.model.Zhdd_event_source">
+	select * from ZHDD_EVENT_SOURCE
+		<where>
+			<if test="pk_id !=null and pk_id !=''">
+				and pk_id = #{pk_id}
+			</if>
+		</where>
+	</select>
+	<!-- 根据条件查询事件类型信息 -->
+	<select id="querysjtype" parameterType="java.util.HashMap"
+	resultType="com.cist.eventmanagement.model.Zhdd_event_type">
+		select * from ZHDD_EVENT_TYPE
+			<where>
+				<if test="pk_id !=null and pk_id !=''">
+					and pk_id = #{pk_id}
+				</if>
+			</where>
+	</select>
+	<!-- 添加事件信息 -->
+	<insert id="addsj" parameterType="java.util.HashMap">
+	<selectKey resultType="int" order="BEFORE" keyProperty="sj_id">
+			select SEQ_EVENT_INFORMATION_ID.nextval as sj_id from dual
+		</selectKey>
+		insert into ZHDD_EVENT_INFORMATION(
+				   pk_id,
+			       fk_dept_id,
+			       fk_event_source_id,
+			       fk_event_type_id,
+			       event_address,
+			       longitude,
+			       latitude,
+			       event_describe,
+			       alarm_person,
+			       alarm_person_telephone,
+			       alarm_time,
+			       event_preselection,
+			       event_current_status,
+			       event_status,
+			       event_name
+				)
+			values( #{sj_id},
+			       #{fk_dept_id},
+			       #{fk_event_source_id},
+			       #{fk_event_type_id},
+			       #{event_address},
+			       #{longitude},
+			       #{latitude},
+			       #{event_describe},
+			       #{alarm_person},
+			       #{alarm_person_telephone},
+			       to_date(#{alarm_time},'yyyy-mm-dd HH24:mi:ss'),
+			       #{event_preselection},
+			       #{event_current_status},
+			       #{event_status},
+			       #{event_name})
+	</insert>
+	<!-- 添加受理信息 -->
+	<insert id="addslinfo" parameterType="java.util.HashMap">
+		insert into ZHDD_EVENT_ACCEPTANCE(
+				    pk_id,
+			        fk_event_id,
+			        fk_acceptance_dept_id,
+			        fk_acceptance_person_id,
+			        acceptance_time,
+			        acceptance_state,
+			        fk_forward_dept_id,
+			        forward_time
+				) values(
+					SEQ_SJSL_PK_ID.nextval,
+					#{sj_id},
+					#{fk_acceptance_dept_id},
+					#{fk_acceptance_person_id},
+					sysdate,
+					'2',
+					#{fk_forward_dept_id},
+					sysdate
+				)
+	</insert>
+	<!-- 删除受理信息 -->
+	<delete id="delZhdd_event_acceptance" parameterType="java.util.HashMap">
+		delete from ZHDD_EVENT_ACCEPTANCE where fk_event_id in
+		<foreach item="w" collection="list" open="(" separator="," close=")">
+		       #{w}
+		 </foreach> 
+	</delete>
+	
+	<!-- 根据事件信息查询调度信息 -->
+	<select id="queryddinfo" parameterType="java.util.HashMap" 
+	resultType="com.cist.eventmanagement.model.Zhdd_event_dispatch">
+		select t.pk_id,
+       t.fk_event_id,
+       t.fk_dispatch_person_id,
+       t.dispatch_time,
+       t.sms_contents,
+       t.fk_work_flow_id,
+       (select sypi_name from sys_police_info where sypi_pk = t.fk_dispatch_person_id) fk_dispatch_person_name 
+       from ZHDD_EVENT_DISPATCH t
+       where fk_event_id = #{fk_event_id}
+	</select>
+	<!-- 根据事件id查询受理信息 -->
+	<select id="queryslinfo" parameterType="java.util.HashMap"
+	resultType="com.cist.eventmanagement.model.Zhdd_event_acceptance">
+		select t.pk_id,
+       t.fk_event_id,
+       t.fk_acceptance_dept_id,
+       (select dept_name from sys_depart_info where dept_pk = t.fk_acceptance_dept_id) fk_acceptance_dept_name,
+       t.fk_acceptance_person_id,
+       (select sypi_name from sys_police_info where sypi_pk = t.fk_acceptance_person_id) fk_acceptance_person_name,
+       t.acceptance_time,
+       t.acceptance_state,
+       t.fk_forward_dept_id,
+       (select dept_name from sys_depart_info where dept_pk = t.fk_forward_dept_id) fk_forward_dept_name,
+       t.forward_time
+        from ZHDD_EVENT_ACCEPTANCE t where fk_event_id = #{fk_event_id} order by pk_id
+	</select>
+	<!-- 根据事件id查询事件处理流程信息 -->
+	<select id="querylcinfo" parameterType="java.util.HashMap"
+	resultType="com.cist.eventmanagement.model.Zhdd_event_flow">
+		select t.pk_id,
+       t.fk_event_id,
+       t.work_flow_num,
+       t.work_flow_name,
+       t.feedback_contents,
+       t.complete_time,
+       t.fk_complete_person_id,
+       (select sypi_name from sys_police_info where sypi_pk =t.fk_complete_person_id)fk_complete_person_name from ZHDD_EVENT_FLOW t
+		where fk_event_id = #{fk_event_id} order by pk_id
+	</select>
+	<!-- 查询预选项信息 -->
+	<select id="queryyxx" parameterType="java.util.HashMap"
+	resultType="com.cist.eventmanagement.model.Zhdd_event_preselection">
+		select t.pk_id value, t.event_preselection label from ZHDD_EVENT_PRESELECTION t
+	</select>
+	<!-- 查询事件处置人员 -->
+	<select id="querypeople" parameterType="java.util.HashMap"
+	resultType="com.cist.eventmanagement.model.Zhdd_event_personnel">
+		select t.*,p.sypi_name,p.sypi_mobial from ZHDD_EVENT_PERSONNEL t left join sys_police_info p
+			on t.fk_person_id = p.sypi_pk
+			where fk_event_id = #{fk_event_id}
+	</select>
+	<!-- 根据事件id查询事件附件信息 -->
+	<select id="querysjfj" parameterType="java.util.HashMap"
+	resultType="com.cist.eventmanagement.model.Zhdd_event_attachment">
+		select * from ZHDD_EVENT_ATTACHMENT where fk_event_id = #{fk_event_id} and 
+		attachment_suffix in('jpg','jpeg','png','bmp')
+	</select>
+	<!-- 根据事件id查询事件处置结果信息 -->
+	<select id="querysjjg" parameterType="java.util.HashMap"
+	resultType="com.cist.eventmanagement.model.Zhdd_event_result">
+		select t.*,(select sypi_name from sys_police_info where sypi_pk=t.fk_submitier_id) fk_submitier_name from ZHDD_EVENT_RESULT t
+		where fk_event_id = #{fk_event_id}
+	</select>
+	<!-- 更新事件信息 -->
+	<update id="updateZhdd_event_information" parameterType="java.util.HashMap">
+		update ZHDD_EVENT_INFORMATION 
+		<trim prefix="set" suffixOverrides=",">
+			<if test="event_name !=null and event_name != ''">event_name = #{event_name,jdbcType=VARCHAR},</if>
+			<if test="fk_event_source_id !=null and fk_event_source_id != ''">fk_event_source_id = #{fk_event_source_id},</if>
+			<if test="fk_event_type_id !=null and fk_event_type_id != ''">fk_event_type_id = #{fk_event_type_id},</if>
+			<if test="event_address !=null and event_address != ''">event_address = #{event_address},</if>
+			<if test="event_describe !=null and event_describe != ''">event_describe = #{event_describe},</if>
+			<if test="longitude !=null and longitude != ''">longitude = #{longitude},</if>
+			<if test="latitude !=null and latitude != ''">latitude = #{latitude},</if>
+			<if test="alarm_person_telephone !=null and alarm_person_telephone != ''">alarm_person_telephone = #{alarm_person_telephone},</if>
+			<if test="event_preselection !=null and event_preselection != ''">event_preselection = #{event_preselection},</if>
+		</trim>
+		where pk_id=#{pk_id}
+	</update>
+	<!-- 更新受理信息 -->
+	<update id="updateZhdd_event_acceptance" parameterType="java.util.HashMap">
+		update ZHDD_EVENT_ACCEPTANCE
+		<trim prefix="set" suffixOverrides=",">
+			<if test="fk_forward_dept_id !=null and fk_forward_dept_id != ''">fk_forward_dept_id = #{fk_forward_dept_id},</if>
+		</trim>
+		where fk_event_id = #{pk_id}
+	</update>
+	<!-- 更新事件处置结果 -->
+	<update id="updateZhdd_event_result" parameterType="java.util.Map">
+		update ZHDD_EVENT_RESULT
+		<trim prefix="set" suffixOverrides=",">
+			<if test="processing_results !=null and processing_results != ''">processing_results = #{processing_results},</if>
+		</trim>
+		where pk_id = #{pk_id}
+	</update>
+	<!-- 更新事件处置流程 -->
+	<update id="updateZhdd_event_flow" parameterType="java.util.Map">
+		update zhdd_event_flow
+		<trim prefix="set" suffixOverrides=",">
+			<if test="feedback_contents !=null and feedback_contents != ''">feedback_contents = #{feedback_contents},</if>
+		</trim>
+		where pk_id = #{pk_id}
+	</update>
+	<!-- 查询流程 -->
+	<select id="queryZhdd_work_flow" parameterType="java.util.HashMap"
+	resultType="com.cist.eventmanagement.model.Zhdd_work_flow">
+		select * from ZHDD_WORK_FLOW t where pk_id = #{pk_id}
+	</select>
+	<!-- 查询流程明细 -->
+	<select id="queryZhdd_work_flow_detail" parameterType="java.util.HashMap"
+	resultType="com.cist.eventmanagement.model.Zhdd_work_flow_detail">
+		select * from ZHDD_WORK_FLOW_DETAIL t where fk_work_flow_id = #{fk_work_flow_id}
+		order by work_flow_num
+	</select>
+	<!-- 添加事件处理流程 -->
+	<insert id="addflow" parameterType="java.util.Map">
+		<!-- <selectKey resultType="int" order="BEFORE" keyProperty="flow_id">
+			select SEQ_EVENT_INFORMATION_ID.nextval as flow_id from dual
+		</selectKey> -->
+		insert into ZHDD_EVENT_FLOW(
+			pk_id,
+			fk_event_id,
+			work_flow_num,
+			work_flow_name,
+			<if test="feedback_contents !=null and feedback_contents !=''">
+			feedback_contents,
+			</if>
+			
+			complete_time,
+			fk_complete_person_id
+		)
+		values(#{pk_id},
+			#{fk_event_id},
+			#{work_flow_num},
+			#{work_flow_name},
+			<if test="feedback_contents !=null and feedback_contents !=''">
+				#{feedback_contents},
+			</if>
+			sysdate,
+			#{fk_complete_person_id}
+		)
+	</insert>
+	
+	<!-- 添加事件处置结果 -->
+	<insert id="addresult" parameterType="java.util.Map">
+		<!-- <selectKey resultType="int" order="BEFORE" keyProperty="flow_id">
+			select SEQ_EVENT_INFORMATION_ID.nextval as flow_id from dual
+		</selectKey> -->
+		insert into ZHDD_EVENT_RESULT(
+			pk_id,
+			fk_event_id,
+			fk_submitier_id,
+			<if test="processing_results !=null and processing_results !=''">
+				processing_results,
+			</if>
+			<if test="return_visit !=null and return_visit !=''">
+				return_visit,
+			</if>
+			<if test="visit_results !=null and visit_results !=''">
+				visit_results,
+			</if>
+			<if test="satisfaction_star !=null and satisfaction_star !=''">
+				satisfaction_star,
+			</if>	
+			submit_time
+			
+		)
+		values(
+			#{pk_id},
+			#{fk_event_id},
+			#{fk_submitier_id},
+			<if test="processing_results !=null and processing_results !=''">
+				#{processing_results},
+			</if>
+			<if test="return_visit !=null and return_visit !=''">
+				#{return_visit},
+			</if>
+			<if test="visit_results !=null and visit_results !=''">
+				#{visit_results},
+			</if>
+			<if test="satisfaction_star !=null and satisfaction_star !=''">
+				#{satisfaction_star},
+			</if>
+			sysdate
+			
+		)
+	</insert>
+	
+	<!-- 根据id删除附件信息 -->
+	<delete id="delZhdd_event_attachment" parameterType="java.util.HashMap">
+		delete from zhdd_event_attachment where fk_event_id = #{fk_event_id}
+	</delete>
+	<!-- 添加附件信息 -->
+	<insert id="addZhdd_event_attachment" parameterType="com.cist.eventmanagement.model.Zhdd_event_attachment">
+		insert into zhdd_event_attachment(
+			pk_id,
+			fk_event_id,
+			attachment_name,
+			attachment_suffix,
+			attachment_size,
+			attachment_source,
+			<if test="remarks !=null and remarks !=''">
+				remarks,
+			</if>
+			commit_time
+			
+		)values(
+			#{pk_id},
+			#{fk_event_id},
+			#{attachment_name},
+			#{attachment_suffix},
+			#{attachment_size},
+			#{attachment_source},
+			<if test="remarks !=null and remarks !=''">
+				#{remarks},
+			</if>
+			sysdate
+		)
+	</insert>
+	<!-- 查询附件 -->
+	<select id="queryZhdd_event_attachment" parameterType="java.util.HashMap"
+	resultType="com.cist.eventmanagement.model.Zhdd_event_attachment">
+		select * from zhdd_event_attachment where fk_event_id = #{fk_event_id}
+	</select>
+
+</mapper>

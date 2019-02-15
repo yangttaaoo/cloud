@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cist.keyarea.mapper.KeyAreaMapper">
+
+	<select id="list" resultType="com.cist.keyarea.model.ZhddHotArea"
+		parameterType="java.util.HashMap">
+		select * from VW_ZHDD_HOT_AREA
+		<where>
+			<if test=" area_name !=null and area_name !='' ">
+				and AREA_NAME like '%'||#{area_name}||'%'
+			</if>
+		</where>
+		order by create_time desc
+	</select>
+	<delete id="delete" parameterType="java.util.HashMap">
+		delete from ZHDD_HOT_AREA
+		where PK_ID in
+		<foreach item="items" collection="pk_id" open="(" separator=","
+			close=")">
+			#{items}
+		</foreach>
+	</delete>
+
+	<insert id="save" parameterType="com.cist.keyarea.model.ZhddHotArea">
+		insert into ZHDD_HOT_AREA
+		<trim prefix="(" suffixOverrides="," suffix=")">
+			PK_ID,
+			FK_DEPT_ID,
+			FK_CREATE_FOUNDER_ID,
+			CREATE_TIME,
+			AREA_NAME,
+			HOT_AREA,
+			<if test=" area_desc !=null and area_desc !=''">
+				AREA_DESC,
+			</if>
+		</trim>
+		<trim prefix="values(" suffixOverrides="," suffix=")">
+			SEQ_ZHDD_HOT_AREA_PK.NEXTVAL,
+			#{fk_dept_id,jdbcType=DECIMAL},
+			#{fk_create_founder_id,jdbcType=DECIMAL},
+			sysdate,
+			#{area_name,jdbcType=VARCHAR},
+			#{hot_area,jdbcType=CLOB},
+			<if test=" area_desc !=null and area_desc !=''">
+				#{area_desc},
+			</if>
+		</trim>
+	</insert>
+	<update id="update" parameterType="com.cist.keyarea.model.ZhddHotArea">
+		update  ZHDD_HOT_AREA
+		<trim prefix="set" suffixOverrides=",">  
+		<if test=" area_name !=null and area_name !=''">
+				AREA_NAME=#{area_name},
+			</if>
+			<if test=" hot_area !=null and hot_area !=''">
+				HOT_AREA=#{hot_area,jdbcType=CLOB},
+			</if>
+			<if test=" area_desc !=null and area_desc !=''">
+				AREA_DESC=#{area_desc},
+			</if>
+		</trim>
+		<where>
+         PK_ID=#{pk_id}
+       </where>		
+	</update>
+</mapper>

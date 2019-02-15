@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cist.workflow.mapper.WorkFlowMapper" >
+  
+
+	
+	<select id="selectWorkFlow" resultType="com.cist.workflow.model.Zhdd_work_flow">
+		select * from zhdd_work_flow 
+		
+		<where>
+		<if test="work_flow_name != null and work_flow_name !=''">
+			and work_flow_name =#{work_flow_name}
+		</if>
+			
+		<if test="sqsj1 !=null and sqsj1 !=''">
+	       <![CDATA[ and create_time >=to_date(#{sqsj1},'yyyy-mm-dd HH24:mi:ss')]]>
+	       </if>
+	        <if test="sqsj2 !=null and sqsj2 !=''">
+	       <![CDATA[ and create_time <=to_date(#{sqsj2},'yyyy-mm-dd HH24:mi:ss')]]>
+	       </if>
+			
+	
+		</where>
+	</select>
+
+	<select id="selectWorkfDetall" resultType="com.cist.workflow.model.Zhdd_work_flow">
+		select * from zhdd_work_flow_detail t
+	</select>
+
+	
+	<select id="selectWorkName" resultType="com.cist.workflow.model.Zhdd_wflow_detall">
+		select * from zhdd_work_flow_detail where fk_work_flow_id=#{fk_work_flow_id}
+	</select>
+	
+	<select id="selectWorkNames" resultType="com.cist.workflow.model.Zhdd_wflow_detall">
+		select * from zhdd_work_flow_detail 
+	</select>
+	
+	
+	<select id="selectPolice" resultType="com.cist.workflow.model.Syspoliceinfo">
+		select * from sys_police_info where sypi_code=#{sypi_code}
+	</select>
+	
+	<delete id="deleteWorkFlow" parameterType="java.util.Map">
+ 		delete FROM zhdd_work_flow 
+		WHERE  
+		pk_id=#{pk_id} 
+	</delete>
+	
+	
+	<delete id="deleteWorkFlowList" parameterType="java.util.Map">
+ 		delete FROM ZHDD_WORK_FLOW_DETAIL 
+		WHERE  
+		fk_work_flow_id=#{pk_id} 
+	</delete>
+	
+	<update id="updateWorkFlow"  parameterType="java.util.Map">
+		update zhdd_work_flow 
+		<set>
+			<if test="work_flow_name != null and work_flow_name !=''">
+				work_flow_name=#{work_flow_name},
+			</if>
+			
+			<if test="work_flow_summary != null and work_flow_summary !=''">
+				work_flow_summary=#{work_flow_summary},
+			</if>
+		</set>
+		where pk_id=#{pk_id,jdbcType=DECIMAL}
+	</update>
+	
+
+
+	
+	
+	<insert id="insertWorkFolw"  parameterType="java.util.Map">
+	  <selectKey resultType="java.math.BigDecimal" order="BEFORE" keyProperty="pk_id">
+	   SELECT cistsys.SEQ_ZHDD_WORKFLOW.nextval as pk_id from DUAL
+   </selectKey>
+		insert into zhdd_work_flow 
+		(
+			pk_id,
+			fk_dept_id,
+			fk_producer_id,
+			work_flow_name,
+			work_flow_summary
+		)
+		values
+		(
+			#{pk_id},
+			#{fk_dept_id},
+			#{fk_producer_id},
+			#{work_flow_name},
+			#{work_flow_summary}
+				
+		)
+
+	</insert>
+	
+	<insert id="insertWorkfDetall"  parameterType="java.util.Map">
+			<selectKey resultType="java.math.BigDecimal" order="BEFORE" keyProperty="pk">
+	   SELECT cistsys.SEQ_ZHDD_WORKFLOW.nextval as pk from DUAL
+   </selectKey>
+		insert into zhdd_work_flow_detail 
+		(
+			pk_id,
+			fk_work_flow_id,
+			work_flow_num,
+			work_flow_name
+		)
+		SELECT cd.*
+		FROM(
+		<foreach item="item"  collection="list"
+			separator="union all">
+			SELECT
+			#{pk},
+			#{fk_work_flow_id},
+			#{item.work_flow_num},
+			#{item.work_flow_name}
+			FROM dual
+		</foreach>
+		)cd
+	</insert>
+	<select id="selectDetail" resultType="com.cist.workflow.model.Zhdd_wflow_detall">
+		select * from zhdd_work_flow_detail t
+		where FK_WORK_FLOW_ID = #{pk_id}
+	</select>
+	
+</mapper>

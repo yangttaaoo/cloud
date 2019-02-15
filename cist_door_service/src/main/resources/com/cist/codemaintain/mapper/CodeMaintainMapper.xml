@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cist.codemaintain.mapper.CodeMaintainMapper" >
+  
+  <select id="queryAll" resultType="com.cist.codemaintain.model.Sys_frm_code">
+		<!-- select *  from SYS_FRM_CODE -->
+		
+		select a.*,b.fct_name  
+		from 
+			SYS_FRM_CODE a left join sys_frm_code_type b 
+		on 
+			a.fct_code=b.fct_code
+		<where>
+		<if test="fct_code !=null and fct_code !='' ">
+			and a.fct_code=#{fct_code}
+		
+		</if>
+		
+		<if test="fc_code !=null and fc_code !='' ">
+			and a.FC_CODE like '%'||#{fc_code}||'%'
+		
+		</if>
+		
+		<if test="fc_name !=null and fc_name !='' ">
+			and a.fc_name like '%'||#{fc_name}||'%'
+		</if>
+		
+		<if test="fc_attr !=null and fc_attr !='' ">
+			and a.fc_attr=#{fc_attr}
+		
+		</if>
+		
+		<if test="fc_status !=null and fc_status !='' ">
+			and a.fc_status=#{fc_status}
+		
+		</if>
+		</where>
+	</select>
+	
+	<select id="queryFrmType" resultType="com.cist.codemaintain.model.Sys_frm_code_type">
+		select * from sys_frm_code_type 
+	</select>
+	
+	<insert id="insert"  parameterType="java.util.Map">
+		insert into SYS_FRM_CODE 
+		(
+			fc_pk,
+			fct_code,
+			fc_code,
+			fc_name,
+			fc_num,
+			fc_attr,
+			fc_status
+		)
+		values
+		(
+			cistsys.SEQ_FRM_CODE.nextval,
+			#{fct_code,jdbcType=VARCHAR},
+			#{fc_code,jdbcType=VARCHAR},
+			#{fc_name,jdbcType=VARCHAR},
+			#{fc_num,jdbcType=INTEGER},
+			#{fc_attr,jdbcType=VARCHAR},
+			#{fc_status,jdbcType=VARCHAR}
+		)
+
+	</insert>
+	
+	<delete id="delete" parameterType="java.util.Map">
+		DELETE FROM cistsys.SYS_FRM_CODE t
+		WHERE  t.fc_pk=#{fc_pk} 
+	</delete>
+	
+	
+	<update id="update"  parameterType="java.util.Map">
+		update SYS_FRM_CODE 
+		<set>
+			<if test="fct_code != null and fct_code !=''">
+				fct_code = #{fct_code},
+			</if>
+			<if test="fc_code != null and fc_code !=''">
+				fc_code = #{fc_code},
+			</if>
+			<if test="fc_name != null and fc_name !=''">
+				fc_name = #{fc_name},
+			</if>
+			<if test="fc_num != null and fc_num !=''">
+				fc_num = #{fc_num},
+			</if>
+			<if test="fc_attr != null and fc_attr !=''">
+				fc_attr = #{fc_attr},
+			</if>
+			<if test="fc_status != null and fc_status !=''">
+				fc_status = #{fc_status},
+			</if>
+		</set>
+		where fc_pk = #{fc_pk,jdbcType=DECIMAL}
+	</update>
+  
+</mapper>

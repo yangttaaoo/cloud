@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cist.log.mapper.LogMapper" >
+  <insert id="insertLoginLog"  parameterType="java.util.Map"> 
+     INSERT INTO cistsys.SYS_LOGIN_LOG
+    (user_pk, 
+     username,
+     login_time,
+     user_cn, 
+     ip,
+     user_flag
+         )
+     VALUES
+      (
+     cistsys.SEQ_SYS_LOGIN_LOG.nextval,
+     #{username,jdbcType=VARCHAR},
+     #{login_time,jdbcType=TIMESTAMP},
+     #{user_cn,jdbcType=VARCHAR}, 
+     #{ip,jdbcType=VARCHAR},
+     #{user_flag,jdbcType=INTEGER}
+      )
+    </insert>  
+    
+     <insert id="insertOperLog"  parameterType="java.util.Map"> 
+     INSERT INTO cistsys.SYS_OPERATION_LOG
+    (syol_id, 
+     syol_user_cn,
+     sypi_pk,
+     syol_request_url, 
+     syol_ip,
+     syol_time,
+     syol_content,
+     syol_action,
+     syol_type,
+     syol_param_values,
+     syol_err_location,
+     syol_ex_msg,
+     syol_flag
+         )
+     VALUES
+      (
+     cistsys.SEQ_SYS_LOG.nextval,
+     #{syol_user_cn,jdbcType=VARCHAR},
+     #{sypi_pk,jdbcType=VARCHAR},
+     #{syol_request_url,jdbcType=VARCHAR}, 
+     #{syol_ip,jdbcType=VARCHAR},
+     #{syol_time,jdbcType=TIMESTAMP},
+     #{syol_content,jdbcType=VARCHAR},
+     #{syol_action,jdbcType=VARCHAR},
+     #{syol_type,jdbcType=VARCHAR},
+     #{syol_param_values,jdbcType=VARCHAR},
+     #{syol_err_location,jdbcType=VARCHAR},
+     #{syol_ex_msg,jdbcType=VARCHAR},
+     #{syol_flag,jdbcType=VARCHAR}
+      )
+    </insert>  
+</mapper>

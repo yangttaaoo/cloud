@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cist.dj.mapper.DJMapper" >
+
+<select id="selectAll" resultType="java.util.Date" parameterType="java.util.HashMap">
+		select t.wfsj from oeuser.tbl_offe_evdi t
+		
+		<where>
+		     1=1
+			<if test="dateFlag == 0">
+				and to_char(t.wfsj,'yyyy-mm-dd')=to_char(sysdate,'yyyy-mm-dd')
+			</if>
+			<if test="dateFlag == 1">
+				and to_char(t.wfsj,'yyyy-mm-dd') between to_char(#{xqy},'yyyy-mm-dd') and to_char(#{xqt},'yyyy-mm-dd') 
+			</if>
+			<if test="dateFlag == 2">
+				and to_char(t.wfsj,'yyyy-mm')=to_char(sysdate,'yyyy-mm')
+			</if>
+			<if test="dateFlag == 3">
+				and to_char(t.wfsj,'yyyy')=to_char(sysdate,'yyyy')
+			</if>
+			<if test="dateFlag == 3">
+				and to_char(t.wfsj,'yyyy')=to_char(sysdate,'yyyy')
+			</if>
+			<if test="sbbh != null and sbbh !='' ">
+				and t.sbbh = #{sbbh}
+			</if>
+		</where>
+</select>
+<!-- 小时过车辆 -->
+<select id="selectOneHourCount" resultType="java.lang.Integer" parameterType="java.util.HashMap">
+		select count(*) from oeuser.tbl_offe_evdi t
+		<where>
+			1=1
+			<if test="hour == 1">
+				and to_char(t.wfsj,'yyyy-mm-dd HH24')=to_char(sysdate,'yyyy-mm-dd HH24')
+			</if>
+			<if test="today == 1">
+				and to_char(t.wfsj,'yyyy-mm-dd')=to_char(sysdate,'yyyy-mm-dd')
+			</if>
+			<if test="hphm == 1">
+				and t.hphm  != '_'
+			</if>
+			<if test="yesterday == 1">
+				and to_char(t.wfsj,'yyyy-mm-dd')=to_char(sysdate,'yyyy-mm-dd')
+			</if>
+			<if test="lastweek == 1">
+				and to_char(t.wfsj,'yyyy-mm-dd') between to_char(#{lastMonday},'yyyy-mm-dd') and to_char(#{lastSunday},'yyyy-mm-dd')
+			</if>
+			<if test="thisweek == 1">
+				and to_char(t.wfsj,'yyyy-mm-dd') between to_char(#{monday},'yyyy-mm-dd') and to_char(#{sunday},'yyyy-mm-dd')
+			</if>
+			<if test="sbbh != null and sbbh !='' ">
+			t.sbbh = #{sbbh}
+			</if>
+		</where>
+</select>
+<!-- 最新的一条数据 -->
+<select id="selectLastData" resultType="com.cist.dj.model.TblOffeEvdiInfo">
+		select * from(select * from oeuser.tbl_offe_evdi t  
+		<where>
+			<if test="sbbh != null and sbbh !='' ">
+				and t.sbbh = #{sbbh}
+			</if>
+		</where>
+		order by t.wfsj desc)  where rownum=1
+</select>
+
+
+</mapper>

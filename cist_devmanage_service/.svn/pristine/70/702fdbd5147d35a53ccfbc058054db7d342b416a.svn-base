@@ -1,0 +1,139 @@
+package com.cist.realTimeMonitor.service.impl;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.cist.realTimeMonitor.mapper.RealTimeMonitorMapper;
+import com.cist.realTimeMonitor.model.DeptDeviceTree;
+import com.cist.realTimeMonitor.model.VideoDeviceStatus;
+import com.cist.realTimeMonitor.model.VideoDeviceTypeStatus;
+import com.cist.realTimeMonitor.service.RealTimeMonitorService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+@Service
+public class RealTimeMonitorServiceImpl implements RealTimeMonitorService {
+	@Autowired
+	private RealTimeMonitorMapper mapper;
+
+	@Override
+	public HashMap<String, Object> initDeptDeviceTree() throws JsonProcessingException {
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		List<DeptDeviceTree> DeviceList = new ArrayList<DeptDeviceTree>();
+		DeptDeviceTree topDept = mapper.queryTopLevelDept();
+		List<DeptDeviceTree> childrenDeptList = mapper.querySubLevelDept(topDept.getPk());
+		topDept.setIsDept(true);
+		topDept.setIsDevice(false);
+		this.getchildrenNode(childrenDeptList, DeviceList, topDept, 0);
+		this.initDeviceTree(topDept, DeviceList);
+
+		this.setTopDeptTitle(topDept, DeviceList);
+
+		ObjectMapper obj = new ObjectMapper();
+		String deptArea = obj.writeValueAsString(topDept);
+		resultMap.put("deptDevice", deptArea);
+		resultMap.put("deviceList", DeviceList);
+		return resultMap;
+	}
+
+	public void setTopDeptTitle(DeptDeviceTree dept, List<DeptDeviceTree> DeviceList) {
+		int onlineNum = 0;
+		// 在线设备
+		for (DeptDeviceTree device : DeviceList) {
+			if (1 == device.getStatus())
+				onlineNum += 1;
+		}
+		dept.setTitle(dept.getTitle() + "(" + onlineNum + "/" + DeviceList.size() + ")");
+	}
+
+	@Override
+	public int initDeviceTree(DeptDeviceTree dept, List<DeptDeviceTree> DeviceList) {
+		List<DeptDeviceTree> deviceType = mapper.queryDeviceType(dept.getKey());
+		if (deviceType.size() != 0) {
+			if (dept.getChildren() == null) {
+				dept.setChildren(deviceType);
+			} else {
+				dept.getChildren().addAll(deviceType);
+			}
+
+		}
+
+		for (DeptDeviceTree deptDeviceTree : deviceType) {
+			deptDeviceTree.setIsDevice(false);
+			HashMap<String, Object> paramMap = new HashMap<String, Object>();
+			// 设备类型节点返回的key 为'管理部门-设备类型'的形式.例:510600000000-KKSB
+			String key = deptDeviceTree.getKey();
+			String[] split = key.split("-");
+			if (2 == split.length) {
+				paramMap.put("dept_id", split[0]);
+				paramMap.put("device_type_code", split[1]);
+				List<DeptDeviceTree> queryVideoDevice = mapper.queryVideoDevice(paramMap);
+
+				// 设备List
+				DeviceList.addAll(queryVideoDevice);
+				deptDeviceTree.setChildren(queryVideoDevice);
+			}
+
+		}
+		return deviceType.size();
+	}
+
+	@Override
+	public List<DeptDeviceTree> queryDeviceType(String deptId) {
+		// TODO Auto-generated method stub
+		return mapper.queryDeviceType(deptId);
+	}
+
+	@Override
+	public List<VideoDeviceTypeStatus> queryStatusTotalByVideoDeviceType(HashMap<String, Object> paramMap) {
+
+		return mapper.queryStatusTotalByVideoDeviceType(paramMap);
+	}
+
+	@Override
+	public List<VideoDeviceStatus> queryStatusTotalByVideoDevice(HashMap<String, Object> paramMap) {
+		// TODO Auto-generated method stub
+		return mapper.queryStatusTotalByVideoDevice(paramMap);
+	}
+
+	@Override
+	public int getchildrenNode(List<DeptDeviceTree> deptList, List<DeptDeviceTree> DeviceList,
+			DeptDeviceTree parentDept, int sizeNum) {
+		for (DeptDeviceTree dept : deptList) {
+			 //只有部门节点才会有pk
+			if (null != dept.getPk()) {
+				dept.setIsDept(true);
+				dept.setIsDevice(false);
+				int deviceTypeSize = this.initDeviceTree(dept, DeviceList);
+				List<DeptDeviceTree> childrenDeptList = mapper.querySubLevelDept(dept.getPk());
+				if (childrenDeptList.size() != 0) {
+					//返回部门dept所有子部门具有设备数
+					int childrenDeviceNum = this.getchildrenNode(childrenDeptList, DeviceList, dept, 0);
+					if (childrenDeviceNum > 0) {
+						if (parentDept != null) {
+							if (parentDept.getChildren() == null) {
+								parentDept.setChildren(new ArrayList<DeptDeviceTree>());
+							}
+							parentDept.getChildren().add(dept);
+						}
+					}
+				} else {
+					//该部门没有子部门时  sizeNum用于统计父部门下所有子部门设备总数
+					sizeNum += deviceTypeSize;
+					if (deviceTypeSize > 0) {
+						if (parentDept.getChildren() == null) {
+							parentDept.setChildren(new ArrayList<DeptDeviceTree>());
+						}
+						parentDept.getChildren().add(dept);
+					}
+
+				}
+			}
+		}
+		return sizeNum;
+	}
+}

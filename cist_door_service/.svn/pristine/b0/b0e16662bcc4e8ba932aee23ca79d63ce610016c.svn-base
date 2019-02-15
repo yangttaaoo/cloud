@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper  namespace="com.cist.logquery.bizoperate.mapper.BizMapper">
+<select id="selectBiz" parameterType="java.util.HashMap"  
+resultType="com.cist.logquery.bizoperate.modle.LogBiz">
+ select  * from  sys_operation_log t
+    <where>
+     t.syol_flag=1
+    <if test="name!=null and name!=''">
+    and t.syol_user_cn like'%'||#{name}||'%' 
+   <!--  or t.operation_username like '%'||#{name}||'%' -->
+    </if>
+    <if test="content!=null and content!=''">
+    and  t.syol_content like '%'||#{content}||'%'
+    </if>
+   <if test="action!=null and action!=''">
+      and t.syol_action=#{action}
+    </if>
+    <if test="login!=null and login!=''">
+     and t.sypi_type=#{login}
+    </if>
+    <if test="ip!=null and ip!=''">
+     and t.syol_ip=#{ip}
+    </if>
+    <if test="time1!=null and time1!='' and time1!='null'">
+		   <![CDATA[ and t.syol_time>=to_date(#{time1},'yyyy-mm-dd HH24:mi:ss')]]>
+	  </if>
+	 <if test="time2!=null and time2!='' and time2!='null'">
+		   <![CDATA[and t.syol_time<= to_date(#{time2},'yyyy-mm-dd HH24:mi:ss') ]]>
+	 </if>
+    </where>
+  <!--    order by operation_time desc -->
+</select>
+ <!-- 批量删除 -->
+	<delete id="deleteAll">
+		delete FROM sys_operation_log    
+		WHERE syol_id in
+		<foreach item="pk" collection="array" open="(" separator="," close=")">
+            #{pk}
+        </foreach>  
+	</delete> 
+	<!-- 单一删除 -->
+	<delete id="deleteOne">
+	delete FROM sys_operation_log
+	where syol_id=#{pk}
+	</delete>
+</mapper>

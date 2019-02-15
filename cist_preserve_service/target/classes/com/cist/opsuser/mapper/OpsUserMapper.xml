@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cist.opsuser.mapper.OpsUserMapper">
+
+	<select id="quertAll" resultType="com.cist.opsuser.model.Jtyw_staff">
+		select * from vw_jtyw_maintenance_staff
+		<where>
+			<if test="staff_name !=null and staff_name !='' ">
+				and staff_name=#{staff_name}
+
+			</if>
+			<if test="fk_comp_id !=null and fk_comp_id !='' ">
+				and fk_comp_id=#{fk_comp_id}
+
+			</if>
+
+		</where>
+	</select>
+
+	
+	<select id="queryUser" resultType="com.cist.opsflow.model.Jtyw_company">
+		select *  from jtyw_maintenance_company
+		
+	</select>
+	<select id="queryGroup" resultType="com.cist.opsvdt.model.Jtyw_group">
+		select *  from jtyw_maintenance_group
+		
+	</select>
+	<select id="skCompanyName" resultType="com.cist.opsflow.model.Jtyw_company">
+		select *  from jtyw_maintenance_company
+		<where>
+		<if test="pk_id !=null and pk_id !='' ">
+		and pk_id=#{pk_id}
+		</if>
+		
+		</where>
+	</select>
+
+	<select id="skGroupName" resultType="com.cist.opsflow.model.Jtyw_company">
+		select *  from jtyw_maintenance_group
+		<where>
+		<if test="pk_id !=null and pk_id !='' ">
+		and pk_id=#{pk_id}
+		</if>
+		
+		</where>
+	</select>
+	
+
+	<insert id="insertOps" parameterType="java.util.Map">
+		insert into jtyw_maintenance_staff
+		(
+			pk_id,
+			staff_name,
+			staff_contacts_num,
+			fk_comp_id,
+			fk_group_id
+			
+		)
+		values
+		(
+			cistsys.SEQ_STICK_MAG.nextval,
+			#{staff_name,jdbcType=VARCHAR},
+			#{staff_contacts_num,jdbcType=VARCHAR},
+			#{fk_comp_id,jdbcType=INTEGER},
+			#{fk_group_id,jdbcType=INTEGER}
+		)
+
+	</insert>
+
+	<delete id="deleteOps" parameterType="java.util.Map">
+		DELETE FROM
+		cistsys.jtyw_maintenance_staff t
+		WHERE t.pk_id=#{pk_id}
+	</delete>
+
+
+	<update id="updateOps" parameterType="java.util.Map">
+		update jtyw_maintenance_staff
+		<set>
+			<if test="staff_name != null and staff_name !=''">
+				staff_name = #{staff_name},
+			</if>
+			<if test="staff_contacts_num != null and staff_contacts_num !=''">
+				staff_contacts_num = #{staff_contacts_num},
+			</if>
+			<if test="fk_comp_id != null and fk_comp_id !=''">
+				fk_comp_id = #{fk_comp_id},
+			</if>
+			<if test="fk_group_id != null and fk_group_id !=''">
+				fk_group_id = #{fk_group_id},
+			</if>
+			
+		</set>
+		where pk_id = #{pk_id}
+	</update>
+
+
+	<!-- 批量删除 -->
+	<delete id="deleteAll" parameterType="java.util.HashMap">
+		delete FROM cistsys.jtyw_maintenance_staff
+		WHERE pk_id in
+		<foreach item="pk" collection="array" open="(" separator=","
+			close=")">
+			#{pk}
+		</foreach>
+	</delete>
+	
+</mapper>

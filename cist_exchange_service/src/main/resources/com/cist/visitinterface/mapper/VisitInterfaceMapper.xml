@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cist.visitinterface.mapper.VisitInterfaceMapper" >
+	<!-- 查询访问接口信息 -->
+ 	<select id="queryinterface" parameterType="java.util.HashMap"
+ 	 resultType="com.cist.visitinterface.model.SjgxInterface">
+ 		select * from SJGX_INTERFACE
+ 		<where>
+ 			<if test="interface_name!=null and interface_name!=''">
+ 				and interface_name like ('%'||#{interface_name}||'%')
+ 			</if>
+ 			<if test="fk_interface_type_id!=null and fk_interface_type_id!=''">
+ 				and fk_interface_type_id = #{fk_interface_type_id}
+ 			</if>
+ 			<if test="interface_enable_status!=null and interface_enable_status!=''">
+ 				and interface_enable_status = #{interface_enable_status}
+ 			</if>
+ 		</where>
+ 	</select>
+ 	<!-- 查询接口类型信息 -->
+ 	<select id="queryinterfacetype" parameterType="java.util.HashMap"
+ 	resultType="com.cist.visitinterface.model.SJGX_INTERFACE_TYPE">
+ 		select * from SJGX_INTERFACE_TYPE
+ 		<where>
+ 			<if test="pk_id!=null and pk_id!=''">
+ 				and pk_id=#{pk_id}
+ 			</if>
+ 		</where>
+ 	</select>
+ 	<!-- 查询开发单位信息 -->
+ 	<select id="querydev" parameterType="java.util.HashMap"
+ 	 resultType="com.cist.visitinterface.model.SjgxDevCompany">
+ 		select * from SJGX_DEV_COMPANY
+ 		<where>
+ 			<if test="pk_id!=null and pk_id!=''">
+ 				and pk_id=#{pk_id}
+ 			</if>
+ 		</where>
+ 	</select>
+ 	<!-- 查询管理部门信息 -->
+	<select id="querydept" parameterType="com.cist.visitinterface.model.SYS_depart_info"
+	resultType="com.cist.visitinterface.model.SYS_depart_info">
+		select * from sys_depart_info 
+		<where>
+			<if test="dept_code!=null and dept_code!=''">
+				and dept_code = #{dept_code}
+			</if>
+		</where>
+	</select>
+	<!-- 添加访问接口信息 -->
+	<insert id="addsjgx" parameterType="java.util.HashMap">
+		insert into SJGX_INTERFACE(pk_id,fk_dept_id,interface_num,interface_name,fk_interface_type_id,
+		interface_url,interface_describe,interface_enable_status,highest_connect_limit,fk_dev_company_id,
+		create_time)
+		values(#{pk_id},#{fk_dept_id},#{interface_num},#{interface_name},#{fk_interface_type_id},#{interface_url},
+		#{interface_describe},#{interface_enable_status},#{highest_connect_limit},#{fk_dev_company_id},
+		#{create_time})
+	</insert>
+	<!-- 管理部门树 -->
+	<select id="depart_infolist"
+		resultType="com.cist.visitinterface.model.DeptInfo"
+		parameterType="java.lang.Integer">
+		select t.dept_pk,t.dept_code,t.dept_name as name,t.DEPT_SUPERIOR from
+		sys_depart_info t
+		<where>
+			<if test="_parameter  == null or _parameter  == ''">
+				t.DEPT_SUPERIOR is null
+			</if>
+			<if test="_parameter  != null and _parameter  != ''">
+				t.DEPT_SUPERIOR=#{_parameter}
+			</if>
+		</where>
+	</select>
+	<!-- 查询pk_id最大值 -->
+	<select id="queryid" resultType="java.lang.Integer">
+		select max(pk_id) from SJGX_INTERFACE 
+	</select>
+	<!-- 删除接口 -->
+	<delete id="delinterface" parameterType="java.util.HashMap">
+		delete from SJGX_INTERFACE where pk_id in
+		<foreach item="w" collection="pk_id" open="(" separator="," close=")">
+		       #{w}
+		 </foreach>
+	</delete>
+	<!-- 更新访问接口信息 -->
+	<update id="updateinterface" parameterType="java.util.HashMap">
+		update SJGX_INTERFACE
+		<trim prefix="set" suffixOverrides=",">
+			<if test="fk_dept_id!=null">fk_dept_id = #{fk_dept_id,jdbcType=INTEGER},</if>
+			<if test="interface_num!=null">interface_num = #{interface_num,jdbcType=VARCHAR},</if>
+			<if test="interface_name!=null">interface_name = #{interface_name,jdbcType=VARCHAR},</if>
+			<if test="fk_interface_type_id!=null">fk_interface_type_id = #{fk_interface_type_id,jdbcType=INTEGER},</if>
+			<if test="interface_url!=null">interface_url = #{interface_url,jdbcType=VARCHAR},</if>
+			<if test="interface_describe!=null">interface_describe = #{interface_describe,jdbcType=VARCHAR},</if>
+			<if test="interface_enable_status!=null">interface_enable_status = #{interface_enable_status,jdbcType=VARCHAR},</if>
+			<if test="highest_connect_limit!=null">highest_connect_limit = #{highest_connect_limit,jdbcType=INTEGER},</if>
+			<if test="fk_dev_company_id!=null">fk_dev_company_id = #{fk_dev_company_id,jdbcType=INTEGER},</if>
+			<!-- <if test="create_time!=null">create_time = to_date(#{create_time},'yyyy-mm-dd HH24:mi:ss'),</if> -->
+		</trim>
+		where pk_id = #{pk_id,jdbcType=INTEGER}
+	</update>
+</mapper>

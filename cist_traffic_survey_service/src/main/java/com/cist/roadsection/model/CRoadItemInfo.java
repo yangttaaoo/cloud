@@ -337,7 +337,7 @@ public class CRoadItemInfo {
 	public String getTbek_name() {
 //		if(tbek_code!=null)
 //		{
-//			tbek_name= SysTempStoreUtils.getTbekName(tbek_code);
+//			tbek_name= SysTempStoreUtils.getFcName(SysBaseDataCode.xz, tbek_code)
 //		}
 		return tbek_name;
 	}

@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cist.patrolplan.mapper.PatrolplanMapper">
+
+<select id="selectAll" resultType="com.cist.patrolplan.model.Need"
+		parameterType="java.util.HashMap">
+		select * from vw_spxlfapz_info
+		<where>
+			<if test="dept_pk != null and dept_pk !=''">
+				and dept_pk = #{dept_pk}
+			</if>
+			<if test="vcc_name!=null and vcc_name!=''">
+				and lower(vcc_name) like lower('%'||#{vcc_name}||'%')
+			</if>
+			<if test="dvc_name!=null and dvc_name!=''">
+				<!-- and lower(device_name) like lower('%'||#{device_name}||'%') -->
+				and dvc_name like '%'||#{dvc_name}||'%'
+			</if>
+		</where>
+		
+	</select>
+
+	<select id="selectDept" resultType="com.cist.patrolplan.model.Dept"
+	  parameterType="java.util.HashMap">
+		select t.dept_pk,t.dept_code,t.dept_name from sys_depart_info t
+		<where>
+			<if test="DEPT_CODE != null and DEPT_CODE !=''">
+				and t.DEPT_CODE = #{DEPT_CODE}
+			</if>
+		</where>
+	</select>
+	
+	<delete id="deleteByVccname" parameterType="java.util.HashMap">
+		delete from tbl_vio_cruise_case tvcc where tvcc.vcc_pk = #{vcc_pk}
+	</delete>	
+	
+	<delete id="deleteByVccpk" parameterType="java.util.HashMap">
+		delete from tbl_vio_cruise_config tvcc where tvcc.vcc_pk = #{vcc_pk}
+	</delete>
+	
+	<select id="selectTvcc" parameterType="java.util.HashMap"
+		resultType="com.cist.videopatrol.model.TBL_VIO_CRUISE_CASE">
+	 select tvcc.* from tbl_vio_cruise_case tvcc where tvcc.vcc_name = #{vcc_name}
+	</select>
+	
+	 <insert id="addTblVioCruiseCase" parameterType="java.util.HashMap">
+	   INSERT INTO tbl_vio_cruise_case
+       <trim prefix="(" suffix=")" suffixOverrides="," >
+             VCC_PK,
+             VCC_NAME,
+             VCC_TYPE,
+             VCC_DURATION,
+             VCC_TIME,
+             VCC_START_TIME,
+             VCC_END_TIME,
+             <if test="vcc_remark!=null and vcc_remark!=''">
+             	vcc_remark,
+             </if>
+             dept_pk,
+             vcc_duration_unit
+             </trim>
+      <trim prefix="values(" suffix=")" suffixOverrides="," >
+       		cistsys.SEQ_VIO_CRUISE_CASE.nextval,
+        	#{vcc_name,jdbcType=VARCHAR},
+            #{vcc_type},
+            #{vcc_duration,jdbcType=VARCHAR},
+        	#{vcc_time,jdbcType=VARCHAR},
+        	to_date(#{vcc_start_time},'yyyy-mm-dd HH24:mi:ss'),
+        	to_date(#{vcc_end_time},'yyyy-mm-dd HH24:mi:ss'),
+        	<if test="vcc_remark!=null and vcc_remark!=''">
+            	#{vcc_remark,jdbcType=VARCHAR},
+            </if>
+             #{dept_pk,jdbcType=VARCHAR},
+            #{vcc_duration_unit,jdbcType=VARCHAR}
+            </trim>
+	</insert>
+	
+	<update id="updateTblVioCruiseCase" parameterType="java.util.HashMap">
+		UPDATE tbl_vio_cruise_case SET 
+             VCC_NAME=#{vcc_name},
+             VCC_TYPE=#{vcc_type},
+             VCC_DURATION=#{vcc_duration},
+             VCC_TIME=#{vcc_time},
+             VCC_START_TIME=to_date(#{vcc_start_time},'yyyy-mm-dd HH24:mi:ss'),
+             VCC_END_TIME=to_date(#{vcc_end_time},'yyyy-mm-dd HH24:mi:ss'),
+             VCC_REMARK=#{vcc_remark,jdbcType=VARCHAR}
+       where VCC_PK = #{vcc_pk}
+	</update>
+	
+	<insert id="insertTblVioCruiseConfig" parameterType="java.util.HashMap">
+		INSERT INTO tbl_vio_cruise_config
+            (
+             VCF_PK,
+             VCC_PK,
+             PK_ID,
+             VCF_NUM,
+             VCF_PREST_SIGN,
+             VCF_REST_SIGN)
+       VALUES (
+       		cistsys.SEQ_VIO_CRUISE_CASE.nextval,
+        	#{vcc_pk},
+            #{pk_id},
+            #{vcf_num},
+        	#{vcf_prest_sign},
+            #{vcf_rest_sign})
+	</insert>
+	
+	<delete id="deleteVccpk" parameterType="java.util.HashMap">
+		delete from tbl_vio_cruise_config tvcc
+      			 where tvcc.VCF_PK = #{vcf_pk}
+	</delete>
+	
+	<select id="getVideoMonitorInfo"  resultType="com.cist.patrolplan.model.Device"  parameterType="java.util.HashMap" >
+	SELECT v.* FROM jcsj_device  v  where v.device_num=#{device_num}
+	</select>
+	
+	<select id="getTblVioCruiseConfig"  resultType="com.cist.videopatrol.model.TBL_VIO_CRUISE_CONFIG"  parameterType="java.util.HashMap" >
+		SELECT * FROM  tbl_vio_cruise_config t where t.pk_id=#{pk_id}
+	</select>
+	
+	<select id="getUpdatedata"  resultType="com.cist.patrolplan.model.UpdateData"  parameterType="java.util.HashMap" >
+		select tvcc.vcf_pk,tvcc.vcf_num,tvc.device_num,tvc.device_name,tvcc.vcf_prest_sign,tvcc.vcf_rest_sign,tvcc.pk_id from jcsj_device tvc join tbl_vio_cruise_config tvcc on tvc.pk_id=tvcc.pk_id
+		 where tvc.device_name in
+		<foreach collection="dvc_name" index="index" item="item" open="(" separator="," close=")">
+               #{item}
+        </foreach>    
+		 order by tvcc.vcf_num
+	</select>
+<select id="queryVideoDevice"
+		resultType="com.cist.realTimeMonitor.model.DeptDeviceTree"
+		parameterType="java.util.HashMap">	
+		  SELECT
+    d.device_name title, nvl(b.status,0) status,
+    d.device_num key,d.longitude,d.latitude,g.device_gb_serial,
+    g.device_gb_code,g.device_gb_channel,g.device_gb_ptz FROM
+    (SELECT
+    d.pk_id,d.device_name,fk_device_type,d.fk_dept_id,d.longitude,d.latitude,d.device_num
+    FROM
+    JCSJ_DEVICE d WHERE
+    d.fk_device_type not in('KK','QJCS') AND
+    (d.pk_id
+    IN(
+    SELECT f.device_id FROM
+    JCSJ_DEVICE_HAVE_FUNCTION f WHERE
+    f.FK_HAVE_FUNCTION
+    =(SELECT f.fc_pk
+    pk from
+    SYS_FRM_CODE f JOIN
+    SYS_FRM_CODE_TYPE t ON
+    f.FCT_CODE=t.FCT_CODE WHERE
+    t.FCT_CODE='G999' AND
+    f.fc_code='SP')) OR
+    d.fk_device_type = 'JK' ) and
+    d.fk_dept_id=#{dept_id}
+    AND d.fk_device_type=#{device_type_code})
+    d
+    LEFT JOIN JCSJ_DEVICE_CAMERA_GB28181 g ON g.device_id=d.pk_id
+
+    LEFT JOIN
+    JCSJ_DEVICE_STATUS_BASIC b ON b.fk_device_id=d.pk_id
+		
+	</select>
+</mapper>

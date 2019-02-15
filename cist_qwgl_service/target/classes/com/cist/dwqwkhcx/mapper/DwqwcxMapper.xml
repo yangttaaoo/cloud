@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cist.dwqwkhcx.mapper.DwqwcxMapper" >
+
+
+
+	<select id="selectCheckAll" resultType="com.cist.dwqwkhcx.model.Qw_company"
+		parameterType="java.util.Map">
+
+		select * from VW_QW_COMPANY_METRICS 
+				<where>
+			<if test=" fk_dept_id != null and fk_dept_id !=''">
+				and FK_DEPT_ID=#{fk_dept_id}
+			</if>
+			<if test=" assessment_type != null and assessment_type !=''">
+				and assessment_type=#{assessment_type}
+			</if>
+			<if test=" input_time_start != null and input_time_start !=''">
+				 <![CDATA[and input_time>=to_date(#{input_time_start},'yyyy-mm-dd HH24:mi:ss')]]>
+			</if>
+			<if test=" input_time_end != null and input_time_end !=''">
+				 <![CDATA[and input_time<=to_date(#{input_time_end},'yyyy-mm-dd HH24:mi:ss')]]>
+			</if>
+			<if test=" fkzt !=null and fkzt !='' and fkzt=='1'.toString()">
+				and explain_type like '%'||#{fkzt}||'%'
+			</if>
+			<if test=" fkzt !=null and fkzt !='' and fkzt=='0'.toString()">
+				and (explain_type not like '%'||'1'||'%' or explain_type
+				is null)
+			</if>
+			<if test=" hfzt !=null and hfzt !='' and hfzt=='1'.toString()">
+				and explain_type like '%'||'2'||'%'
+			</if>
+			<if test=" hfzt !=null and hfzt !='' and hfzt=='0'.toString()">
+				and (explain_type not like '%'||'2'||'%' or explain_type
+				is null)
+			</if>
+			<if test=" topic_name !=null and topic_name !=''">
+				and topic_name=#{topic_name}
+			</if>
+			<if test=" verify_status !=null and verify_status !=''">
+				and verify_status=#{verify_status}
+			</if>
+		</where>
+		
+	</select>
+
+
+	<select id="selectList" resultType="com.cist.dwqwkhcx.model.QwAssessmentAttachment"
+		parameterType="java.util.Map">
+ 
+		select * from QW_ASSESSMENT_ATTACHMENT where  FK_RELATION_ID=#{pk_id}
+
+		
+	</select>
+
+
+
+		
+	<select id="selectLog" resultType="com.cist.dwqwkhcx.model.Qw_Opertion_Log"
+		parameterType="java.util.Map">
+		select * from QW_OPERATION_LOG t where fk_relation_id=#{pk_id}
+	</select>
+
+	
+
+	<!--根据勤务考核id查询对应的反馈信息 -->
+	<select id="selectResponse"  resultType="com.cist.dwqwkhcx.model.QWAppraiseFeedbackResponse"  parameterType="java.util.Map">
+		select * from QW_APPRAISE_FEEDBACK_RESPONSE where
+		FK_ASSESSMENT_ID=#{pk_id} and ASSESSMENT_TYPE=#{assessment_type} 
+	</select>
+
+</mapper>

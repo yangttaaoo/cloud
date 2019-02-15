@@ -1,0 +1,67 @@
+package com.cist.workflow.service.impl;
+
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.cist.frame.page.PageInfo;
+import com.cist.workflow.mapper.WorkFlowMapper;
+import com.cist.workflow.model.Syspoliceinfo;
+import com.cist.workflow.model.Zhdd_wflow_detall;
+import com.cist.workflow.service.WorkFlowService;
+
+@Service
+public class WorkFlowServiceImpl implements WorkFlowService{
+
+	@Autowired
+	private WorkFlowMapper mapper;
+
+	@Override
+	public Object selectWorkpageList(Map<String, Object> map, PageInfo p) {
+		return mapper.selectWorkFlow(map);
+	}
+
+	@Override
+	public Integer insertWorkFolw(Map<String, Object> map) {
+		return mapper.insertWorkFolw(map);
+	}
+
+	@Override
+	public Integer deleteWorkFlow(Map<String, Object> map) {
+		return mapper.deleteWorkFlow(map);
+	}
+
+	@Override
+	public Integer updateWorkFlow(Map<String, Object> map) {
+		return mapper.updateWorkFlow(map);
+	}
+
+	@Override
+	public List<Zhdd_wflow_detall> selectWorkfDetall() {
+		return mapper.selectWorkfDetall();
+	}
+
+	@Override
+	public Integer insertWorkfDetall(Map<String, Object> map) {
+		return mapper.insertWorkfDetall(map);
+	}
+
+	@Override
+	public List<Syspoliceinfo> selectPolice(String sypi_code) {
+		return mapper.selectPolice(sypi_code);
+	}
+
+	@Override
+	public List<Zhdd_wflow_detall> selectWorkName(Map<String, Object> map) {
+		return mapper.selectWorkName(map);
+	}
+
+	@Override
+	public List<Zhdd_wflow_detall> selectWorkNames() {
+		return mapper.selectWorkNames();
+	}
+	
+	
+}

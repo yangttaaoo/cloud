@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sbzc.mappers.JcbkWarningDispatchMapper">
+  <resultMap id="BaseResultMap" type="com.sbzc.model.JcbkWarningDispatch">
+    <result column="PK_ID" jdbcType="DECIMAL" property="pkId" />
+    <result column="FK_WARNING_ID" jdbcType="DECIMAL" property="fkWarningId" />
+    <result column="FK_DISPATCH_PERSON_ID" jdbcType="DECIMAL" property="fkDispatchPersonId" />
+    <result column="DISPATCH_TIME" jdbcType="TIMESTAMP" property="dispatchTime" />
+    <result column="NOTIFICATION_CONTENT" jdbcType="VARCHAR" property="notificationContent" />
+  </resultMap>
+  <insert id="insert" parameterType="com.sbzc.model.JcbkWarningDispatch">
+    insert into JCBK_WARNING_DISPATCH (PK_ID, FK_WARNING_ID, FK_DISPATCH_PERSON_ID, 
+      DISPATCH_TIME, NOTIFICATION_CONTENT)
+    values (#{pkId,jdbcType=DECIMAL}, #{fkWarningId,jdbcType=DECIMAL}, #{fkDispatchPersonId,jdbcType=DECIMAL}, 
+      #{dispatchTime,jdbcType=TIMESTAMP}, #{notificationContent,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.sbzc.model.JcbkWarningDispatch">
+    insert into JCBK_WARNING_DISPATCH
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="pkId != null">
+        PK_ID,
+      </if>
+      <if test="fkWarningId != null">
+        FK_WARNING_ID,
+      </if>
+      <if test="fkDispatchPersonId != null">
+        FK_DISPATCH_PERSON_ID,
+      </if>
+      <if test="dispatchTime != null">
+        DISPATCH_TIME,
+      </if>
+      <if test="notificationContent != null">
+        NOTIFICATION_CONTENT,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="pkId != null">
+        #{pkId,jdbcType=DECIMAL},
+      </if>
+      <if test="fkWarningId != null">
+        #{fkWarningId,jdbcType=DECIMAL},
+      </if>
+      <if test="fkDispatchPersonId != null">
+        #{fkDispatchPersonId,jdbcType=DECIMAL},
+      </if>
+      <if test="dispatchTime != null">
+        #{dispatchTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="notificationContent != null">
+        #{notificationContent,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <resultMap id="BaseResultMap" type="com.sbzc.model.JcbkWarningDispatch">
+    <result column="PK_ID" jdbcType="DECIMAL" property="pkId" />
+    <result column="FK_WARNING_ID" jdbcType="DECIMAL" property="fkWarningId" />
+    <result column="FK_DISPATCH_PERSON_ID" jdbcType="DECIMAL" property="fkDispatchPersonId" />
+    <result column="DISPATCH_TIME" jdbcType="TIMESTAMP" property="dispatchTime" />
+    <result column="NOTIFICATION_CONTENT" jdbcType="VARCHAR" property="notificationContent" />
+  </resultMap>
+  <insert id="insert" parameterType="com.sbzc.model.JcbkWarningDispatch">
+    insert into JCBK_WARNING_DISPATCH (PK_ID, FK_WARNING_ID, FK_DISPATCH_PERSON_ID, 
+      DISPATCH_TIME, NOTIFICATION_CONTENT)
+    values (#{pkId,jdbcType=DECIMAL}, #{fkWarningId,jdbcType=DECIMAL}, #{fkDispatchPersonId,jdbcType=DECIMAL}, 
+      #{dispatchTime,jdbcType=TIMESTAMP}, #{notificationContent,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.sbzc.model.JcbkWarningDispatch">
+    insert into JCBK_WARNING_DISPATCH
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="pkId != null">
+        PK_ID,
+      </if>
+      <if test="fkWarningId != null">
+        FK_WARNING_ID,
+      </if>
+      <if test="fkDispatchPersonId != null">
+        FK_DISPATCH_PERSON_ID,
+      </if>
+      <if test="dispatchTime != null">
+        DISPATCH_TIME,
+      </if>
+      <if test="notificationContent != null">
+        NOTIFICATION_CONTENT,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="pkId != null">
+        #{pkId,jdbcType=DECIMAL},
+      </if>
+      <if test="fkWarningId != null">
+        #{fkWarningId,jdbcType=DECIMAL},
+      </if>
+      <if test="fkDispatchPersonId != null">
+        #{fkDispatchPersonId,jdbcType=DECIMAL},
+      </if>
+      <if test="dispatchTime != null">
+        #{dispatchTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="notificationContent != null">
+        #{notificationContent,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+</mapper>

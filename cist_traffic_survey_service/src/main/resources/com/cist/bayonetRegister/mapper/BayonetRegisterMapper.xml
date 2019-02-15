@@ -2,61 +2,78 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper
 	namespace="com.cist.bayonetRegister.mapper.BayonetRegisterMapper">
-	  <!-- 分页查询 -->
-  <select id="queryList"  parameterType="java.util.HashMap"  resultType="com.cist.devRegister.model.Device">
- select d.*, p.device_id,p.check_person_id,p.check_person_dept_id,p.check_time,p.check_status,p.uncheck_reason, m.device_manufacturer,m.device_brand,m.device_model,m.ip_address,m.port,m.channel,m.access_address,m.access_user_name,m.access_password,m.contacts_num maintenance_contacts_num,m.contacts_person maintenance_contacts_person  from JCSJ_DEVICE d    join  JCSJ_DEVICE_MAINTENANCE m on d.pk_id=m.device_id
- left join JCSJ_DEVICE_AUDIT_PROCESS p on d.pk_id=p.device_id 
+	<!-- 分页查询卡口信息 -->
+	<select id="queryDeviceList" parameterType="java.util.HashMap"
+		resultType="com.cist.devRegister.model.DeviceList">
+		select
+		pk_id,device_name,device_num,road_name,device_type_name,dept_name,validity_date
+		from VM_DEVICE v
+		where v.fk_device_type='KK'
+		<if test="deptId !=null and deptId !='' "> and v.fk_dept_id=#{deptId}</if>
+		<if test="create_time_start !=null and create_time_start !='' ">and v.enable_date &gt;= to_date(#{
+			create_time_start},'yyyy-mm-dd HH24:mi:ss')
+			and v.enable_date &lt;= to_date(#{ create_time_end},'yyyy-mm-dd
+			HH24:mi:ss')
+		</if>
+		<if test="devName !=null and devName !='' ">and v.device_name like '%'||#{devName}||'%'</if>
+		<if test="road !=null and road !='' ">and v.belonged_road_id=#{road}</if>
+		<if test="device_num !=null and device_num !='' ">and v.device_num=#{device_num}</if>
+		<if test="crossroads.size() >0">
+			and v.belonged_road_id||v.kilometre_num in
+			<foreach collection="crossroads" item="item" index="index"
+				separator="," open="(" close=")">
+				#{item}
+			</foreach>
+		</if>
+		<if test="xzqh !=null and xzqh !='' ">and v.xzqh=#{xzqh}</if>
+		<if test="state ==0 ">and v.ISDEVAUDIT=0</if>
+		<if test="state ==1 ">and v.ISDEVAUDIT=1</if>
+		<if test="kilometre_num !=null and kilometre_num !='' ">and v.kilometre_num=#{kilometre_num}</if>
 
- where 1=1 and d.fk_device_type='KK'
- <if test="deptId !=null and deptId !='' "> and  d.fk_dept_id=#{deptId}</if> 
-  <if test="create_time_start !=null and create_time_start !='' ">and  d.enable_date &gt;= to_date(#{ create_time_start},'yyyy-mm-dd HH24:mi:ss')
-      and d.enable_date &lt;= to_date(#{ create_time_end},'yyyy-mm-dd HH24:mi:ss')
-  </if> 
-   <if test="devName !=null and devName !='' ">and  d.device_name like '%'||#{devName}||'%'
-  </if> 
-   <if test="road !=null and road !='' ">and  d.belonged_road_id=#{road}</if> 
-   <if test="state ==0 ">and  p.check_status is null</if> 
-   <if test="state ==1 ">and  p.check_status in(0,1)</if> 
-      <if test="kilometre_num !=null and kilometre_num !='' ">and  d.kilometre_num=#{kilometre_num}</if>
-  </select>
-  
-     <select id="queryDeviceList"  parameterType="java.util.HashMap"  resultType="com.cist.devRegister.model.DeviceList">
-   select pk_id,device_name,device_num,road_name,device_type_name,dept_name,validity_date from VM_DEVICE   v
-    where v.fk_device_type='KK'
-     <if test="deptId !=null and deptId !='' "> and  v.fk_dept_id=#{deptId}</if>
-      <if test="create_time_start !=null and create_time_start !='' ">and  v.enable_date &gt;= to_date(#{ create_time_start},'yyyy-mm-dd HH24:mi:ss')
-      and v.enable_date &lt;= to_date(#{ create_time_end},'yyyy-mm-dd HH24:mi:ss')
-  </if> 
-   <if test="devName !=null and devName !='' ">and  v.device_name like '%'||#{devName}||'%'</if> 
-      <if test="road !=null and road !='' ">and  v.belonged_road_id=#{road}</if> 
-   <if test="state ==0 ">and  v.ISDEVAUDIT=0</if> 
-   <if test="state ==1 ">and  v.ISDEVAUDIT=1</if> 
-      <if test="kilometre_num !=null and kilometre_num !='' ">and  v.kilometre_num=#{kilometre_num}</if>
-
-   </select>
-   <select id="queryBayonetById" parameterType="java.util.HashMap"  resultType="com.cist.devRegister.model.Device">
-   select d.*, p.device_id,p.check_person_id,p.check_person_dept_id,p.check_time,p.check_status,p.uncheck_reason, m.device_manufacturer,m.device_brand,m.device_model,m.ip_address,m.port,m.channel,m.access_address,m.access_user_name,m.access_password,m.contacts_num maintenance_contacts_num,m.contacts_person maintenance_contacts_person  from JCSJ_DEVICE d    join  JCSJ_DEVICE_MAINTENANCE m on d.pk_id=m.device_id
- left join JCSJ_DEVICE_AUDIT_PROCESS p on d.pk_id=p.device_id  where d.pk_id=#{pk_id}  and d.fk_device_type='KK'
-  </select>
-  
-	<select id="queryImminentExpiryList" parameterType="java.util.HashMap" resultType="com.cist.devRegister.model.Device">
-	select 
- TO_NUMBER(TO_DATE(to_char(d.validity_date,'YYYY-MM-DD HH24:MI:SS'),'YYYY-MM-DD HH24:MI:SS') - sysDate) AS TT,
- TRUNC(TO_NUMBER(TO_DATE(to_char(d.validity_date,'YYYY-MM-DD HH24:MI:SS'),'YYYY-MM-DD HH24:MI:SS') - sysDate)) AS TD  ,d.*,
- 
- 
-p.device_id,p.check_person_id,p.check_person_dept_id,p.check_time,p.check_status,p.uncheck_reason, m.device_manufacturer,m.device_brand,m.device_model,m.ip_address,m.port,m.channel,m.access_address,m.access_user_name,m.access_password,m.contacts_num maintenance_contacts_num,m.contacts_person maintenance_contacts_person  from JCSJ_DEVICE d    join  JCSJ_DEVICE_MAINTENANCE m on d.pk_id=m.device_id
- left join JCSJ_DEVICE_AUDIT_PROCESS p on d.pk_id=p.device_id 
-
- where 1=1 and d.fk_device_type='KK' 
- <if test="monthNumber !=null and monthNumber !=''" >and  d.validity_date &lt;=add_months(SYSDATE,#{monthNumber})</if> 
-	 <if test="state==1" >and  d.validity_date&gt;=SYSDATE</if>
-	 	 <if test="state==0" >and  d.validity_date&lt;SYSDATE</if>
 	</select>
-	<select id="queryBayonetFunType" resultType="com.cist.devRegister.util.TempModel">
-		select f.fc_pk pk,f.fc_code code,f.fc_name name from SYS_FRM_CODE f 
-	join SYS_FRM_CODE_TYPE t  on f.FCT_CODE=t.FCT_CODE where t.FCT_CODE=#{FCT_CODE} 
-and f.fc_code not in('TZTP','SJJC','LLJC')
-order by f.FC_NUM  
+	<!-- 根据卡口Id查询卡口详细信息 -->
+	<select id="queryBayonetById" parameterType="java.util.HashMap"
+		resultType="com.cist.devRegister.model.Device">
+		select d.*,
+		p.device_id,p.check_person_id,p.check_person_dept_id,p.check_time,p.check_status,p.uncheck_reason,
+		m.device_manufacturer,m.device_brand,m.device_model,m.ip_address,m.port,m.channel,m.access_address,m.access_user_name,m.access_password,m.contacts_num
+		maintenance_contacts_num,m.contacts_person maintenance_contacts_person
+		from JCSJ_DEVICE d join JCSJ_DEVICE_MAINTENANCE m on
+		d.pk_id=m.device_id
+		left join JCSJ_DEVICE_AUDIT_PROCESS p on d.pk_id=p.device_id where
+		d.pk_id=#{pk_id} and d.fk_device_type='KK'
 	</select>
-	</mapper>
+	<!-- 分页查询即将过期的卡口 -->
+	<select id="queryImminentExpiryList"
+		parameterType="java.util.HashMap"
+		resultType="com.cist.devRegister.model.Device">
+		select
+		TO_NUMBER(TO_DATE(to_char(d.validity_date,'YYYY-MM-DD HH24:MI:SS'),'YYYY-MM-DD HH24:MI:SS') - sysDate) AS TT,
+		TRUNC(TO_NUMBER(TO_DATE(to_char(d.validity_date,'YYYY-MM-DD
+		HH24:MI:SS'),'YYYY-MM-DD HH24:MI:SS') - sysDate)) AS TD ,d.*,
+
+
+		p.device_id,p.check_person_id,p.check_person_dept_id,p.check_time,p.check_status,p.uncheck_reason,
+		m.device_manufacturer,m.device_brand,m.device_model,m.ip_address,m.port,m.channel,m.access_address,m.access_user_name,m.access_password,m.contacts_num
+		maintenance_contacts_num,m.contacts_person maintenance_contacts_person
+		from JCSJ_DEVICE d join JCSJ_DEVICE_MAINTENANCE m on
+		d.pk_id=m.device_id
+		left join JCSJ_DEVICE_AUDIT_PROCESS p on d.pk_id=p.device_id
+
+		where 1=1 and d.fk_device_type='KK'
+		<if test="monthNumber !=null and monthNumber !=''">and
+			d.validity_date &lt;=add_months(SYSDATE,#{monthNumber})</if>
+		<if test="state==1">and d.validity_date&gt;=SYSDATE</if>
+		<if test="state==0">and d.validity_date&lt;SYSDATE</if>
+	</select>
+	<!-- 查询卡口类型List -->
+	<select id="queryBayonetFunType"
+		resultType="com.cist.devRegister.util.TempModel">
+		select f.fc_pk pk,f.fc_code code,f.fc_name name from
+		SYS_FRM_CODE f
+		join SYS_FRM_CODE_TYPE t on f.FCT_CODE=t.FCT_CODE where
+		t.FCT_CODE=#{FCT_CODE}
+		and f.fc_code not in('TZTP','SJJC','LLJC')
+		order by f.FC_NUM
+	</select>
+</mapper>

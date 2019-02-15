@@ -1,0 +1,37 @@
+package com.cist.tqrw.mapper;
+
+import java.util.HashMap;
+import java.util.List;
+
+import com.cist.tqrw.model.MissionGrade;
+import com.cist.tqrw.model.Police;
+import com.cist.tqrw.model.SpecialMission;
+
+public interface TqrwMapper {
+	/**
+	 * 根据条件查询数据
+	 * @param map
+	 * @return
+	 */
+	List<SpecialMission> selectAll(HashMap<String,Object> map);
+	/**
+	 * 查询数量
+	 * @return
+	 */
+	Integer selectCount();
+	/**
+	 * 查询任务等级
+	 * @return
+	 */
+	List<MissionGrade> selectGrades();
+	/**
+	 * 查询所有警员
+	 * @return
+	 */
+	List<Police> selectPolice();
+	/**
+	 * 查询所有警车
+	 * @return
+	 */
+	List<Police> selectPoliceCar();
+}

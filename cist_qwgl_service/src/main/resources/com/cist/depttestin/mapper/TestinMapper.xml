@@ -168,4 +168,9 @@ select t.dept_pk,t.dept_code,t.dept_name as name,t.DEPT_SUPERIOR from sys_depart
      verify_not_pass_reason=#{verify_not_pass_reason,jdbcType=VARCHAR}
      where pk_id=#{pk_id}
    </update>
+   <!--查询指标信息  -->
+   <select id="selectTargetData" resultType="com.cist.depttestin.model.TargetInfo"
+parameterType="java.lang.Integer">
+  select topic_name from qw_appraise_topic where pk_id=#{pk}
+</select>
 </mapper>

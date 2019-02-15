@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cist.kreis.mapper.KreisMapper" >
+
+   <select id="kerisInfopageList" resultType="com.cist.kreis.model.KreisInfo" parameterType="java.util.HashMap">
+   select * from c_kreis_code t
+    <where>
+    1=1
+	    <if test="tbek_code !=null and tbek_code !=''">
+	    and t.tbek_code LIKE '%'||#{tbek_code}||'%'
+	    </if>
+	    <if test="tbek_name !=null and tbek_name !=''" >
+	    and t.tbek_name LIKE '%'||#{tbek_name}||'%'
+	    </if>
+	    <if test="tbek_parent !=null and tbek_parent !='' and tbek_parent !=1 " >
+	    and t.tbek_parent = #{tbek_parent}
+	    </if>
+	    </where>
+   </select>
+   
+   <select id="kreisLevelList" resultType="com.cist.kreis.model.KreisLevelInfo">
+      select * from c_kreis_level t
+   </select>
+   
+   <select id="getTbekname" resultType="com.cist.kreis.model.KreisInfo" parameterType="java.lang.Integer">
+ 		select * from c_kreis_code 
+    	<where>
+   			<if test="_parameter!=null and _parameter!='' ">
+   				and tbek_pk=#{_parameter}
+  			</if>
+    	</where>
+  	</select>
+  	
+  	<delete id="delKreis" parameterType="java.util.Map">
+		DELETE FROM c_kreis_code WHERE tbek_pk in 
+		<foreach item="w" collection="tbek_pk" open="(" separator="," close=")">
+		            #{w}
+		        </foreach>
+	</delete>
+	
+	 <insert id="addKreis" parameterType="java.util.HashMap">
+	   INSERT INTO c_kreis_code
+            (
+             TBEK_PK,
+             TBEK_CODE,
+             TBEK_NAME,
+             TBEK_LEVEL,
+             TBEK_PARENT,
+             TBEK_SIMP_SPELL,
+             TBEK_FIRST_LETTER)
+       VALUES (
+       		cistsys.SEQ_KREIS_CODE.nextval,
+        	#{tbek_code,jdbcType=INTEGER},
+            #{tbek_name,jdbcType=VARCHAR},
+            #{tbek_level,jdbcType=INTEGER},
+        	#{tbek_parent,jdbcType=INTEGER},
+            #{tbek_simp_spell,jdbcType=VARCHAR},
+            #{tbek_first_letter,jdbcType=CHAR})
+	</insert>
+	
+	<update id="editKreis"  parameterType="java.util.HashMap">
+       UPDATE c_kreis_code SET 
+             TBEK_CODE=#{tbek_code,jdbcType=INTEGER},
+             TBEK_NAME=#{tbek_name,jdbcType=VARCHAR},
+             TBEK_LEVEL=#{tbek_level,jdbcType=INTEGER},
+             TBEK_PARENT=#{tbek_parent,jdbcType=INTEGER},
+             TBEK_SIMP_SPELL=#{tbek_simp_spell,jdbcType=VARCHAR},
+             TBEK_FIRST_LETTER=#{tbek_first_letter,jdbcType=CHAR}
+       where TBEK_PK = #{tbek_pk,jdbcType=INTEGER}
+     </update>
+   <select id="tbek_infolist" resultType="com.cist.kreis.model.TbekInfo" parameterType="java.lang.Integer">
+		select t.tbek_pk,t.tbek_code,t.tbek_name,t.tbek_parent from c_kreis_code t 
+		<where>
+		  <if test="_parameter  == null or _parameter  == ''">
+		     t.TBEK_PARENT is null
+		   </if>
+		     <if test="_parameter  != null and _parameter  != ''">
+		     t.TBEK_PARENT=#{_parameter}
+		   </if>
+		</where>
+   </select>
+
+</mapper>

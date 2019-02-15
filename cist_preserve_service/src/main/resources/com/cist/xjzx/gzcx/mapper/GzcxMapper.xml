@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cist.xjzx.gzcx.mapper.GzcxMapper" >
+	<!-- 故障查询 -->
+	<select id="querygz" parameterType="java.util.HashMap" 
+	resultType="com.cist.xjzx.gzcx.model.VW_SBGZ_INFO">
+		select * from VW_SBGZ_INFO
+		<where>
+			<if test="gz_type !=null and gz_type!=''">
+				and alarm_type=#{gz_type}
+			</if>
+			<if test="tbet_type!=null and tbet_type!=''">
+				and fk_device_type=#{tbet_type}
+			</if>
+			<if test="tbei_name!=null and tbei_name!=''">
+				and device_name like '%'||#{tbei_name}||'%'
+			</if>
+		</where>
+		order by pk_id
+	</select>
+	<!-- 添加工单 -->
+	<insert id="addgd" parameterType="java.util.HashMap">
+		insert into JTYW_JOB_ORDER
+		<trim prefix="(" suffix=")" suffixOverrides="," >
+			pk_id,
+			<if test="fk_dept_id !=null and fk_dept_id !=''">
+				fk_dept_id,
+			</if>
+			<if test="job_num !=null and job_num !=''">
+				job_num,
+			</if>
+			<if test="job_name !=null and job_name !=''">
+				job_name,
+			</if>
+			<if test="job_contents !=null and job_contents !=''">
+				job_contents,
+			</if>
+			<if test="job_status !=null and job_status !=''">
+				job_status,
+			</if>
+			<if test="complete_percentage !=null and complete_percentage !=''">
+				complete_percentage,
+			</if>
+			<if test="complete_time_limit !=null and complete_time_limit !=''">
+				complete_time_limit,
+			</if>
+			<if test="job_feedback !=null and job_feedback !=''">
+				job_feedback,
+			</if>
+			<if test="fk_company_id !=null and fk_company_id !=''">
+				fk_company_id,
+			</if>
+			<if test="fk_group_id !=null and fk_group_id !=''">
+				fk_group_id,
+			</if>
+			<if test="fk_device_list_id !=null and fk_device_list_id !=''">
+				fk_device_list_id,
+			</if>
+			<if test="remarks !=null and remarks !=''">
+				remarks,
+			</if>
+		</trim>
+		<trim prefix="values(" suffix=")" suffixOverrides="," >
+			SEQ_JTYW_JOB_ORDER_pk_id.NEXTVAL,
+			<if test="fk_dept_id !=null and fk_dept_id !=''">
+				#{fk_dept_id},
+			</if>
+			<if test="job_num !=null and job_num !=''">
+				#{job_num},
+			</if>
+			<if test="job_name !=null and job_name !=''">
+				#{job_name},
+			</if>
+			<if test="job_contents !=null and job_contents !=''">
+				#{job_contents},
+			</if>
+			<if test="job_status !=null and job_status !=''">
+				#{job_status},
+			</if>
+			<if test="complete_percentage !=null and complete_percentage !=''">
+				#{complete_percentage},
+			</if>
+			<if test="complete_time_limit !=null and complete_time_limit !=''">
+				to_date(#{complete_time_limit},'yyyy-mm-dd HH24:mi:ss'),
+			</if>
+			<if test="job_feedback !=null and job_feedback !=''">
+				#{job_feedback},
+			</if>
+			<if test="fk_company_id !=null and fk_company_id !=''">
+				#{fk_company_id},
+			</if>
+			<if test="fk_group_id !=null and fk_group_id !=''">
+				#{fk_group_id},
+			</if>
+			<if test="fk_device_list_id !=null and fk_device_list_id !=''">
+				#{fk_device_list_id},
+			</if>
+			<if test="remarks !=null and remarks !=''">
+				#{remarks},
+			</if>
+		</trim>
+	</insert>
+	<!-- 添加关联信息 -->
+	<insert id="addgdgl" parameterType="java.util.HashMap">
+		insert into JTYW_JOB_DEVICE_LIST(pk_id,job_num,fk_device_id)
+		values(SEQ_JTYW_JOB_ORDER_pk_id.NEXTVAL,#{job_num},#{fk_device_id,jdbcType=INTEGER})
+	</insert>
+	<!-- 删除故障设备信息 -->
+	<delete id="del" parameterType="java.util.HashMap">
+		delete from JTYW_ALARM_INFO where pk_id in
+		<foreach item="w" collection="sbgz_pk" open="(" separator="," close=")">
+		       #{w}
+		 </foreach>
+	</delete>
+	<!-- 添加工单流程信息 -->
+	<insert id="addgdlc" parameterType="java.util.HashMap">
+		insert into JTYW_JOB_PROCESS(pk_id,fk_job_num,fk_d_operator_id,distribution_time)
+		values(SEQ_JTYW_JOB_ORDER_pk_id.NEXTVAL,#{fk_job_num},#{fk_d_operator_id},#{distribution_time})
+	</insert>
+	<!-- 工单查询 -->
+	<select id="querygd" parameterType="java.util.HashMap" resultType="com.cist.xjzx.gzcx.model.JTYW_JOB_ORDER">
+		select * from JTYW_JOB_ORDER o left join JTYW_JOB_PROCESS p on o.job_num = p.fk_job_num
+		<where>
+			<if test="job_status != null and job_status !=''">
+				and o.job_status= #{job_status}
+			</if>
+			<if test="job_name != null and job_name != ''">
+				and o.job_name like '%'||#{job_name}||'%'
+			</if>
+		</where>
+	</select>
+	<!-- 更新工单详情 -->
+	<update id="updategd" parameterType="java.util.HashMap">
+		update JTYW_JOB_ORDER
+		<trim prefix="set" suffixOverrides=",">
+			<if test="job_name!=null">job_name = #{job_name,jdbcType=VARCHAR},</if>
+			<if test="complete_time_limit!=null">complete_time_limit = #{complete_time_limit},</if>
+			<if test="job_contents!=null">job_contents = #{job_contents,jdbcType=VARCHAR},</if>
+			<if test="remarks!=null">remarks = #{remarks,jdbcType=VARCHAR},</if>
+			<if test="fk_company_id!=null">fk_company_id = #{fk_company_id,jdbcType=INTEGER},</if>
+			<if test="fk_group_id!=null">fk_group_id = #{fk_group_id,jdbcType=INTEGER},</if>
+		</trim>
+		where job_num = #{job_num}
+	</update>
+	<!-- 查询维护单位 -->
+	<select id="querycompany" parameterType="java.util.HashMap" resultType="com.cist.xjzx.gzcx.model.JTYW_MAINTENANCE_COMPANY">
+		select * from JTYW_MAINTENANCE_COMPANY
+		<!-- <where>
+			<if test="pk_id != null and pk_id != ''">
+				and pk_id = #{pk_id}
+			</if>
+		</where> -->
+	</select>
+	<!-- 查询维护组   -->
+	<select id="querygroup" parameterType="java.util.HashMap" resultType="com.cist.xjzx.gzcx.model.JTYW_MAINTENANCE_GROUP">
+		select * from JTYW_MAINTENANCE_GROUP
+		<where>
+			<if test="fk_comp_id != null and fk_comp_id != ''">
+				and fk_comp_id = #{fk_comp_id}
+			</if>
+		</where>
+	</select>
+</mapper>
