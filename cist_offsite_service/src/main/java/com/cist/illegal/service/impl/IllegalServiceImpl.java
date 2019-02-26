@@ -172,4 +172,14 @@ public class IllegalServiceImpl implements IllegalService {
 		return mapper.selectRestriction(map);
 	}
 
+	@Override
+	public Integer tiqu(HashMap<String, Object> map) {
+		return mapper.tiqu(map);
+	}
+
+	@Override
+	public Object selectAllExtractpageList(HashMap<String, Object> map, PageInfo p) {
+		return mapper.selectAllExtract(map);
+	}
+
 }

@@ -15,7 +15,9 @@
 	</select>
 	<select id="queryAreaList" parameterType="java.util.HashMap"
 		resultType="com.cist.configManage.areaPlan.model.PatrolArea">
-	select a.*,a.area_name title from  qw_patrol_area  a  where  1=1 
+	select  b.name area_type_name,a.*,a.area_name title from  qw_patrol_area  a left join 
+(select f.fc_pk pk,f.fc_code code,f.fc_name name from SYS_FRM_CODE f join SYS_FRM_CODE_TYPE t  on f.FCT_CODE=t.FCT_CODE where t.FCT_CODE='QW02'  order by f.FC_NUM  )
+b  on a.area_type=b.code where  1=1 
 	<if test="area_name !=null and area_name !=''">
 	 and a.area_name like '%'||#{area_name}||'%'
 	</if>
@@ -70,6 +72,9 @@ b  on a.area_type=b.code  left join sys_depart_info c on c.dept_code=a.fk_dept_i
 	</update>
 	<delete id="deleteArea" parameterType="java.util.HashMap">
 	
-	delete from qw_patrol_area where pk_id=#{pk_id}
+	delete from qw_patrol_area where pk_id in 
+	<foreach collection="areaIds" index="index" item="pk_id" open="(" close=")" separator=",">
+	#{pk_id}
+	</foreach>
 	</delete>
 </mapper>

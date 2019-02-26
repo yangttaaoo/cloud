@@ -11,6 +11,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.cist.frame.page.PageInfo;
 import com.cist.picture.mapper.PictureMapper;
 import com.cist.picture.model.C_plate_type;
 import com.cist.picture.model.Depart_info;
@@ -160,5 +161,19 @@ public class PictureServiceImpl implements PictureService  {
 	@Override
 	public Integer quantity() {
 		return mapper.quantity();
+	}
+	@Override
+	public Integer selectExtract(HashMap<String,Object> map) {
+		return mapper.selectExtract(map);
+	}
+	@Override
+	public Object selectAllExtractpageList(HashMap<String, Object> map, PageInfo p) {
+		
+			return mapper.selectAllExtract(map);
+		
+	}
+	@Override
+	public Integer tiqu(HashMap<String, Object> map) {
+		return mapper.tiqu(map);
 	}
 }

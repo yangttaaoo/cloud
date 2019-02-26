@@ -185,4 +185,7 @@ public interface RecheckMapper {
 		 * @return
 		 */
 		String querysbbhbysbpk(HashMap<String, Object> map); 
+		
+		//根据条件提取固定数量数据
+		public Integer tiqu(HashMap<String,Object> map);
 }

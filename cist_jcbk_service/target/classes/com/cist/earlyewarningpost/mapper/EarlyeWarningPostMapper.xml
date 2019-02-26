@@ -168,10 +168,11 @@
 		<where>
 			<if test="Pleasevalue !=null and Pleasevalue.size()>0">
 				and glbm in
-				<foreach collection="Pleasevalue" index="index" item="item"
+				(select bmdm from JCBK_BAYONET_UNITS where kkbh=#{kkbh})
+				<!-- <foreach collection="Pleasevalue" index="index" item="item"
 					open="(" separator="," close=")">
 					#{item}
-				</foreach>
+				</foreach> -->
 
 			</if>
 			<if test="xm !=null and xm != ''">
@@ -594,7 +595,7 @@
 <select id="selectTrajectory"
 		resultType="com.cist.earlyewarningpost.model.TblCarRecoInfo"
 		parameterType="java.util.HashMap">
-		select t.* from JCBK_CAR_RECO t
+		select t.* from BSUSER.JCBK_CAR_RECO t
 		<!-- left join JCSJ_DEVICE t1 on t.sbbh=t1.DEVICE_NUM -->
 		<where>
 			<if test="kssj !=null and kssj !=''">
@@ -626,8 +627,16 @@
 	<select id="selectQwbb" parameterType="java.util.HashMap"
 		resultType="com.cist.earlyewarningpost.model.Qw_report">
 		select * from QW_REPORT t left join SYS_DEPART_INFO t1 on t.FK_DEPT_ID=t1.dept_pk
-		where t1.dept_code=#{ssbm}
+		<where>
+		<if test="Pleasevalue !=null and Pleasevalue.size()>0">
+		and t1.dept_code in
+				<foreach collection="Pleasevalue" index="index" item="item"
+					open="(" separator="," close=")">
+					#{item}
+				</foreach>
+				</if>
 		and t.REPORT_TYPE='1'
 		and trunc(t.REPORT_PERIOD_TYPE)=trunc(sysdate)
+		</where>
 	</select>
 </mapper>

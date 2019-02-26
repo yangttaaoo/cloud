@@ -5,7 +5,9 @@
    <select id="querylistpageList" resultType="com.cist.picture.model.Tbl_offe_evdi" parameterType="java.util.HashMap">
    select * from oeuser.tbl_offe_evdi t
    <where>
-          t.SHBZ=0
+			
+   
+         t.SHBZ=0
            <if test="hphm!=null and hphm!=''">
 		     and t.hphm like '%'||#{hphm}||'%'
 		   </if>
@@ -24,6 +26,9 @@
 			    <foreach item="w" collection="sbbh" open="(" separator="," close=")">
 		            #{w}
 		        </foreach>
+		   </if>
+		   <if test="sypi_pk!=null and sypi_pk!=''">
+		   and TQRY =#{sypi_pk}
 		   </if>
    </where>
    </select>
@@ -44,7 +49,9 @@ select count(*) from OEUSER.TBL_OFFE_EVDI t where trunc(sysdate)=trunc(t.SXSJ) a
     update oeuser.tbl_offe_evdi t set 
     t.SHBZ=#{radioValue},
     t.SXR=#{SXR},
-     t.SXSJ=#{SXSJ}
+     t.SXSJ=#{SXSJ},
+     t.tqry=#{tqry,jdbcType=VARCHAR},
+     t.tqrq=#{tqrq,jdbcType=VARCHAR}
      where t.wfpk
      in
 	    <foreach item="w" collection="wfpk" open="(" separator="," close=")">
@@ -133,4 +140,87 @@ group by t.belonged_road_id
 		        </foreach>
 	</select>
 	
+	<!--查询提取数据信息数量-->
+	<select id="selectExtract" resultType="Integer" parameterType="java.util.HashMap">
+	    select count(0) from OEUSER.TBL_OFFE_EVDI t
+	    where TQRY =#{sypi_pk}  
+	     and shbz in
+	    <foreach item="w" collection="shbz" open="(" separator="," close=")">
+		            #{w}
+		        </foreach>
+	   
+	</select>
+	
+		<!--查询已提取信息数据-->
+	<select id="selectAllExtract" resultType="Integer" parameterType="java.util.HashMap">
+	    select * from OEUSER.TBL_OFFE_EVDI t
+	     <where>
+         t.SHBZ=0
+           <if test="hphm!=null and hphm!=''">
+		     and t.hphm like '%'||#{hphm}||'%'
+		   </if>
+		   <if test="hpzl!=null and hpzl!=''">
+		     and t.hpzl=#{hpzl}
+		   </if>
+		    <if test="wfxw!=null and wfxw!=''">
+		     and t.wfxw=#{wfxw}
+		   </if>
+           <if test="wfkssj != null and wfkssj != '' and wfjssj != null and wfjssj != ''">
+		     and t.wfsj BETWEEN 
+		     to_date(#{wfkssj},'yyyy-mm-dd hh24:mi:ss') and to_date(#{wfjssj},'yyyy-mm-dd hh24:mi:ss')
+		   </if>
+		   	<if test="sbbh!=null and sbbh!=''">
+		     and t.sbbh in
+			    <foreach item="w" collection="sbbh" open="(" separator="," close=")">
+		            #{w}
+		        </foreach>
+		   </if>
+		   <if test="sypi_pk!=null and sypi_pk!=''">
+		   and TQRY =#{sypi_pk}
+		   </if>
+   </where>
+	</select>	
+	
+			<!--提取固定数量的数据-->
+	<select id="tiqu" resultType="Integer" parameterType="java.util.HashMap">
+	   update oeuser.tbl_offe_evdi t1  set tqry=#{tqry},tqrq=#{tqrq}
+	   where   wfpk in(
+	   select wfpk from oeuser.tbl_offe_evdi t
+   <where>
+         t.SHBZ=0
+           <if test="hphm!=null and hphm!=''">
+		     and t.hphm like '%'||#{hphm}||'%'
+		   </if>
+		   <if test="hpzl!=null and hpzl!=''">
+		     and t.hpzl=#{hpzl}
+		   </if>
+		    <if test="wfxw!=null and wfxw!=''">
+		     and t.wfxw=#{wfxw}
+		   </if>
+           <if test="wfkssj != null and wfkssj != '' and wfjssj != null and wfjssj != ''">
+		     and t.wfsj BETWEEN 
+		     to_date(#{wfkssj},'yyyy-mm-dd hh24:mi:ss') and to_date(#{wfjssj},'yyyy-mm-dd hh24:mi:ss')
+		   </if>
+		   	<if test="sbbh!=null and sbbh.size()>0">
+		     and t.sbbh in
+			    <foreach item="w" collection="sbbh" open="(" separator="," close=")">
+		            #{w}
+		        </foreach>
+		   </if>
+		   <![CDATA[  and  rownum <= #{tqsl} ]]>
+		   
+		   and tqry is null
+		  <!--  <choose>
+				<when test="sypi_pk!=null and sypi_pk!=''">
+					and TQRY =#{sypi_pk}
+				</when>
+				<otherwise>
+			 <![CDATA[  ]]>
+				</otherwise>
+			</choose> -->
+   </where>
+	   )
+	</select>
+	
+	   
 </mapper>

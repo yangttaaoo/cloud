@@ -1,125 +1,263 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.cist.qwgl.qwjg.mapper.QwjgMapper" >
-<select id="selectQw_report" parameterType="java.util.HashMap" resultMap="messageResultMap">
-select * from (
-select 
-(select c.dept_name from SYS_DEPART_INFO c where c.dept_pk=t.FK_DEPT_ID) as dept_name,
-(select c.dept_pk from SYS_DEPART_INFO c where c.dept_pk=t.FK_DEPT_ID) as dept_pk,
-(select AREA_NAME from QW_REPORT_STREET where FK_REPORT_ID=t.pk_id) as AREA_NAME,
-(select FK_PATROL_AREA_ID from QW_REPORT_STREET where FK_REPORT_ID=t.pk_id) as FK_PATROL_AREA_ID,
-(select count(*) from QW_REPORT_CAR_PATROL where FK_REPORT_ID=t.pk_id) as jingcheshu,
-(select count(*) from QW_REPORT_CAR_RELATION where FK_CAR_PATROL_ID in(select PK_ID from QW_REPORT_CAR_PATROL where FK_REPORT_ID=t.pk_id)) as ren1,
-(select count(*) from QW_REPORT_WALK_RELATION where FK_REPORT_ID=t.pk_id) as ren2,
-(   select count(*) from QW_GUNS_RELATION where FK_EQUIP_ID in(select pk_id from QW_EQUIP_INFO where FK_REPORT_ID =t.pk_id)) as qiangzhi,
-t.* from QW_REPORT t where t.REPORT_TYPE=1  and trunc(t.REPORT_PERIOD_TYPE) = trunc(sysdate)
-)t
-<where>
+<mapper namespace="com.cist.qwgl.qwjg.mapper.QwjgMapper">
+	<select id="selectQw_report" parameterType="java.util.HashMap"
+		resultMap="messageResultMap">
+		select * from (
+		select
+		(select c.dept_name from SYS_DEPART_INFO c where c.dept_pk=t.FK_DEPT_ID) as
+		dept_name,
+		(select c.dept_pk from SYS_DEPART_INFO c where c.dept_pk=t.FK_DEPT_ID) as
+		dept_pk,
+		(select AREA_NAME from QW_REPORT_STREET where FK_REPORT_ID=t.pk_id) as
+		AREA_NAME,
+		(select FK_PATROL_AREA_ID from QW_REPORT_STREET where FK_REPORT_ID=t.pk_id)
+		as FK_PATROL_AREA_ID,
+		(select count(*) from QW_REPORT_CAR_PATROL where FK_REPORT_ID=t.pk_id) as
+		jingcheshu,
+		(select count(*) from QW_REPORT_CAR_RELATION where FK_CAR_PATROL_ID in(select
+		PK_ID from QW_REPORT_CAR_PATROL where FK_REPORT_ID=t.pk_id)) as ren1,
+		(select count(*) from QW_REPORT_WALK_RELATION where
+		FK_REPORT_ID=t.pk_id) as ren2,
+		( select count(*) from QW_GUNS_RELATION where FK_EQUIP_ID in(select
+		pk_id from QW_EQUIP_INFO where FK_REPORT_ID =t.pk_id)) as qiangzhi,
+		t.* from QW_REPORT t where t.REPORT_TYPE=1 and
+		trunc(t.REPORT_PERIOD_TYPE) = trunc(sysdate)<!-- 查询今天的 -->
+		)t
+		left join QW_REPORT_STREET c on c.FK_REPORT_ID=t.pk_id
+		<where>
+			<!-- 勤务监督 查询现在的时间 当前的勤务班次时间 -->
+			to_char(sysdate,'yyyy-mm-dd hh24:mi') between
+			to_char(c.WORK_SHIFT_START_TIME,'yyyy-mm-dd hh24:mi') and
+			to_char(c.WORK_SHIFT_END_TIME-c.SPAN_CYCLE+1,'yyyy-mm-dd hh24:mi')
 			<if test="dept_pk!=null and dept_pk!=''">
 				and t.dept_pk=#{dept_pk}
 			</if>
 			<if test="qiangzhi!=null and qiangzhi!=''">
-				and  t.qiangzhi!=0
+				and t.qiangzhi!=0
 			</if>
 		</where>
-</select>
-	<resultMap type="com.cist.qwgl.qwbb.model.Qw_report" id="messageResultMap">
-	    <id property="pk_id" column="pk_id"/><!-- 勤务报备id -->
-	    <association property="qw_report_street" column="pk_id" javaType="com.cist.qwgl.qwbb.model.Qw_report_street"  select="getqw_report_street"/>  
-	    <collection property="qw_report_car_patrol" column="pk_id" ofType="com.cist.qwgl.qwbb.model.Qw_report_car_patrol"  select="getQw_report_car_patrolche"/>
-     <collection property="qw_report_walk_relation" column="pk_id" ofType="com.cist.qwgl.qwbb.model.Qw_report_walk_relation"  select="Qw_report_walk_relationdata"/>
+	</select>
+	<resultMap type="com.cist.qwgl.qwbb.model.Qw_report"
+		id="messageResultMap">
+		<id property="pk_id" column="pk_id" /><!-- 勤务报备id -->
+		<association property="qw_report_street" column="pk_id"
+			javaType="com.cist.qwgl.qwbb.model.Qw_report_street"
+			select="getqw_report_street" />
+		<association property="qw_patrol_alarm_log" column="pk_id"
+			javaType="com.cist.qwgl.qwjg.model.Qw_patrol_alarm_log"
+			select="getQw_patrol_alarm_log" />
+		<collection property="qw_report_car_patrol" column="pk_id"
+			ofType="com.cist.qwgl.qwbb.model.Qw_report_car_patrol"
+			select="getQw_report_car_patrolche" />
+		<collection property="qw_report_walk_relation"
+			column="pk_id"
+			ofType="com.cist.qwgl.qwbb.model.Qw_report_walk_relation"
+			select="Qw_report_walk_relationdata" />
 
 	</resultMap>
-	<!-- 勤务报备9.22.	步巡关联人员报备 一对多 -->
-	<select id="Qw_report_walk_relationdata" parameterType="Integer" resultMap="Qw_report_walk_relationuser">
-            select * from  QW_REPORT_WALK_RELATION  where  FK_REPORT_ID = #{pk_id}
-    </select>
-	<resultMap type="com.cist.qwgl.qwbb.model.Qw_report_walk_relation" id="Qw_report_walk_relationuser">
-	    <id property="pk_id" column="pk_id"/>
-	    <association property="syspoliceinfo" column="fk_user_id" javaType="com.cist.qwgl.qwbb.model.Jcsj_police_res_person"  select="getSyspoliceinforenyuan"/>  
+	<select id="getQw_patrol_alarm_log" parameterType="Integer"
+		resultType="com.cist.qwgl.qwjg.model.Qw_patrol_alarm_log">
+		select * from (
+select * from QW_PATROL_ALARM_LOG c where c.jmqwbbid=#{pk_id} order by c.pk desc
+)t where rownum=1
+	</select>
+	<!-- 勤务报备9.22. 步巡关联人员报备 一对多 -->
+	<select id="Qw_report_walk_relationdata" parameterType="Integer"
+		resultMap="Qw_report_walk_relationuser">
+		select * from QW_REPORT_WALK_RELATION where FK_REPORT_ID = #{pk_id}
+	</select>
+	<select id="jczzxl" parameterType="Integer" resultType="int">
+		select count(*) from VW_QW_GPS_RECORD t where t.YWBH in 
+		<foreach item="w" collection="rybhdata" open="(" separator="," close=")">
+		            #{w}
+		</foreach>
+	</select>
+
+	<select id="eventinfobumen" parameterType="java.util.HashMap"
+		resultType="com.cist.qwgl.qwbb.model.Qwpbdata">
+		select
+		(select count(*) from JCSJ_POLICE_RES_PERSON c where c.glbm=t.dept_code and
+		c.RYFL in(1,2)) as zongshu,
+		(select count(*) from JCSJ_POLICE_RES_PERSON c where c.glbm=t.dept_code and
+		c.RYFL=1) as mingjingcount,
+		(select count(*) from JCSJ_POLICE_RES_PERSON c where c.glbm=t.dept_code and
+		c.RYFL=2) as fujingcount
+		from SYS_DEPART_INFO t where t.dept_pk=#{fk_dept_id}
+
+	</select>
+
+	<resultMap
+		type="com.cist.qwgl.qwbb.model.Qw_report_walk_relation"
+		id="Qw_report_walk_relationuser">
+		<id property="pk_id" column="pk_id" />
+		<association property="syspoliceinfo" column="fk_user_id"
+			javaType="com.cist.qwgl.qwbb.model.Jcsj_police_res_person"
+			select="getSyspoliceinforenyuan" />
 	</resultMap>
 	<!-- 勤务报备街面勤务信息 一对一 -->
-	<select id="getqw_report_street" parameterType="Integer" resultType="com.cist.qwgl.qwbb.model.Qw_report_street">
-            select * from  QW_REPORT_STREET  where  fk_report_id = #{pk_id}
-    </select>
-    <!-- 勤务报备车巡报备一 -->
-	<select id="getQw_report_car_patrolche" parameterType="Integer" resultMap="Qw_report_car_patroldy">
-            select * from  QW_REPORT_CAR_PATROL  where  FK_REPORT_ID = #{pk_id}
-    </select>
-     <resultMap type="com.cist.qwgl.qwbb.model.Qw_report_car_patrol" id="Qw_report_car_patroldy">
-	    <id property="pk_id" column="pk_id"/>
-	    <association property="jcsjpoliceresources" column="fk_police_car_id" javaType="com.cist.qwgl.qwbb.model.Jcsjpoliceresources"  select="Jcsjpoliceresourcesdtas"/>  
-	    <collection property="qw_report_car_relation" column="pk_id" ofType="com.cist.qwgl.qwbb.model.Qw_report_car_relation"  select="Qw_report_car_relationtydta"/>
-	</resultMap>
-	 <!-- 勤务报备车俩信息一 -->
-	<select id="Jcsjpoliceresourcesdtas" parameterType="Integer" resultType="com.cist.qwgl.qwbb.model.Jcsjpoliceresources">
-            select * from  JCSJ_POLICE_RESOURCES  where  pk_id = #{fk_police_car_id}
-    </select>
-    <!-- 车巡关联人员报备 -->
-    <select id="Qw_report_car_relationtydta" parameterType="Integer" resultMap="Qw_report_car_relationjj">
-            select * from  QW_REPORT_CAR_RELATION  where  FK_CAR_PATROL_ID = #{PK_ID}
-    </select>
-     <resultMap type="com.cist.qwgl.qwbb.model.Qw_report_car_relation" id="Qw_report_car_relationjj">
-	    <id property="pk_id" column="pk_id"/>
-	    <association property="syspoliceinfo" column="fk_user_id" javaType="com.cist.qwgl.qwbb.model.Jcsj_police_res_person"  select="getSyspoliceinforenyuan"/>  
-	</resultMap>
-	 <!-- 车巡关联人员信息 -->
-	<select id="getSyspoliceinforenyuan" parameterType="Integer" resultType="com.cist.qwgl.qwbb.model.Jcsj_police_res_person">
-          select * from JCSJ_POLICE_RES_PERSON t  where  t.id = #{fk_user_id}
-    </select>
-    <select id="selectQwpbdata" parameterType="java.util.HashMap" resultMap="Qwpbdatahaha">
-    select (select DEPT_NAME from SYS_DEPART_INFO where  DEPT_PK=h.DEPT_SUPERIOR)  as shangjiname,
-      (select count(*) from JCSJ_POLICE_RES_PERSON where glbm =h.fk_dept_id and ryfl!=3) as mingjingcount,
-           (select count(*) from JCSJ_POLICE_RES_PERSON where glbm =h.fk_dept_id and ryfl=3) as fujingcount,
-    h.* from (
-select (select DEPT_SUPERIOR from SYS_DEPART_INFO where  DEPT_PK=t.fk_dept_id) as DEPT_SUPERIOR,(select DEPT_NAME from SYS_DEPART_INFO where  DEPT_PK=t.fk_dept_id) as deptname,t.* from (
- select t.fk_dept_id,count(*) as baobbeicount from  QW_REPORT t  where t.REPORT_TYPE = 1 and trunc(t.REPORT_PERIOD_TYPE) = trunc(sysdate) 
- <if test="fk_dept_idinfo!=null and fk_dept_idinfo!=''">
-			  and t.FK_DEPT_ID=#{fk_dept_idinfo}
-			</if>
- group by t.fk_dept_id
-)t
-)h
-    </select>
-         <resultMap type="com.cist.qwgl.qwbb.model.Qwpbdata" id="Qwpbdatahaha">
-	    <id property="fk_dept_id" column="fk_dept_id"/>
-	 <collection property="qw_report" column="fk_dept_id" ofType="com.cist.qwgl.qwbb.model.Qw_report"  select="Qw_reportoiz"/>
-	</resultMap>
-	 <!-- 勤务报备一 -->
-	<select id="Qw_reportoiz" parameterType="Integer" resultMap="wodkjjjjnff">
-          select * from QW_REPORT t
-  left join QW_REPORT_STREET c on c.FK_REPORT_ID=t.PK_ID
-   where t.FK_DEPT_ID= #{fk_dept_id} and REPORT_TYPE = 1  and trunc(t.REPORT_PERIOD_TYPE) = trunc(sysdate)
- 
-   order by c.FK_PATROL_AREA_ID
-    </select>
-    	<resultMap type="com.cist.qwgl.qwbb.model.Qw_report" id="wodkjjjjnff">
-	    <id property="pk_id" column="pk_id"/><!-- 勤务报备id -->
-	    <association property="qw_report_street" column="pk_id" javaType="com.cist.qwgl.qwbb.model.Qw_report_street"  select="getqw_report_street"/>  
+	<select id="getqw_report_street" parameterType="Integer"
+		resultType="com.cist.qwgl.qwbb.model.Qw_report_street">
+		select * from QW_REPORT_STREET where fk_report_id = #{pk_id}
+	</select>
+	<!-- 勤务报备车巡报备一 -->
+	<select id="getQw_report_car_patrolche" parameterType="Integer"
+		resultMap="Qw_report_car_patroldy">
+		select * from QW_REPORT_CAR_PATROL where FK_REPORT_ID = #{pk_id}
+	</select>
+	<resultMap
+		type="com.cist.qwgl.qwbb.model.Qw_report_car_patrol"
+		id="Qw_report_car_patroldy">
+		<id property="pk_id" column="pk_id" />
+		<association property="jcsjpoliceresources"
+			column="fk_police_car_id"
+			javaType="com.cist.qwgl.qwbb.model.Jcsjpoliceresources"
+			select="Jcsjpoliceresourcesdtas" />
+		<collection property="qw_report_car_relation"
+			column="pk_id"
+			ofType="com.cist.qwgl.qwbb.model.Qw_report_car_relation"
+			select="Qw_report_car_relationtydta" />
 
 	</resultMap>
-    
-    <select id="qwpbdataxunqu" parameterType="java.util.HashMap" resultType="com.cist.qwgl.qwbb.model.Qwpbdata">
-    select c.fk_patrol_area_id,c.area_name,count(*) as quyucount from QW_REPORT_STREET c
-where c.fk_report_id in(select p.pk_id from QW_REPORT p where p.fk_dept_id=#{fk_dept_id} and  p.REPORT_TYPE = 1 and trunc(p.REPORT_PERIOD_TYPE) = trunc(sysdate))
-group by c.fk_patrol_area_id,c.area_name
-    
-    </select>
-       <select id="yujingxinx" parameterType="java.util.HashMap" resultMap="qwpatrolalarmlog">
-   select * from QW_PATROL_ALARM_LOG where PK in(select min(pk) from QW_PATROL_ALARM_LOG
-group by zqr)
-   </select>
-   <resultMap type="com.cist.qwgl.qwjg.model.Qw_patrol_alarm_log" id="qwpatrolalarmlog">
-	    <id property="pk" column="pk"/>
-	    <association property="qw_report_street" column="jmqwbbid" javaType="com.cist.qwgl.qwbb.model.Qw_report_street" select="jmqwbbidinfo"/>
+	<!-- 勤务报备车俩信息一 -->
+	<select id="Jcsjpoliceresourcesdtas" parameterType="Integer"
+		resultMap="JcsjpoliceresourcesDATA">
+		select * from JCSJ_POLICE_RESOURCES where pk_id = #{fk_police_car_id}
+	</select>
+	<resultMap
+		type="com.cist.qwgl.qwbb.model.Jcsjpoliceresources"
+		id="JcsjpoliceresourcesDATA">
+		<id property="pk_id" column="pk_id" />
+		<result column="car_num" property="car_num" jdbcType="VARCHAR" />
+		<association property="gpsrecord" column="car_num"
+			javaType="com.cist.qwgl.qwjg.model.GpsRecord" select="getGpsRecord" />
 	</resultMap>
-	   <select id="jmqwbbidinfo" parameterType="java.util.HashMap" resultType="com.cist.qwgl.qwbb.model.Qw_report_street">
-   select * from QW_REPORT_STREET where FK_REPORT_ID=#{jmqwbbid}
-   </select>
-   <select id="pageListSyspoliceinfo" parameterType="java.util.HashMap" resultType="com.cist.qwgl.qwbb.model.Jcsj_police_res_person">
-   select * from JCSJ_POLICE_RES_PERSON t
-   <where>
-       	<if test="sypi_dept!=null and sypi_dept!=''">
+
+	<!-- 车巡关联人员报备 -->
+	<select id="Qw_report_car_relationtydta" parameterType="Integer"
+		resultMap="Qw_report_car_relationjj">
+		select * from QW_REPORT_CAR_RELATION where FK_CAR_PATROL_ID = #{PK_ID}
+	</select>
+	<resultMap
+		type="com.cist.qwgl.qwbb.model.Qw_report_car_relation"
+		id="Qw_report_car_relationjj">
+		<id property="pk_id" column="pk_id" />
+		<association property="syspoliceinfo" column="fk_user_id"
+			javaType="com.cist.qwgl.qwbb.model.Jcsj_police_res_person"
+			select="getSyspoliceinforenyuan" />
+	</resultMap>
+	<!-- 车巡关联人员信息 -->
+	<select id="getSyspoliceinforenyuan" parameterType="Integer"
+		resultMap="getuserjsgsl">
+		select b.*,(select count(*) from ZHDD_EVENT_PERSONNEL c
+		where c.fk_event_id in(select t.pk_id from ZHDD_EVENT_INFORMATION t where
+		t.EVENT_CURRENT_STATUS in (0,2)) and c.fk_person_id=b.id) as renwu
+		from JCSJ_POLICE_RES_PERSON b where b.id = #{fk_user_id}
+	</select>
+
+	<resultMap
+		type="com.cist.qwgl.qwbb.model.Jcsj_police_res_person"
+		id="getuserjsgsl">
+		<id property="pk_id" column="pk_id" />
+		<result property="rybh" column="rybh" />
+		<association property="gpsrecord" column="rybh"
+			javaType="com.cist.qwgl.qwbb.model.Jcsj_police_res_person"
+			select="getGpsRecord" />
+	</resultMap>
+
+	<!-- gps数据 -->
+	<select id="getGpsRecord" parameterType="string"
+		resultType="com.cist.qwgl.qwjg.model.GpsRecord">
+		select * from VW_QW_GPS_RECORD t where t.YWBH=#{rybh}
+	</select>
+
+
+	<select id="selectQwpbdata" parameterType="java.util.HashMap"
+		resultMap="Qwpbdatahaha">
+		select (select DEPT_NAME from SYS_DEPART_INFO where
+		DEPT_PK=h.DEPT_SUPERIOR) as shangjiname,
+		(select count(*) from JCSJ_POLICE_RES_PERSON where glbm =h.fk_dept_id and
+		ryfl!=3) as mingjingcount,
+		(select count(*) from JCSJ_POLICE_RES_PERSON where glbm =h.fk_dept_id and
+		ryfl=3) as fujingcount,
+		h.* from (
+		select (select DEPT_SUPERIOR from SYS_DEPART_INFO where
+		DEPT_PK=t.fk_dept_id) as DEPT_SUPERIOR,(select DEPT_NAME from
+		SYS_DEPART_INFO where DEPT_PK=t.fk_dept_id) as deptname,t.* from (
+		select t.fk_dept_id,count(*) as baobbeicount from QW_REPORT t where
+		t.REPORT_TYPE = 1 and trunc(t.REPORT_PERIOD_TYPE) = trunc(sysdate)
+		<if test="fk_dept_idinfo!=null and fk_dept_idinfo!=''">
+			and t.FK_DEPT_ID=#{fk_dept_idinfo}
+		</if>
+		group by t.fk_dept_id
+		)t
+		)h
+	</select>
+	<resultMap type="com.cist.qwgl.qwbb.model.Qwpbdata"
+		id="Qwpbdatahaha">
+		<id property="fk_dept_id" column="fk_dept_id" />
+		<collection property="qw_report" column="fk_dept_id"
+			ofType="com.cist.qwgl.qwbb.model.Qw_report" select="Qw_reportoiz" />
+	</resultMap>
+	<!-- 勤务报备一 -->
+	<select id="Qw_reportoiz" parameterType="Integer"
+		resultMap="wodkjjjjnff">
+		select * from QW_REPORT t
+		left join QW_REPORT_STREET c on c.FK_REPORT_ID=t.PK_ID
+		where t.FK_DEPT_ID= #{fk_dept_id} and REPORT_TYPE = 1 and
+		trunc(t.REPORT_PERIOD_TYPE) = trunc(sysdate)
+
+		order by c.FK_PATROL_AREA_ID
+	</select>
+	<resultMap type="com.cist.qwgl.qwbb.model.Qw_report"
+		id="wodkjjjjnff">
+		<id property="pk_id" column="pk_id" /><!-- 勤务报备id -->
+		<association property="qw_report_street" column="pk_id"
+			javaType="com.cist.qwgl.qwbb.model.Qw_report_street"
+			select="getqw_report_street" />
+
+	</resultMap>
+
+	<select id="qwpbdataxunqu" parameterType="java.util.HashMap"
+		resultType="com.cist.qwgl.qwbb.model.Qwpbdata">
+		select c.fk_patrol_area_id,c.area_name,count(*) as quyucount from
+		QW_REPORT_STREET c
+		where c.fk_report_id in(select p.pk_id from QW_REPORT p where
+		p.fk_dept_id=#{fk_dept_id} and p.REPORT_TYPE = 1 and
+		trunc(p.REPORT_PERIOD_TYPE) = trunc(sysdate))
+		group by c.fk_patrol_area_id,c.area_name
+	</select>
+	<select id="yujingxinx" parameterType="java.util.HashMap"
+		resultMap="qwpatrolalarmlog">
+		select * from QW_PATROL_ALARM_LOG where PK in(select min(pk) from
+		QW_PATROL_ALARM_LOG
+		group by zqr)
+	</select>
+	<select id="qwpatrolalarmyujing"
+		parameterType="java.util.HashMap" resultMap="qwpatrolalarmlog">
+		select * from QW_PATROL_ALARM_LOG where PK in(select min(pk) from
+		QW_PATROL_ALARM_LOG
+		group by zqr)
+	</select>
+
+	<resultMap
+		type="com.cist.qwgl.qwjg.model.Qw_patrol_alarm_log"
+		id="qwpatrolalarmlog">
+		<id property="pk" column="pk" />
+		<association property="qw_report_street" column="jmqwbbid"
+			javaType="com.cist.qwgl.qwbb.model.Qw_report_street"
+			select="jmqwbbidinfo" />
+	</resultMap>
+	<select id="jmqwbbidinfo" parameterType="java.util.HashMap"
+		resultType="com.cist.qwgl.qwbb.model.Qw_report_street">
+		select * from QW_REPORT_STREET where FK_REPORT_ID=#{jmqwbbid}
+	</select>
+	<select id="pageListSyspoliceinfo"
+		parameterType="java.util.HashMap"
+		resultType="com.cist.qwgl.qwbb.model.Jcsj_police_res_person">
+		select (select c.dept_name from SYS_DEPART_INFO c where c.dept_code=t.glbm) as dept_name,t.* from JCSJ_POLICE_RES_PERSON t 
+		<where>
+			<if test="sypi_dept!=null and sypi_dept!=''">
 				and t.GLBM=#{sypi_dept}
 			</if>
 			<if test="sypi_kind!=null and sypi_kind!=''">
@@ -131,12 +269,18 @@ group by zqr)
 			<if test="sypi_code!=null and sypi_code!=''">
 				and t.RYBH like '%'||#{sypi_code}||'%'
 			</if>
-   </where>
-   </select>
-      <select id="pageListJcsj_police_resources" parameterType="java.util.HashMap" resultType="com.cist.qwgl.qwjg.model.Jcsj_police_resources">
-  	select * from JCSJ_POLICE_RESOURCES t 
-       <where>
-       	   <if test="resources_type!=null and resources_type!=''">
+		</where>
+	</select>
+	<select id="pageListJcsj_police_resources"
+		parameterType="java.util.HashMap"
+		resultType="com.cist.qwgl.qwjg.model.Jcsj_police_resources">
+		select 
+(select c.dept_name from SYS_DEPART_INFO c where c.dept_pk=t.fk_dept_id) as dept_name,
+(select h.fc_name from SYS_FRM_CODE h where h.fct_code='C110' and h.fc_code=t.car_brand) as car_brandname,
+(select h.fc_name from SYS_FRM_CODE h where h.fct_code='C004' and h.fc_code=t.car_purpose) as car_purposename,
+t.*  from JCSJ_POLICE_RESOURCES t
+		<where>
+			<if test="resources_type!=null and resources_type!=''">
 				and t.resources_type=#{resources_type}
 			</if>
 			<if test="fk_dept_id!=null and fk_dept_id!=''">
@@ -149,98 +293,348 @@ group by zqr)
 				and t.car_brand=#{car_brand}
 			</if>
 			<if test="car_purpose!=null and car_purpose!=''">
-					and t.car_purpose=#{car_purpose}
+				and t.car_purpose=#{car_purpose}
 			</if>
-   </where>
-   </select>
-   <select id="selectjichuxin" parameterType="java.util.HashMap" resultType="com.cist.qwgl.qwbb.model.Sysfrmcode">
-    select * from SYS_FRM_CODE t where t.fct_code=#{fct_code}
-   </select>
-   
+		</where>
+	</select>
+	<select id="selectjichuxin" parameterType="java.util.HashMap"
+		resultType="com.cist.qwgl.qwbb.model.Sysfrmcode">
+		select * from SYS_FRM_CODE t where t.fct_code=#{fct_code}
+	</select>
 
-     
-        <select id="jingyuan" parameterType="java.util.HashMap" resultMap="vwpolicegpspisf">
-select * from JCSJ_POLICE_RESOURCES c where c.device_code in(select t.device_code from VW_POLICE_GPS t)
-   </select>
-    <resultMap type="com.cist.qwgl.qwjg.model.Jcsj_police_resources" id="vwpolicegpspisf">
-	    <id property="pk_id" column="pk_id"/>
-	    <collection property="qw_gps_history" column="device_code" ofType="com.cist.qwgl.qwjg.model.Qw_gps_history" select="sbwybmdatadata"/>
+
+
+	<select id="jingyuan" parameterType="java.util.HashMap"
+		resultMap="vwpolicegpspisf">
+		select * from JCSJ_POLICE_RESOURCES c where c.device_code in(select
+		t.device_code from VW_POLICE_GPS t)
+	</select>
+	<resultMap
+		type="com.cist.qwgl.qwjg.model.Jcsj_police_resources"
+		id="vwpolicegpspisf">
+		<id property="pk_id" column="pk_id" />
+		<result property="device_code" column="device_code" />
+		<collection property="qw_gps_history" column="device_code"
+			ofType="com.cist.qwgl.qwjg.model.Qw_gps_history"
+			select="sbwybmdatadata" />
 	</resultMap>
-  <select id="sbwybmdatadata" parameterType="java.util.HashMap" resultType="com.cist.qwgl.qwjg.model.Qw_gps_history">
-           select * from QW_GPS_HISTORY t where t.sbwybm=#{device_code}
-   </select>
-     
-	<select id="qwreportjg" parameterType="java.util.HashMap" resultMap="qwreportjgdata">
-		select * from QW_REPORT t where t.REPORT_TYPE=1 and trunc(t.REPORT_PERIOD_TYPE)=trunc(sysdate)
-   </select>
-     <resultMap type="com.cist.qwgl.qwbb.model.Qw_report" id="qwreportjgdata">
-	    <id property="pk_id" column="pk_id"/>
-	    <association property="qw_report_street" column="pk_id" javaType="com.cist.qwgl.qwbb.model.Qw_report_street" select="qwreportstreetp"/>
-	    <collection property="qw_report_car_patrol" column="pk_id" ofType="com.cist.qwgl.qwbb.model.Qw_report_car_patrol" select="qwreportcarpatrole"></collection>
-	    <collection property="qw_report_walk_relation" column="pk_id" ofType="com.cist.qwgl.qwbb.model.Qw_report_walk_relation" select="mapqwreportwalkrelation"></collection>
+	<select id="sbwybmdatadata" parameterType="java.util.HashMap"
+		resultType="com.cist.qwgl.qwjg.model.Qw_gps_history">
+		select * from GPSUSER.QW_GPS_HISTORY t where t.sbwybm=#{device_code}
+	</select>
+	<select id="qwgpshistoryywbh" parameterType="java.util.HashMap" resultType="com.cist.qwgl.qwjg.model.Qw_gps_history">
+		select * from GPSUSER.QW_GPS_HISTORY t where t.ywbh=#{ywbh} and t.gpstime between to_date(#{kaitime},'yyyy-mm-dd hh24:mi:ss') and to_date(#{jieshutime},'yyyy-mm-dd hh24:mi:ss')
+	</select>
+
+	<select id="qwreportjg" parameterType="java.util.HashMap"
+		resultMap="qwreportjgdata">
+		select * from QW_REPORT t where t.REPORT_TYPE=1 and
+		trunc(t.REPORT_PERIOD_TYPE)=trunc(sysdate)
+	</select>
+	<resultMap type="com.cist.qwgl.qwbb.model.Qw_report"
+		id="qwreportjgdata">
+		<id property="pk_id" column="pk_id" />
+		<association property="qw_report_street" column="pk_id"
+			javaType="com.cist.qwgl.qwbb.model.Qw_report_street"
+			select="qwreportstreetp" />
+		<collection property="qw_report_car_patrol" column="pk_id"
+			ofType="com.cist.qwgl.qwbb.model.Qw_report_car_patrol"
+			select="qwreportcarpatrole"></collection>
+		<collection property="qw_report_walk_relation"
+			column="pk_id"
+			ofType="com.cist.qwgl.qwbb.model.Qw_report_walk_relation"
+			select="mapqwreportwalkrelation"></collection>
 	</resultMap>
 	<!-- 步巡人员 -->
-	<select id="mapqwreportwalkrelation" parameterType="java.util.HashMap" resultMap="relationrelation">
-	select * from QW_REPORT_WALK_RELATION where FK_REPORT_ID=#{pk_id}
+	<select id="mapqwreportwalkrelation"
+		parameterType="java.util.HashMap" resultMap="relationrelation">
+		select * from QW_REPORT_WALK_RELATION where FK_REPORT_ID=#{pk_id}
 	</select>
-	 <resultMap type="com.cist.qwgl.qwbb.model.Qw_report_walk_relation" id="relationrelation">
-	    <id property="pk_id" column="pk_id"/>
-	   <association property="syspoliceinfo" column="fk_user_id" javaType="com.cist.qwgl.qwbb.model.Jcsj_police_res_person"  select="cljingyuanxinxi"/>
+	<resultMap
+		type="com.cist.qwgl.qwbb.model.Qw_report_walk_relation"
+		id="relationrelation">
+		<id property="pk_id" column="pk_id" />
+		<result property="fk_user_id" column="fk_user_id" />
+		<association property="syspoliceinfo" column="fk_user_id"
+			javaType="com.cist.qwgl.qwbb.model.Jcsj_police_res_person"
+			select="cljingyuanxinxi" />
 	</resultMap>
-     <select id="qwreportstreetp" resultType="com.cist.qwgl.qwbb.model.Qw_report_street">
-              select * from qw_report_street where fk_report_id=#{pk_id}
-     </select>
-     <!-- 9.20. 车巡报备 -->
-      <select id="qwreportcarpatrole" resultMap="mapQwreportcarpatrol">
-              select * from QW_REPORT_CAR_PATROL where fk_report_id=#{pk_id}
-     </select>
-     
-     <resultMap type="com.cist.qwgl.qwbb.model.Qw_report_car_patrol" id="mapQwreportcarpatrol">
-	    <id property="pk_id" column="pk_id"/>
-	    <association property="jcsj_police_resources" column="fk_police_car_id" javaType="com.cist.qwgl.qwjg.model.Jcsj_police_resources" select="jcsjpoliceresources"></association>
-	    <collection property="qw_report_car_relation" column="pk_id" ofType="com.cist.qwgl.qwbb.model.Qw_report_car_relation" select="qwreportcarrelationp"></collection>
+	<select id="qwreportstreetp"
+		resultType="com.cist.qwgl.qwbb.model.Qw_report_street">
+		select * from qw_report_street where fk_report_id=#{pk_id}
+	</select>
+	<!-- 9.20. 车巡报备 -->
+	<select id="qwreportcarpatrole" resultMap="mapQwreportcarpatrol">
+		select * from QW_REPORT_CAR_PATROL where fk_report_id=#{pk_id}
+	</select>
+
+	<resultMap
+		type="com.cist.qwgl.qwbb.model.Qw_report_car_patrol"
+		id="mapQwreportcarpatrol">
+		<id property="pk_id" column="pk_id" />
+		<result property="fk_police_car_id" column="fk_police_car_id" />
+		<association property="jcsj_police_resources"
+			column="fk_police_car_id"
+			javaType="com.cist.qwgl.qwjg.model.Jcsj_police_resources"
+			select="jcsjpoliceresources"></association>
+		<collection property="qw_report_car_relation"
+			column="pk_id"
+			ofType="com.cist.qwgl.qwbb.model.Qw_report_car_relation"
+			select="qwreportcarrelationp"></collection>
 	</resultMap>
-	
+
 	<!-- 9.21. 车巡关联人员报备 -->
-	  <select id="qwreportcarrelationp"  parameterType="java.util.HashMap" resultMap="renyuanxnx">
-              select * from QW_REPORT_CAR_RELATION where FK_CAR_PATROL_ID=#{pk_id}
-     </select>
-       <resultMap type="com.cist.qwgl.qwbb.model.Qw_report_car_relation" id="renyuanxnx">
-	    <id property="pk_id" column="pk_id"/>
-	   <association property="syspoliceinfo" column="fk_user_id" javaType="com.cist.qwgl.qwbb.model.Jcsj_police_res_person"  select="cljingyuanxinxi"/>
+	<select id="qwreportcarrelationp"
+		parameterType="java.util.HashMap" resultMap="renyuanxnx">
+		select * from QW_REPORT_CAR_RELATION where FK_CAR_PATROL_ID=#{pk_id}
+	</select>
+	<resultMap
+		type="com.cist.qwgl.qwbb.model.Qw_report_car_relation" id="renyuanxnx">
+		<id property="pk_id" column="pk_id" />
+		<result property="fk_user_id" column="fk_user_id" />
+		<association property="syspoliceinfo" column="fk_user_id"
+			javaType="com.cist.qwgl.qwbb.model.Jcsj_police_res_person"
+			select="cljingyuanxinxi" />
 	</resultMap>
 	<!-- 获取车俩警员信息 -->
-	<select id="cljingyuanxinxi" parameterType="Integer" resultMap="jingyuanzbxinxi">
-          select t.*,(select c.dept_name from SYS_DEPART_INFO c where c.dept_code=t.glbm) as dept_name from JCSJ_POLICE_RES_PERSON t  where  t.id = #{fk_user_id}
-    </select>
-       <resultMap type="com.cist.qwgl.qwbb.model.Jcsj_police_res_person" id="jingyuanzbxinxi">
-	    <id property="pk_id" column="pk_id"/>
-	    <association property="qw_gps_history" column="rybh" javaType="com.cist.qwgl.qwjg.model.Qw_gps_history" select="rybhdataino"/>
+	<select id="cljingyuanxinxi" parameterType="Integer"
+		resultMap="jingyuanzbxinxi">
+		select t.*,(select c.dept_name from SYS_DEPART_INFO c where
+		c.dept_code=t.glbm) as dept_name from JCSJ_POLICE_RES_PERSON t where
+		t.id = #{fk_user_id}
+	</select>
+	<resultMap
+		type="com.cist.qwgl.qwbb.model.Jcsj_police_res_person"
+		id="jingyuanzbxinxi">
+		<id property="pk_id" column="pk_id" />
+		<result property="rybh" column="rybh" />
+		<association property="qw_gps_history" column="rybh"
+			javaType="com.cist.qwgl.qwjg.model.Qw_gps_history"
+			select="rybhdataino" />
 	</resultMap>
+
+	<select id="rybhdataino" parameterType="java.util.HashMap"
+		resultType="com.cist.qwgl.qwjg.model.Qw_gps_history">
+		select * from (
+		select * from GPSUSER.QW_GPS_HISTORY c where c.ywbh=#{rybh} order by c.rksj desc
+		)y where rownum=1
+	</select>
+	<!-- gps警车信息 没有坐标编码的不显示 -->
+	<select id="jcsjpoliceresources"
+		parameterType="java.util.HashMap" resultMap="pijcsjpoliceresources">
+		select (select c.dept_name from SYS_DEPART_INFO c where
+		c.dept_pk=t.fk_dept_id) as dept_name,t.* from JCSJ_POLICE_RESOURCES t
+		where t.pk_id=#{fk_police_car_id}
+	</select>
+	<resultMap
+		type="com.cist.qwgl.qwjg.model.Jcsj_police_resources"
+		id="pijcsjpoliceresources">
+		<id property="pk_id" column="pk_id" />
+		<collection property="qw_gps_history" column="pk_id"
+			ofType="com.cist.qwgl.qwjg.model.Qw_gps_history" select="sbwybmdata" />
+	</resultMap>
+	<select id="sbwybmdata" parameterType="java.util.HashMap"
+		resultType="com.cist.qwgl.qwjg.model.Qw_gps_history">
+		select * from GPSUSER.QW_GPS_HISTORY t where t.sbwybm=(select c.DEVICE_CODE from
+		VW_PR_CAR_GPS c where c.PK_ID=#{pk_id})
+	</select>
+	<!-- gps警车信息 end -->
+	<!-- 签到数据 -->
+	<select id="qw_sign_in" parameterType="java.util.HashMap"
+		resultType="com.cist.qwgl.qwbb.model.Qw_sign_in">
+		select * from qw_sign_in t where t.fk_report_id=#{fk_report_id} and
+		t.fk_sign_in_user_id=#{fk_sign_in_user_id}
+	</select>
+
+	<select id="qiangzi" parameterType="java.util.HashMap"
+		resultType="int">
+		select count(*) from qw_guns_relation t where t.fk_equip_id=(select c.pk_id
+		from QW_EQUIP_INFO c where c.fk_police_team_id=#{fk_report_id}) and
+		t.fk_user_id=#{fk_sign_in_user_id}
+	</select>
+	<select id="qiangziqungwu" parameterType="java.util.HashMap"
+		resultType="int">
+		select count(*) from qw_guns_relation t where t.fk_equip_id=(select c.pk_id
+		from QW_EQUIP_INFO c where c.fk_report_id=#{fk_report_id}) and
+		t.fk_user_id=#{fk_sign_in_user_id}
+	</select>
+	<select id="sign" parameterType="java.util.HashMap"
+		resultType="com.cist.qwgl.qwjg.model.Qw_sign_in">
+		select * from (
+		select * from ( select t.*,(select c.sypi_code from SYS_POLICE_INFO c where
+		c.sypi_pk=t.fk_sign_in_user_id) as sypi_code from QW_SIGN_IN t)t
+		where t.SIGN_IN_TYPE=#{sign_in_type} and
+		t.fk_report_id=#{fk_report_id} and t.sypi_code=#{rybh}
+		order by t.pk_id desc
+		)h where rownum=1
+	</select>
+	<select id="qw_patrol_alarm_log"
+		parameterType="java.util.HashMap"
+		resultType="com.cist.qwgl.qwjg.model.Qw_patrol_alarm_log">
+		select * from (
+		select t.*, t.rowid from QW_PATROL_ALARM_LOG t where t.zqr=#{zqr} and
+		t.JMQWBBID=#{fk_report_id}
+		order by t.pk desc
+		)t where rownum=1
+	</select>
+	<select id="alarmlogList" parameterType="java.util.HashMap"
+		resultType="com.cist.qwgl.qwjg.model.Qw_patrol_alarm_log">
+		select * from (
+		select * from QW_PATROL_ALARM_LOG c where
+		c.zqr=#{zqr}
+		)c where c.yjkssj between to_date(#{kaitime},'yyyy-mm-dd hh24:mi:ss')
+		and to_date(#{jieshutime},'yyyy-mm-dd hh24:mi:ss')
+		or c.yjjssj between to_date(#{kaitime},'yyyy-mm-dd hh24:mi:ss') and
+		to_date(#{jieshutime},'yyyy-mm-dd hh24:mi:ss')
+	</select>
+	<select id="eventid" parameterType="java.util.HashMap"
+		resultType="string">
+		select c.FK_EVENT_ID from (
+		select * from (
+		select c.* from (
+		select c.*,(c.xm||'（'||c.rybh||'）') as
+		xmrybh from (
+		select c.*,(select h.xm from JCSJ_POLICE_RES_PERSON h
+		where h.id=c.fk_person_id) as xm,
+		(select h.rybh from
+		JCSJ_POLICE_RES_PERSON h where h.id=c.fk_person_id) as rybh
+		from ZHDD_EVENT_PERSONNEL c
+		) c where c.FK_EVENT_ID in(
+		select t.FK_EVENT_ID
+		from ZHDD_EVENT_DISPATCH t where t.DISPATCH_TIME between #{yjkssj} and
+		#{yjjssj}
+		)
+		)c left join ZHDD_EVENT_DISPATCH t on
+		c.FK_EVENT_ID=t.FK_EVENT_ID
+		) c where c.xmrybh=#{zqr}
+		)c
+
+		where rownum =1
+	</select>
+	<select id="eventlist" parameterType="java.util.HashMap"
+		resultType="com.cist.qwgl.qwjg.model.EventInfo">
+		select t.*,(select c.event_source_name from ZHDD_EVENT_SOURCE c where
+		c.pk_id=t.fk_event_source_id) as event_source_name,
+		(select b.event_type_name from ZHDD_EVENT_TYPE b where
+		b.pk_id=t.fk_event_type_id) as event_type_name
+		from ZHDD_EVENT_INFORMATION t
+		where t.pk_id=#{pk_id}
+	</select>
+	<select id="sysfrmcode"
+		resultType="com.cist.qwgl.qwbb.model.Sysfrmcode"
+		parameterType="java.util.HashMap">
+		select * from SYS_FRM_CODE t where t.fct_code=#{fct_code} order by t.fc_num
+	</select>
+	<select id="qw_gps_history"
+		resultType="com.cist.qwgl.qwjg.model.Qw_gps_history"
+		parameterType="java.util.HashMap">
+		select * from GPSUSER.QW_GPS_HISTORY t where
+		t.ywbh=#{ywbh}
+		and
+		t.gpstime between to_date(#{kaitime},'yyyy-mm-dd hh24:mi:ss') and
+		to_date(#{jieshutime},'yyyy-mm-dd hh24:mi:ss')
+	</select>
+	<select id="qwindividualassessment"
+		resultType="com.cist.qwgl.qwjg.model.Qw_individual_assessment"
+		parameterType="java.util.HashMap">
+		select
+		(select o.sypi_name from SYS_POLICE_INFO o where o.sypi_pk=t.input_person) as sypi_names,
+(select o.sypi_code from SYS_POLICE_INFO o where o.sypi_pk=t.input_person) as sypi_code,
+ (select b.XM from JCSJ_POLICE_RES_PERSON b where b.id=t.fk_user_id) as xm,
+   (select b.rybh from JCSJ_POLICE_RES_PERSON b where b.id=t.fk_user_id) as rybh,
+(select h.dept_name from SYS_DEPART_INFO h where h.dept_code=t.fk_dept_id) as dept_name,
+(select h.dept_pk from SYS_DEPART_INFO h where h.dept_code=t.fk_dept_id) as dept_pk,
+t.* from (
+		select * from (
+ select *from QW_INDIVIDUAL_ASSESSMENT t where t.fk_user_id=#{fk_user_id} and t.FK_REPORT_ID=#{fk_report_id} and t.VERIFY_STATUS=0 order by t.pk_id desc
+) t
+where rownum=1
+) t
+	</select>
+	<insert id="addattachment" parameterType="java.util.HashMap">
+	   INSERT INTO QW_ASSESSMENT_ATTACHMENT
+            (
+             PK_ID,
+             FK_RELATION_ID,
+             ATTACHMENT_NAME,
+             ATTACHMENT_SUFFIX,
+             ATTACHMENT_SIZE,
+             ATTACHMENT_SOURCE,
+             FK_COMMIT_PERSON_ID,
+             COMMIT_TIME,
+             CONSTRAINT
+             )
+       VALUES (
+       		cistsys.SEQ_ASSESSMENT_ATTACHMENT.nextval,
+            #{fk_relation_id,jdbcType=VARCHAR},
+            #{attachment_name,jdbcType=VARCHAR},
+           	#{attachment_suffix,jdbcType=VARCHAR},
+           	#{attachment_size,jdbcType=VARCHAR},
+           	#{attachment_source,jdbcType=VARCHAR},
+            #{fk_commit_person_id,jdbcType=VARCHAR},
+           	sysdate,
+           	'KHLR'
+        	)
+	</insert>
+	  	<select id="getAttachment" resultType="com.cist.qwgl.qwjg.model.Qw_assessment_attachment" parameterType="java.util.HashMap">
+   	  select * from QW_ASSESSMENT_ATTACHMENT t
+   where	  t.CONSTRAINT = 'KHLR' and t.FK_RELATION_ID=#{fk_relation_id}
+   	</select>
+   	<delete id="deleteAttachment" parameterType="java.util.HashMap">
+	DELETE FROM QW_ASSESSMENT_ATTACHMENT WHERE CONSTRAINT = 'KHLR' and pk_id in 
+		<foreach item="w" collection="pk_id" open="(" separator="," close=")">
+		            #{w}
+		        </foreach>
+	</delete>
+	<update id="updateassessment" parameterType="java.util.HashMap">
+	update qw_individual_assessment t 
+		set 
+		t.own_guns=#{own_guns,jdbcType=VARCHAR},
+		t.start_date=to_date(#{start_date},'yyyy-mm-dd HH24:mi:ss'),  
+		t.end_date=to_date(#{end_date},'yyyy-mm-dd HH24:mi:ss'),
+		t.record_invalid_reason=#{record_invalid_reason,jdbcType=VARCHAR},
+		t.verify_status=#{radioValue,jdbcType=VARCHAR},
+		t.explain=#{explain,jdbcType=VARCHAR},
+		t.fk_topic_id=#{qwjmValue,jdbcType=VARCHAR},
+		t.fk_regulations_id=#{regulations_name,jdbcType=VARCHAR},
+		t.fk_verify_person_id=#{fk_verify_person_id,jdbcType=VARCHAR},
+        t.verify_time=sysdate
+		where t.pk_id=#{dualassessmentpk}
+	</update>
+	<select id="gpsrecord" parameterType="java.util.HashMap" resultType="com.cist.qwgl.qwjg.model.GpsRecord">
+	select * from VW_QW_GPS_RECORD t where t.SBWYBM in (
+select t.device_code from JCSJ_POLICE_RESOURCES t where t.RESOURCES_TYPE=3
+)
+	</select>
+		<select id="gpsrecordlixian" parameterType="java.util.HashMap" resultType="int">
+select count(*) from JCSJ_POLICE_RESOURCES t where t.RESOURCES_TYPE=3
+	</select>
+		<select id="deviceList" resultMap="mapDeviceInfo">
+   	 select * from JCSJ_DEVICE t 
+left join JCSJ_DEVICE_STATUS_BASIC c on t.pk_id=c.fk_device_id
+ WHERE T.FK_DEVICE_TYPE IN('JK') and c.status=1
+   	</select> 
+   	 <resultMap type="com.cist.qwgl.qwjg.model.DeviceInfo" id="mapDeviceInfo">
+	    <id property="pk_id" column="pk_id"/>
+	    <collection property="jcsj_device_camera_gb28181" column="pk_id" ofType="com.cist.qwgl.qwjg.model.Jcsj_device_camera_gb28181" select="cameradata"/>
+	</resultMap>
+  <select id="cameradata" parameterType="java.util.HashMap" resultType="com.cist.qwgl.qwjg.model.Jcsj_device_camera_gb28181">
+         select * from JCSJ_DEVICE_CAMERA_GB28181 t where t.device_id=#{pk_id}
+   </select>
+   <delete id="delyichang" parameterType="java.util.HashMap">
+    delete QW_PATROL_ALARM_LOG
+   </delete>
+     <delete id="delkaohe" parameterType="java.util.HashMap">
+    delete  QW_INDIVIDUAL_ASSESSMENT 
+    <where>
+     ASSESSMENT_TYPE=1 and VERIFY_STATUS in(1,3) and FK_REPORT_ID in
+     <foreach item="w" collection="fkreport" open="(" separator="," close=")">
+		            #{w}
+	</foreach>
+      and 
+     verify_time between to_date(#{kaitime},'yyyy-mm-dd hh24:mi:ss') and to_date(#{jieshutime},'yyyy-mm-dd hh24:mi:ss')
+    </where>
     
-      <select id="rybhdataino" parameterType="java.util.HashMap" resultType="com.cist.qwgl.qwjg.model.Qw_gps_history">
-   select * from (
-select * from QW_GPS_HISTORY c where c.ywbh=#{rybh} order by c.rksj desc
-)y where   rownum=1
-</select>
-        <!-- gps警车信息  没有坐标编码的不显示--> 
-   <select id="jcsjpoliceresources" parameterType="java.util.HashMap" resultMap="pijcsjpoliceresources">
-     select (select c.dept_name from SYS_DEPART_INFO c where c.dept_pk=t.fk_dept_id) as dept_name,t.* from  JCSJ_POLICE_RESOURCES t where t.pk_id=#{fk_police_car_id}
-   </select>
-    <resultMap type="com.cist.qwgl.qwjg.model.Jcsj_police_resources" id="pijcsjpoliceresources">
-	    <id property="pk_id" column="pk_id"/>
-	    <collection property="qw_gps_history" column="pk_id" ofType="com.cist.qwgl.qwjg.model.Qw_gps_history" select="sbwybmdata"/>
-	</resultMap>
-  <select id="sbwybmdata" parameterType="java.util.HashMap" resultType="com.cist.qwgl.qwjg.model.Qw_gps_history">
-           select * from QW_GPS_HISTORY t where t.sbwybm=(select c.DEVICE_CODE from VW_PR_CAR_GPS c where c.PK_ID=#{pk_id})
-   </select>
-     <!-- gps警车信息 end -->
-     <!-- 签到数据 -->
-     <select id="qw_sign_in" parameterType="java.util.HashMap" resultType="com.cist.qwgl.qwbb.model.Qw_sign_in">
-     select * from qw_sign_in t where t.fk_report_id=#{fk_report_id} and t.fk_sign_in_user_id=#{fk_sign_in_user_id}
-     </select>
-     
-       <select id="qiangzi" parameterType="java.util.HashMap" resultType="int">
-    select count(*) from qw_guns_relation t where t.fk_equip_id=(select c.pk_id from QW_EQUIP_INFO c where c.fk_police_team_id=#{fk_report_id}) and t.fk_user_id=#{fk_sign_in_user_id}
-     </select>
+   </delete>
+   
 </mapper>

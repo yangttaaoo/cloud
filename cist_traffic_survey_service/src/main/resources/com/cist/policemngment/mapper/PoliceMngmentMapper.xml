@@ -493,9 +493,7 @@
 				rdtrq = to_date(#{rdtrq},'yyyy-MM-dd'),
 			</if>
 
-			<if test="pic != null and pic !='' and pic !='null'">
-				pic = #{pic},
-			</if>
+				pic = #{pic,jdbcType=NULL},
 			<choose>
 				<when test="sbh != null and sbh !='' and sbh !='null'">
 					sbh = #{sbh},

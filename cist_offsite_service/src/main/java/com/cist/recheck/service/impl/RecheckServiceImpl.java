@@ -214,6 +214,11 @@ public class RecheckServiceImpl implements RecheckService{
 		return mapper.querysbbhbysbpk(map);
 	}
 
+	@Override
+	public Integer tiqu(HashMap<String, Object> map) {
+		return mapper.tiqu(map);
+	}
+
 
 
 

@@ -194,5 +194,11 @@ public interface IllegalService {
 		 * @return
 		 */
 		TblOffeEvdiInfo selectRestriction(HashMap<String, Object> map);
+		
+		//根据条件提取固定数量数据
+		public Integer tiqu(HashMap<String,Object> map);
+		
+		//分页查询提取数据
+		Object selectAllExtractpageList(HashMap<String,Object> map,PageInfo p);
 	
 }

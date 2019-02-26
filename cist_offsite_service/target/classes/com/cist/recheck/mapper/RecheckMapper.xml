@@ -76,7 +76,7 @@
 			hpzlname = #{hpzlName},
 			</if>			
 			<if test=" clsbdh != null and clsbdh !='' ">
-			clsbdm = #{clsbdh},
+			clsbdh = #{clsbdh},
 			</if>
 			<if test=" clyt != null and clyt !='' ">
 			clyt_lhy = #{clyt},
@@ -87,11 +87,14 @@
 			<if test=" cwkc != null and cwkc !='' ">
 			clwlc = #{cwkc},
 			</if>	
-			<if test=" cwkc != null and cwkc !='' ">
-			clwlc = #{cwkc},
-			</if>
 			<if test=" djrqName != null and djrqName !='' ">
 			DJRQ = #{djrqName},
+			</if>
+						<if test=" hphm != null and hphm !='' ">
+			hphmlhy = #{hphm},
+			</if>
+			<if test=" hpzl != null and hpzl !='' ">
+			hpzllhy = #{hpzl},
 			</if>
 
 			LHYFLAG='1',
@@ -101,7 +104,7 @@
 	
 <!--特殊车辆库  -->
 <insert id="insertBus">
-		insert into C_VEH_BUS
+		insert into TXZ_VEH_BUS
 		<trim prefix="(" suffixOverrides="," suffix=")">
 			PK,
 			HPZL,
@@ -182,15 +185,9 @@
 		
 		
 		select 
-			t.*,(select dept_name from SYS_DEPART_INFO where dept_code = t.cjdw) dept_name,
-			(select device_name from JCSJ_DEVICE where device_num=t.sbbh) tbei_name,c.tboc_name,c.tboc_points,c.tboc_fines
+			t.*
 		from 
 			OEUSER.TBL_OFFE_EVDI t 
-		left join 
-			TBL_OFFE_CATE c 
-		on 
-			c.tboc_code = t.wfxw
-		
 		<!-- select 
 			t.*,(select dept_name from SYS_DEPART_INFO where dept_code = t.cjdw) dept_name,
 			(select device_name from JCSJ_DEVICE where device_num=t.sbbh) tbei_name,
@@ -202,6 +199,7 @@
 		on 
 			c.tboc_code = t.wfxw -->
 		<where>
+		tqry=#{tqry}
 			<if test="wfpk != null and wfpk !=''">
 				and t.WFPk = #{wfpk}
 			</if>
@@ -292,6 +290,8 @@
 			</if>
 		
 			  fssj=sysdate,
+			 tqry=#{tqry,jdbcType=VARCHAR},
+     tqrq=#{tqrq,jdbcType=VARCHAR}
 			
 		</set>
 		where WFPK = #{wfpk,jdbcType=DECIMAL}
@@ -346,7 +346,7 @@
 	</insert> -->
 	
 	 		<insert id="addInsert" parameterType="java.util.HashMap">
-		  insert into c_veh_bus
+		  insert into TXZ_veh_bus
 		  (
 		  PK,
 		  HPZL,
@@ -501,5 +501,53 @@
 		        </foreach>
 			</if>
 		</where>
+	</select>
+	
+	<!--提取固定数量的数据-->
+	<select id="tiqu" resultType="Integer" parameterType="java.util.HashMap">
+	   update oeuser.tbl_offe_evdi t1  set tqry=#{tqry},tqrq=#{tqrq}
+	   where   wfpk in(
+	  select wfpk  from OEUSER.TBL_OFFE_EVDI t
+		<where>
+			<if test="wfpk != null and wfpk !=''">
+				and t.WFPk = #{wfpk}
+			</if>
+			<if test="hphm!=null and hphm!=''">
+				and lower(t.hphm) like lower('%'||#{hphm}||'%')
+			</if>
+
+			<if test="hpzl!=null and hpzl!=''and hpzl!='null'">
+				and t.hpzl = #{hpzl}
+			</if>
+
+			<if test="wfxw!=null and wfxw!=''and wfxw!='null'">
+				and t.wfxw in
+				<foreach item="w" collection="wfxw" open="(" separator="," close=")">
+		            #{w}
+		        </foreach>
+			</if>
+			<if test="sbbh!=null and sbbh!=''">
+				and t.SBBH in
+				<foreach item="t" collection="sbbh" open="(" separator="," close=")">
+		            #{t}
+		        </foreach>
+			</if>
+			<if test="clpp!=null and clpp!=''">
+				and t.clpp=#{clpp}
+			</if>
+			<if test="csys!=null and csys!=''">
+				and t.csys=#{csys}
+			</if>
+			<if test="wfkssj!=null and wfkssj!='' and wfkssj!='null'">
+		    <![CDATA[ and t.WFKSSJ >=to_date(#{wfkssj},'yyyy-mm-dd HH24:mi:ss')]]>
+			</if>
+			<if test="wfjssj!=null and wfjssj!=''and wfjssj!='null'">
+		    <![CDATA[and t.WFJSSJ <= to_date(#{wfjssj},'yyyy-mm-dd HH24:mi:ss') ]]>
+			</if>
+			and t.shbz='1'
+			and t.tqry is null
+			 <![CDATA[  and  rownum <= #{tqsl} ]]>
+		</where>
+	   )
 	</select>
 </mapper>

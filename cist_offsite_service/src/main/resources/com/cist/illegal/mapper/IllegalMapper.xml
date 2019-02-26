@@ -15,7 +15,7 @@
    </select>
 <!--特殊车辆库  -->
 <insert id="insertBus">
-		insert into C_VEH_BUS
+		insert into TXZ_VEH_BUS
 		<trim prefix="(" suffixOverrides="," suffix=")">
 			PK,
 			HPZL,
@@ -168,7 +168,7 @@
 			hpzlname = #{hpzlName},
 			</if>			
 			<if test=" clsbdh != null and clsbdh !='' ">
-			clsbdm = #{clsbdh},
+			clsbdh = #{clsbdh},
 			</if>
 			<if test=" clyt != null and clyt !='' ">
 			clyt_lhy = #{clyt},
@@ -179,11 +179,14 @@
 			<if test=" cwkc != null and cwkc !='' ">
 			clwlc = #{cwkc},
 			</if>	
-			<if test=" cwkc != null and cwkc !='' ">
-			clwlc = #{cwkc},
-			</if>
 			<if test=" djrqName != null and djrqName !='' ">
 			DJRQ = #{djrqName},
+			</if>
+			<if test=" hphm != null and hphm !='' ">
+			hphmlhy = #{hphm},
+			</if>
+			<if test=" hpzl != null and hpzl !='' ">
+			hpzllhy = #{hpzl},
 			</if>
 
 			LHYFLAG='1',
@@ -198,6 +201,60 @@
 		c.tboc_name,c.tboc_points,c.tboc_fines
 		 from OEUSER.TBL_OFFE_EVDI t left join TBL_OFFE_CATE c on c.tboc_code = t.wfxw -->
 		 select * from OEUSER.TBL_OFFE_EVDI t
+		<where>
+		    tqry=#{tqry}
+			<if test="hphm != null and hphm != ''">
+				and t.hphm like '%'||#{hphm}||'%'
+			</if>
+			<if test="hpzl != null and hpzl != ''">
+				and t.hpzl = #{hpzl}
+			</if>
+			<if test="wfxw != null and wfxw !=''">
+				and t.wfxw in
+				<foreach item="k" collection="wfxw" open="(" separator="," close=")">
+		           		 #{k}
+		        	</foreach>
+			</if>
+			<if test="wfkssj!=null and wfkssj!=''">
+				<![CDATA[ and t.WFSJ >=to_date(#{wfkssj},'yyyy-mm-dd HH24:mi:ss')]]>
+			</if>
+			<if test="wfjssj!=null and wfjssj!=''">
+				<![CDATA[and t.WFSJ <= to_date(#{wfjssj},'yyyy-mm-dd HH24:mi:ss') ]]>
+			</if>
+			    <choose>
+        <when test="sxbz!=null and sxbz!='null' and sxbz!=''">
+            and t.shbz =#{sxbz}
+        </when>
+        <otherwise>
+            and t.shbz in('0','15')
+        </otherwise>
+        </choose>
+			<if test="zplx != null and zplx != '' and sbbh.size()>0">
+				and ( zplx = #{zplx} or sbbh in
+			    	<foreach item="w" collection="sbbh" open="(" separator="," close=")">
+		           		 #{w}
+		        	</foreach>
+		        	)
+			</if>
+			<if test="zplx !=null and zplx != '' and sbbh.size()>0">
+				and zplx = #{zplx}
+			</if>
+			<if test="sbbh.size()>0 and zplx == null">
+				and sbbh in
+			    	<foreach item="w" collection="sbbh" open="(" separator="," close=")">
+		           		 #{w}
+		        	</foreach>
+			</if>
+			
+		</where>
+		order by t.wfpk desc
+	</select>
+	
+	<!--提取固定数量的数据-->
+	<select id="tiqu" resultType="Integer" parameterType="java.util.HashMap">
+	   update oeuser.tbl_offe_evdi t1  set tqry=#{tqry},tqrq=#{tqrq}
+	   where   wfpk in(
+	  select wfpk  from OEUSER.TBL_OFFE_EVDI t
 		<where>
 			<if test="hphm != null and hphm != ''">
 				and t.hphm like '%'||#{hphm}||'%'
@@ -241,9 +298,17 @@
 		           		 #{w}
 		        	</foreach>
 			</if>
+			 <![CDATA[  and  rownum <= #{tqsl} ]]>
+			 and tqry is null
 		</where>
-		order by t.wfpk desc
+	   )
 	</select>
+	
+			<!--查询已提取信息数据-->
+	<select id="selectAllExtract" resultType="Integer" parameterType="java.util.HashMap">
+	    select * from OEUSER.TBL_OFFE_EVDI t
+	    where TQRY =#{tqry}  and shbz in('0','15')
+	</select>	
 	<!-- 查询上传违法数据 -->
 	<select id="queryupload" parameterType="java.util.HashMap"
 	resultType="com.cist.illegal.model.TBL_OFFE_EVDI">
@@ -313,6 +378,8 @@
 			<if test="cszfbz!=null">cszfbz=#{cszfbz,jdbcType=VARCHAR},</if>
 			<if test="shbj!=null">cssj=sysdate,</if>
 			<if test="shbj==null">scsj=sysdate,</if>
+			tqry=#{tqry,jdbcType=VARCHAR},
+    tqrq=#{tqrq,jdbcType=VARCHAR}
 		</trim>
 		where wfpk = #{wfpk,jdbcType=INTEGER}
 	</update>
@@ -458,7 +525,7 @@
 	</select>
 	<!-- 添加特殊车辆信息 -->
 	<insert id="addveh" parameterType="java.util.HashMap">
-		insert into c_veh_bus
+		insert into txz_veh_bus
 		<trim prefix="(" suffix=")" suffixOverrides=",">
 			pk,hpzl,hphm,
 			<if test="cllx !=null and cllx !=''">
@@ -644,5 +711,6 @@
 		 select * from OEUSER.TBL_OFFE_EVDI t
 		 where wfpk = #{wfpk}
 		<!-- select * from OEUSER.TBL_OFFE_EVDI where wfpk= -->
-	</select>        
+	</select>  
+	
 </mapper>

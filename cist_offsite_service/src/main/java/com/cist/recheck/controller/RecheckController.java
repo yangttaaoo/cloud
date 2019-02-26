@@ -225,6 +225,9 @@ public class RecheckController {
 		PageInfo pinfo = new PageInfo();
 		pinfo.setPageNum(Integer.parseInt(map.get("currentPage").toString()));
 		pinfo.setPageSize(Integer.parseInt(map.get("pageSize").toString()));
+		if("1".equals(map.get("tqFlag"))) {
+			Integer tiqu = recheckService.tiqu(map);	
+		}
 		PageInfo<TblOffeEvdiInfo> pageinfo = (PageInfo<TblOffeEvdiInfo>)recheckService.selectByConditionpageList(map,pinfo);
 		return pageinfo;
 	}

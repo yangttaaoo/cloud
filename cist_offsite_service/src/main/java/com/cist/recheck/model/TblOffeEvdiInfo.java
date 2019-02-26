@@ -232,6 +232,42 @@ public class TblOffeEvdiInfo implements Serializable {
 	
 	private String qzbfqzName;// 报废日期
 	private String ztName;// 车辆状态
+	
+private String tqry;//提取人员pk
+	
+
+	private String tqrq;//提取日期 开始时间-结束时间
+	
+	private String hphmlhy;//号牌号码六合一
+	
+	private String hpzllhy;//号牌种类六合一
+	
+	private String clysName;//车辆信息的颜色名称 用于对比与车管库信息颜色是否一致
+	
+	private String hpzllhyName;//六合一号牌种类名称
+	
+
+	public String getHpzllhyName() {
+		if(hpzllhy!=null) {
+			hpzllhyName = SysTempStoreUtils.getFcName(SysBaseDataCode.SYS_HPZL, hpzllhy);
+		}
+		return hpzllhyName;
+	}
+
+	public void setHpzllhyName(String hpzllhyName) {
+		this.hpzllhyName = hpzllhyName;
+	}
+
+	public String getClysName() {
+		if(csys!=null) {
+			clysName = SysTempStoreUtils.getFcName(SysBaseDataCode.SYS_CSYS, csys);
+		}
+		return clysName;
+	}
+
+	public void setClysName(String clysName) {
+		this.clysName = clysName;
+	}
 
 	public Long getWfpk() {
 		return wfpk;
@@ -1189,4 +1225,37 @@ public class TblOffeEvdiInfo implements Serializable {
 	public void setYsName(String ysName) {
 		this.ysName = ysName;
 	}
+
+	public String getTqry() {
+		return tqry;
+	}
+
+	public void setTqry(String tqry) {
+		this.tqry = tqry;
+	}
+
+	public String getTqrq() {
+		return tqrq;
+	}
+
+	public void setTqrq(String tqrq) {
+		this.tqrq = tqrq;
+	}
+
+	public String getHphmlhy() {
+		return hphmlhy;
+	}
+
+	public void setHphmlhy(String hphmlhy) {
+		this.hphmlhy = hphmlhy;
+	}
+
+	public String getHpzllhy() {
+		return hpzllhy;
+	}
+
+	public void setHpzllhy(String hpzllhy) {
+		this.hpzllhy = hpzllhy;
+	}
+	
 }

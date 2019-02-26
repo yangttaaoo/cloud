@@ -67,4 +67,10 @@ public interface IllegalMapper {
 	 * @return
 	 */
 	TblOffeEvdiInfo selectRestriction(HashMap<String, Object> map);
+	
+	//根据条件提取固定数量数据
+	public Integer tiqu(HashMap<String,Object> map);
+	
+	// 查询提取数据信息
+	public List<TblOffeEvdiInfo> selectAllExtract(HashMap<String, Object> map);
 }

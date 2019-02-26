@@ -3,14 +3,10 @@ package com.cist.picture.service;
 
 import java.util.HashMap;
 import java.util.List;
-
-import org.apache.ibatis.annotations.Param;
-
 import com.cist.frame.page.PageInfo;
 import com.cist.picture.model.C_plate_type;
 import com.cist.picture.model.Depart_info;
 import com.cist.picture.model.MenuDetails;
-import com.cist.picture.model.Monitorpoint;
 import com.cist.picture.model.Tbl_offe_cate;
 import com.cist.picture.model.Tbl_offe_evdi;
 
@@ -74,5 +70,15 @@ public interface PictureService {
 	public Integer getjintiri(HashMap<String,Object> map);
 	//图片初筛总数
 	public Integer quantity();
+	//查询提取数据信息数量
+	public Integer selectExtract(HashMap<String,Object> map);
+	
+	//分页查询提取数据
+	Object selectAllExtractpageList(HashMap<String,Object> map,PageInfo p);
+	
+	//根据条件提取固定数量数据
+	public Integer tiqu(HashMap<String,Object> map);
+	
+	
 	
 }

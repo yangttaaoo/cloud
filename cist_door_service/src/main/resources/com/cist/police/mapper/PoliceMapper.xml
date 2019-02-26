@@ -91,7 +91,7 @@
      #{sypi_fixedip2,jdbcType=VARCHAR},
      #{sypi_fixedip3,jdbcType=VARCHAR},
      #{sypi_pvp},
-     123456,
+     #{sypi_comp},
      #{sypi_avp}
       )
     </insert>
@@ -194,7 +194,10 @@ where t.sypi_pk=#{sypi_pk}
     </select>
     <update id="updatwpwd" parameterType="java.util.Map">
        UPDATE SYS_POLICE_INFO SET 
-       SYPI_COMP=123456
+       SYPI_COMP=#{sypi_comp}
          WHERE sypi_pk = #{sypi_pk}
     </update>
+    <select id="syspoliceinfo" parameterType="java.util.Map" resultType="com.cist.police.model.Syspoliceinfo">
+    select * from SYS_POLICE_INFO t where t.sypi_pk=#{sypi_pk}
+    </select>
 </mapper>

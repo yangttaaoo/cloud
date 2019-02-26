@@ -64,6 +64,7 @@ import com.cist.illegal.model.TBL_OFFE_EVDI;
 import com.cist.illegal.model.TBL_VERIFY_GROUP;
 import com.cist.illegal.service.IllegalService;
 import com.cist.illegal.util.XwpfTUtil;
+import com.cist.picture.model.Tbl_offe_evdi;
 import com.cist.recheck.model.TblOffeEvdiInfo;
 import com.cist.redlist.model.DeptInfo;
 import com.cist.redlist.service.RedListService;
@@ -141,6 +142,9 @@ public class IllegalController {
 		PageInfo info = new PageInfo();
 		info.setPageNum(Integer.parseInt(map.get("currentPage").toString()));
 		info.setPageSize(Integer.parseInt(map.get("pageSize").toString()));
+		if("1".equals(map.get("tqFlag"))) {
+			Integer tiqu = service.tiqu(map);	
+		}
 		PageInfo<TBL_OFFE_EVDI> list = (PageInfo<TBL_OFFE_EVDI>) service.queryevdipageList(map, info);
 		for (int i = 0; i < list.getList().size(); i++) {
 			if (list.getPageNum() == 1 && list.getPages() > list.getPageNum()) {
@@ -161,12 +165,16 @@ public class IllegalController {
 					list.getList().get(i).setIsnext(1);
 					list.getList().get(i).setIsupper(1);
 				}
-			} else if (list.getTotal() == list.getPageNum() && list.getPageNum() == 1) {
+			} else if (list.getPageNum() == 1&&list.getPages()==1) {
 				// 如果当前页为第一页，且总页数等于1
-				if (list.getPageSize() == 1) {
+				if (list.getList().size()==1) {
 					list.getList().get(i).setIsnext(0);
 					list.getList().get(i).setIsupper(0);
-				} else if (i == 0) {
+				}else if(list.getTotal()==i+1) {
+					list.getList().get(i).setIsnext(0);
+					list.getList().get(i).setIsupper(1);
+				}
+				else if (i == 0) {
 					list.getList().get(i).setIsnext(1);
 					list.getList().get(i).setIsupper(0);
 				} else if (i == list.getList().size() - 1) {

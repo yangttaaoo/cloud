@@ -57,7 +57,12 @@ public class Tbl_offe_evdi implements Serializable{
 	private String csbz;//初审备注
 	private String resve;//行政区别
 	private String cdbh;//车道编号
+	private String tqry;//提取人员pk
+	private String tqrq;//提取日期 开始时间-结束时间
 	
+	private String hphmlhy;//号牌号码六合一
+	
+	private String hpzllhy;//号牌种类六合一
 	public String getWfdz() {
 		return wfdz;
 	}
@@ -487,6 +492,38 @@ public class Tbl_offe_evdi implements Serializable{
 
 	public Tbl_offe_evdi() {
 		super();
+	}
+
+	public String getTqry() {
+		return tqry;
+	}
+
+	public void setTqry(String tqry) {
+		this.tqry = tqry;
+	}
+
+	public String getTqrq() {
+		return tqrq;
+	}
+
+	public void setTqrq(String tqrq) {
+		this.tqrq = tqrq;
+	}
+
+	public String getHphmlhy() {
+		return hphmlhy;
+	}
+
+	public void setHphmlhy(String hphmlhy) {
+		this.hphmlhy = hphmlhy;
+	}
+
+	public String getHpzllhy() {
+		return hpzllhy;
+	}
+
+	public void setHpzllhy(String hpzllhy) {
+		this.hpzllhy = hpzllhy;
 	}
 	
 }

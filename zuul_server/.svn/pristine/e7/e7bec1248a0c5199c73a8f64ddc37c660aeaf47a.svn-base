@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+
+<script type="text/javascript" src="jquery-1.7.1.min.js"></script>
+</head>
+<script type="text/javascript"> 
+$(function(){ 
+	$.ajax({
+	    type: "GET",
+	    url: "http://192.168.0.111:8769/service-dy/springboot/index",
+	    data: {},
+	    dataType: "json",
+	    success: function(data){
+	    	$('#text').val(data);
+	}
+	});
+	
+});
+
+
+</script>
+
+<body>
+  <input id="text" type="text" width="100" />
+</body>
+</html>

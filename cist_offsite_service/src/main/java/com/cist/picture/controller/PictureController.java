@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cist.offsite.invalidtrial.model.TblOffeEvdiInfo;
 import com.cist.picture.model.C_plate_type;
 import com.cist.picture.model.Depart_info;
 import com.cist.picture.model.MenuDetails;
@@ -64,20 +65,26 @@ public class PictureController {
 	@RequestMapping("querylist")
 	public PageInfo<Tbl_offe_evdi> querylist(@RequestBody HashMap<String,Object> modelMap ){
 		//获取分页数据位置,每页显示16条数据
-		modelMap.put("hphm", modelMap.get("hphm").toString().toUpperCase());
-		
+		if(modelMap.get("hphm")!=null&&!"".equals(modelMap.get("hphm").toString())) {
+			modelMap.put("hphm", modelMap.get("hphm").toString().toUpperCase());
+		}
 		String pageSize=modelMap.get("pageSize").toString();
-		String sbbh=modelMap.get("sbbh").toString();
-		if(null!=sbbh&&sbbh!="") {
-			sbbh=sbbh.substring(1, sbbh.length()-1);
-			if(!sbbh.equals("")) {
-				String sbb[]=sbbh.split(",");
-				modelMap.put("sbbh", sbb);
-			}else {
-				modelMap.put("sbbh", null);
-			}
+		if(modelMap.get("sbbh")!=null&&!"".equals(modelMap.get("sbbh").toString())) {
+			String sbbh=modelMap.get("sbbh").toString();
+			if(null!=sbbh&&sbbh!="") {
+				sbbh=sbbh.substring(1, sbbh.length()-1);
+				if(!sbbh.equals("")) {
+					String sbb[]=sbbh.split(",");
+					modelMap.put("sbbh", sbb);
+				}else {
+					modelMap.put("sbbh", null);
+				}
+			}	
 		}
  		PageHelper.startPage(Integer.valueOf(modelMap.get("currentPage").toString()), Integer.valueOf(pageSize), true);
+    	if("1".equals(modelMap.get("tqFlag"))) {
+			Integer tiqu = service.tiqu(modelMap);
+		}
 		List<Tbl_offe_evdi> list= service.querylistpageList(modelMap);
 		PageInfo<Tbl_offe_evdi> pageinfo=new PageInfo<Tbl_offe_evdi>(list,10);
 		 return pageinfo;
@@ -424,5 +431,31 @@ public class PictureController {
 			depart_info.setChildren(list);
 		}
 		return departinfo;
+	}
+	
+	/***
+	 * 查询未审核并且已提取数据的数量
+	 * @return
+	 */
+	@RequestMapping("selectExtract")
+	public Integer selectExtract(@RequestBody HashMap<String,Object> map){
+		Integer selectExtract = service.selectExtract(map);
+		
+		return selectExtract;
+	}
+	
+	/***
+	 * 提取固定数量的数据
+	 * @return
+	 */
+	@RequestMapping("tiqu")
+	public com.cist.frame.page.PageInfo<Tbl_offe_evdi> selectAllExtract(@RequestBody HashMap<String,Object> map){
+		com.cist.frame.page.PageInfo pinfo = new com.cist.frame.page.PageInfo();
+	    pinfo.setPageNum(Integer.parseInt(map.get("currentPage").toString()));
+		pinfo.setPageSize(Integer.parseInt(map.get("pageSize").toString()));
+		
+		com.cist.frame.page.PageInfo<Tbl_offe_evdi> pageinfo = (com.cist.frame.page.PageInfo<Tbl_offe_evdi>)service.selectAllExtractpageList(map,pinfo);
+		return pageinfo;
+		
 	}
 }

@@ -126,7 +126,7 @@
 			<if test=" qwyf != null and qwyf !=''">
 				<![CDATA[ and to_date(to_char(report_period_type,'yyyy-mm'),'yyyy-mm') = to_date(#{qwyf},'yyyy-mm') ]]>
 			</if>
-    	<![CDATA[ and instr(PERSONNEL_LIST_STR,#{report_person_id},1,1)<>0 or instr(PERSONNEL_LIST_STR,#{report_person_id},1,1)<>0]]>
+    	<![CDATA[ and instr(PERSONNEL_LIST_STR,#{report_person_id},1,1)<>0 ]]>
 		</where>
 		order by t.pk_id asc
 	</select>
@@ -262,7 +262,7 @@
 			<if test=" jssj != null and jssj !=''">
 				<![CDATA[ and report_period_type <= to_date(#{jssj},'yyyy-mm-dd') ]]>
 			</if>
-			<![CDATA[ and instr(PERSONNEL_LIST_STR,#{report_person_id},1,1)<>0 or instr(PERSONNEL_LIST_STR,#{report_person_id},1,1)<>0]]>
+			<![CDATA[ and instr(PERSONNEL_LIST_STR,#{report_person_id},1,1)<>0]]>
 		</where>
 	</select>
 

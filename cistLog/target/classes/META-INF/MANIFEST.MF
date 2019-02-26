@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Implementation-Title: cist-log-service
 Implementation-Version: 1.0.0-SNAPSHOT
-Built-By: 12850
+Built-By: YT
 Implementation-Vendor-Id: com.cist.log
 Build-Jdk: 1.8.0_171
 Implementation-URL: http://projects.spring.io/spring-boot/cist-log-ser

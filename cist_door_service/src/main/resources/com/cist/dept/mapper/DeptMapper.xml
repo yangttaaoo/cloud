@@ -64,7 +64,8 @@ select t.dept_pk,t.dept_code,t.dept_name as name,t.DEPT_SUPERIOR from sys_depart
      sydt_pk, 
      dept_head,
      dept_tel,
-     dept_addr
+     dept_addr,
+     geo_spatial
          )
      VALUES
       (
@@ -76,7 +77,8 @@ select t.dept_pk,t.dept_code,t.dept_name as name,t.DEPT_SUPERIOR from sys_depart
      #{sydt_pk}, 
      #{dept_head,jdbcType=VARCHAR},
      #{dept_tel,jdbcType=VARCHAR},
-     #{dept_addr,jdbcType=VARCHAR}
+     #{dept_addr,jdbcType=VARCHAR},
+     #{geo_spatial,jdbcType=CLOB}
       )
    </insert>
    <select id="selectdept_code" resultType="int" parameterType="java.util.Map">
@@ -99,7 +101,8 @@ select t.dept_pk,t.dept_code,t.dept_name as name,t.DEPT_SUPERIOR from sys_depart
      sydt_pk=#{sydt_pk,jdbcType=VARCHAR}, 
      dept_head=#{dept_head,jdbcType=VARCHAR},
      dept_tel=#{dept_tel,jdbcType=VARCHAR},
-     dept_addr=#{dept_addr,jdbcType=VARCHAR}
+     dept_addr=#{dept_addr,jdbcType=VARCHAR},
+      geo_spatial= #{geo_spatial,jdbcType=CLOB}
     <where>
     		 dept_pk=#{dept_pk}
     </where>
