@@ -39,7 +39,7 @@ and HPHM not like '川'||'%'
      and SHBZ ='0'
    </select>
 	<insert id="insertBus">
-		insert into C_VEH_BUS
+		insert into TXZ_VEH_BUS
 		<trim prefix="(" suffixOverrides="," suffix=")">
 			PK,
 			HPZL,
@@ -330,7 +330,7 @@ and HPHM not like '川'||'%'
   
   		
   		<insert id="saveVehBus" parameterType="java.util.HashMap">
-		  insert into c_veh_bus
+		  insert into txz_veh_bus
 		  (
 		  PK,
 		  HPZL,

@@ -121,7 +121,7 @@
    select t.syci_value from SYS_CONFIG t where t.syci_pk=6
    </select>
 	<insert id="insertBus">
-		insert into C_VEH_BUS
+		insert into TXZ_VEH_BUS
 		<trim prefix="(" suffixOverrides="," suffix=")">
 			PK,
 			HPZL,

@@ -24,4 +24,16 @@
 		<update id="updateOffEdv" parameterType="com.cist.illegalUpload.domain.Tbloffeevdi">
 	    update oeuser.TBL_OFFE_EVDI t set t.shbz = #{SHBZ},t.scsj=sysdate,t.scdm=#{SCDM} where t.WFPK = #{WFPK}
 	</update>
+	<select id="cjgjkfs" resultType="int">
+	select t.syci_value  from SYS_CONFIG t where t.syci_key='CJGJKFS'
+	</select>
+	<select id="vehicledate" resultType="com.cist.illegalUpload.domain.Vehicle" parameterType="java.util.HashMap">
+		select * from INFUSER.MV_VEH t where t.hphm=#{hphm} and t.hpzl=#{hpzl}
+	</select>
+	<select id="checkOffedvi" resultType="com.cist.illegalUpload.domain.Tbloffeevdi" parameterType="java.util.HashMap">
+		select * from oeuser.TBL_OFFE_EVDI t where t.wfpk=#{WFPK}
+	</select> 
+	<update id="updateOffEdv1" parameterType="com.cist.illegalUpload.domain.Tbloffeevdi">
+	    update oeuser.TBL_OFFE_EVDI t set t.shbz = #{SHBZ,jdbcType=VARCHAR},t.scsj=sysdate,t.scdm=#{SCDM,jdbcType=VARCHAR},t.hphm=#{HPHM,jdbcType=VARCHAR},t.wfxw=#{WFXW,jdbcType=VARCHAR},t.hpzl=#{HPZL,jdbcType=VARCHAR} where t.WFPK = #{WFPK}
+	</update>
 </mapper>
