@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sbzc.mappers.SssbEquipmentPcMapper" >
+  <resultMap id="BaseResultMap" type="com.sbzc.model.SssbEquipmentPc" >
+    <id column="FK_EQUIPMENT_ID" property="fkEquipmentId" jdbcType="DECIMAL" />
+    <result column="USER_NAME" property="userName" jdbcType="VARCHAR" />
+    <result column="CONTACT_NUMBER" property="contactNumber" jdbcType="VARCHAR" />
+    <result column="FK_DEPT_ID" property="fkDeptId" jdbcType="DECIMAL" />
+    <result column="DEPT_CONTACT_NUMBER" property="deptContactNumber" jdbcType="VARCHAR" />
+    <result column="EQUIPMENT_MODEL" property="equipmentModel" jdbcType="VARCHAR" />
+    <result column="IP_ADDR" property="ipAddr" jdbcType="VARCHAR" />
+    <result column="MAC_ADDR" property="macAddr" jdbcType="VARCHAR" />
+    <result column="DESCRIPTION" property="description" jdbcType="VARCHAR" />
+    <result column="SUPPLIER" property="supplier" jdbcType="VARCHAR" />
+    <result column="SUPPLIER_CONTACT_NUMBER" property="supplierContactNumber" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    FK_EQUIPMENT_ID, USER_NAME, CONTACT_NUMBER, FK_DEPT_ID, DEPT_CONTACT_NUMBER, EQUIPMENT_MODEL, 
+    IP_ADDR, MAC_ADDR, DESCRIPTION, SUPPLIER, SUPPLIER_CONTACT_NUMBER
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.math.BigDecimal" >
+    select 
+    <include refid="Base_Column_List" />
+    from SSSB_EQUIPMENT_PC
+    where FK_EQUIPMENT_ID = #{fkEquipmentId,jdbcType=DECIMAL}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.math.BigDecimal" >
+    delete from SSSB_EQUIPMENT_PC
+    where FK_EQUIPMENT_ID = #{fkEquipmentId,jdbcType=DECIMAL}
+  </delete>
+  <insert id="insert" parameterType="com.sbzc.model.SssbEquipmentPc" >
+    insert into SSSB_EQUIPMENT_PC (FK_EQUIPMENT_ID, USER_NAME, CONTACT_NUMBER, 
+      FK_DEPT_ID, DEPT_CONTACT_NUMBER, EQUIPMENT_MODEL, 
+      IP_ADDR, MAC_ADDR, DESCRIPTION, 
+      SUPPLIER, SUPPLIER_CONTACT_NUMBER)
+    values (#{fkEquipmentId,jdbcType=DECIMAL}, #{userName,jdbcType=VARCHAR}, #{contactNumber,jdbcType=VARCHAR}, 
+      #{fkDeptId,jdbcType=DECIMAL}, #{deptContactNumber,jdbcType=VARCHAR}, #{equipmentModel,jdbcType=VARCHAR}, 
+      #{ipAddr,jdbcType=VARCHAR}, #{macAddr,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, 
+      #{supplier,jdbcType=VARCHAR}, #{supplierContactNumber,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.sbzc.model.SssbEquipmentPc" >
+    insert into SSSB_EQUIPMENT_PC
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="fkEquipmentId != null" >
+        FK_EQUIPMENT_ID,
+      </if>
+      <if test="userName != null" >
+        USER_NAME,
+      </if>
+      <if test="contactNumber != null" >
+        CONTACT_NUMBER,
+      </if>
+      <if test="fkDeptId != null" >
+        FK_DEPT_ID,
+      </if>
+      <if test="deptContactNumber != null" >
+        DEPT_CONTACT_NUMBER,
+      </if>
+      <if test="equipmentModel != null" >
+        EQUIPMENT_MODEL,
+      </if>
+      <if test="ipAddr != null" >
+        IP_ADDR,
+      </if>
+      <if test="macAddr != null" >
+        MAC_ADDR,
+      </if>
+      <if test="description != null" >
+        DESCRIPTION,
+      </if>
+      <if test="supplier != null" >
+        SUPPLIER,
+      </if>
+      <if test="supplierContactNumber != null" >
+        SUPPLIER_CONTACT_NUMBER,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="fkEquipmentId != null" >
+        #{fkEquipmentId,jdbcType=DECIMAL},
+      </if>
+      <if test="userName != null" >
+        #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="contactNumber != null" >
+        #{contactNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="fkDeptId != null" >
+        #{fkDeptId,jdbcType=DECIMAL},
+      </if>
+      <if test="deptContactNumber != null" >
+        #{deptContactNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="equipmentModel != null" >
+        #{equipmentModel,jdbcType=VARCHAR},
+      </if>
+      <if test="ipAddr != null" >
+        #{ipAddr,jdbcType=VARCHAR},
+      </if>
+      <if test="macAddr != null" >
+        #{macAddr,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null" >
+        #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="supplier != null" >
+        #{supplier,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierContactNumber != null" >
+        #{supplierContactNumber,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.sbzc.model.SssbEquipmentPc" >
+    update SSSB_EQUIPMENT_PC
+    <set >
+      <if test="userName != null" >
+        USER_NAME = #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="contactNumber != null" >
+        CONTACT_NUMBER = #{contactNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="fkDeptId != null" >
+        FK_DEPT_ID = #{fkDeptId,jdbcType=DECIMAL},
+      </if>
+      <if test="deptContactNumber != null" >
+        DEPT_CONTACT_NUMBER = #{deptContactNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="equipmentModel != null" >
+        EQUIPMENT_MODEL = #{equipmentModel,jdbcType=VARCHAR},
+      </if>
+      <if test="ipAddr != null" >
+        IP_ADDR = #{ipAddr,jdbcType=VARCHAR},
+      </if>
+      <if test="macAddr != null" >
+        MAC_ADDR = #{macAddr,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null" >
+        DESCRIPTION = #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="supplier != null" >
+        SUPPLIER = #{supplier,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierContactNumber != null" >
+        SUPPLIER_CONTACT_NUMBER = #{supplierContactNumber,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where FK_EQUIPMENT_ID = #{fkEquipmentId,jdbcType=DECIMAL}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.sbzc.model.SssbEquipmentPc" >
+    update SSSB_EQUIPMENT_PC
+    set USER_NAME = #{userName,jdbcType=VARCHAR},
+      CONTACT_NUMBER = #{contactNumber,jdbcType=VARCHAR},
+      FK_DEPT_ID = #{fkDeptId,jdbcType=DECIMAL},
+      DEPT_CONTACT_NUMBER = #{deptContactNumber,jdbcType=VARCHAR},
+      EQUIPMENT_MODEL = #{equipmentModel,jdbcType=VARCHAR},
+      IP_ADDR = #{ipAddr,jdbcType=VARCHAR},
+      MAC_ADDR = #{macAddr,jdbcType=VARCHAR},
+      DESCRIPTION = #{description,jdbcType=VARCHAR},
+      SUPPLIER = #{supplier,jdbcType=VARCHAR},
+      SUPPLIER_CONTACT_NUMBER = #{supplierContactNumber,jdbcType=VARCHAR}
+    where FK_EQUIPMENT_ID = #{fkEquipmentId,jdbcType=DECIMAL}
+  </update>
+</mapper>

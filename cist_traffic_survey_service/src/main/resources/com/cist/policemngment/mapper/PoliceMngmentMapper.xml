@@ -876,6 +876,10 @@
 			<if test="car_purpose != null and car_purpose !=''">
 				car_purpose = #{car_purpose},
 			</if>
+			
+			<if test="device_code != null and device_code !=''">
+				device_code = #{device_code},
+			</if>
 		</trim>
 		where pk_id = #{pk_id,jdbcType=DECIMAL}
 	</update>

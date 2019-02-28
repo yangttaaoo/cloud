@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cist.devmanagement.mapper.DevManagementMapper" >
+ <!-- 查询采集设备 -->
+ <select id="list" resultMap="BaseResultMap" parameterType="java.util.HashMap" >
+    select *
+    from C_ROAD_SEGITEM t
+    <where>
+	<if test="lkdm !=null and lkdm !='' and lkdm !='null'">
+		and lkdm like '%'||#{lkdm}||'%'
+	</if>
+	<if test="lkmc !=null and lkmc !='' and lkmc !='null'">
+     and lkmc like '%'||#{lkmc}||'%'
+	</if> 
+	<if test="dldm !=null and dldm !='' ">
+     and dldm =#{dldm}
+	</if> 
+	
+    </where>
+    order by t.pk desc
+    
+  </select>
+</mapper>

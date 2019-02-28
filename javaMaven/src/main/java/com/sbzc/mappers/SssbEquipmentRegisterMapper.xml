@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sbzc.mappers.SssbEquipmentRegisterMapper" >
+  <resultMap id="BaseResultMap" type="com.sbzc.model.SssbEquipmentRegister" >
+    <id column="PK_ID" property="pkId" jdbcType="DECIMAL" />
+    <result column="EQUIPMENT_TYPE" property="equipmentType" jdbcType="VARCHAR" />
+    <result column="EQUIPMENT_NAME" property="equipmentName" jdbcType="VARCHAR" />
+    <result column="DAC_IP" property="dacIp" jdbcType="VARCHAR" />
+    <result column="EQUIPMENT_AADR" property="equipmentAadr" jdbcType="VARCHAR" />
+    <result column="STATUS" property="status" jdbcType="CHAR" />
+    <result column="REASONS" property="reasons" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    PK_ID, EQUIPMENT_TYPE, EQUIPMENT_NAME, DAC_IP, EQUIPMENT_AADR, STATUS, REASONS
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.math.BigDecimal" >
+    select 
+    <include refid="Base_Column_List" />
+    from SSSB_EQUIPMENT_REGISTER
+    where PK_ID = #{pkId,jdbcType=DECIMAL}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.math.BigDecimal" >
+    delete from SSSB_EQUIPMENT_REGISTER
+    where PK_ID = #{pkId,jdbcType=DECIMAL}
+  </delete>
+  <insert id="insert" parameterType="com.sbzc.model.SssbEquipmentRegister" >
+    insert into SSSB_EQUIPMENT_REGISTER (PK_ID, EQUIPMENT_TYPE, EQUIPMENT_NAME, 
+      DAC_IP, EQUIPMENT_AADR, STATUS, 
+      REASONS)
+    values (#{pkId,jdbcType=DECIMAL}, #{equipmentType,jdbcType=VARCHAR}, #{equipmentName,jdbcType=VARCHAR}, 
+      #{dacIp,jdbcType=VARCHAR}, #{equipmentAadr,jdbcType=VARCHAR}, #{status,jdbcType=CHAR}, 
+      #{reasons,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.sbzc.model.SssbEquipmentRegister" >
+    insert into SSSB_EQUIPMENT_REGISTER
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="pkId != null" >
+        PK_ID,
+      </if>
+      <if test="equipmentType != null" >
+        EQUIPMENT_TYPE,
+      </if>
+      <if test="equipmentName != null" >
+        EQUIPMENT_NAME,
+      </if>
+      <if test="dacIp != null" >
+        DAC_IP,
+      </if>
+      <if test="equipmentAadr != null" >
+        EQUIPMENT_AADR,
+      </if>
+      <if test="status != null" >
+        STATUS,
+      </if>
+      <if test="reasons != null" >
+        REASONS,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="pkId != null" >
+        #{pkId,jdbcType=DECIMAL},
+      </if>
+      <if test="equipmentType != null" >
+        #{equipmentType,jdbcType=VARCHAR},
+      </if>
+      <if test="equipmentName != null" >
+        #{equipmentName,jdbcType=VARCHAR},
+      </if>
+      <if test="dacIp != null" >
+        #{dacIp,jdbcType=VARCHAR},
+      </if>
+      <if test="equipmentAadr != null" >
+        #{equipmentAadr,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=CHAR},
+      </if>
+      <if test="reasons != null" >
+        #{reasons,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.sbzc.model.SssbEquipmentRegister" >
+    update SSSB_EQUIPMENT_REGISTER
+    <set >
+      <if test="equipmentType != null" >
+        EQUIPMENT_TYPE = #{equipmentType,jdbcType=VARCHAR},
+      </if>
+      <if test="equipmentName != null" >
+        EQUIPMENT_NAME = #{equipmentName,jdbcType=VARCHAR},
+      </if>
+      <if test="dacIp != null" >
+        DAC_IP = #{dacIp,jdbcType=VARCHAR},
+      </if>
+      <if test="equipmentAadr != null" >
+        EQUIPMENT_AADR = #{equipmentAadr,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        STATUS = #{status,jdbcType=CHAR},
+      </if>
+      <if test="reasons != null" >
+        REASONS = #{reasons,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where PK_ID = #{pkId,jdbcType=DECIMAL}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.sbzc.model.SssbEquipmentRegister" >
+    update SSSB_EQUIPMENT_REGISTER
+    set EQUIPMENT_TYPE = #{equipmentType,jdbcType=VARCHAR},
+      EQUIPMENT_NAME = #{equipmentName,jdbcType=VARCHAR},
+      DAC_IP = #{dacIp,jdbcType=VARCHAR},
+      EQUIPMENT_AADR = #{equipmentAadr,jdbcType=VARCHAR},
+      STATUS = #{status,jdbcType=CHAR},
+      REASONS = #{reasons,jdbcType=VARCHAR}
+    where PK_ID = #{pkId,jdbcType=DECIMAL}
+  </update>
+</mapper>

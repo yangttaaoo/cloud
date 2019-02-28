@@ -30,9 +30,6 @@
 			<if test=" fzjg != null and fzjg !='' ">
 			fzjg = #{fzjg},
 			</if>
-			<if test=" clytName != null and clytName !='' ">
-			clyt = #{clytName},
-			</if>
 			<if test=" zsxxdz != null and zsxxdz !='' ">
 			zsxxdz = #{zsxxdz},
 			</if>

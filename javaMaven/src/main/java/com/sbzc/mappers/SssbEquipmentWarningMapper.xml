@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sbzc.mappers.SssbEquipmentWarningMapper" >
+  <resultMap id="BaseResultMap" type="com.sbzc.model.SssbEquipmentWarning" >
+    <id column="PK_ID" property="pkId" jdbcType="DECIMAL" />
+    <result column="WARNING_TYPE" property="warningType" jdbcType="CHAR" />
+    <result column="SOURCE_IP" property="sourceIp" jdbcType="VARCHAR" />
+    <result column="SOURCE_MAC" property="sourceMac" jdbcType="VARCHAR" />
+    <result column="SOURCE_PROT" property="sourceProt" jdbcType="VARCHAR" />
+    <result column="DEST_IP" property="destIp" jdbcType="VARCHAR" />
+    <result column="DEST_PORT" property="destPort" jdbcType="VARCHAR" />
+    <result column="DAC_IP" property="dacIp" jdbcType="VARCHAR" />
+    <result column="IFNAME-INSIDE" property="ifnameInside" jdbcType="VARCHAR" />
+    <result column="PROTOCOL" property="protocol" jdbcType="VARCHAR" />
+    <result column="TERMINAL_TYPE" property="terminalType" jdbcType="VARCHAR" />
+    <result column="TERMINAL_NAME" property="terminalName" jdbcType="VARCHAR" />
+    <result column="TERMINAL_LOCATIONT" property="terminalLocationt" jdbcType="VARCHAR" />
+    <result column="WARNING_TIME" property="warningTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    PK_ID, WARNING_TYPE, SOURCE_IP, SOURCE_MAC, SOURCE_PROT, DEST_IP, DEST_PORT, DAC_IP, 
+    IFNAME-INSIDE, PROTOCOL, TERMINAL_TYPE, TERMINAL_NAME, TERMINAL_LOCATIONT, WARNING_TIME
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.math.BigDecimal" >
+    select 
+    <include refid="Base_Column_List" />
+    from SSSB_EQUIPMENT_WARNING
+    where PK_ID = #{pkId,jdbcType=DECIMAL}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.math.BigDecimal" >
+    delete from SSSB_EQUIPMENT_WARNING
+    where PK_ID = #{pkId,jdbcType=DECIMAL}
+  </delete>
+  <insert id="insert" parameterType="com.sbzc.model.SssbEquipmentWarning" >
+    insert into SSSB_EQUIPMENT_WARNING (PK_ID, WARNING_TYPE, SOURCE_IP, 
+      SOURCE_MAC, SOURCE_PROT, DEST_IP, 
+      DEST_PORT, DAC_IP, IFNAME-INSIDE, 
+      PROTOCOL, TERMINAL_TYPE, TERMINAL_NAME, 
+      TERMINAL_LOCATIONT, WARNING_TIME)
+    values (#{pkId,jdbcType=DECIMAL}, #{warningType,jdbcType=CHAR}, #{sourceIp,jdbcType=VARCHAR}, 
+      #{sourceMac,jdbcType=VARCHAR}, #{sourceProt,jdbcType=VARCHAR}, #{destIp,jdbcType=VARCHAR}, 
+      #{destPort,jdbcType=VARCHAR}, #{dacIp,jdbcType=VARCHAR}, #{ifnameInside,jdbcType=VARCHAR}, 
+      #{protocol,jdbcType=VARCHAR}, #{terminalType,jdbcType=VARCHAR}, #{terminalName,jdbcType=VARCHAR}, 
+      #{terminalLocationt,jdbcType=VARCHAR}, #{warningTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.sbzc.model.SssbEquipmentWarning" >
+    insert into SSSB_EQUIPMENT_WARNING
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="pkId != null" >
+        PK_ID,
+      </if>
+      <if test="warningType != null" >
+        WARNING_TYPE,
+      </if>
+      <if test="sourceIp != null" >
+        SOURCE_IP,
+      </if>
+      <if test="sourceMac != null" >
+        SOURCE_MAC,
+      </if>
+      <if test="sourceProt != null" >
+        SOURCE_PROT,
+      </if>
+      <if test="destIp != null" >
+        DEST_IP,
+      </if>
+      <if test="destPort != null" >
+        DEST_PORT,
+      </if>
+      <if test="dacIp != null" >
+        DAC_IP,
+      </if>
+      <if test="ifnameInside != null" >
+        IFNAME-INSIDE,
+      </if>
+      <if test="protocol != null" >
+        PROTOCOL,
+      </if>
+      <if test="terminalType != null" >
+        TERMINAL_TYPE,
+      </if>
+      <if test="terminalName != null" >
+        TERMINAL_NAME,
+      </if>
+      <if test="terminalLocationt != null" >
+        TERMINAL_LOCATIONT,
+      </if>
+      <if test="warningTime != null" >
+        WARNING_TIME,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="pkId != null" >
+        #{pkId,jdbcType=DECIMAL},
+      </if>
+      <if test="warningType != null" >
+        #{warningType,jdbcType=CHAR},
+      </if>
+      <if test="sourceIp != null" >
+        #{sourceIp,jdbcType=VARCHAR},
+      </if>
+      <if test="sourceMac != null" >
+        #{sourceMac,jdbcType=VARCHAR},
+      </if>
+      <if test="sourceProt != null" >
+        #{sourceProt,jdbcType=VARCHAR},
+      </if>
+      <if test="destIp != null" >
+        #{destIp,jdbcType=VARCHAR},
+      </if>
+      <if test="destPort != null" >
+        #{destPort,jdbcType=VARCHAR},
+      </if>
+      <if test="dacIp != null" >
+        #{dacIp,jdbcType=VARCHAR},
+      </if>
+      <if test="ifnameInside != null" >
+        #{ifnameInside,jdbcType=VARCHAR},
+      </if>
+      <if test="protocol != null" >
+        #{protocol,jdbcType=VARCHAR},
+      </if>
+      <if test="terminalType != null" >
+        #{terminalType,jdbcType=VARCHAR},
+      </if>
+      <if test="terminalName != null" >
+        #{terminalName,jdbcType=VARCHAR},
+      </if>
+      <if test="terminalLocationt != null" >
+        #{terminalLocationt,jdbcType=VARCHAR},
+      </if>
+      <if test="warningTime != null" >
+        #{warningTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.sbzc.model.SssbEquipmentWarning" >
+    update SSSB_EQUIPMENT_WARNING
+    <set >
+      <if test="warningType != null" >
+        WARNING_TYPE = #{warningType,jdbcType=CHAR},
+      </if>
+      <if test="sourceIp != null" >
+        SOURCE_IP = #{sourceIp,jdbcType=VARCHAR},
+      </if>
+      <if test="sourceMac != null" >
+        SOURCE_MAC = #{sourceMac,jdbcType=VARCHAR},
+      </if>
+      <if test="sourceProt != null" >
+        SOURCE_PROT = #{sourceProt,jdbcType=VARCHAR},
+      </if>
+      <if test="destIp != null" >
+        DEST_IP = #{destIp,jdbcType=VARCHAR},
+      </if>
+      <if test="destPort != null" >
+        DEST_PORT = #{destPort,jdbcType=VARCHAR},
+      </if>
+      <if test="dacIp != null" >
+        DAC_IP = #{dacIp,jdbcType=VARCHAR},
+      </if>
+      <if test="ifnameInside != null" >
+        IFNAME-INSIDE = #{ifnameInside,jdbcType=VARCHAR},
+      </if>
+      <if test="protocol != null" >
+        PROTOCOL = #{protocol,jdbcType=VARCHAR},
+      </if>
+      <if test="terminalType != null" >
+        TERMINAL_TYPE = #{terminalType,jdbcType=VARCHAR},
+      </if>
+      <if test="terminalName != null" >
+        TERMINAL_NAME = #{terminalName,jdbcType=VARCHAR},
+      </if>
+      <if test="terminalLocationt != null" >
+        TERMINAL_LOCATIONT = #{terminalLocationt,jdbcType=VARCHAR},
+      </if>
+      <if test="warningTime != null" >
+        WARNING_TIME = #{warningTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where PK_ID = #{pkId,jdbcType=DECIMAL}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.sbzc.model.SssbEquipmentWarning" >
+    update SSSB_EQUIPMENT_WARNING
+    set WARNING_TYPE = #{warningType,jdbcType=CHAR},
+      SOURCE_IP = #{sourceIp,jdbcType=VARCHAR},
+      SOURCE_MAC = #{sourceMac,jdbcType=VARCHAR},
+      SOURCE_PROT = #{sourceProt,jdbcType=VARCHAR},
+      DEST_IP = #{destIp,jdbcType=VARCHAR},
+      DEST_PORT = #{destPort,jdbcType=VARCHAR},
+      DAC_IP = #{dacIp,jdbcType=VARCHAR},
+      IFNAME-INSIDE = #{ifnameInside,jdbcType=VARCHAR},
+      PROTOCOL = #{protocol,jdbcType=VARCHAR},
+      TERMINAL_TYPE = #{terminalType,jdbcType=VARCHAR},
+      TERMINAL_NAME = #{terminalName,jdbcType=VARCHAR},
+      TERMINAL_LOCATIONT = #{terminalLocationt,jdbcType=VARCHAR},
+      WARNING_TIME = #{warningTime,jdbcType=TIMESTAMP}
+    where PK_ID = #{pkId,jdbcType=DECIMAL}
+  </update>
+</mapper>
