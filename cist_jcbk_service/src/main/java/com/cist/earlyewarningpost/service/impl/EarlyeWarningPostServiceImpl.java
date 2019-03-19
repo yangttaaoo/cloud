@@ -98,7 +98,7 @@ public class EarlyeWarningPostServiceImpl implements EarlyeWarningPostService {
 	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = { Exception.class })
 	public Integer update(HashMap<String, Object> map) {
 		Integer update = mapper.update(map);
-		mapper.insertAccept(map);// 受理信息插入
+		Integer insertAccept = mapper.insertAccept(map);// 受理信息插入
 		// 受理且有效就插入调度信息  并且调度的人员不为空则插入调度信息
 		if ("1".equals(map.get("acceptance_state").toString())&&((ArrayList)map.get("checkList")).size()>0) {
 			Integer insertDispatch = mapper.insertDispatch(map);// 调度信息插入
@@ -107,7 +107,7 @@ public class EarlyeWarningPostServiceImpl implements EarlyeWarningPostService {
 			}
 			
 		}
-		return update;
+		return insertAccept;
 	}
 
 	@Override
@@ -260,6 +260,11 @@ public class EarlyeWarningPostServiceImpl implements EarlyeWarningPostService {
 	@Override
 	public List<Qw_report> selectQwbb(HashMap<String, Object> map) {
 		return mapper.selectQwbb(map);
+	}
+
+	@Override
+	public List<JcbkControlBayonet> selectBkDev(HashMap<String, Object> map) {
+		return mapper.selectBkDev(map);
 	}
 
 }

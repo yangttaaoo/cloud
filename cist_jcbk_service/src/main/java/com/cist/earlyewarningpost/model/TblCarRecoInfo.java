@@ -101,6 +101,8 @@ public class TblCarRecoInfo {
 	private BigDecimal longitude;//经度
 	
 	private BigDecimal latitude;//纬度
+	
+	private String xsdd_name;//行驶地点名称  道路名称  + 方向+车道
     
     public Long getGcpk() {
         return gcpk;
@@ -489,5 +491,14 @@ public class TblCarRecoInfo {
 
 	public void setLatitude(BigDecimal latitude) {
 		this.latitude = latitude;
+	}
+
+	public String getXsdd_name() {
+		xsdd_name = (roim_name==null?"未知":roim_name)+(cdfx==null?"":","+cdfx)+(cdbh==null?"":",第"+cdbh+"车道");
+		return xsdd_name;
+	}
+
+	public void setXsdd_name(String xsdd_name) {
+		this.xsdd_name = xsdd_name;
 	}
 }

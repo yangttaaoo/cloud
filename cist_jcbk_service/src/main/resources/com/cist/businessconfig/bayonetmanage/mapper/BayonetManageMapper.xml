@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cist.businessconfig.bayonetmanage.mapper.BayonetManageMapper" >
+	<!-- 查询单位 -->
+	<select id="getDeptNode" resultType="com.cist.businessconfig.bayonetmanage.model.BayonetTree">
+			SELECT dept_code key,dept_name title FROM  SYS_DEPART_INFO
+			<!-- <where>
+				<if test="_parameter  == null or _parameter  == ''">
+					t.DEPT_SUPERIOR is null
+				</if>
+				<if test="_parameter  != null and _parameter  != ''">
+					t.DEPT_SUPERIOR=#{_parameter}
+				</if>
+			</where> -->
+	</select>
+  	<!-- 查询卡口 -->
+  	<select id="getBayonetNode" parameterType="java.lang.String"
+  	resultType="com.cist.businessconfig.bayonetmanage.model.BayonetTree">
+  			select device_name title,pk_id key from JCSJ_DEVICE t
+  			 where fk_dept_id = #{deptId} and fk_device_type = 'KK'
+  	</select>
+   	<!-- 查询卡口性质 -->
+   	<select id="getNatureNode" parameterType="java.lang.String"
+  	resultType="com.cist.businessconfig.bayonetmanage.model.BayonetTree">
+  				select bayonet_nature key ,
+(case when bayonet_nature='1' then '上行单行卡口'
+ when bayonet_nature ='2' then '下行单行卡口'
+   else '双向卡口' end) title from JCSJ_DEVICE_BAYONET_PARAM 
+   where device_id=#{deviceid} and bayonet_nature is not null
+  	</select>
+  	<!-- 根据pk_id查询设备信息 -->
+  	<select id="querydevicebypkid" parameterType="java.util.HashMap"
+  	resultType="com.cist.businessconfig.bayonetmanage.model.Jcsj_device">
+  		select t.*,(select dept_name from sys_depart_info where dept_code = t.fk_dept_id) fk_dept_name from JCSJ_DEVICE t where pk_id=#{pk_id}
+  	</select>
+  	<!-- 管理部门树 -->
+	<select id="depart_infolist"
+		resultType="com.cist.businessconfig.bayonetmanage.model.DeptInfo"
+		parameterType="java.lang.Integer">
+		select t.dept_pk,t.dept_code,t.dept_name as name,t.DEPT_SUPERIOR from
+		sys_depart_info t
+		<where>
+			<if test="_parameter  == null or _parameter  == ''">
+				t.DEPT_SUPERIOR is null
+			</if>
+			<if test="_parameter  != null and _parameter  != ''">
+				t.DEPT_SUPERIOR=#{_parameter}
+			</if>
+		</where>
+	</select>
+	<select id="querykkinfo" parameterType="java.lang.String"
+	resultType="com.cist.businessconfig.bayonetmanage.model.Jcsj_device_bayonet_param">
+		select * from jcsj_device_bayonet_param where device_id = #{device_id}
+		and bayonet_nature is not null
+	</select>
+	<!-- 查询车辆布控卡口 -->
+	<select id="querybayonetinfo" parameterType="java.util.HashMap"
+	resultType="com.cist.businessconfig.bayonetmanage.model.Jcbk_control_bayonet">
+		select t.*,(select dept_name from sys_depart_info where dept_code = t.glbm)glbm_name,
+		(case when fxlx='1' then '上行('||(select sxfxbm from jcsj_device b left join jcsj_device_bayonet_param d on d.device_id=b.pk_id
+where b.device_num = t.kkbh
+		and bayonet_nature is not null)||')'
+    else  '下行('||(select xxfxbm from jcsj_device b left join jcsj_device_bayonet_param d on d.device_id=b.pk_id
+where b.device_num = t.kkbh
+		and bayonet_nature is not null)||')' end
+) kk from JCBK_CONTROL_BAYONET t
+		<where>
+			<if test="glbm !=null and glbm != ''">
+				and glbm = #{glbm}
+			</if>
+			<if test="kkbh !=null and kkbh != ''">
+				and kkbh like '%'||#{kkbh}||'%'
+			</if>
+			<if test="kkmc !=null and kkmc != ''">
+				and kkmc like '%'||#{kkmc}||'%'
+			</if>
+		</where>
+	</select>
+	<!-- 添加车辆布控卡口信息 -->
+	<insert id="addcarbayonet" parameterType="java.util.HashMap">
+		<selectKey resultType="int" order="BEFORE" keyProperty="bayonetid">   
+            select SEQ_BAYONET_PK.nextval as bayonetid from dual
+        </selectKey> 
+		insert into JCBK_CONTROL_BAYONET
+		<trim prefix="(" suffixOverrides="," suffix=")">
+			pk,
+			kkbh,
+			<if test="kkmc !=null and kkmc !=''">
+				kkmc,
+			</if>
+			<if test="dlmc !=null and dlmc !=''">
+				dlmc,
+			</if>
+			<if test="fxlx !=null and fxlx !=''">
+				fxlx,
+			</if>
+			<if test="sbfx !=null and sbfx !=''">
+				sbfx,
+			</if>
+			<if test="xsfx !=null and xsfx !=''">
+				xsfx,
+			</if>
+			<if test="jd !=null and jd !=''">
+				jd,
+			</if>
+			<if test="wd !=null and wd !=''">
+				wd,
+			</if>
+			<if test="enable !=null and enable !=''">
+				enable,
+			</if>
+			<if test="ms !=null and ms !=''">
+				ms,
+			</if>
+			<if test="glbm !=null and glbm !=''">
+				glbm,
+			</if>
+		</trim>
+		<trim prefix="values(" suffixOverrides="," suffix=")">
+			#{bayonetid},
+			#{kkbh},
+			<if test="kkmc !=null and kkmc !=''">
+				#{kkmc},
+			</if>
+			<if test="dlmc !=null and dlmc !=''">
+				#{dlmc},
+			</if>
+			<if test="fxlx !=null and fxlx !=''">
+				#{fxlx},
+			</if>
+			<if test="sbfx !=null and sbfx !=''">
+				#{sbfx},
+			</if>
+			<if test="xsfx !=null and xsfx !=''">
+				#{xsfx},
+			</if>
+			<if test="jd !=null and jd !=''">
+				#{jd},
+			</if>
+			<if test="wd !=null and wd !=''">
+				#{wd},
+			</if>
+			<if test="enable !=null and enable !=''">
+				#{enable},
+			</if>
+			<if test="ms !=null and ms !=''">
+				#{ms},
+			</if>
+			<if test="glbm !=null and glbm !=''">
+				#{glbm},
+			</if>
+		</trim>
+	</insert>
+	<!-- 添加布控车辆拦截单位信息 -->
+	<insert id="addbayonetunits" parameterType="java.util.HashMap">
+		insert into JCBK_BAYONET_UNITS
+		<trim prefix="(" suffixOverrides="," suffix=")">
+			pk,
+	      	kkbh,
+	       	bmdm,
+	       	bkkk,
+		</trim>
+		<trim prefix="values(" suffixOverrides="," suffix=")">
+			SEQ_BAYONETUNITS_PK.nextval,
+			#{kkbh},
+			#{bmdm},
+			#{bkkk},
+		</trim>
+	</insert>
+	<!--  -->
+	<select id="isshow" parameterType="java.util.HashMap"
+	resultType="com.cist.businessconfig.bayonetmanage.model.Jcbk_control_bayonet">
+		select * from JCBK_CONTROL_BAYONET t left join jcsj_device p on t.kkbh = p.device_num
+		 where pk_id = #{deviceid} and fxlx = #{fxlx}
+	</select>
+	<!--  -->
+	<select id="querybayonetunitsinfo" parameterType="java.util.HashMap"
+	resultType="com.cist.businessconfig.bayonetmanage.model.Jcbk_bayonet_units">
+		select * from JCBK_BAYONET_UNITS where bkkk=#{bkkk} and kkbh=#{kkbh}
+	</select>
+	<!-- 根据pk删除车辆布控卡口信息 -->
+	<delete id="delJcbk_control_bayonet" parameterType="java.util.HashMap">
+		delete from JCBK_CONTROL_BAYONET where pk in
+		<foreach item="w" collection="list" open="(" separator="," close=")">
+		       #{w}
+		 </foreach>
+	</delete>
+	<!-- 根据pk删除布控卡口拦截单位信息 -->
+	<delete id="delJcbk_bayonet_units" parameterType="java.util.HashMap">
+		delete from JCBK_BAYONET_UNITS where bkkk in
+			<foreach item="w" collection="list" open="(" separator="," close=")">
+			       #{w}
+			 </foreach>
+	</delete>
+	<!--  -->
+	<update id="updatebayonet" parameterType="java.util.HashMap">
+			update JCBK_CONTROL_BAYONET T 
+				<trim prefix="set" suffixOverrides=",">
+					<if test="sbfx !=null and sbfx !=''">
+						sbfx=#{sbfx},
+					</if>
+					<if test="xsfx !=null and xsfx !=''">
+						xsfx=#{xsfx},
+					</if>
+					<if test="jd !=null and jd !=''">
+						jd=#{jd},
+					</if>
+					<if test="wd !=null and wd !=''">
+						wd=#{wd},
+					</if>
+					<if test="enable !=null and enable !=''">
+						enable=#{enable},
+					</if>
+					<if test="ms !=null and ms !=''">
+						ms=#{ms},
+					</if>
+					<if test="glbm !=null and glbm !=''">
+						glbm=#{glbm},
+					</if>
+				</trim>
+				where pk=#{pk}
+	</update>
+</mapper>

@@ -7,7 +7,7 @@
   select c.* from (select t.*,y.tpzj,y.bkyy,to_char(t.gcsj,'yyyy-mm-dd HH24:mi:ss')as gcsj_name,
    to_char(t.yjsj,'yyyy-mm-dd HH24:mi:ss')as yjsj_name,l.device_name as sbmc,l.direction as xsfx,l.road_name,l.longitude as jd,l.latitude as wd
    from tbl_warning_vehicle t,tbl_control_vehicle y,JCSJ_DEVICE l
-   where  t.hphm=y.hphm and t.hpzl = y.hpzl and t.yjsb = l.pk_id) c
+   where  t.hphm=y.hphm and t.hpzl = y.hpzl and t.yjsb = l.device_num) c
     <where>
 	   c.pk not in (select yjpk from tbl_issued_warning)
 	</where>

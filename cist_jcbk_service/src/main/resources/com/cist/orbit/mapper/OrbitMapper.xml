@@ -62,6 +62,14 @@
 				</foreach>
 
 			</if>
+			<if test="crossroads!=null and crossroads.size()>0">
+				and kkbh in
+				<foreach collection="crossroads" index="index" item="item" open="("
+					separator="," close=")">
+					#{item}
+				</foreach>
+
+			</if>
 		</where>
 		order by jgsj desc
 	</select>
@@ -100,5 +108,46 @@ group by t.belonged_road_id
 	      <foreach item="w" collection="dept_pk" open="(" separator="," close=")">
 		            #{w}
 		        </foreach>
+	</select>
+	
+			<!-- 行政区划Tree查询 -->
+	<select id="queryAdministrativeAreas1"
+		parameterType="java.util.HashMap"
+		resultType="com.cist.orbit.model.RoadTree">
+		select t.tbek_pk pk,t.tbek_code key,t.tbek_name title,t.tbek_parent
+		parent_pk from C_KREIS_CODE t  where 1=1
+			
+			<if test="tbek_code !=null and tbek_code !=''">
+				and t.tbek_code=#{tbek_code}
+			</if>
+			<if test="tbek_code ==null">
+				<if test="parent_pk !=null and parent_pk !=''">
+				and t.tbek_parent=#{parent_pk}
+			</if>
+			<if test="parent_pk ==null">
+				and t.TBEK_PARENT is null
+			</if>
+			</if>
+	</select>
+	
+		<!-- 查询所有道路 -->
+	<select id="queryAllRoad"
+		resultType="com.cist.orbit.model.RoadTree" parameterType="java.util.HashMap">
+		select ROIM_CODE key,roim_name title,roim_type road_type
+		from C_ROAD_ITEM  where 1=1
+		<if test="tbek_code !=null and tbek_code !=''">
+		and instr(tbek_code,#{tbek_code})>0
+		</if>
+		<if test="dept_code !=null and dept_code !=''">
+		and dept_code=#{dept_code}
+		</if>
+	</select>
+	<!-- 根据道路code查询路口路段 -->
+	<select id="queryRoadSegiteByRoadCode"
+		parameterType="java.util.HashMap"
+		resultType="com.cist.orbit.model.RoadTree">
+		select s.DEVICE_NUM key,s.DEVICE_NAME title from JCSJ_DEVICE
+		s where s.BELONGED_ROAD_ID=#{code}
+		and fk_device_type='KK'
 	</select>
 </mapper>

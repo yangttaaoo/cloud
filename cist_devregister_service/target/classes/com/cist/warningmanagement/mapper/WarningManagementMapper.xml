@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper
+	namespace="com.cist.warningmanagement.mapper.WarningManagementMapper">
+
+	<!-- 查询采集设备信息 -->
+	<select id="list"
+		resultType="com.cist.warningmanagement.model.SssbEquipmentWarning"
+		parameterType="java.util.HashMap">
+		select * from SSSB_EQUIPMENT_WARNING
+		<where>
+			<if test="source_ip != null and source_ip != ''">
+				and source_ip like '%'||#{ip_addr}||'%'
+			</if>
+			<if test="source_mac != null and source_mac != ''">
+				and source_mac like '%'||#{source_mac}||'%'
+			</if>
+			<if test="source_prot != null and source_prot != ''">
+				and source_prot like '%'||#{source_prot}||'%'
+			</if>
+
+			<if test="terminal_type != null and terminal_type != ''">
+				and terminal_type =#{terminal_type}
+			</if>
+
+			<if test="yjkssj != null and yjkssj != ''">
+			<![CDATA[  and warning_time >= to_date(#{yjkssj},'yyyy-mm-dd HH24:mi:ss')]]>
+			</if>
+			
+			<if test="yjjssj != null and yjjssj != ''">
+			<![CDATA[  and warning_time <= to_date(#{yjjssj},'yyyy-mm-dd HH24:mi:ss')]]>
+			</if>
+		</where>
+
+	</select>
+
+	<!-- 删除预警信息 -->
+	<delete id="deleteWarning">
+		delete from SSSB_EQUIPMENT_WARNING
+		<where>
+			pk_id in
+			<foreach item="item" collection="pkList" open="("
+				separator="," close=")">
+				#{item}
+			</foreach>
+		</where>
+	</delete>
+	
+	
+	
+	<!-- 根据IP和MAC地址查询设备信息-->
+	<select id="selectByDev"
+		resultType="com.cist.devmanagement.model.SssbEquipmentRegister"
+		parameterType="java.util.HashMap">
+		select * from SSSB_EQUIPMENT_GATHER t left join SSSB_EQUIPMENT_REGISTER t1
+		
+		on  t.FK_EQUIPMENT_ID = t1.pk_id
+		<where>
+			<if test="source_ip != null and source_ip != ''">
+				and IP_ADDR = #{source_ip}
+			</if>
+			<if test="source_mac != null and source_mac != ''">
+				and  mac_addr = #{source_mac}
+			</if>
+		</where>
+
+	</select>
+	
+		<!-- 根据IP和MAC地址查询设备信息-->
+	<select id="selectByPc"
+		resultType="com.cist.devmanagement.model.SssbEquipmentRegister"
+		parameterType="java.util.HashMap">
+		select * from SSSB_EQUIPMENT_PC t left join SSSB_EQUIPMENT_REGISTER t1
+		
+		on  t.FK_EQUIPMENT_ID = t1.pk_id
+		<where>
+			<if test="source_ip != null and source_ip != ''">
+				and IP_ADDR = #{source_ip}
+			</if>
+			<if test="source_mac != null and source_mac != ''">
+				and  mac_addr = #{source_mac}
+			</if>
+		</where>
+
+	</select>
+</mapper>

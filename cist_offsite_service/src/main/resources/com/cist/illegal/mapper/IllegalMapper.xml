@@ -614,7 +614,7 @@
    <!-- 违法数据有效期内多少违法数据 -->
     <select id="auditnumber" resultType="int" parameterType="java.util.HashMap">
     select count(*) from oeuser.tbl_offe_evdi t where t.shbz in('0','15') and t.wfsj BETWEEN 
-		     to_date(#{wfkssj},'yyyy-mm-dd hh24:mi:ss') and to_date(#{wfjssj},'yyyy-mm-dd hh24:mi:ss')
+		     to_date(#{wfkssj},'yyyy-mm-dd hh24:mi:ss') and sysdate
 		     <if test="tboc_code != null and tboc_code !=''">
 		     	and wfxw in
 				<foreach item="w" collection="tboc_code" open="(" separator="," close=")">

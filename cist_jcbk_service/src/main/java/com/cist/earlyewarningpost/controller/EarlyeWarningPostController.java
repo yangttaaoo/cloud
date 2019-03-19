@@ -98,13 +98,18 @@ public class EarlyeWarningPostController {
 	}
 
 	/**
-	 * 拦截单位区域
-	 * 
+	 * 布控卡口拦截单位  单位关联区域
 	 * @param map
 	 */
 	@RequestMapping("selectDeptArrea")
-	public List<SysDepartInfo> selectDeptArrea(@RequestBody HashMap<String, Object> map) {
-		return service.selectDeptArrea(map);
+	public Map<String,Object> selectDeptArrea(@RequestBody HashMap<String, Object> map) {
+		Map<String,Object> modelMap = new HashMap<String,Object>();
+		List<SysDepartInfo> selectDeptArrea = service.selectDeptArrea(map);
+		List<JcbkControlBayonet> selectBkDev = service.selectBkDev(map);
+		modelMap.put("deptArrea", selectDeptArrea);
+		modelMap.put("bkDev", selectBkDev);
+		return modelMap;
+				
 	}
 
 	@RequestMapping("departinfo")

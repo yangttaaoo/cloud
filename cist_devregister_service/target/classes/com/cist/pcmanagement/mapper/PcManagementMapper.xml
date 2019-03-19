@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper
+	namespace="com.cist.pcmanagement.mapper.PcManagementMapper">
+	
+	<!-- 查询采集设备信息 -->
+	<select id="pcList"
+		resultType="com.cist.devmanagement.model.SssbEquipmentRegister"
+		parameterType="java.util.HashMap">
+		select * from vw_sssb_equipment_register_pc
+		<where>
+			<if test="sblx != null and sblx != ''">
+				and sblx=#{sblx}
+			</if>
+			<if test="fk_dept_id != null and fk_dept_id != ''">
+				and fk_dept_id=#{fk_dept_id}
+			</if>
+			<if test="equipment_name != null and equipment_name != ''">
+				and equipment_name like '%'||#{equipment_name}||'%'
+			</if>
+			<if test="ip_addr != null and ip_addr != ''">
+				and ip_addr like '%'||#{ip_addr}||'%'
+			</if>
+			<if test="status != null and status != ''">
+				and status=#{status}
+			</if>
+			
+			<if test="user_name != null and user_name != ''">
+				and user_name like '%'||#{user_name}||'%'
+			</if>
+		</where>
+
+	</select>
+	
+	
+
+	<!-- 新增设备注册信息 -->
+	<insert id="addRegister" parameterType="java.util.HashMap">
+		<selectKey keyProperty="pk_id"
+			resultType="java.lang.Integer" order="BEFORE">
+			select
+			cistsys.SEQ_SSSB_EQUIPMENT_REGISTER.NEXTVAL as pk_id from dual
+		</selectKey>
+		insert into SSSB_EQUIPMENT_REGISTER
+		(PK_ID,EQUIPMENT_TYPE,EQUIPMENT_NAME,DAC_IP,EQUIPMENT_AADR,STATUS,reasons)
+		values(
+		#{pk_id},
+		#{equipment_type},
+		#{equipment_name},
+		#{dac_ip},
+		#{equipment_aadr,jdbcType=VARCHAR},
+		'2',
+		#{reasons,jdbcType=VARCHAR}
+		)
+	</insert>
+
+	
+	<!-- 新增PC终端信息 -->
+	<insert id="addPc" parameterType="java.util.HashMap">
+		insert into
+		SSSB_EQUIPMENT_PC
+		(FK_EQUIPMENT_ID,USER_NAME,CONTACT_NUMBER,FK_DEPT_ID,DEPT_CONTACT_NUMBER,EQUIPMENT_MODEL,IP_ADDR,MAC_ADDR,DESCRIPTION,SUPPLIER,SUPPLIER_CONTACT_NUMBER)
+		values(
+		#{pk_id},
+		#{user_name,jdbcType=VARCHAR},
+		#{contact_number,jdbcType=VARCHAR},
+		#{fk_dept_id},
+		#{dept_contact_number,jdbcType=VARCHAR},
+		#{equipment_model,jdbcType=VARCHAR},
+		#{ip_addr,jdbcType=VARCHAR},
+		#{mac_addr,jdbcType=VARCHAR},
+		#{description,jdbcType=VARCHAR},
+		#{supplier,jdbcType=VARCHAR},
+		#{supplier_contact_number,jdbcType=VARCHAR}
+		)
+	</insert>
+	
+	<!-- 更新PC终端信息 -->
+	<update id="updatePC" parameterType="java.util.HashMap">
+		update SSSB_EQUIPMENT_PC
+		<set>
+		USER_NAME=#{user_name,jdbcType=VARCHAR},
+		CONTACT_NUMBER=#{contact_number,jdbcType=VARCHAR},
+		FK_DEPT_ID=#{fk_dept_id},
+		DEPT_CONTACT_NUMBER=#{dept_contact_number,jdbcType=VARCHAR},
+		EQUIPMENT_MODEL=#{equipment_model,jdbcType=VARCHAR},
+		IP_ADDR=#{ip_addr,jdbcType=VARCHAR},
+		MAC_ADDR=#{mac_addr,jdbcType=VARCHAR},
+		DESCRIPTION=#{description,jdbcType=VARCHAR},
+		SUPPLIER=#{supplier,jdbcType=VARCHAR},
+		SUPPLIER_CONTACT_NUMBER=#{supplier_contact_number,jdbcType=VARCHAR}
+		</set>
+		where FK_EQUIPMENT_ID = #{pk_id}
+	</update>
+	
+
+	<!--删除设备注册信息 -->
+	<delete id="deleteRegister">
+		delete from SSSB_EQUIPMENT_REGISTER
+		<where>
+			pk_id in
+			<foreach item="item" collection="pkList" open="("
+				separator="," close=")">
+				#{item}
+			</foreach>
+		</where>
+	</delete>
+	<!-- 删除PC终端信息 -->
+	<delete id="deletePc">
+		delete from SSSB_EQUIPMENT_PC
+		<where>
+			FK_EQUIPMENT_ID in
+			<foreach item="item" collection="pkList" open="("
+				separator="," close=")">
+				#{item}
+			</foreach>
+		</where>
+	</delete>
+</mapper>

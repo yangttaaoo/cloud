@@ -37,7 +37,7 @@
    </select>
    <select id="auditnumber" resultType="int" parameterType="java.util.HashMap">
     select count(*) from oeuser.tbl_offe_evdi t where t.shbz=0 and t.wfsj BETWEEN 
-		     to_date(#{wfkssj},'yyyy-mm-dd hh24:mi:ss') and to_date(#{wfjssj},'yyyy-mm-dd hh24:mi:ss')
+		     to_date(#{wfkssj},'yyyy-mm-dd hh24:mi:ss') and sysdate
    </select>
    <select id="getjintiri" resultType="int" parameterType="java.util.HashMap">
 select count(*) from OEUSER.TBL_OFFE_EVDI t where trunc(sysdate)=trunc(t.SXSJ) and t.shbz in (15,16)
@@ -124,7 +124,7 @@ select t.tbvg_pk from  TBL_VERIFY_GROUP t where t.sypi_pk=#{sypi_pk} and t.tbvg_
 	</select>
 	<select id="yijicdepartinfo" resultType="com.cist.picture.model.Depart_info" parameterType="java.util.HashMap">
 		         select t.ROIM_CODE as tbec_kkbh ,t.roim_name as tbei_name from C_ROAD_ITEM t where t.roim_code in (
-select t.belonged_road_id from JCSJ_DEVICE t where t.device_num in
+select to_char(t.belonged_road_id) from JCSJ_DEVICE t where t.device_num in
 <foreach item="w" collection="dept_pk" open="(" separator="," close=")">
 		            #{w}
 		        </foreach>

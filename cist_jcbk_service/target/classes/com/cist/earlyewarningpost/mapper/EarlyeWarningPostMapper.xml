@@ -81,6 +81,7 @@
 		</if>
 	</select>
 
+<!--警员信息查询  -->
 	<select id="gpsRecordList"
 		resultType="com.cist.earlyewarningpost.model.GpsRecord">
 		<!-- select * from QW_GPS_RECORD t -->
@@ -88,6 +89,7 @@
 		c.rybh=t.ywbh) as jytype from VW_QW_GPS_RECORD t
 	</select>
 
+<!-- 设备信息列表 -->
 	<select id="DeviceList"
 		resultType="com.cist.earlyewarningpost.model.JcbkControlBayonet">
 		select t.*,t2.device_gb_serial,t2.device_gb_code,t2.device_gb_channel from JCBK_CONTROL_BAYONET t
@@ -97,7 +99,8 @@
 		where t.ENABLE ='1'
 		
 	</select>
-
+	
+<!--查询警员信息 -->
 	<select id="Jcsjpoliceresperson"
 		resultType="com.cist.earlyewarningpost.model.Jcsj_police_res_person">
 		select
@@ -141,6 +144,7 @@
 		VW_PR_CAR_GPS d where d.device_code=#{device_code})
 	</select>
 
+<!-- 布控卡口拦截单位  单位关联区域 -->
 	<select id="selectDeptArrea"
 		resultType="com.cist.earlyewarningpost.model.SysDepartInfo">
 		select * from SYS_DEPART_INFO s where
@@ -638,5 +642,17 @@
 		and t.REPORT_TYPE='1'
 		and trunc(t.REPORT_PERIOD_TYPE)=trunc(sysdate)
 		</where>
+	</select>
+	
+		<!-- 通过布控卡口查询 关联车辆布控卡口 查询到布控卡口的关联设备-->
+	<select id="selectBkDev" parameterType="java.util.HashMap"
+		resultType="com.cist.earlyewarningpost.model.JcbkControlBayonet">
+		
+		select t2.device_gb_serial,t2.device_gb_code,t2.device_gb_channel 
+		from JCSJ_DEVICE t 
+		left join JCBK_BAYONET_DEV t1 on t1.sbbh=t.pk_id
+		left join JCBK_CONTROL_BAYONET t4 on t4.pk=t1.bkkk
+		left join JCSJ_DEVICE_CAMERA_GB28181 t2 on  t2.DEVICE_ID=t.pk_id
+		where t4.ENABLE ='1' and t4.kkbh = #{kkbh}
 	</select>
 </mapper>

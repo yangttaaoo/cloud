@@ -216,7 +216,11 @@ public interface EarlyeWarningPostService {
 	 */
  	List<Qw_report> selectQwbb(HashMap<String, Object> map);
  	
- 	
+ 	/**
+	 * 查询预警信息关联布控卡口关联设备
+	 * @return List<JcbkControlBayonet>
+	 */
+ 	List<JcbkControlBayonet> selectBkDev(HashMap<String, Object> map);
  	
  	
 }

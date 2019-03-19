@@ -82,27 +82,27 @@
     (pk,hphm,hpzl,cllx,csys,clpp,bkkssj,bkjssj,lrsj,bkxz,lrr,lxdh,bkqy,bkdw,bkyy,tpzj,bklx)
      values(
      cistsys.SEQ_TBL_CONTROL_VEHICLE.nextval,
-     #{hphm},
-     #{hpzl},
-     #{cllx},
-     #{csys},
-     #{clpp},
-    to_date(#{bkkssj},'yyyy-mm-dd'),
- 	to_date(#{bkjssj},'yyyy-mm-dd'), 
+     #{hphm,jdbcType=VARCHAR},
+     #{hpzl,jdbcType=VARCHAR},
+     #{cllx,jdbcType=VARCHAR},
+     #{csys,jdbcType=VARCHAR},
+     #{clpp,jdbcType=VARCHAR},
+    to_date(#{bkkssj,jdbcType=VARCHAR},'yyyy-mm-dd'),
+ 	to_date(#{bkjssj,jdbcType=VARCHAR},'yyyy-mm-dd'), 
       sysdate,
-      #{bkxz},
-      #{lrr},
-      #{lxdh},
-      #{bkqy},
-      #{bkdw},
-      #{bkyy},
-      #{tpzj},
-      #{bklx}
+      #{bkxz,jdbcType=VARCHAR},
+      #{lrr,jdbcType=VARCHAR},
+      #{lxdh,jdbcType=VARCHAR},
+      #{bkqy,jdbcType=VARCHAR},
+      #{bkdw,jdbcType=VARCHAR},
+      #{bkyy,jdbcType=VARCHAR},
+      #{tpzj,jdbcType=VARCHAR},
+      #{bklx,jdbcType=VARCHAR}
      )
 </insert>
 
 <update id="updateData" parameterType="java.util.HashMap">
-   update tbl_control_vehicle   
+   update tbl_control_vehicle t   
   <trim prefix="set" suffixOverrides=",">
    hphm=#{hphm},
    hpzl=#{hpzl},
@@ -119,9 +119,10 @@
    bkdw=#{bkdw},
    bkyy=#{bkyy},
    <if test="tpzj !=null and tpzj !=''">
-   tpzj=#{tpzj},
+   tpzj=#{tpzj}
    </if>
   </trim>
+  where t.pk = #{pk}
 </update>
 <!-- 查询区域 -->
 <select id="selectQy" parameterType="java.util.HashMap" resultType="com.cist.warningmanagement.bayonet.model.Qylx">

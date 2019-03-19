@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sbzc.mappers.JcsjDeviceMapper" >
+  <resultMap id="BaseResultMap" type="com.sbzc.model.JcsjDevice" >
+    <result column="PK_ID" property="pkId" jdbcType="DECIMAL" />
+    <result column="FK_DEPT_ID" property="fkDeptId" jdbcType="DECIMAL" />
+    <result column="CREATE_PERSON" property="createPerson" jdbcType="DECIMAL" />
+    <result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="ENABLE_DATE" property="enableDate" jdbcType="TIMESTAMP" />
+    <result column="CONTACTS_PERSON" property="contactsPerson" jdbcType="VARCHAR" />
+    <result column="CONTACTS_NUM" property="contactsNum" jdbcType="VARCHAR" />
+    <result column="REMARKS" property="remarks" jdbcType="VARCHAR" />
+    <result column="FK_DEVICE_TYPE" property="fkDeviceType" jdbcType="VARCHAR" />
+    <result column="DEVICE_NAME" property="deviceName" jdbcType="VARCHAR" />
+    <result column="DEVICE_NUM" property="deviceNum" jdbcType="VARCHAR" />
+    <result column="BELONGED_ROAD_ID" property="belongedRoadId" jdbcType="DECIMAL" />
+    <result column="KILOMETRE_NUM" property="kilometreNum" jdbcType="DECIMAL" />
+    <result column="METER_NUM" property="meterNum" jdbcType="DECIMAL" />
+    <result column="ROAD_NAME" property="roadName" jdbcType="VARCHAR" />
+    <result column="LONGITUDE" property="longitude" jdbcType="DECIMAL" />
+    <result column="LATITUDE" property="latitude" jdbcType="DECIMAL" />
+    <result column="NETWORK_LOCATION" property="networkLocation" jdbcType="CHAR" />
+    <result column="UPLOAD_MODE" property="uploadMode" jdbcType="CHAR" />
+    <result column="DEVICE_SOURCE" property="deviceSource" jdbcType="CHAR" />
+    <result column="DIRECTION" property="direction" jdbcType="VARCHAR" />
+    <result column="XZQH" property="xzqh" jdbcType="VARCHAR" />
+    <result column="VALIDITY_DATE" property="validityDate" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <insert id="insert" parameterType="com.sbzc.model.JcsjDevice" >
+    insert into JCSJ_DEVICE (PK_ID, FK_DEPT_ID, CREATE_PERSON, 
+      CREATE_TIME, ENABLE_DATE, CONTACTS_PERSON, 
+      CONTACTS_NUM, REMARKS, FK_DEVICE_TYPE, 
+      DEVICE_NAME, DEVICE_NUM, BELONGED_ROAD_ID, 
+      KILOMETRE_NUM, METER_NUM, ROAD_NAME, 
+      LONGITUDE, LATITUDE, NETWORK_LOCATION, 
+      UPLOAD_MODE, DEVICE_SOURCE, DIRECTION, 
+      XZQH, VALIDITY_DATE)
+    values (#{pkId,jdbcType=DECIMAL}, #{fkDeptId,jdbcType=DECIMAL}, #{createPerson,jdbcType=DECIMAL}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{enableDate,jdbcType=TIMESTAMP}, #{contactsPerson,jdbcType=VARCHAR}, 
+      #{contactsNum,jdbcType=VARCHAR}, #{remarks,jdbcType=VARCHAR}, #{fkDeviceType,jdbcType=VARCHAR}, 
+      #{deviceName,jdbcType=VARCHAR}, #{deviceNum,jdbcType=VARCHAR}, #{belongedRoadId,jdbcType=DECIMAL}, 
+      #{kilometreNum,jdbcType=DECIMAL}, #{meterNum,jdbcType=DECIMAL}, #{roadName,jdbcType=VARCHAR}, 
+      #{longitude,jdbcType=DECIMAL}, #{latitude,jdbcType=DECIMAL}, #{networkLocation,jdbcType=CHAR}, 
+      #{uploadMode,jdbcType=CHAR}, #{deviceSource,jdbcType=CHAR}, #{direction,jdbcType=VARCHAR}, 
+      #{xzqh,jdbcType=VARCHAR}, #{validityDate,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.sbzc.model.JcsjDevice" >
+    insert into JCSJ_DEVICE
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="pkId != null" >
+        PK_ID,
+      </if>
+      <if test="fkDeptId != null" >
+        FK_DEPT_ID,
+      </if>
+      <if test="createPerson != null" >
+        CREATE_PERSON,
+      </if>
+      <if test="createTime != null" >
+        CREATE_TIME,
+      </if>
+      <if test="enableDate != null" >
+        ENABLE_DATE,
+      </if>
+      <if test="contactsPerson != null" >
+        CONTACTS_PERSON,
+      </if>
+      <if test="contactsNum != null" >
+        CONTACTS_NUM,
+      </if>
+      <if test="remarks != null" >
+        REMARKS,
+      </if>
+      <if test="fkDeviceType != null" >
+        FK_DEVICE_TYPE,
+      </if>
+      <if test="deviceName != null" >
+        DEVICE_NAME,
+      </if>
+      <if test="deviceNum != null" >
+        DEVICE_NUM,
+      </if>
+      <if test="belongedRoadId != null" >
+        BELONGED_ROAD_ID,
+      </if>
+      <if test="kilometreNum != null" >
+        KILOMETRE_NUM,
+      </if>
+      <if test="meterNum != null" >
+        METER_NUM,
+      </if>
+      <if test="roadName != null" >
+        ROAD_NAME,
+      </if>
+      <if test="longitude != null" >
+        LONGITUDE,
+      </if>
+      <if test="latitude != null" >
+        LATITUDE,
+      </if>
+      <if test="networkLocation != null" >
+        NETWORK_LOCATION,
+      </if>
+      <if test="uploadMode != null" >
+        UPLOAD_MODE,
+      </if>
+      <if test="deviceSource != null" >
+        DEVICE_SOURCE,
+      </if>
+      <if test="direction != null" >
+        DIRECTION,
+      </if>
+      <if test="xzqh != null" >
+        XZQH,
+      </if>
+      <if test="validityDate != null" >
+        VALIDITY_DATE,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="pkId != null" >
+        #{pkId,jdbcType=DECIMAL},
+      </if>
+      <if test="fkDeptId != null" >
+        #{fkDeptId,jdbcType=DECIMAL},
+      </if>
+      <if test="createPerson != null" >
+        #{createPerson,jdbcType=DECIMAL},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="enableDate != null" >
+        #{enableDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="contactsPerson != null" >
+        #{contactsPerson,jdbcType=VARCHAR},
+      </if>
+      <if test="contactsNum != null" >
+        #{contactsNum,jdbcType=VARCHAR},
+      </if>
+      <if test="remarks != null" >
+        #{remarks,jdbcType=VARCHAR},
+      </if>
+      <if test="fkDeviceType != null" >
+        #{fkDeviceType,jdbcType=VARCHAR},
+      </if>
+      <if test="deviceName != null" >
+        #{deviceName,jdbcType=VARCHAR},
+      </if>
+      <if test="deviceNum != null" >
+        #{deviceNum,jdbcType=VARCHAR},
+      </if>
+      <if test="belongedRoadId != null" >
+        #{belongedRoadId,jdbcType=DECIMAL},
+      </if>
+      <if test="kilometreNum != null" >
+        #{kilometreNum,jdbcType=DECIMAL},
+      </if>
+      <if test="meterNum != null" >
+        #{meterNum,jdbcType=DECIMAL},
+      </if>
+      <if test="roadName != null" >
+        #{roadName,jdbcType=VARCHAR},
+      </if>
+      <if test="longitude != null" >
+        #{longitude,jdbcType=DECIMAL},
+      </if>
+      <if test="latitude != null" >
+        #{latitude,jdbcType=DECIMAL},
+      </if>
+      <if test="networkLocation != null" >
+        #{networkLocation,jdbcType=CHAR},
+      </if>
+      <if test="uploadMode != null" >
+        #{uploadMode,jdbcType=CHAR},
+      </if>
+      <if test="deviceSource != null" >
+        #{deviceSource,jdbcType=CHAR},
+      </if>
+      <if test="direction != null" >
+        #{direction,jdbcType=VARCHAR},
+      </if>
+      <if test="xzqh != null" >
+        #{xzqh,jdbcType=VARCHAR},
+      </if>
+      <if test="validityDate != null" >
+        #{validityDate,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+</mapper>

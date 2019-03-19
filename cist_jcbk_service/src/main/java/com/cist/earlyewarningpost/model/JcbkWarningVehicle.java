@@ -3,6 +3,7 @@ package com.cist.earlyewarningpost.model;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import com.cist.BaseInfo.model.SysBaseDataCode;
 import com.cist.frame.utils.SysTempStoreUtils;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -14,7 +15,7 @@ import net.sf.json.JSONObject;
  *
  */
 public class JcbkWarningVehicle {
-    private Long pk;//主键
+    private String pk;//主键
 
     private String hphm;//号牌号码
 
@@ -90,11 +91,11 @@ public class JcbkWarningVehicle {
     
     
 
-    public Long getPk() {
+    public String getPk() {
         return pk;
     }
 
-    public void setPk(Long pk) {
+    public void setPk(String pk) {
         this.pk = pk;
     }
 

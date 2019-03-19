@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cist.carParkPath.mapper.CarParkPathMapper">
+	<!-- 查询车辆停车轨迹记录 -->
+	<select id="queryCarParkPathList"
+		parameterType="java.util.HashMap"
+		resultType="com.cist.carParkPath.model.JCBK_CAR_STOP_RECO">
+		select * from STOPUSER.TCC_CAR_STOP_RECO
+		<where>
+			<if test="hphm !=null and hphm !=''"> and hphm=#{hphm}</if>
+			<if test="hpzl !=null and hpzl !=''"> and hpzl=#{hpzl}</if>
+			<if test="cllx !=null and cllx !=''"> and cllx=#{cllx}</if>
+			<if test="kssj!=null and kssj!=''">
+				<![CDATA[ and jgsj >=to_date(#{kssj},'yyyy-mm-dd HH24:mi:ss')]]>
+			</if>
+			<if test="jssj!=null and jssj!=''">
+				<![CDATA[and jgsj <= to_date(#{jssj},'yyyy-mm-dd HH24:mi:ss') ]]>
+			</if>
+			<if test="parkCodes.size() >0">
+			and tccbh in
+			<foreach collection="parkCodes" item="item" index="index"
+				separator="," open="(" close=")">
+				#{item}
+			</foreach>
+		</if>
+		</where>
+	</select>
+	<!-- 根据查询顶级行政区划 -->
+	<select id="queryTopLevelAdministrativeAreas"
+		parameterType="java.util.HashMap"
+		resultType="com.cist.carParkPath.model.TreeModel">
+		select t.tbek_pk pk,t.tbek_code key,t.tbek_name
+		title,t.tbek_parent
+		parent_pk from C_KREIS_CODE t where t.tbek_parent
+		is null
+	</select>
+	<!-- 根据行政区划Id查询子行政区划 -->
+	<select id="querySubLevelAdministrativeAreas"
+		parameterType="java.util.HashMap"
+		resultType="com.cist.carParkPath.model.TreeModel">
+		select t.tbek_pk pk,t.tbek_code key,t.tbek_name
+		title,t.tbek_parent
+		parent_pk from C_KREIS_CODE t where
+		t.tbek_parent=#{AdministrativeAreasId}
+	</select>
+	<!-- 根据部门code或者区划code查询隶属于该部门或者该行政区划的(非自身属性的 ,意指业务逻辑中需要嵌套的)子节点 -->
+	<select id="queryNodeByDeptOrArea"
+		parameterType="java.lang.String"
+		resultType="com.cist.carParkPath.model.TreeModel">
+		select p.*,p.tccbh key,p.tccmc title from TCC_PARK_INFO p
+		where p.qydm=#{areaId}
+	</select>
+</mapper>
