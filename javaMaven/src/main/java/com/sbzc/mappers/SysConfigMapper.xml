@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sbzc.mappers.SysConfigMapper" >
+  <resultMap id="BaseResultMap" type="com.sbzc.model.SysConfig" >
+    <result column="SYCI_PK" property="syciPk" jdbcType="DECIMAL" />
+    <result column="SYCI_TYPE" property="syciType" jdbcType="VARCHAR" />
+    <result column="SYCI_KEY" property="syciKey" jdbcType="VARCHAR" />
+    <result column="SYCI_NAME" property="syciName" jdbcType="VARCHAR" />
+    <result column="SYCI_VALUE" property="syciValue" jdbcType="VARCHAR" />
+    <result column="SYCI_DES" property="syciDes" jdbcType="VARCHAR" />
+    <result column="SYCI_HTML_TYPE" property="syciHtmlType" jdbcType="CHAR" />
+    <result column="SYCI_HTML" property="syciHtml" jdbcType="VARCHAR" />
+    <result column="SYCI_FLAG" property="syciFlag" jdbcType="CHAR" />
+  </resultMap>
+  <insert id="insert" parameterType="com.sbzc.model.SysConfig" >
+    insert into SYS_CONFIG (SYCI_PK, SYCI_TYPE, SYCI_KEY, 
+      SYCI_NAME, SYCI_VALUE, SYCI_DES, 
+      SYCI_HTML_TYPE, SYCI_HTML, SYCI_FLAG
+      )
+    values (#{syciPk,jdbcType=DECIMAL}, #{syciType,jdbcType=VARCHAR}, #{syciKey,jdbcType=VARCHAR}, 
+      #{syciName,jdbcType=VARCHAR}, #{syciValue,jdbcType=VARCHAR}, #{syciDes,jdbcType=VARCHAR}, 
+      #{syciHtmlType,jdbcType=CHAR}, #{syciHtml,jdbcType=VARCHAR}, #{syciFlag,jdbcType=CHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.sbzc.model.SysConfig" >
+    insert into SYS_CONFIG
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="syciPk != null" >
+        SYCI_PK,
+      </if>
+      <if test="syciType != null" >
+        SYCI_TYPE,
+      </if>
+      <if test="syciKey != null" >
+        SYCI_KEY,
+      </if>
+      <if test="syciName != null" >
+        SYCI_NAME,
+      </if>
+      <if test="syciValue != null" >
+        SYCI_VALUE,
+      </if>
+      <if test="syciDes != null" >
+        SYCI_DES,
+      </if>
+      <if test="syciHtmlType != null" >
+        SYCI_HTML_TYPE,
+      </if>
+      <if test="syciHtml != null" >
+        SYCI_HTML,
+      </if>
+      <if test="syciFlag != null" >
+        SYCI_FLAG,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="syciPk != null" >
+        #{syciPk,jdbcType=DECIMAL},
+      </if>
+      <if test="syciType != null" >
+        #{syciType,jdbcType=VARCHAR},
+      </if>
+      <if test="syciKey != null" >
+        #{syciKey,jdbcType=VARCHAR},
+      </if>
+      <if test="syciName != null" >
+        #{syciName,jdbcType=VARCHAR},
+      </if>
+      <if test="syciValue != null" >
+        #{syciValue,jdbcType=VARCHAR},
+      </if>
+      <if test="syciDes != null" >
+        #{syciDes,jdbcType=VARCHAR},
+      </if>
+      <if test="syciHtmlType != null" >
+        #{syciHtmlType,jdbcType=CHAR},
+      </if>
+      <if test="syciHtml != null" >
+        #{syciHtml,jdbcType=VARCHAR},
+      </if>
+      <if test="syciFlag != null" >
+        #{syciFlag,jdbcType=CHAR},
+      </if>
+    </trim>
+  </insert>
+</mapper>

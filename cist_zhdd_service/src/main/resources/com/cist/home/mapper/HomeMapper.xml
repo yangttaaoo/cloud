@@ -35,7 +35,7 @@ c.* from JCSJ_POLICE_RES_PERSON c where c.rybh=#{device_code}
    	</select> 
 <select id="tbl_car_reco" resultType="com.cist.home.model.Tbl_car_reco">
 select * from (
-select t.*,(select count(*) from TBL_CAR_RECO  where SBBH=#{sbbh}) as counts from TBL_CAR_RECO t where t.SBBH=#{sbbh}
+select t.*,(select count(*) from BSUSER.JCBK_CAR_RECO  where SBBH=#{sbbh}) as counts from BSUSER.JCBK_CAR_RECO t where t.SBBH=#{sbbh}
 order by t.GCPK desc
 ) c where rownum=1
    	</select> 
@@ -44,7 +44,7 @@ order by t.GCPK desc
    select t.*,(select c.event_source_name from ZHDD_EVENT_SOURCE c where c.pk_id=t.fk_event_source_id) as event_source_name,
 (select b.event_type_name from ZHDD_EVENT_TYPE b where b.pk_id=t.fk_event_type_id) as event_type_name
  from ZHDD_EVENT_INFORMATION t 
- where  t.EVENT_STATUS != '3' and t.EVENT_CURRENT_STATUS = 4
+ where  t.EVENT_STATUS != '3' and t.EVENT_CURRENT_STATUS = 4 and trunc(t.ALARM_TIME) = trunc(sysdate)
   <if test="bumenfkdeptid.size() > 0"> 
   and t.fk_dept_id in 
    	 <foreach item="w" collection="bumenfkdeptid" open="(" separator="," close=")">
@@ -61,7 +61,7 @@ order by t.GCPK desc
  and t.pk_id in(select g.fk_event_id from ZHDD_EVENT_ACCEPTANCE g)
 )t
 where t.pk_id  not in(select c.fk_event_id from ZHDD_EVENT_FLOW c)
-and t.pk_id  not in(select g.fk_event_id from ZHDD_EVENT_RESULT g)
+and t.pk_id  not in(select g.fk_event_id from ZHDD_EVENT_RESULT g) and trunc(t.ALARM_TIME) = trunc(sysdate)
  <if test="bumenfkdeptid.size() > 0"> 
  and t.fk_dept_id in 
    	 <foreach item="w" collection="bumenfkdeptid" open="(" separator="," close=")">
@@ -78,7 +78,7 @@ and t.pk_id  not in(select g.fk_event_id from ZHDD_EVENT_RESULT g)
  and t.pk_id in(select g.fk_event_id from ZHDD_EVENT_ACCEPTANCE g)
 )t
 where t.pk_id   in(select c.fk_event_id from ZHDD_EVENT_FLOW c)
-or t.pk_id   in(select g.fk_event_id from ZHDD_EVENT_RESULT g)
+or t.pk_id   in(select g.fk_event_id from ZHDD_EVENT_RESULT g) and trunc(t.ALARM_TIME) = trunc(sysdate)
  <if test="bumenfkdeptid.size() > 0"> 
  and t.fk_dept_id in 
    	 <foreach item="w" collection="bumenfkdeptid" open="(" separator="," close=")">
@@ -91,7 +91,7 @@ select t.*,(select c.event_source_name from ZHDD_EVENT_SOURCE c where c.pk_id=t.
 (select b.event_type_name from ZHDD_EVENT_TYPE b where b.pk_id=t.fk_event_type_id) as event_type_name,
 (select count(*)  from ZHDD_EVENT_FLOW c where c.fk_event_id=t.pk_id) as startid
  from ZHDD_EVENT_INFORMATION t 
- where  t.EVENT_STATUS != '3'
+ where  t.EVENT_STATUS != '3' and trunc(t.ALARM_TIME) = trunc(sysdate)
  <if test="bumenfkdeptid.size() > 0"> 
   and t.fk_dept_id in 
    	 <foreach item="w" collection="bumenfkdeptid" open="(" separator="," close=")">

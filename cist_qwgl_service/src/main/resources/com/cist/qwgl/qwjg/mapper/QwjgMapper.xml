@@ -27,15 +27,43 @@
 		left join QW_REPORT_STREET c on c.FK_REPORT_ID=t.pk_id
 		<where>
 			<!-- 勤务监督 查询现在的时间 当前的勤务班次时间 -->
-			to_char(sysdate,'yyyy-mm-dd hh24:mi') between
-			to_char(c.WORK_SHIFT_START_TIME,'yyyy-mm-dd hh24:mi') and
-			to_char(c.WORK_SHIFT_END_TIME-c.SPAN_CYCLE+1,'yyyy-mm-dd hh24:mi')
+			   to_char(sysdate,'yyyy-mm-dd hh24:mi') between
+			to_char(c.work_shift_start_time,'yyyy-mm-dd hh24:mi') and
+			to_char(c.work_shift_end_time,'yyyy-mm-dd hh24:mi')
 			<if test="dept_pk!=null and dept_pk!=''">
 				and t.dept_pk=#{dept_pk}
 			</if>
 			<if test="qiangzhi!=null and qiangzhi!=''">
 				and t.qiangzhi!=0
 			</if>
+		</where>
+	</select>
+		<select id="kaoheselectQwreport" parameterType="java.util.HashMap"
+		resultMap="messageResultMap">
+		select * from (
+		select
+		(select c.dept_name from SYS_DEPART_INFO c where c.dept_pk=t.FK_DEPT_ID) as
+		dept_name,
+		(select c.dept_pk from SYS_DEPART_INFO c where c.dept_pk=t.FK_DEPT_ID) as
+		dept_pk,
+		(select AREA_NAME from QW_REPORT_STREET where FK_REPORT_ID=t.pk_id) as
+		AREA_NAME,
+		(select FK_PATROL_AREA_ID from QW_REPORT_STREET where FK_REPORT_ID=t.pk_id)
+		as FK_PATROL_AREA_ID,
+		(select count(*) from QW_REPORT_CAR_PATROL where FK_REPORT_ID=t.pk_id) as
+		jingcheshu,
+		(select count(*) from QW_REPORT_CAR_RELATION where FK_CAR_PATROL_ID in(select
+		PK_ID from QW_REPORT_CAR_PATROL where FK_REPORT_ID=t.pk_id)) as ren1,
+		(select count(*) from QW_REPORT_WALK_RELATION where
+		FK_REPORT_ID=t.pk_id) as ren2,
+		( select count(*) from QW_GUNS_RELATION where FK_EQUIP_ID in(select
+		pk_id from QW_EQUIP_INFO where FK_REPORT_ID =t.pk_id)) as qiangzhi,
+		t.* from QW_REPORT t where t.REPORT_TYPE=1 and
+		t.pk_id=#{pk_id}
+		)t
+		left join QW_REPORT_STREET c on c.FK_REPORT_ID=t.pk_id
+		<where>
+		
 		</where>
 	</select>
 	<resultMap type="com.cist.qwgl.qwbb.model.Qw_report"
@@ -68,7 +96,7 @@ select * from QW_PATROL_ALARM_LOG c where c.jmqwbbid=#{pk_id} order by c.pk desc
 		select * from QW_REPORT_WALK_RELATION where FK_REPORT_ID = #{pk_id}
 	</select>
 	<select id="jczzxl" parameterType="Integer" resultType="int">
-		select count(*) from VW_QW_GPS_RECORD t where t.YWBH in 
+		select count(*) from VW_QW_GPS_RECORD t where  trunc(t.gpstime) = trunc(sysdate) and t.YWBH in 
 		<foreach item="w" collection="rybhdata" open="(" separator="," close=")">
 		            #{w}
 		</foreach>
@@ -168,7 +196,7 @@ select * from QW_PATROL_ALARM_LOG c where c.jmqwbbid=#{pk_id} order by c.pk desc
 	<!-- gps数据 -->
 	<select id="getGpsRecord" parameterType="string"
 		resultType="com.cist.qwgl.qwjg.model.GpsRecord">
-		select * from VW_QW_GPS_RECORD t where t.YWBH=#{rybh}
+		select * from VW_QW_GPS_RECORD t where t.YWBH=#{rybh} and trunc(t.gpstime) = trunc(sysdate)
 	</select>
 
 
@@ -277,7 +305,7 @@ select * from QW_PATROL_ALARM_LOG c where c.jmqwbbid=#{pk_id} order by c.pk desc
 		select 
 (select c.dept_name from SYS_DEPART_INFO c where c.dept_pk=t.fk_dept_id) as dept_name,
 (select h.fc_name from SYS_FRM_CODE h where h.fct_code='C110' and h.fc_code=t.car_brand) as car_brandname,
-(select h.fc_name from SYS_FRM_CODE h where h.fct_code='C004' and h.fc_code=t.car_purpose) as car_purposename,
+(select h.fc_name from SYS_FRM_CODE h where h.fct_code='JW02' and h.fc_code=t.car_purpose) as car_purposename,
 t.*  from JCSJ_POLICE_RESOURCES t
 		<where>
 			<if test="resources_type!=null and resources_type!=''">
@@ -602,7 +630,7 @@ where rownum=1
 		where t.pk_id=#{dualassessmentpk}
 	</update>
 	<select id="gpsrecord" parameterType="java.util.HashMap" resultType="com.cist.qwgl.qwjg.model.GpsRecord">
-	select * from VW_QW_GPS_RECORD t where t.SBWYBM in (
+	select * from VW_QW_GPS_RECORD t where  trunc(t.gpstime) = trunc(sysdate) and t.SBWYBM in (
 select t.device_code from JCSJ_POLICE_RESOURCES t where t.RESOURCES_TYPE=3
 )
 	</select>
@@ -634,7 +662,110 @@ left join JCSJ_DEVICE_STATUS_BASIC c on t.pk_id=c.fk_device_id
       and 
      verify_time between to_date(#{kaitime},'yyyy-mm-dd hh24:mi:ss') and to_date(#{jieshutime},'yyyy-mm-dd hh24:mi:ss')
     </where>
-    
    </delete>
+   
+   <select id="jcsj_police_resources" parameterType="java.util.HashMap" resultMap="getGpsRecordinfo" resultType="com.cist.qwgl.qwjg.model.Jcsj_police_resources">
+     select * from JCSJ_POLICE_RESOURCES t where t.RESOURCES_TYPE in(1,5,6)
+     <if test="listjc !=null and  listjc.size() > 0">
+		and t.car_num  not in 
+		<foreach item="w" collection="listjc" open="(" separator="," close=")">
+		            #{w}
+		</foreach>
+	</if>
+     	
+   </select>
+  <resultMap type="com.cist.qwgl.qwjg.model.Jcsj_police_resources" id="getGpsRecordinfo">
+		<id property="pk_id" column="pk_id" />
+		 <result column="car_num" property="car_num" />  
+		<association property="gpsrecord" column="car_num"
+			javaType="com.cist.qwgl.qwjg.model.GpsRecord"
+			select="getGpsRecordinfocha" />
+
+	</resultMap>
+    <select id="getGpsRecordinfocha" parameterType="java.util.HashMap" resultType="com.cist.qwgl.qwjg.model.GpsRecord">
+      select * from QW_GPS_RECORD t where t.ywbh=#{car_num} and trunc(t.gpstime) = trunc(sysdate)
+   </select>
+   <select id="jcsjpolicerespersoninfo" parameterType="java.util.HashMap" resultMap="hdjnagyuandata">
+        select t.*,(select c.dept_name from SYS_DEPART_INFO c where c.dept_code=t.GLBM) as  dept_name from JCSJ_POLICE_RES_PERSON t
+     <where>
+        <if test="listjy !=null and  listjy.size() > 0">
+			 t.rybh  not in 
+			<foreach item="w" collection="listjy" open="(" separator="," close=")">
+			            #{w}
+			</foreach>
+		</if>
+     </where>
+   </select>
+     <resultMap type="com.cist.qwgl.qwbb.model.Jcsj_police_res_person" id="hdjnagyuandata">
+		<id property="pk_id" column="pk_id" />
+		 <result column="rybh" property="rybh" />  
+		<association property="gpsrecord" column="rybh"
+			javaType="com.cist.qwgl.qwjg.model.GpsRecord"
+			select="getGpsRecordinfochagg" />
+	</resultMap>
+    <select id="getGpsRecordinfochagg" parameterType="java.util.HashMap" resultType="com.cist.qwgl.qwjg.model.GpsRecord">
+      select * from QW_GPS_RECORD t where t.ywbh=#{rybh} and trunc(t.gpstime) = trunc(sysdate)
+   </select>
+   <select id="onduty" parameterType="java.util.HashMap" resultType="com.cist.qwgl.qwjg.model.Onduty">
+
+   select t.*,(select a.WORK_SHIFT_START_TIME from QW_REPORT_STREET a where a.FK_REPORT_ID=t.fk_report_id) as WORK_SHIFT_START_TIME,(select a.WORK_SHIFT_END_TIME from QW_REPORT_STREET a where a.FK_REPORT_ID=t.fk_report_id) as WORK_SHIFT_END_TIME 
+ , ( select POLICE_TEAM_NAME from QW_REPORT where PK_ID=t.fk_report_id) as POLICE_TEAM_NAME
+ ,(select ARMED_FORCES_TYPE from QW_REPORT_STREET where FK_REPORT_ID=t.fk_report_id) as ARMED_FORCES_TYPE
+  ,(select AREA_NAME from QW_REPORT_STREET where FK_REPORT_ID=t.fk_report_id) as AREA_NAME
+     from (
+select j.*,(select c.REPORT_PERIOD_TYPE from QW_REPORT c where c.pk_id=j.fk_report_id) as REPORT_PERIOD_TYPE
+,(select RYBH from JCSJ_POLICE_RES_PERSON h where h.id=j.fk_user_id) as RYBH
+,(select XM from JCSJ_POLICE_RES_PERSON h where h.id=j.fk_user_id) as XM
+  from QW_REPORT_WALK_RELATION j where j.FK_REPORT_ID in(
+select FK_REPORT_ID from QW_REPORT_STREET where FK_REPORT_ID in(select c.pk_id from QW_REPORT c where to_char(c.REPORT_PERIOD_TYPE,'dd')=to_char(sysdate,'dd'))
+and WORK_SHIFT_START_TIME between to_date(#{kaitime},'yyyy-mm-dd hh24:mi:ss') and to_date(#{jieshutime},'yyyy-mm-dd hh24:mi:ss')
+and  WORK_SHIFT_END_TIME between to_date(#{kaitime},'yyyy-mm-dd hh24:mi:ss') and to_date(#{jieshutime},'yyyy-mm-dd hh24:mi:ss')
+)
+)t  where t.rybh=#{ywbh}
+   </select>
+    <select id="ondutyche" parameterType="java.util.HashMap" resultType="com.cist.qwgl.qwjg.model.Onduty">
+select t.*
+ , ( select POLICE_TEAM_NAME from QW_REPORT where PK_ID=t.fk_report_id) as POLICE_TEAM_NAME
+ ,(select ARMED_FORCES_TYPE from QW_REPORT_STREET where FK_REPORT_ID=t.fk_report_id) as ARMED_FORCES_TYPE
+  ,(select AREA_NAME from QW_REPORT_STREET where FK_REPORT_ID=t.fk_report_id) as AREA_NAME
+ from (
+select g.*
+,(select RYBH from JCSJ_POLICE_RES_PERSON h where h.id=g.fk_user_id) as RYBH
+,(select XM from JCSJ_POLICE_RES_PERSON h where h.id=g.fk_user_id) as XM,
+(select a.WORK_SHIFT_START_TIME from QW_REPORT_STREET a where a.FK_REPORT_ID=g.fk_report_id) as WORK_SHIFT_START_TIME,(select a.WORK_SHIFT_END_TIME from QW_REPORT_STREET a where a.FK_REPORT_ID=g.fk_report_id) as WORK_SHIFT_END_TIME  ,
+(select c.REPORT_PERIOD_TYPE from QW_REPORT c where c.pk_id=g.fk_report_id) as REPORT_PERIOD_TYPE from (
+select j.*,(select k.FK_REPORT_ID from QW_REPORT_CAR_PATROL k where k.PK_ID=j.FK_CAR_PATROL_ID) as FK_REPORT_ID from QW_REPORT_CAR_RELATION j where FK_CAR_PATROL_ID in(
+select PK_ID from QW_REPORT_CAR_PATROL where FK_REPORT_ID in(
+select FK_REPORT_ID from QW_REPORT_STREET where FK_REPORT_ID in(select c.pk_id from QW_REPORT c where to_char(c.REPORT_PERIOD_TYPE,'dd')=to_char(sysdate,'dd'))
+and WORK_SHIFT_START_TIME between to_date(#{kaitime},'yyyy-mm-dd hh24:mi:ss') and to_date(#{jieshutime},'yyyy-mm-dd hh24:mi:ss')
+and  WORK_SHIFT_END_TIME between to_date(#{kaitime},'yyyy-mm-dd hh24:mi:ss') and to_date(#{jieshutime},'yyyy-mm-dd hh24:mi:ss')
+)
+)
+) g 
+)t
+where t.rybh=#{ywbh}
+   </select>
+   <select id="ondutydiaodu" parameterType="java.util.HashMap" resultType="com.cist.qwgl.qwjg.model.Onduty">
+   select * from (
+select c.*
+,(select f.EVENT_DESCRIBE from ZHDD_EVENT_INFORMATION f where f.pk_id=c.fk_event_id) as event_describe
+,(select RYBH from JCSJ_POLICE_RES_PERSON h where h.id=c.fk_person_id) as RYBH
+,(select XM from JCSJ_POLICE_RES_PERSON h where h.id=c.fk_person_id) as XM,
+(select a.dispatch_time from ZHDD_EVENT_DISPATCH a where a.pk_id=c.fk_event_dispatch_id) as dispatch_time
+ from ZHDD_EVENT_PERSONNEL c where c.fk_event_dispatch_id in(select t.PK_ID from ZHDD_EVENT_DISPATCH t where DISPATCH_TIME between to_date(#{kaitime},'yyyy-mm-dd hh24:mi:ss') and to_date(#{jieshutime},'yyyy-mm-dd hh24:mi:ss'))
+)t where t.rybh=#{ywbh}
+ 
+   </select>
+      <select id="ondutyjcbk" parameterType="java.util.HashMap" resultType="com.cist.qwgl.qwjg.model.Onduty">
+select * from (
+select b.*
+,(select p.DISPATCH_TIME from JCBK_WARNING_DISPATCH p where p.pk_id=b.FK_WARNING_DISPATCH_ID) as DISPATCH_TIME
+,(select p.NOTIFICATION_CONTENT from JCBK_WARNING_DISPATCH p where p.pk_id=b.FK_WARNING_DISPATCH_ID) as event_describe
+,(select RYBH from JCSJ_POLICE_RES_PERSON h where h.id=b.fk_person_id) as RYBH
+,(select XM from JCSJ_POLICE_RES_PERSON h where h.id=b.fk_person_id) as XM
+ from JCBK_WARNING_PERSONNEL b where b.FK_WARNING_DISPATCH_ID in(select pk_id from JCBK_WARNING_DISPATCH  where dispatch_time between to_date(#{kaitime},'yyyy-mm-dd hh24:mi:ss') and to_date(#{jieshutime},'yyyy-mm-dd hh24:mi:ss'))
+)t where t.rybh=#{ywbh}
+ 
+   </select>
    
 </mapper>

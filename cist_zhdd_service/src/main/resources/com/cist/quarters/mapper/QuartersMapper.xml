@@ -64,7 +64,7 @@ COMMIT;
     END;  
    </insert>
           <select id="depart_infolist" resultType="com.cist.quarters.model.Depart_info" parameterType="java.lang.Integer">
-select t.dept_pk,t.dept_code,t.dept_name as name,t.DEPT_SUPERIOR from sys_depart_info t 
+select t.dept_pk,t.dept_code,t.dept_name as name,t.DEPT_SUPERIOR,t.geo_spatial from sys_depart_info t 
 <where>
 		  <if test="_parameter  == null or _parameter  == ''">
 		     t.DEPT_SUPERIOR is null

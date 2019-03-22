@@ -39,7 +39,7 @@
 				<![CDATA[and alarm_time <= to_date(#{jssj},'yyyy-mm-dd HH24:mi:ss') ]]>
 			</if>
 		</where>
-		 order by pk_id
+		 order by alarm_time desc
 	</select>
 	<!-- 删除事件 -->
 	<delete id="deleteeventinfo" parameterType="java.util.HashMap">

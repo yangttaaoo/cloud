@@ -19,6 +19,7 @@ import com.cist.earlyewarningpost.model.JcbkWarningVehicle;
 import com.cist.earlyewarningpost.model.Jcsj_police_res_person;
 import com.cist.earlyewarningpost.model.Jcsj_police_resources;
 import com.cist.earlyewarningpost.model.Qw_report;
+import com.cist.earlyewarningpost.model.SysConfig;
 import com.cist.earlyewarningpost.model.SysDepartInfo;
 import com.cist.earlyewarningpost.model.Sys_frm_code;
 import com.cist.earlyewarningpost.model.TblCarRecoInfo;
@@ -221,6 +222,12 @@ public interface EarlyeWarningPostService {
 	 * @return List<JcbkControlBayonet>
 	 */
  	List<JcbkControlBayonet> selectBkDev(HashMap<String, Object> map);
+ 	
+ 	/**
+	 * 查询基础配置信息 视频播放地址
+	 * @return List<SysConfig>
+	 */
+ 	SysConfig selectConfig(HashMap<String, Object> map);
  	
  	
 }

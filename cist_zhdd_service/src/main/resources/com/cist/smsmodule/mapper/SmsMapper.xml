@@ -3,8 +3,10 @@
 <mapper namespace="com.cist.smsmodule.mapper.SmsMapper">
 	<!-- 查询所有数据 -->
 	<select id="selectData" resultType="com.cist.smsmodule.modle.Smsmodle" parameterType="java.util.HashMap">
-		select * from  zhdd_sms_template t
+		select t.*,(select dept_name from sys_depart_info i where dept_pk = t.fk_dept_id) deptname,
+(select sypi_name from sys_police_info where sypi_pk = t.fk_create_founder_id)pepolename from  SYS_SMS_TEMPLATE t
 		<where>
+			t.type='1'
 			<if test="mkmc!=null and mkmc!=''">
 				and t.temp_name like '%'||#{mkmc}||'%'
 			</if>
@@ -18,34 +20,35 @@
 	</select>
 	<!--修改数据  -->
     <update id="updateData" parameterType="java.util.HashMap">
-        update  zhdd_sms_template  
+          update  SYS_SMS_TEMPLATE  
       <trim prefix="set" suffixOverrides=",">
-       <if test="dept!=null and dept!=''">
-        fk_dept_id=#{dept},
+       <if test="fk_dept_id!=null and fk_dept_id!=''">
+        fk_dept_id=#{fk_dept_id},
         </if>
-        temp_name=#{name},
-        temp_contents=#{content},
+        temp_name=#{temp_name},
+        temp_contents=#{temp_contents},
         isdefault=#{isdefault}
-        where  pk_id=#{id}
+        where  pk_id=#{pk_id}
         </trim>
     </update>
     <!--增加数据  -->
     <insert id="addData" parameterType="java.util.HashMap">
-       insert into zhdd_sms_template 
-        <!--  <trim prefix="(" suffix=")" suffixOverrides=","> -->
+      insert into SYS_SMS_TEMPLATE 
          (pk_id,
-	   fk_dept_id,
-       temp_name,temp_contents,create_time,fk_create_founder_id,isdefault) 
-      <!--  </trim>
-       <trim prefix="values(" suffix=")" suffixOverrides=","> -->
+fk_dept_id,
+temp_name,
+temp_contents,
+create_time,
+fk_create_founder_id,
+isdefault,type) 
        values(
-        cistsys.SEQ_ZHDD_SMS_TEMPLATE.nextval,
-        #{dept},
-        #{name},
-        #{content},
-        sysdate,
-        #{createid},
-        #{isdefault}
+        cistsys.SEQ_JCBK_SMS_TEMPLATE.nextval,
+#{fk_dept_id},
+#{temp_name},
+#{temp_contents},
+sysdate,
+#{fk_create_founder_id},
+#{isdefault},'1'
     )
     </insert>
     <!-- 删除数据-->

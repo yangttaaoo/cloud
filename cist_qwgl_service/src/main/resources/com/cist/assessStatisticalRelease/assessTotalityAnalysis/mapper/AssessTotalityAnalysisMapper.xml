@@ -65,7 +65,7 @@ select a.* from
 		total_assess_score,sum(v.total_jf)
 		total_add_score,sum(v.total_kf)
 		total_buckle_score,
-		RANK()OVER(ORDER BY
+		dense_rank()OVER(ORDER BY
 		sum(v.total_defen) desc) as
 		total_rank from vm_qwgl_ztfx v left join sys_police_info s
 		on

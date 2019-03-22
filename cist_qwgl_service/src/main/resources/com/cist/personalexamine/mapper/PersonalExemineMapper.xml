@@ -16,7 +16,7 @@
        
    	</select>
    	
-   	<select id="getTopice" resultType="java.lang.String" parameterType="java.lang.Integer">
+   	<select id="getTopice" resultType="java.lang.String" parameterType="java.lang.String">
      select t.TOPIC_NAME from QW_APPRAISE_TOPIC t 
       <where>
       1=1
@@ -26,7 +26,7 @@
       </where>
    	</select>
    	
-   	<select id="getRegulations" resultType="java.lang.String" parameterType="java.lang.Integer">
+   	<select id="getRegulations" resultType="java.lang.String" parameterType="java.lang.String">
      select t.REGULATIONS_NAME from QW_APPRAISE_REGULATIONS t 
       <where>
       1=1
@@ -45,7 +45,7 @@
        where pk_id = #{pk}
      </update>
      
-     <select id="getReport" resultType="java.lang.Character" parameterType="java.lang.Integer">
+     <select id="getReport" resultType="java.lang.String" parameterType="java.lang.String">
      select t.REPORT_TYPE from QW_REPORT t 
       <where>
       1=1

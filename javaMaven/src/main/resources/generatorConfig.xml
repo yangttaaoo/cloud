@@ -31,7 +31,7 @@
              <property name="enableSubPackages" value="true" />
          </javaClientGenerator>
          <!-- 要生成那些表(更改tableName和domainObjectName就可以) -->
-         <table schema="" tableName="JCSJ_DEVICE" domainObjectName="JcsjDevice" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false" />
+         <table schema="" tableName="SYS_CONFIG" domainObjectName="SysConfig" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false" />
          <!-- <table schema="sbzcdb" tableName="equipment" domainObjectName="Equipment" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false" />    -->
      </context>
 </generatorConfiguration>

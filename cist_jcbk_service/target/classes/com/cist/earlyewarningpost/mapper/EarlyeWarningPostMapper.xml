@@ -172,7 +172,9 @@
 		<where>
 			<if test="Pleasevalue !=null and Pleasevalue.size()>0">
 				and glbm in
-				(select bmdm from JCBK_BAYONET_UNITS where kkbh=#{kkbh})
+				(select glbm from JCBK_FENCE_AREA t
+				where exists(select BKKK from JCBK_BAYONET_AREA t1  where t1.QYPK = t.PK and t1.KKBH = #{kkbh}))
+				<!-- (select bmdm from JCBK_BAYONET_UNITS where kkbh=#{kkbh}) -->
 				<!-- <foreach collection="Pleasevalue" index="index" item="item"
 					open="(" separator="," close=")">
 					#{item}
@@ -648,11 +650,18 @@
 	<select id="selectBkDev" parameterType="java.util.HashMap"
 		resultType="com.cist.earlyewarningpost.model.JcbkControlBayonet">
 		
-		select t2.device_gb_serial,t2.device_gb_code,t2.device_gb_channel 
+		select t.pk_id pk,t2.device_gb_serial,t2.device_gb_code,t2.device_gb_channel 
 		from JCSJ_DEVICE t 
 		left join JCBK_BAYONET_DEV t1 on t1.sbbh=t.pk_id
 		left join JCBK_CONTROL_BAYONET t4 on t4.pk=t1.bkkk
 		left join JCSJ_DEVICE_CAMERA_GB28181 t2 on  t2.DEVICE_ID=t.pk_id
 		where t4.ENABLE ='1' and t4.kkbh = #{kkbh}
+	</select>
+	
+	<select id="selectConfig" parameterType="java.util.HashMap" resultType="com.cist.earlyewarningpost.model.SysConfig">
+	select * from SYS_CONFIG t 
+	<where>
+	syci_key = #{syci_key}
+	</where>
 	</select>
 </mapper>

@@ -30,6 +30,7 @@ import com.cist.earlyewarningpost.model.JcbkWarningResult;
 import com.cist.earlyewarningpost.model.JcbkWarningVehicle;
 import com.cist.earlyewarningpost.model.Jcsj_police_res_person;
 import com.cist.earlyewarningpost.model.Jcsj_police_resources;
+import com.cist.earlyewarningpost.model.SysConfig;
 import com.cist.earlyewarningpost.model.SysDepartInfo;
 import com.cist.earlyewarningpost.model.Sys_frm_code;
 import com.cist.earlyewarningpost.model.TblCarRecoInfo;
@@ -424,5 +425,15 @@ public class EarlyeWarningPostController {
 		Map<String, Object> modelMap = new HashMap<String, Object>();
 		modelMap.put("policList", service.selectQwbb(map));
 		return modelMap;
+	}
+	
+	/**
+	 * 查询基础配置信息中的 国标视频地址
+	 * @param map
+	 */
+	@RequestMapping("selectConfig")
+	public SysConfig selectConfig(@RequestBody HashMap<String, Object> map) {
+		map.put("syci_key", "GBVIDEOURL");
+		return service.selectConfig(map);
 	}
 }
