@@ -208,7 +208,7 @@
 				and t.hpzl = #{hpzl}
 			</if>
 
-			<if test="wfxw!=null and wfxw!='' and wfxw!='null'">
+			<if test="wfxw!=null and wfxw!=''and wfxw!='null'">
 				and t.wfxw in
 				<foreach item="w" collection="wfxw" open="(" separator="," close=")">
 		            #{w}

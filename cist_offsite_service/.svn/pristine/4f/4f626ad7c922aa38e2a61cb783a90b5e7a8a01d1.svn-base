@@ -205,7 +205,7 @@ public class RecheckController {
 
 
 		}else {
-			if(map.get("wfxw")!=null &&!"".equals(map.get("wfxw"))) {
+			if(map.get("wfxw")!=null) {
 				String[] str = new String[1];
 				str[0]=map.get("wfxw").toString();
 				map.put("wfxw", str);

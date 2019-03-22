@@ -534,7 +534,7 @@ public class RecheckController {
 		Integer queryjrgzl = recheckService.queryjrgzl(userPk);
 		modelMap.put("jrshl", queryjrgzl==null?0:queryjrgzl);// 今日已审核量
 		List<TBL_VERIFY_GROUP> querywfxwqxbysypi = recheckService.querywfxwqxbysypi(userPk);
-		if(querywfxwqxbysypi.size()>0&&querywfxwqxbysypi.get(0).getTbvg_job()!=null)
+		if(querywfxwqxbysypi.get(0).getTbvg_job()!=null)
 		{
 			modelMap.put("jrgzl", querywfxwqxbysypi.get(0).getTbvg_job());// 今日工作量	
 		}

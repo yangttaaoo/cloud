@@ -208,7 +208,7 @@
 				and t.hpzl = #{hpzl}
 			</if>
 
-			<if test="wfxw!=null and wfxw!='' and wfxw!='null'">
+			<if test="wfxw!=null and wfxw!=''and wfxw!='null'">
 				and t.wfxw in
 				<foreach item="w" collection="wfxw" open="(" separator="," close=")">
 		            #{w}
@@ -517,13 +517,13 @@
 				and t.hpzl = #{hpzl}
 			</if>
 
-			<if test="wfxw!=null and wfxw!=''and wfxw!='null' ">
+			<if test="wfxw!=null and wfxw!=''and wfxw!='null' adn wfxw.size()>0">
 				and t.wfxw in
 				<foreach item="w" collection="wfxw" open="(" separator="," close=")">
 		            #{w}
 		        </foreach>
 			</if>
-			<if test="sbbh!=null and sbbh!=''">
+			<if test="sbbh!=null and sbbh!='' and sbbh.size()>0">
 				and t.SBBH in
 				<foreach item="t" collection="sbbh" open="(" separator="," close=")">
 		            #{t}
