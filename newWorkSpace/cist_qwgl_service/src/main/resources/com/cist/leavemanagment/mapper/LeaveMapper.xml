@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cist.leavemanagment.mapper.LeaveMapper" >
+	<!-- 查询个人请假信息-->
+	<select id="selectSelf" parameterType="java.util.HashMap" 
+	resultType="com.cist.leavemanagment.model.Leave">
+	select (select  t.sypi_name from  SYS_POLICE_INFO t where  t.sypi_pk=l.l_sqr) as qjrname, (select  t.sypi_name from  SYS_POLICE_INFO t where  t.sypi_pk=l.l_spr) as sprrname,
+ (select k.dept_name from SYS_DEPART_INFO k where k.dept_pk=l.l_deptid) as deptname,
+l.* from QW_LEAVE l
+<where>
+			<if test="spzt!=null and spzt!=''">
+			 <if test="xjzt==null or xjzt=='' ">
+			and l.L_SPZT = #{spzt}
+			     </if>
+				
+			</if>
+			<if test="qjkssj!=null and qjkssj!='' and qjkssj!='null'">
+		    <![CDATA[ and l.L_QJKSRQ >=to_date(#{qjkssj},'yyyy-mm-dd HH24:mi:ss')]]>
+			</if>
+			<if test="qjjssj!=null and qjjssj!='' and qjjssj!='null'">
+		    <![CDATA[and l.L_QJJSRQ <= to_date(#{qjjssj},'yyyy-mm-dd HH24:mi:ss') ]]>
+			</if>
+			<if test="userPk!=null and userPk!=''">
+				and l.L_SQR = #{userPk}
+			</if>
+			<if test="l_deptid!=null and l_deptid!=''">
+		
+			  and l.l_deptid = #{l_deptid}
+			    
+			</if>
+				<if test="xjzt!=null and xjzt!=''">
+				and l.xjzt = #{xjzt}
+			</if>	
+		</where>
+		order by l.l_pk desc
+	</select>
+	
+		<select id="selectSelfoff" parameterType="java.util.HashMap" 
+	resultType="com.cist.leavemanagment.model.Leave">
+select * from (
+  select (select  t.sypi_name from  SYS_POLICE_INFO t where  t.sypi_pk=l.L_SQR) as qjrnames,(select  t.sypi_name from  SYS_POLICE_INFO t where  t.sypi_pk=l.l_xjr) as qjrname, (select  t.sypi_name from  SYS_POLICE_INFO t where  t.sypi_pk=l.l_spr) as sprrname,
+ (select k.dept_name from SYS_DEPART_INFO k where k.dept_pk=l.l_deptid) as deptname,
+l.* from QW_LEAVE l
+)l
+<where>
+			<if test="l_deptid!=null and l_deptid!=''">
+				and l.L_DEPTID = #{l_deptid}
+			</if>
+			
+			<if test="l_xjr!=null and l_xjr!=''">
+			 and  l.qjrname like '%'||#{l_xjr}||'%'
+			</if>
+			
+			
+			<if test="sell_off_time!=null and sell_off_time!='' and sell_off_time!='null'">
+		     and to_char (l.sell_off_time,'yyyy-mm-dd')=#{sell_off_time}
+			</if>
+			
+			<if test="xjzt!=null and xjzt!=''">
+				and l.xjzt = #{xjzt}
+			</if>
+		</where>
+		order by l.l_pk desc
+	</select>
+	
+	<!-- 查询未审核请假信息-->
+	<select id="selectNoAuditing" parameterType="java.util.HashMap" 
+	resultType="com.cist.leavemanagment.model.Leave">
+		select * from (
+  select (select  t.sypi_name from  SYS_POLICE_INFO t where  t.sypi_pk=l.l_sqr) as qjrname,
+   (select  t.sypi_name from  SYS_POLICE_INFO t where  t.sypi_pk=l.l_spr) as sprrname,
+   
+   l.* from QW_LEAVE l
+
+  )b	
+		<where>
+			<if test="l_sqr!=null and l_sqr!='' and l_sqr!='null'">
+				   and  b.qjrname like '%'||#{l_sqr}||'%'
+			</if>
+			<if test="l_deptid!=null and l_deptid!='' and l_deptid!='null'">
+				and b.L_DEPTID = #{l_deptid}
+			</if>
+			<if test="sqkssj!=null and sqkssj!='' and sqkssj!='null'">
+		    <![CDATA[ and b.L_SQSJ >=to_date(#{sqkssj},'yyyy-mm-dd HH24:mi:ss')]]>
+			</if>
+			<if test="sqjssj!=null and sqjssj!='' and sqjssj!='null'">
+		    <![CDATA[and b.L_SQSJ <= to_date(#{sqjssj},'yyyy-mm-dd HH24:mi:ss') ]]>
+			</if>
+			and b.L_SPZT in (1,3)
+		</where>
+	</select>
+	<!-- 查询所有请假信息-->
+	<select id="selectAll" parameterType="java.util.HashMap" 
+	resultType="com.cist.leavemanagment.model.Leave">
+	select * from (
+  select (select  t.sypi_name from  SYS_POLICE_INFO t where  t.sypi_pk=l.L_SQR) as qjrnames,(select  t.sypi_name from  SYS_POLICE_INFO t where  t.sypi_pk=l.l_xjr) as qjrname, (select  t.sypi_name from  SYS_POLICE_INFO t where  t.sypi_pk=l.l_spr) as sprrname,
+ (select k.dept_name from SYS_DEPART_INFO k where k.dept_pk=l.l_deptid) as deptname,
+l.* from QW_LEAVE l
+)l
+		<where>
+			<if test="l_sqr!=null and l_sqr!=''">
+				and  l.qjrnames like '%'||#{l_sqr}||'%'
+			</if>
+			<if test="l_deptid!=null and l_deptid!=''">
+				and l.L_DEPTID = #{l_deptid}
+			</if>
+			<if test="l_spzt!=null and l_spzt!=''">
+				and l.L_SPZT = #{l_spzt}
+			</if>
+			<if test="sqkssj!=null and sqkssj!='' and qjkssj!='null'">
+		    <![CDATA[ and l.L_SQSJ >=to_date(#{sqkssj},'yyyy-mm-dd HH24:mi:ss')]]>
+			</if>
+			<if test="sqjssj!=null and sqjssj!='' and qjjssj!='null'">
+		    <![CDATA[and l.L_SQSJ <= to_date(#{sqjssj},'yyyy-mm-dd HH24:mi:ss') ]]>
+			</if>
+		</where>
+	</select>
+	<!-- 获取部门 -->
+	<select id="selectDept" resultType="com.cist.leavemanagment.model.Dept"
+	  parameterType="java.util.HashMap">
+		select t.dept_pk,t.dept_code,t.dept_name from sys_depart_info t
+		<where>
+			<if test="dept_pk != null and dept_pk !=''">
+				and t.DEPT_PK = #{dept_pk}
+			</if>
+		</where>
+	</select>
+	<!-- 请假申请 -->
+	<insert id="insertLeave" parameterType="java.util.HashMap">
+		insert into QW_LEAVE
+			(
+			 L_PK,
+			 L_QJKSRQ,
+			 L_QJJSRQ,
+			 L_SQR,
+			 L_QJYY,
+			 L_SQSJ,
+			 L_SQSM,
+			 L_DEPTID)
+		values(
+		cistsys.SEQ_VIO_CRUISE_CASE.nextval,
+		to_date(#{l_qjksrq},'yyyy-mm-dd HH24:mi:ss'),
+		to_date(#{l_qjjsrq},'yyyy-mm-dd HH24:mi:ss'),
+		#{l_sqr,jdbcType=VARCHAR},
+		#{l_qjyy},
+		to_date(#{l_sqsj},'yyyy-mm-dd HH24:mi:ss'),
+		#{l_sqsm,jdbcType=VARCHAR},
+		#{l_deptid})
+	</insert>
+	<!-- 删除请假申请 -->
+	<delete id="deleteById" parameterType="java.util.HashMap">
+		delete from QW_LEAVE where L_PK=#{l_pk}
+	</delete>
+	<!-- 更新请假申请 -->
+	<update id="updateLeave" parameterType="java.util.HashMap">
+		UPDATE QW_LEAVE SET 
+             L_QJKSRQ=to_date(#{l_qjksrq},'yyyy-mm-dd HH24:mi:ss'),
+             L_QJJSRQ=to_date(#{l_qjjsrq},'yyyy-mm-dd HH24:mi:ss'),
+             L_QJYY=#{l_qjyy},
+             L_SQSM=#{l_sqsm},
+             L_SQSJ=to_date(#{l_sqsj},'yyyy-mm-dd HH24:mi:ss'),
+             L_SPZT=1,
+			 L_SPR = null,
+			 L_SHSM = null,
+			 L_SPSJ = null
+       where L_PK=#{l_pk}
+	</update>
+		<update id="updateLeaveoff" parameterType="java.util.HashMap" >
+		UPDATE QW_LEAVE SET 
+             xjzt=2,
+             SELL_OFF_TIME=to_date(#{sell_off_time},'yyyy-mm-dd HH24:mi:ss'),
+             l_xjrdeptid=#{l_xjrdeptid},
+             L_XJR=#{l_xjr}
+       where L_PK=#{l_pk}
+	</update>
+	
+	<!-- 审核请假申请 -->
+	<update id="auditingLeave" parameterType="java.util.HashMap">
+		UPDATE QW_LEAVE SET 
+             L_SPZT=#{l_spzt},
+             L_SPSJ=to_date(#{l_spsj},'yyyy-mm-dd HH24:mi:ss'),
+             L_SPR=#{l_sqr},
+             L_SHSM=#{l_shsm}
+       where L_PK=#{l_pk}
+	</update>
+	
+	<select id="depart_infolist" resultType="com.cist.leavemanagment.model.DeptInfo" parameterType="java.lang.Integer">
+		select t.dept_pk,t.dept_code,t.dept_name as name,t.DEPT_SUPERIOR from sys_depart_info t 
+		<where>
+				  <if test="_parameter  == null or _parameter  == ''">
+				     t.DEPT_SUPERIOR is null
+				   </if>
+				     <if test="_parameter  != null and _parameter  != ''">
+				     t.DEPT_SUPERIOR=#{_parameter}
+				   </if>
+		</where>
+	</select>
+</mapper>

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cist.xxtj.wfsjlztj.mapper.WfsjlztjMapper">
+	<!-- 查询四卡片信息 -->
+	<select id="querycard" parameterType="java.util.HashMap" resultType="com.cist.xxtj.wfsjlztj.model.TBL_FLOW_CARD_STAT">
+		select * from (select * from TBL_FLOW_CARD_STAT order by tjsj desc) where rownum=1
+	</select>
+	<!-- 查询数据流转统计 查询今日 -->
+	<select id="queryjrsjlztj" parameterType="java.util.HashMap" resultType="com.cist.xxtj.wfsjlztj.model.Sjlztj">
+		select p.sj||':00' rq ,s.cjzs ,s.shzs,s.sczs from (
+             select to_char(to_date(to_char(sysdate -(rownum - 1) / 24,'yyyy-mm-dd hh24') || ':00:00','yyyy-mm-dd hh24:mi:ss'),'hh24') sj
+              from dual
+              connect by <![CDATA[rownum <= 24]]>
+            ) p left join (
+            	select * from TBL_OFFE_VIO_FLOW_STAT
+            	where 
+						<![CDATA[tjsj >=(select to_date(to_char(sysdate,'yyyy-mm-dd')||'00:00:00', 'YYYY-MM-DD HH24:MI:SS') from dual)]]>
+						<![CDATA[and tjsj <= (select to_date(to_char(sysdate,'yyyy-mm-dd')||'23:59:59', 'YYYY-MM-DD HH24:MI:SS') from dual) ]]>
+            ) s on p.sj=s.tjxs order by rq
+	</select>
+	<!-- 查询数据流转统计 查询本周 -->
+	<select id="querybzsjlztj" parameterType="java.util.HashMap" resultType="com.cist.xxtj.wfsjlztj.model.Sjlztj">
+			select p.xq rq,p.rq k,sum(s.cjzs) cjzs,sum(s.shzs) shzs,sum(s.sczs) sczs from (
+		          select to_char(trunc(sysdate,'iw'),'yyyy-mm-dd') rq,to_char(trunc(sysdate,'iw'),'day') xq from dual union all
+		          select to_char(trunc(sysdate,'iw') +1,'yyyy-mm-dd') rq ,to_char(trunc(sysdate,'iw')+1,'day') xq from dual union all
+		          select to_char(trunc(sysdate,'iw') +2,'yyyy-mm-dd') rq,to_char(trunc(sysdate,'iw')+2,'day') xq from dual union all
+		          select to_char(trunc(sysdate,'iw') +3,'yyyy-mm-dd') rq,to_char(trunc(sysdate,'iw')+3,'day') xq from dual union all
+		          select to_char(trunc(sysdate,'iw') +4,'yyyy-mm-dd') rq,to_char(trunc(sysdate,'iw')+4,'day') xq from dual union all
+		          select to_char(trunc(sysdate,'iw') +5,'yyyy-mm-dd') rq,to_char(trunc(sysdate,'iw')+5,'day') xq from dual union all
+		          select to_char(trunc(sysdate,'iw') +6,'yyyy-mm-dd') rq,to_char(trunc(sysdate,'iw')+6,'day') xq  from dual
+			) p left join TBL_OFFE_VIO_FLOW_STAT s on p.rq = to_char(s.tjsj,'yyyy-mm-dd') group by p.xq,p.rq order by k
+	</select>
+	<!-- 查询数据流转统计 查询本月 -->
+	<select id="querybysjlztj" parameterType="java.util.HashMap" resultType="com.cist.xxtj.wfsjlztj.model.Sjlztj">
+		select t.sj rq,sum(s.cjzs) cjzs,sum(s.shzs) shzs,sum(s.sczs) sczs from
+			(
+				SELECT to_char(TRUNC(SYSDATE, 'MONTH') + LEVEL - 1,'yyyy-mm-dd') AS sj
+				FROM DUAL WHERE TO_CHAR((TRUNC(SYSDATE, 'MONTH') + LEVEL - 1), 'MM') =
+				TO_CHAR(SYSDATE, 'MM')
+				<![CDATA[CONNECT BY LEVEL <= 31]]>
+			) t left join TBL_OFFE_VIO_FLOW_STAT s
+		on t.sj = to_char(s.tjsj,'yyyy-mm-dd') group by sj order by sj 
+	</select>
+	<!-- 查询数据流转统计 查询全年 -->
+	<select id="queryqnsjlztj" parameterType="java.util.HashMap" resultType="com.cist.xxtj.wfsjlztj.model.Sjlztj">
+		select rq,sum(s.cjzs) cjzs,sum(s.shzs) shzs,sum(s.sczs) sczs from (
+	       select to_char(sysdate,'yyyy') ||'-'|| lpad(level,2,0) sj,lpad(level,2,0)||'月' rq from dual <![CDATA[connect by level<13]]>
+		)t left join TBL_OFFE_VIO_FLOW_STAT s
+			on t.sj = to_char(s.tjsj,'yyyy-mm') group by sj,rq order by sj 
+	</select>
+	<!-- 查询数据流转统计列表 -->
+	<select id="querysjlztjlist" parameterType="java.util.HashMap" resultType="com.cist.xxtj.wfsjlztj.model.TBL_OFFE_VIO_FLOW_STAT">
+		select p.rq,count(*) scsbs,sum(p.cjzs) cjzs,sum(p.shzs) shzs,sum(p.yxsj) yxsj,sum(p.wxsj) wxsj,sum(p.sczs) sczs,sum(p.dssj) dssj,
+		trunc((sum(p.yxsj)/sum(p.cjzs))*100,2)||'%' yxslzb,trunc((sum(p.wxsj)/sum(p.cjzs))*100,2)||'%' wxsjzb,
+		trunc((sum(p.sczs)/sum(p.cjzs))*100,2)||'%' scslzb,trunc((sum(p.dssj)/sum(p.cjzs))*100,2)||'%' dclzszb
+       from (
+         select t.tjyf||'月'||t.tjrq||'日 '||t.tjxs||':00' rq,t.cjzs,t.shzs,t.yxsj,t.wxsj,t.sczs,t.dssj
+         from TBL_OFFE_VIO_FLOW_STAT t order by t.tjsj desc
+       )p group by rq order by rq desc
+	</select>
+	<!-- 查询违法抓拍量排名 -->
+	<select id="querywfzppm" parameterType="java.util.HashMap" resultType="com.cist.xxtj.wfsjlztj.model.Wfzppm">
+		select t.sj rq,sum(t.cjzs) num from (
+	      select to_char(tjsj,'MM')||'月'||to_char(tjsj,'dd')||'日  '||to_char(tjsj,'HH24')||':00' sj, cjzs
+	      from TBL_OFFE_VIO_FLOW_STAT 
+	      <where>
+	 		<if test="kssj!=null and kssj!=''">
+					<![CDATA[ and tjsj >=to_date(#{kssj},'yyyy-mm-dd HH24:mi:ss')]]>
+				</if>
+				<if test="jssj!=null and jssj!=''">
+					<![CDATA[and tjsj <= to_date(#{jssj},'yyyy-mm-dd HH24:mi:ss') ]]>
+				</if>
+	 	</where>
+		)t group by sj order by sum(t.cjzs) desc
+	</select>
+	<!-- 查询当日所有违法数据流转信息 -->
+	<select id="queryjrwflzinfo" resultType="com.cist.xxtj.wfsjlztj.model.TBL_OFFE_VIO_FLOW_STAT">
+		select * from VW_WFSJLZ_INFO t
+	</select>
+</mapper>

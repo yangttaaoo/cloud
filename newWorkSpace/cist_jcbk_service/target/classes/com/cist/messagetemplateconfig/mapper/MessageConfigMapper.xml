@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cist.messagetemplateconfig.mapper.MessageConfigMapper">
+	<!-- 查询所有数据 -->
+	<select id="selectData" resultType="com.cist.messagetemplateconfig.model.Jcbk_sms_template" parameterType="java.util.HashMap">
+		select t.*,(select dept_name from sys_depart_info i where dept_pk = t.fk_dept_id) deptname,
+(select sypi_name from sys_police_info where sypi_pk = t.fk_create_founder_id)pepolename from  SYS_SMS_TEMPLATE t
+		<where>
+			t.type='2'
+			<if test="mkmc!=null and mkmc!=''">
+				and t.temp_name like '%'||#{mkmc}||'%'
+			</if>
+			<if test="sqsj1!=null and sqsj1!=''">
+     <![CDATA[and t.create_time>=to_date(#{sqsj1},'yyyy-mm-dd HH24:mi:ss')]]>
+			</if>
+			<if test="sqsj2!=null and sqsj2!=''">
+      <![CDATA[and t.create_time<=to_date(#{sqsj2},'yyyy-mm-dd HH24:mi:ss')]]>
+			</if>
+		</where>
+	</select>
+	<!--修改数据  -->
+    <update id="updateData" parameterType="java.util.HashMap">
+        update  SYS_SMS_TEMPLATE  
+      <trim prefix="set" suffixOverrides=",">
+       <if test="fk_dept_id!=null and fk_dept_id!=''">
+        fk_dept_id=#{fk_dept_id},
+        </if>
+        temp_name=#{temp_name},
+        temp_contents=#{temp_contents},
+        isdefault=#{isdefault}
+        where  pk_id=#{pk_id}
+        </trim>
+    </update>
+    <!--增加数据  -->
+    <insert id="addData" parameterType="java.util.HashMap">
+       insert into SYS_SMS_TEMPLATE 
+         (pk_id,
+fk_dept_id,
+temp_name,
+temp_contents,
+create_time,
+fk_create_founder_id,
+isdefault,type) 
+       values(
+        cistsys.SEQ_JCBK_SMS_TEMPLATE.nextval,
+#{fk_dept_id},
+#{temp_name},
+#{temp_contents},
+sysdate,
+#{fk_create_founder_id},
+#{isdefault},'2'
+    )
+    </insert>
+   <!-- 查询可选项的下拉框值-->
+	<select id="selectKxx" parameterType="java.util.HashMap"
+	resultType="com.cist.messagetemplateconfig.model.Sys_frm_code">
+		select * from SYS_FRM_CODE
+		where FCT_CODE='YJMB'
+	</select>
+	
+	<!-- 删除车辆布控管理信息 -->
+	<delete id="deleteData" parameterType="java.util.HashMap">
+		delete from SYS_SMS_TEMPLATE where pk_id in
+				<foreach item="w" collection="list" open="(" separator="," close=")">
+				       #{w}
+				 </foreach>
+	</delete>
+</mapper>

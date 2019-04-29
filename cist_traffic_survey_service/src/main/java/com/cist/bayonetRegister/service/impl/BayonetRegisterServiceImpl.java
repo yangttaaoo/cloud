@@ -3,6 +3,7 @@ package com.cist.bayonetRegister.service.impl;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,6 +12,7 @@ import com.cist.bayonetRegister.service.BayonetRegisterService;
 import com.cist.devRegister.model.Device;
 import com.cist.devRegister.util.TempModel;
 import com.cist.frame.page.PageInfo;
+import com.cist.frame.springContext.SpringContextUtil;
 
 @Service
 public class BayonetRegisterServiceImpl implements BayonetRegisterService {
@@ -31,8 +33,7 @@ public class BayonetRegisterServiceImpl implements BayonetRegisterService {
 
 	@Override
 	public Object queryDevicepageList(HashMap<String, Object> paramMap, PageInfo pageInfo) {
-		// TODO Auto-generated method stub
-		return mapper.queryDeviceList(paramMap);
+		return mapper.SecurityByfk_dept_idTocode(paramMap);
 	}
 
 	@Override

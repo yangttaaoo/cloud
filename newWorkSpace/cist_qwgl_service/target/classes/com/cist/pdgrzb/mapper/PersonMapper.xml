@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cist.pdgrzb.mapper.PersonMapper">
+
+
+
+	<select id="selectPersonAll" resultType="com.cist.pdgrzb.model.Qw_I_C_Metricr"
+		parameterType="java.util.Map">
+
+ 
+<!--  select t.FK_DEPT_ID ,t.EVALUATE_DATE_TYPE,t.FK_USER_ID,t.pk_id,t.remarks,
+q.METRICS_NUM,q.fk_topic_id,
+
+po.sypi_pk,po.sypi_name,po.sypi_code,t.evaluate_date_end,t.evaluate_date_start
+ from 
+ QW_I_C_METRICS t 
+ left join 
+ QW_EVALUATE_METRICS q 
+ on t.pk_id=q.fk_relation_id  
+ left join sys_police_info po on po.sypi_pk=t.fk_user_id -->
+ 
+  select t.FK_DEPT_ID ,t.EVALUATE_DATE_TYPE,t.FK_USER_ID,t.pk_id,t.remarks,
+t.evaluate_date_end,t.evaluate_date_start
+ from QW_I_C_METRICS t 
+
+ 
+		<where>
+			<if test="fk_dept_id !=null and fk_dept_id !=''">
+				and t.fk_dept_id=#{fk_dept_id}
+			</if>
+
+
+			
+		<if test="fk_user_id !=null and fk_user_id !='' ">
+				and  t.fk_user_id=#{fk_user_id}
+			</if>
+			
+			<if test="fk_user_id != null and fk_user_id !=''">
+				and t.fk_user_id like '%'||#{fk_user_id}||'%'
+			</if>
+
+	<if test="evaluate_date_type !=null and evaluate_date_type !=''">
+				and t.evaluate_date_type=#{evaluate_date_type}
+			</if>
+
+			
+			and t.METRICS_TYPE=1
+		</where>
+		
+	</select>
+
+
+
+
+
+
+
+ <select id="queryNum" resultType="com.cist.pdgrzb.model.NumIndex" 
+		parameterType="java.lang.Integer"> 
+			select t.fk_relation_id ,sum(t.metrics_num) num from qw_evaluate_metrics t 
+     where t.fk_relation_id=#{pk_id}
+    
+    group by t.fk_relation_id
+		
+		</select> 
+
+
+
+
+
+	<update id="updatePerson" parameterType="java.util.Map">
+		update QW_I_C_METRICS
+		<set>
+			<if test="fk_user_id != null and fk_user_id !=''">
+				fk_user_id = #{fk_user_id},
+			</if>
+			<if test="remarks != null and remarks !=''">
+				remarks = #{remarks},
+			</if>
+			<if test="evaluate_date_type != null and evaluate_date_type !=''">
+				evaluate_date_type = #{evaluate_date_type},
+			</if>
+		<if test="evaluate_date_start != null and evaluate_date_start !=''">
+				evaluate_date_start = to_date(#{evaluate_date_start},'yyyy-mm-dd HH24:mi:ss'),
+			</if>
+<if test="evaluate_date_end != null and evaluate_date_end !=''">
+				evaluate_date_end = to_date(#{evaluate_date_end},'yyyy-mm-dd HH24:mi:ss'),
+			</if>
+		</set>
+		where pk_id = #{pk_id,jdbcType=DECIMAL}
+	</update>
+
+
+	<update id="updateZb" parameterType="java.util.Map">
+		update qw_evaluate_metrics
+		<set>
+			<if test="metrics_num != null and metrics_num !=''">
+				metrics_num = #{metrics_num},
+			</if>
+			
+		</set>
+		where pk_id=#{fk_relation_id,jdbcType=DECIMAL}
+	</update>
+
+
+
+	<insert id="insertPerson" parameterType="java.util.Map">
+<selectKey resultType="java.lang.Integer" order="BEFORE" keyProperty="pk">
+        SELECT cistsys.SEQ_TXZ_PERMIT.nextval FROM DUAL
+    </selectKey>
+		insert into
+		QW_I_C_METRICS
+		(
+		pk_id,
+		fk_user_id,
+		fk_dept_id,
+		metrics_type,
+		evaluate_date_type,
+		evaluate_date_start,
+		evaluate_date_end,
+		remarks
+		
+		)
+		
+values
+		(
+		#{pk},
+		#{arrays},
+		#{fk_dept_id},
+		#{metrics_type},
+		#{evaluate_date_type},
+		to_date(#{evaluate_date_start},'yyyy-mm-dd HH24:mi:ss'),
+		to_date(#{evaluate_date_end},'yyyy-mm-dd HH24:mi:ss'),
+		#{remarks}
+
+		)
+
+	</insert>
+
+	<insert id="insertZb" parameterType="java.util.Map">
+
+		insert into
+		QW_EVALUATE_METRICS
+		(
+		pk_id,
+		FK_RELATION_ID,
+		fk_topic_id,
+		METRICS_NUM
+		)
+		
+	values
+		(
+		cistsys.SEQ_TXZ_PERMIT.nextval,
+		#{FK_RELATION_ID},
+		#{fk_topic_id,jdbcType=INTEGER},
+		#{arr}
+		)
+
+	</insert>
+
+
+
+
+	<delete id="deletePerson" parameterType="java.util.Map" >
+		DELETE FROM
+		QW_I_C_METRICS
+		WHERE pk_id = #{pk_id}
+
+	</delete>
+
+	<delete id="deletePersons" parameterType="java.util.Map" >
+		DELETE FROM
+		QW_EVALUATE_METRICS
+		WHERE FK_RELATION_ID = #{pk_id}
+
+	</delete>
+
+
+	<!-- 批量删除 -->
+	<delete id="deletePersonAll" parameterType="java.util.Map" >
+		delete FROM QW_I_C_METRICS
+		WHERE pk_id in
+		<foreach item="pk" collection="array" open="(" separator=","
+			close=")">
+			#{pk}
+		</foreach>
+	</delete>
+
+<delete id="deletePersonAlls" parameterType="java.util.Map" >
+		delete FROM QW_EVALUATE_METRICS
+		WHERE FK_RELATION_ID in
+		<foreach item="pks" collection="array" open="(" separator=","
+			close=")">
+			#{pks}
+		</foreach>
+	</delete>
+
+
+	 <select id="depart_infolist" resultType="com.cist.pdgrzb.model.Depart_info" parameterType="java.lang.Integer">
+
+select t.dept_pk,t.dept_code,t.dept_name as name,t.DEPT_SUPERIOR from sys_depart_info t 
+<where>
+		  <if test="_parameter  == null or _parameter  == ''">
+		     t.DEPT_SUPERIOR is null
+		   </if>
+		     <if test="_parameter  != null and _parameter  != ''">
+		     t.DEPT_SUPERIOR=#{_parameter}
+		   </if>
+</where>
+
+   </select>
+   
+   
+ <select id="depart_infolists" resultType="com.cist.pdgrzb.model.DeptInfo" parameterType="java.lang.Integer">
+select t.dept_pk,t.dept_code,t.dept_name as name,t.DEPT_SUPERIOR from sys_depart_info t 
+<where>
+		  <if test="_parameter  == null or _parameter  == ''">
+		     t.DEPT_SUPERIOR is null
+		   </if>
+		     <if test="_parameter  != null and _parameter  != ''">
+		     t.DEPT_SUPERIOR=#{_parameter}
+		   </if>
+</where>
+<!-- select t.dept_pk,t.dept_code,t.dept_name as name,t.DEPT_SUPERIOR from sys_depart_info t  -->
+</select>
+ 
+ 
+ <select id="selectPerson" resultType="com.cist.pdgrzb.model.Depart_info" parameterType="java.lang.Integer">
+select sypi_pk dept_pk,sypi_name name , 'true' flag from sys_police_info t  where sypi_dept=#{_parameter}
+
+</select>
+
+</mapper>

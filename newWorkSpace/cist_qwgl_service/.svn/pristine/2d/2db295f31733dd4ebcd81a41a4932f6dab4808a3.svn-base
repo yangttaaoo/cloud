@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cist.deptpublish.mapper.DeptPulishMapper" >
+
+	<select id="selectDeptPub" resultType="com.cist.qwkhgrfb.model.Qw_Check_Pub"
+		parameterType="java.util.HashMap">
+		select * from QW_CHECK_PUB t
+		<where>
+			t.KHLX=2
+			<if test="khbh != null and khbh !=''">
+				and t.KHBH = #{khbh} 
+			</if>
+
+			<if test="gldw != null and gldw !=''">
+				and t.GLDW = #{gldw}
+			</if>	
+			
+			<if test="sfhg != null and sfhg !=''">
+				and t.sfhg = #{sfhg}
+			</if>	
+			
+			<!-- <if test="sfhg != null and sfhg !=''">
+				and t.sfhg = #{sfhg}
+			</if> -->
+			
+		</where>
+		
+	</select>
+
+   <select id="selectSysFrmCode" resultType="com.cist.khpdgl.model.Sys_frm_code" parameterType="java.lang.String">
+    select * from SYS_FRM_CODE
+    where
+    FCT_CODE=#{fct_code}
+  </select>
+	
+  <select id="downloadList" resultType="com.cist.qwkhgrfb.model.Publish"
+	parameterType="java.util.HashMap">
+  select * from QW_CHECK_PUB 
+  <where>
+    khlx=2
+    <if test="gldw!=null and gldw!=''">
+      and gldw = #{gldw}
+    </if>
+    <if test="khbh!=null and khbh!=''">
+     and khbh = #{khbh}
+    </if>
+    <if test="sfhg!=null and sfhg!=''">
+     and sfhg=#{sfhg}
+    </if>
+    <if test="zbrq!=null and zbrq!=''">
+     and zbrq=#{zbrq}
+    </if>
+  </where>
+</select>
+
+
+</mapper>

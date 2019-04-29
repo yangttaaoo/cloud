@@ -26,6 +26,7 @@
 		<if test="device_source !=null and device_source !=''">,device_source</if>
 		<if test="xzqh !=null and xzqh !=''">,xzqh</if>
 		<if test="direction !=null and direction !=''">,direction</if>
+		<if test="collect_dept_code !=null and collect_dept_code !=''">,collect_dept_code</if>
 		)
 		VALUES(#{pk_id},#{ fk_dept_id}
 		<if test="create_person !=null and create_person !=''">,#{ create_person}</if>
@@ -47,6 +48,7 @@
 		<if test="device_source !=null and device_source !=''">,#{device_source}</if>
 		<if test="xzqh !=null and xzqh !=''">,#{xzqh}</if>
 		<if test="direction !=null and direction !=''">,#{direction}</if>
+		<if test="collect_dept_code !=null and collect_dept_code !=''">,#{collect_dept_code}</if>
 		)
 	</insert>
 
@@ -79,6 +81,7 @@
 		<if test="road_name !=null and road_name !=''">,road_name=#{road_name}</if>
 		<if test="longitude !=null and longitude !=''">,longitude=#{longitude}</if>
 		<if test="direction !=null and direction !=''">,direction=#{direction}</if>
+		<if test="collect_dept_code !=null and collect_dept_code !=''">,collect_dept_code=#{collect_dept_code}</if>
 		where pk_id=#{pk_id}
 	</update>
 
@@ -96,7 +99,13 @@
 		order by d.pk_id desc
 	</select>
 
-
+	<select id="queryDeviceByDeviceNum" parameterType="java.util.HashMap"
+		resultType="java.lang.Long">
+		select count(d.pk_id) count from  jcsj_device d where d.device_num=#{device_num}
+		<if test="pk_id !=null and pk_id !=''">
+		and d.pk_id &lt;&gt;#{pk_id}
+		</if>
+	</select>
 	<!-- 添加设备厂商维护信息 -->
 	<insert id="addDevMaintenance" parameterType="java.util.HashMap">
 		insert into JCSJ_DEVICE_MAINTENANCE(device_id
@@ -357,15 +366,15 @@
 		where device_id=#{pk_id}
 	</update>
 	<!-- 分页查询设备List -->
-	<select id="queryDeviceList" parameterType="java.util.HashMap"
+	<select id="SecurityByfk_dept_idTocode" parameterType="java.util.HashMap"
 		resultType="com.cist.devRegister.model.DeviceList">
 		select
-		pk_id,device_name,device_num,road_name,device_type_name,dept_name,validity_date
+		fk_dept_id,pk_id,device_name,device_num,road_name,device_type_name,dept_name,validity_date
 		from VM_DEVICE v
 		where v.device_type_name  <![CDATA[!= ]]>
 		'卡口' and v.device_type_name  <![CDATA[!= ]]>
 		'区间测速'
-		<if test="deptId !=null and deptId !='' "> and v.fk_dept_id=#{deptId}</if>
+		<if test="fk_dept_id !=null and fk_dept_id !='' "> and v.fk_dept_id=#{fk_dept_id}</if>
 		<if test="create_time_start !=null and create_time_start !='' ">and v.enable_date &gt;= to_date(#{
 			create_time_start},'yyyy-mm-dd HH24:mi:ss')
 			and v.enable_date &lt;=
@@ -375,7 +384,7 @@
 		<if test="devName !=null and devName !='' ">and v.device_name like '%'||#{devName}||'%'</if>
 		<if test="road !=null and road !='' ">and v.belonged_road_id=#{road}</if>
 		<if test="crossroads.size() >0">
-			and v.belonged_road_id||v.kilometre_num in
+			and v.belonged_road_id||'-'||v.kilometre_num in
 			<foreach collection="crossroads" item="item" index="index"
 				separator="," open="(" close=")">
 				#{item}
@@ -867,7 +876,7 @@
 	<select id="queryRoadSegiteByRoadCode"
 		parameterType="java.util.HashMap"
 		resultType="com.cist.devRegister.model.RoadTree">
-		select s.DLDM||s.LKDM key,s.LKMC title from C_ROAD_SEGITEM
+		select s.DLDM||'-'||s.LKDM key,s.LKMC title from C_ROAD_SEGITEM
 		s where s.DLDM=#{code}
 	</select>
 		<!-- 行政区划Tree查询 -->
@@ -889,5 +898,19 @@
 			</if>
 			</if>
 	</select>
+	<select id="queryExistRoad" parameterType="java.util.HashMap"
+		resultType="java.lang.Long">
+		   select count(d.pk_id) count from jcsj_device d where d.belonged_road_id=#{rodCode} 
+		   <if test="deviceFlag != 'all'">
+		     <if test="deviceFlag =='device'">
+		     and fk_device_type not in ('KK','QJCS')
+		   </if>
+		     <if test="deviceFlag !='device'">
+		     and fk_device_type =#{deviceFlag}
+		   </if>
+		   </if>
+		 
+		 
+		</select>
 </mapper>
 	

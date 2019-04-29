@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cist.businessconfig.bayonetapply.mapper.BayonetApplyMapper" >
+	<!-- 查询车辆布控管理信息 -->
+	<select id="queryBayonetApplyinfo" parameterType="java.util.HashMap"
+	resultType="com.cist.businessconfig.bayonetapply.model.Jcbk_control_vehicle">
+		select t.*,
+(select dept_name from sys_depart_info where dept_code = t.bkdw) bkdw_name from JCBK_CONTROL_VEHICLE t
+		<where>
+			<if test="bkdw != null and bkdw !=''">
+				and bkdw = #{bkdw}
+			</if>
+			<if test="hphm != null and hphm !=''">
+				and hphm = #{hphm}
+			</if>
+			<if test="hpzl != null and hpzl !=''">
+				and hpzl = #{hpzl}
+			</if>
+			<if test="cllx != null and cllx !=''">
+				and cllx = #{cllx}
+			</if>
+			<if test="bklx != null and bklx !=''">
+				and bklx = #{bklx}
+			</if>
+			<if test="kssj!=null and kssj!=''">
+				<![CDATA[ and bkjssj >=to_date(#{kssj},'yyyy-mm-dd HH24:mi:ss')]]>
+			</if>
+			<if test="jssj!=null and jssj!=''">
+				<![CDATA[and bkkssj <= to_date(#{jssj},'yyyy-mm-dd HH24:mi:ss') ]]>
+			</if>
+			<if test="bkzt !=null and bkzt !=''">
+				and bkzt=#{bkzt}
+			</if>
+		</where>
+	</select>
+	<!-- 添加车辆布控管理信息 -->
+	<insert id="addBayonetApply" parameterType="java.util.Map">
+		insert into JCBK_CONTROL_VEHICLE
+		<trim prefix="(" suffixOverrides="," suffix=")">
+			pk,
+			hphm,
+			hpzl,
+			<if test="cllx != null and cllx !=''">
+			cllx,
+			</if>
+			<if test="csys != null and csys !=''">
+			csys,
+			</if>
+			<if test="clpp != null and clpp !=''">
+			clpp,
+			</if>
+			<if test="bklx != null and bklx !=''">
+			bklx,
+			</if>
+			<if test="sfqztsxx != null and sfqztsxx !=''">
+			sfqztsxx,
+			</if>
+			<if test="lrr != null and lrr !=''">
+			lrr,
+			</if>
+			<if test="bkdw != null and bkdw !=''">
+			bkdw,
+			</if>
+			<if test="bkyy != null and bkyy !=''">
+			bkyy,
+			</if>
+			<if test="lxdh != null and lxdh !=''">
+			lxdh,
+			</if>
+			<if test="sjly != null and sjly !=''">
+			sjly,
+			</if>
+			<if test="bkkssj != null and bkkssj !=''">
+			bkkssj,
+			</if>
+			<if test="bkjssj != null and bkjssj !=''">
+			bkjssj,
+			</if>
+			<if test="lrsj != null and lrsj !=''">
+			lrsj,
+			</if>
+			<if test="xyctp1 != null and xyctp1 !=''">
+			xyctp1,
+			</if>
+			<if test="xyctp2 != null and xyctp2 !=''">
+			xyctp2,
+			</if>
+			<if test="xyctp3 != null and xyctp3 !=''">
+			xyctp3,
+			</if>
+			<if test="fjtp1 != null and fjtp1 !=''">
+			fjtp1,
+			</if>
+			<if test="fjtp2 != null and fjtp2 !=''">
+			fjtp2,
+			</if>
+			<if test="fjtp3 != null and fjtp3 !=''">
+			fjtp3,
+			</if>
+			<if test="bkzt != null and bkzt !=''">
+			bkzt,
+			</if>
+		</trim>
+		<trim prefix="values(" suffixOverrides="," suffix=")">
+			SEQ_VEHICLE_PK.NEXTVAL,
+			#{hphm},
+			#{hpzl},
+			<if test="cllx != null and cllx !=''">
+			#{cllx},
+			</if>
+			<if test="csys != null and csys !=''">
+			#{csys},
+			</if>
+			<if test="clpp != null and clpp !=''">
+			#{clpp},
+			</if>
+			<if test="bklx != null and bklx !=''">
+			#{bklx},
+			</if>
+			<if test="sfqztsxx != null and sfqztsxx !=''">
+			#{sfqztsxx},
+			</if>
+			<if test="lrr != null and lrr !=''">
+			#{lrr},
+			</if>
+			<if test="bkdw != null and bkdw !=''">
+			#{bkdw},
+			</if>
+			<if test="bkyy != null and bkyy !=''">
+			#{bkyy},
+			</if>
+			<if test="lxdh != null and lxdh !=''">
+			#{lxdh},
+			</if>
+			<if test="sjly != null and sjly !=''">
+			#{sjly},
+			</if>
+			<if test="bkkssj != null and bkkssj !=''">
+			to_date(#{bkkssj},'yyyy-mm-dd HH24:mi:ss'),
+			</if>
+			<if test="bkjssj != null and bkjssj !=''">
+			to_date(#{bkjssj},'yyyy-mm-dd HH24:mi:ss'),
+			</if>
+			<if test="lrsj != null and lrsj !=''">
+			#{lrsj},
+			</if>
+			<if test="xyctp1 != null and xyctp1 !=''">
+			#{xyctp1},
+			</if>
+			<if test="xyctp2 != null and xyctp2 !=''">
+			#{xyctp2},
+			</if>
+			<if test="xyctp3 != null and xyctp3 !=''">
+			#{xyctp3},
+			</if>
+			<if test="fjtp1 != null and fjtp1 !=''">
+			#{fjtp1},
+			</if>
+			<if test="fjtp2 != null and fjtp2 !=''">
+			#{fjtp2},
+			</if>
+			<if test="fjtp3 != null and fjtp3 !=''">
+			#{fjtp3},
+			</if>
+			<if test="bkzt != null and bkzt !=''">
+			#{bkzt},	
+			</if>	
+		</trim>
+	</insert>
+	<!-- 修改车辆布控管理信息 -->
+	<update id="updateBayonetApply" parameterType="java.util.Map">
+		update JCBK_CONTROL_VEHICLE T 
+					<trim prefix="set" suffixOverrides=",">
+						<if test="hphm !=null and hphm !=''">
+							hphm=#{hphm},
+						</if>
+						<if test="hpzl !=null and hpzl !=''">
+							hpzl=#{hpzl},
+						</if>
+						<if test="cllx !=null and cllx !=''">
+							cllx=#{cllx},
+						</if>
+						<if test="csys !=null and csys !=''">
+							csys=#{csys},
+						</if>
+						<if test="clpp !=null and clpp !=''">
+							clpp=#{clpp},
+						</if>
+						<if test="bklx !=null and bklx !=''">
+							bklx=#{bklx},
+						</if>
+						<if test="sfqztsxx !=null and sfqztsxx !=''">
+							sfqztsxx=#{sfqztsxx},
+						</if>
+						<if test="lrr !=null and lrr !=''">
+							lrr=#{lrr},
+						</if>
+						<if test="bkdw !=null and bkdw !=''">
+							bkdw=#{bkdw},
+						</if>
+						<if test="bkyy !=null and bkyy !=''">
+							bkyy=#{bkyy},
+						</if>
+						<if test="lxdh !=null and lxdh !=''">
+							lxdh=#{lxdh},
+						</if>
+						<if test="sjly !=null and sjly !=''">
+							sjly=#{sjly},
+						</if>
+						<if test="bkkssj !=null and bkkssj !=''">
+							bkkssj=to_date(#{bkkssj},'yyyy-mm-dd HH24:mi:ss'),
+						</if>
+						<if test="bkjssj !=null and bkjssj !=''">
+							bkjssj=to_date(#{bkjssj},'yyyy-mm-dd HH24:mi:ss'),
+						</if>
+						<if test="lrsj !=null and lrsj !=''">
+							lrsj=#{lrsj},
+						</if>
+						<if test="xyctp1 !=null">
+							xyctp1=#{xyctp1},
+						</if>
+						<if test="xyctp2 !=null">
+							xyctp2=#{xyctp2},
+						</if>
+						<if test="xyctp3 !=null">
+							xyctp3=#{xyctp3},
+						</if>
+						<if test="fjtp1 !=null">
+							fjtp1=#{fjtp1},
+						</if>
+						<if test="fjtp2 !=null">
+							fjtp2=#{fjtp2},
+						</if>
+						<if test="fjtp3 !=null">
+							fjtp3=#{fjtp3},
+						</if>
+						<if test="bkzt !=null and bkzt !=''">
+							bkzt=#{bkzt},
+						</if>
+					</trim>
+					where pk = #{pk}
+	</update>
+	<!-- 删除车辆布控管理信息 -->
+	<delete id="deleteBayonetApply" parameterType="java.util.HashMap">
+		delete from JCBK_CONTROL_VEHICLE where pk in
+				<foreach item="w" collection="list" open="(" separator="," close=")">
+				       #{w}
+				 </foreach>
+	</delete>
+	<!-- 查询基础数据 -->
+	<select id="querySys_frm_code" parameterType="java.util.HashMap"
+	resultType="com.cist.businessconfig.bayonetapply.model.Sys_frm_code">
+		select * from sys_frm_code t 
+		<where>
+			<if test="fct_code != null and fct_code != ''">
+				and fct_code = #{fct_code}
+			</if>
+		</where>
+	</select>
+</mapper>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding">
+    <file url="file://$PROJECT_DIR$/cist-comm-service" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/cistLog" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/cist_base_sevice" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/cist_devmanage_service" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/cist_devregister_service" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/cist_door_service" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/cist_exchange_service" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/cist_jcbk_service" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/cist_offsite_service" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/cist_preserve_service" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/cist_proof_service" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/cist_qwgl_service" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/cist_traffic_survey_service" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/cist_zhdd_service" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/cistdb" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/config-server" charset="UTF-8" />
+  </component>
+</project>

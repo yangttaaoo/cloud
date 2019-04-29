@@ -142,13 +142,13 @@
 	</select>
 
 
-	<select id="queryDeviceList" parameterType="java.util.HashMap"
+	<select id="SecurityByfk_dept_idTocode" parameterType="java.util.HashMap"
 		resultType="com.cist.devRegister.model.DeviceList">
 		select
-		pk_id,device_name,device_num,road_name,device_type_name,dept_name,validity_date
+		fk_dept_id,pk_id,device_name,device_num,road_name,device_type_name,dept_name,validity_date
 		from VM_DEVICE v
 		where v.device_type_name = '区间测速'
-		<if test="deptId !=null and deptId !='' "> and v.fk_dept_id=#{deptId}</if>
+		<if test="fk_dept_id !=null and fk_dept_id !='' "> and v.fk_dept_id=#{fk_dept_id}</if>
 		<if test="create_time_start !=null and create_time_start !='' ">and v.enable_date &gt;= to_date(#{
 			create_time_start},'yyyy-mm-dd HH24:mi:ss')
 			and v.enable_date &lt;=
@@ -156,7 +156,7 @@
 			HH24:mi:ss')
 		</if>
 		<if test="crossroads.size() >0">
-			and v.belonged_road_id||v.kilometre_num in
+			and v.belonged_road_id||'-'||v.kilometre_num in
 			<foreach collection="crossroads" item="item" index="index"
 				separator="," open="(" close=")">
 				#{item}

@@ -1,0 +1,325 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cist.carInfo.mapper.CarInfoMapper" >
+  <!--所属公司查询  -->
+ 	   <select id="selectCompany" resultType="com.cist.carInfo.model.ZdclCompanyInfo" parameterType="java.util.HashMap">
+    select * from ZDCL_COMPANY_INFO
+  </select>
+  
+    <!--驾驶人信息查询  -->
+ 	   <select id="selectDrivers" resultType="com.cist.carInfo.model.ZdclCompanyInfo" parameterType="java.lang.String">
+    select * from SYS_FRM_CODE
+    where
+    FCT_CODE=#{fct_code}
+  </select>
+ <!--基础信息下拉列表查询  -->
+ 	   <select id="selectSysFrmCode" resultType="com.cist.carInfo.model.Sys_frm_code" parameterType="java.lang.String">
+    select * from SYS_FRM_CODE
+    where
+    FCT_CODE=#{fct_code}
+  </select>
+  <!--车辆信息维护查询  -->
+  <select id="list" resultType="com.cist.carInfo.model.ZdclCarInfo" parameterType="java.util.HashMap" >
+  select * from ZDCL_CAR_INFO
+    <where>
+	<if test="hphm !=null and hphm !='' and hphm !='null'">
+		and t.hphm like '%'||#{fk_used_id}||'%'
+	</if>
+	<if test="clfl !=null and clfl !='' and clfl !='null'">
+          clfl = #{clfl}
+	</if>
+	<if test="ssgs !=null and ssgs !='' and ssgs !='null'">
+         ssgs like '%'||#{ssgs}||'%'
+	</if> 
+
+	<if test="glbm !=null and glbm !=''">
+         glbm = #{glbm}
+	</if> 
+    </where>
+  </select>
+  <delete id="delete" parameterType="java.util.HashMap" >
+    delete from ZDCL_CAR_INFO
+    where PK in
+		<foreach item="items" collection="pk" open="(" separator="," close=")">
+            #{items}
+        </foreach>
+  </delete>
+  <!--车辆信息插入  -->
+  <insert id="save" parameterType="java.util.HashMap" >
+<selectKey resultType="java.lang.Integer" order="BEFORE" keyProperty="pk">
+        SELECT SEQ_ZDCL_CAR_INFO.nextval FROM DUAL
+    </selectKey>
+    insert into ZDCL_CAR_INFO
+     <trim prefix="(" suffix=")" suffixOverrides="," >
+          pk_id,
+          <if test="hphm !=null and hphm !='' and hphm !='null'">
+          hphm,
+          </if>   
+           <if test="clfl !=null and clfl !='' and clfl !='null'">
+          clfl,
+          </if> 
+           <if test="clpp !=null and clpp !='' and clpp !='null'">
+          clpp,
+          </if> 
+           <if test="csys !=null and csys !='' and csys !='null'">
+          csys,
+          </if> 
+           <if test="cllx !=null and cllx !=''">
+          cllx,
+          </if> 
+          <if test="fdjbh !=null and fdjbh !=''">
+          fdjbh,
+          </if>
+          <if test="clsbdm !=null and clsbdm !=''">
+          clsbdm,
+          </if>  
+          <if test="hdzkrs !=null and hdzkrs !=''">
+          hdzkrs,
+          </if>  
+          <if test="hdzzl !=null and hdzzl !=''">
+          hdzzl,
+          </if>  
+          <if test="njyxq !=null and njyxq !=''">
+          njyxq,
+          </if>  
+          <if test="ssgs !=null and ssgs !=''">
+          ssgs,
+          </if>  
+          <if test="jsr !=null and jsr !=''">
+          jsr,
+          </if>  
+          <if test="glbm !=null and glbm !=''">
+          glbm,
+          </if>  
+          <if test="xzqh !=null and xzqh !=''">
+          xzqh,
+          </if>    
+      </trim>
+       <trim prefix="values (" suffix=")" suffixOverrides="," >
+       #{pk},
+     <if test="hphm !=null and hphm !='' and hphm !='null'">
+          #{hphm},
+          </if>   
+           <if test="clfl !=null and clfl !='' and clfl !='null'">
+          #{clfl},
+          </if> 
+           <if test="clpp !=null and clpp !='' and clpp !='null'">
+          #{clpp},
+          </if> 
+           <if test="csys !=null and csys !='' and csys !='null'">
+          #{csys},
+          </if> 
+           <if test="cllx !=null and cllx !=''">
+          #{cllx},
+          </if> 
+          <if test="fdjbh !=null and fdjbh !=''">
+          #{fdjbh},
+          </if>
+          <if test="clsbdm !=null and clsbdm !=''">
+          #{clsbdm},
+          </if>  
+          <if test="hdzkrs !=null and hdzkrs !=''">
+          #{hdzkrs},
+          </if>  
+          <if test="hdzzl !=null and hdzzl !=''">
+          #{hdzzl},
+          </if>  
+          <if test="njyxq !=null and njyxq !=''">
+          #{njyxq},
+          </if>  
+          <if test="ssgs !=null and ssgs !=''">
+          #{ssgs},
+          </if>  
+          <if test="jsr !=null and jsr !=''">
+          #{jsr},
+          </if>  
+          <if test="glbm !=null and glbm !=''">
+          #{glbm},
+          </if>  
+          <if test="xzqh !=null and xzqh !=''">
+          #{xzqh},
+          </if>    
+      </trim>
+  </insert>
+  
+  <!--公司信息插入  -->
+  <insert id="saveCompany" parameterType="java.util.HashMap" >
+<selectKey resultType="java.lang.Integer" order="BEFORE" keyProperty="companyPk">
+        SELECT SEQ_ZDCL_COMPANY_INFO.nextval FROM DUAL
+    </selectKey>
+    insert into ZDCL_COMPANY_INFO
+     <trim prefix="(" suffix=")" suffixOverrides="," >
+          pk,
+          <if test="gsmc !=null and gsmc !='' and gsmc !='null'">
+          gsmc,
+          </if>   
+           <if test="xydm !=null and xydm !='' and xydm !='null'">
+          xydm,
+          </if> 
+           <if test="zzbh !=null and zzbh !='' and zzbh !='null'">
+          zzbh,
+          </if> 
+           <if test="lxdh !=null and lxdh !='' and lxdh !='null'">
+          lxdh,
+          </if> 
+           <if test="fzr !=null and fzr !=''">
+          fzr,
+          </if> 
+          <if test="fzrdh !=null and fzrdh !=''">
+          fzrdh,
+          </if> 
+          <if test="gsdz !=null and gsdz !=''">
+          gsdz,
+          </if> 
+          <if test="xzqh !=null and xzqh !=''">
+          xzqh,
+          </if> 
+      </trim>
+       <trim prefix="values (" suffix=")" suffixOverrides="," >
+       #{companyPk},
+                <if test="gsmc !=null and gsmc !='' and gsmc !='null'">
+          #{gsmc},
+          </if>   
+           <if test="xydm !=null and xydm !='' and xydm !='null'">
+          #{xydm},
+          </if> 
+           <if test="zzbh !=null and zzbh !='' and zzbh !='null'">
+          #{zzbh},
+          </if> 
+           <if test="lxdh !=null and lxdh !='' and lxdh !='null'">
+          #{lxdh},
+          </if> 
+           <if test="fzr !=null and fzr !=''">
+          #{fzr},
+          </if> 
+          <if test="fzrdh !=null and fzrdh !=''">
+          #{fzrdh},
+          </if> 
+          <if test="gsdz !=null and gsdz !=''">
+          #{gsdz},
+          </if> 
+          <if test="xzqh !=null and xzqh !=''">
+          #{xzqh},
+          </if> 
+      </trim>
+  </insert>
+  <!--驾驶人信息插入-->
+   <insert id="saveDrivers" parameterType="java.util.HashMap" >
+<selectKey resultType="java.lang.Integer" order="BEFORE" keyProperty="driversPk">
+        SELECT SEQ_ZDCL_DRIVERS_INFO.nextval FROM DUAL
+    </selectKey>
+    insert into ZDCL_DRIVERS_INFO
+     <trim prefix="(" suffix=")" suffixOverrides="," >
+          pk_id,
+          <if test="xm !=null and xm !='' and xm !='null'">
+          xm,
+          </if>   
+           <if test="jszbh !=null and jszbh !='' and jszbh !='null'">
+          jszbh,
+          </if> 
+           <if test="jszyxqz !=null and jszyxqz !='' and jszyxqz !='null'">
+          jszyxqz,
+          </if> 
+           <if test="lxdh !=null and lxdh !='' and lxdh !='null'">
+          lxdh,
+          </if> 
+           <if test="jzdz !=null and jzdz !=''">
+          jzdz,
+          </if> 
+          <if test="ssgs !=null and ssgs !=''">
+          ssgs,
+          </if> 
+          <if test="glbm !=null and glbm !=''">
+          glbm,
+          </if> 
+      </trim>
+       <trim prefix="values (" suffix=")" suffixOverrides="," >
+       #{driversPk},
+               <if test="xm !=null and xm !='' and xm !='null'">
+          #{xm},
+          </if>   
+           <if test="jszbh !=null and jszbh !='' and jszbh !='null'">
+          #{jszbh},
+          </if> 
+           <if test="jszyxqz !=null and jszyxqz !='' and jszyxqz !='null'">
+          #{jszyxqz},
+          </if> 
+           <if test="lxdh !=null and lxdh !='' and lxdh !='null'">
+          #{lxdh},
+          </if> 
+           <if test="jzdz !=null and jzdz !=''">
+          #{jzdz},
+          </if> 
+          <if test="ssgs !=null and ssgs !=''">
+          #{ssgs},
+          </if> 
+          <if test="glbm !=null and glbm !=''">
+          #{glbm},
+          </if> 
+      </trim>
+  </insert>
+  
+  <update id="update" parameterType="com.cist.carInfo.model.ZdclCarInfo" >
+    update SJGX_INTERFACE_USE_APPLY
+    <set >
+      <if test="fk_used_id !=null and fk_used_id !=''">
+          fk_used_id=#{fk_used_id},
+          </if>   
+           <if test="start_date !=null and start_date !=''">
+            <![CDATA[ start_date=to_date(#{start_date},'yyyy-mm-dd HH24:mi:ss')]]>,
+          </if> 
+           <if test="end_date !=null and end_date !=''">
+         <![CDATA[ end_date=to_date(#{end_date},'yyyy-mm-dd HH24:mi:ss')]]>, 
+          </if> 
+           <if test="ip_range !=null and ip_range !=''">
+          ip_range=#{ip_range},
+          </if> 
+           <if test="func_description !=null and func_description !=''">
+          func_description=#{func_description},
+          </if> 
+           <if test="fk_interface_list_id !=null and fk_interface_list_id !=''">
+          fk_interface_list_id=#{fk_interface_list_id},
+          </if> 
+           <if test="dev_company_id !=null and dev_company_id !=''">
+         dev_company_id=#{dev_company_id},
+          </if> 
+    </set>
+    where PK_ID = #{pk_id}
+  </update>
+  
+   <select id="depart_infolist" resultType="com.cist.carInfo.model.DeptInfo" parameterType="java.lang.Integer">
+select t.dept_pk,t.dept_code,t.dept_name as name,t.DEPT_SUPERIOR from sys_depart_info t 
+<where>
+		  <if test="_parameter  == null or _parameter  == ''">
+		     t.DEPT_SUPERIOR is null
+		   </if>
+		     <if test="_parameter  != null and _parameter  != ''">
+		     t.DEPT_SUPERIOR=#{_parameter}
+		   </if>
+</where>
+   </select>
+   
+   	<!-- 行政区划下级-->
+<select id="kreisList" resultType="com.cist.carInfo.model.CKreisCode">
+		select *  from C_KREIS_CODE
+		<where>
+		<if test=" _parameter !=null and _parameter !=''">
+		TBEK_PARENT =#{_parameter}
+		</if>
+		</where>
+		order by tbek_pk desc
+	</select>
+	
+	<!-- 顶级行政区划 或上级行政区划-->
+<select id="kreis" resultType="com.cist.carInfo.model.CKreisCode">
+		select *  from C_KREIS_CODE
+		<where>
+		<if test=" tbek_parent==null">
+		TBEK_PARENT is NULL
+		</if>
+		<if test=" tbek_parent !=null and tbek_parent !=''">
+		TBEK_PARENT =#{tbek_parent}
+		</if>
+		</where>
+	</select>
+</mapper>

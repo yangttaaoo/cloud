@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cist.Illegalbusiness.mapper.IllegalBusinessMapper">
+
+	<select id="list" resultType="com.cist.Illegalbusiness.model.TblWorkCardStatInfo" parameterType="java.util.HashMap">
+	select * from
+	 (select t.* from CISTSYS.TBL_WORK_CARD_STAT t  order by tjsj desc) 
+	 where rownum=1
+	</select>
+	
+		<select id="selectList">
+		select 
+		listagg(WSHTJ,'@') within group(order by WSHTJ)WSHTJ
+		from CISTSYS.TBL_WORK_CARD_STAT t
+		where <![CDATA[ TJSJ>=sysdate-#{day} and t.TJSJ<=sysdate ]]>
+	</select>
+	<!--统计违法信息，违法总量，未审核，总审核量 -->
+	<select id="selectIllegal" resultType="com.cist.Illegalbusiness.model.TblOffeVioWorkStat"
+		parameterType="java.util.HashMap">
+		select count(case when extract(year from sysdate)=extract(year from
+		t.wfsj) then 1 else null end )shsl,
+		count(case when shbz='0' and 
+   <![CDATA[ t.wfsj>=sysdate-#{day} and t.wfsj<=sysdate]]>
+		then 1 else null end )wsh,
+
+		count(case when
+   <![CDATA[ t.wfsj>=sysdate-#{day} and t.wfsj<=sysdate]]>
+		then 1 else null end )wfsl,
+		    count(case when <![CDATA[ wfsj>=trunc(sysdate,'d') + 1 and wfsj<=trunc(sysdate,'d') + 7 ]]> then 1 else null end)wweek,
+    count(case when <![CDATA[ wfsj>=sysdate+(2-to_char(sysdate,'d'))-7 and wfsj<=sysdate+(2-to_char(sysdate,'d'))-1]]>  then 1 else null end)wlastWeek
+      ,count(case when trunc(wfsj)=trunc(sysdate-1) then 1 else null end)wyestoday
+  ,count(case when trunc(wfsj)=trunc(sysdate) then 1 else null end)wtoday
+		from OEUSER.TBL_OFFE_EVDI t
+	</select>
+	<!--统计时间分组审核总量 -->
+	<select id="selectShzl" resultType="com.cist.Illegalbusiness.model.TblOffeVioWorkStat"
+		parameterType="java.util.HashMap">
+		select
+		to_char(trunc(tjsj),'yyyy-MM-dd')sj,sum(t.shsl)shsl,sum(t.yxsl)yxsl
+		,sum(case when <![CDATA[tjsj>=sysdate+(2-to_char(sysdate,'d'))-7 and tjsj<=sysdate+(2-to_char(sysdate,'d'))-1 ]]>
+		then yxsl else 0 end)lastWeek
+		,sum(case when <![CDATA[tjsj>=trunc(sysdate,'d') + 1 and tjsj<=trunc(sysdate,'d') + 7 ]]>
+		then yxsl else 0 end)week
+		,sum(case when trunc(tjsj)=trunc(sysdate-1) then yxsl else 0 end)yestoday
+		,sum(case when trunc(tjsj)=trunc(sysdate) then yxsl else 0 end)today
+		from TBL_OFFE_VIO_WORK_STAT t group by trunc(tjsj)
+		having extract(year from trunc(tjsj))=extract(year from sysdate)
+	</select>
+
+	<!--统计违法信息，违法总量，未审核，总审核量 -->
+	<select id="selectWsh" resultType="com.cist.Illegalbusiness.model.TblOffeVioWorkStat"
+		parameterType="java.util.HashMap">
+		select to_char(trunc(wfsj),'yyyy-mm-dd') cjdw,count(case when shbz='0' then 1 else null end )wsh
+		from OEUSER.TBL_OFFE_EVDI t
+		where
+		  <![CDATA[ t.wfsj>=sysdate-#{day} and t.wfsj<=sysdate]]>
+		 group by to_char(trunc(wfsj),'yyyy-mm-dd')
+	</select>
+	<!-- 分组统计工作量 -->
+	<select id="selectByPolice" resultType="com.cist.Illegalbusiness.model.TblOffeVioWorkStat"
+		parameterType="java.util.HashMap">
+	    select
+	   <if test="flag==0">
+       shr,
+      </if>
+	  <if test="flag==1">
+       ssdw shr,
+      </if> 
+      <if test="flag==2 and dateFlag==0">
+       tjxs shr,
+      </if> 
+       <if test="flag==2 and (dateFlag==1 or dateFlag==2)">
+         to_char(trunc(tjsj),'MM"月"DD"日"') shr,
+      </if> 
+      <if test="flag==2 and dateFlag==3">
+        to_char(trunc(tjsj,'mm'),'MM')||'月' shr,
+      </if> 
+      <if test="flag==2 and dateFlag==4">
+       to_char(trunc(tjsj),'yyyy-mm-dd') shr,
+      </if> 
+      sum(t.shsl)shsl,sum(yxsl)yxsl,listagg(wfxwtj,'@') within group(order by wfxwtj)wfxwtj from
+    CISTSYS.TBL_OFFE_VIO_WORK_STAT t where
+       <![CDATA[ tjsj>=#{kssj} and tjsj<=#{jssj}]]>
+      <if test="flag==2 and dateFlag==0">
+       shr='张菲菲' and trunc(tjsj)=trunc(sysdate)
+      </if> 
+      <if test="flag==2 and (dateFlag==1 or dateFlag==2 or dateFlag==3)">
+       shr='张菲菲' and <![CDATA[ tjsj>=#{kssj} and tjsj<=#{jssj}]]>
+      </if> 
+      <if test=" dept_name !=null and dept_name !='' and  dept_name !='null'">
+        and  ssdw=#{dept_name}
+      </if> 
+      group by 
+      <if test="flag==0">
+       shr
+      </if>
+      <if test="flag==1">
+       ssdw
+      </if>
+      <if test="flag==2 and dateFlag==0">
+       tjxs
+      </if> 
+      <if test="flag==2 and (dateFlag==1 or dateFlag==2)">
+       to_char(trunc(tjsj),'MM"月"DD"日"')
+      </if> 
+      <if test="flag==2 and dateFlag==3">
+        to_char(trunc(tjsj,'mm'),'MM')
+      </if> 
+      <if test="flag==2 and dateFlag==4">
+        tjsj
+      </if> 
+     
+	</select>
+	<select id="selectDay" resultType="com.cist.Illegalbusiness.model.TblOffeVioWorkStat" parameterType="java.util.HashMap">
+	select t1.tjxs||':00' shr,nvl(t2.shsl,0)shsl,nvl(t2.yxsl,0)yxsl,t2.wfxwtj from (select to_char(to_date(to_char(sysdate -(rownum - 1) / 24,'yyyy-mm-dd hh24') || ':00:00','yyyy-mm-dd hh24:mi:ss'),'hh24') tjxs
+        from dual 
+        <![CDATA[ connect by rownum <= 24 ]]> ) t1 left join
+(select TJXS,sum(t.shsl)shsl,sum(yxsl)yxsl,listagg(wfxwtj,'@') within group(order by wfxwtj)wfxwtj from
+    CISTSYS.TBL_OFFE_VIO_WORK_STAT t  where shr=#{shr} 
+    <if test="dept_name !=null and dept_name !='' and dept_name !='null'">
+    ssdw=#{dept_name}
+    </if>
+     <![CDATA[ and tjsj>=#{kssj} and tjsj<=#{jssj}]]>  group by TJXS) t2 
+    
+    on t2.tjxs=t1.tjxs
+    order by t1.tjxs
+	</select>
+		<select id="selectWeek" resultType="com.cist.Illegalbusiness.model.TblOffeVioWorkStat" parameterType="java.util.HashMap">
+select t1.xq shr,nvl(t2.shsl,0)shsl,nvl(t2.yxsl,0)yxsl from (select to_char(trunc(sysdate,'iw'),'yyyy-mm-dd') rq,to_char(trunc(sysdate,'iw'),'day') xq from dual union all
+          select to_char(trunc(sysdate,'iw') +1,'yyyy-mm-dd') rq ,to_char(trunc(sysdate,'iw')+1,'day') xq from dual union all
+          select to_char(trunc(sysdate,'iw') +2,'yyyy-mm-dd') rq,to_char(trunc(sysdate,'iw')+2,'day') xq from dual union all
+          select to_char(trunc(sysdate,'iw') +3,'yyyy-mm-dd') rq,to_char(trunc(sysdate,'iw')+3,'day') xq from dual union all
+          select to_char(trunc(sysdate,'iw') +4,'yyyy-mm-dd') rq,to_char(trunc(sysdate,'iw')+4,'day') xq from dual union all
+          select to_char(trunc(sysdate,'iw') +5,'yyyy-mm-dd') rq,to_char(trunc(sysdate,'iw')+5,'day') xq from dual union all
+          select to_char(trunc(sysdate,'iw') +6,'yyyy-mm-dd') rq,to_char(trunc(sysdate,'iw')+6,'day') xq  from dual) t1 left join
+(select to_char(trunc(TJSJ))tjsj,sum(t.shsl)shsl,sum(yxsl)yxsl from
+    CISTSYS.TBL_OFFE_VIO_WORK_STAT t  where shr=#{shr}  <![CDATA[ and tjsj>=#{kssj} and tjsj<=#{jssj}]]>  group by to_char(trunc(TJSJ))
+    ) t2
+    
+    on t2.TJSJ=t1.rq
+    order by t1.rq
+	</select>
+	<select id="selectMonth" resultType="com.cist.Illegalbusiness.model.TblOffeVioWorkStat" parameterType="java.util.HashMap">
+SELECT to_char(t1.sj,'MM"月"dd"日"')shr,nvl(t2.shsl,0)shsl,nvl(t2.yxsl,0)yxsl,t2.wfxwtj
+   FROM (SELECT TRUNC(SYSDATE, 'MONTH') + LEVEL - 1 AS sj
+           FROM DUAL 
+       <![CDATA[  CONNECT BY LEVEL <= 31 ]]>) t1
+  left join (select trunc(TJSJ)tjsj ,sum(t.shsl)shsl,sum(yxsl)yxsl,listagg(wfxwtj,'@') within group(order by wfxwtj)wfxwtj from
+    CISTSYS.TBL_OFFE_VIO_WORK_STAT t  where shr=#{shr}  
+      group by trunc(TJSJ)) t2
+on t1.sj=t2.TJSJ
+ WHERE TO_CHAR(t1.sj, 'MM') = TO_CHAR(SYSDATE, 'MM')
+order by t1.sj asc
+	</select>
+			<select id="selectYear" resultType="com.cist.Illegalbusiness.model.TblOffeVioWorkStat" parameterType="java.util.HashMap">
+select  to_char(trunc(to_date(t1.sj,'yyyyMM')),'MM"月') shr,nvl(t2.shsl,0)shsl,nvl(t2.yxsl,0)yxsl,t2.wfxwtj 
+from (select to_char(sysdate,'yyyy') || lpad(level,2,0)sj from dual <![CDATA[connect by level<13]]>)t1
+left join (select to_char(TJSJ,'yyyyMM')tjsj ,sum(t.shsl)shsl,sum(yxsl)yxsl,listagg(wfxwtj,'@') within group(order by wfxwtj)wfxwtj from
+    CISTSYS.TBL_OFFE_VIO_WORK_STAT t  where shr=#{shr}
+    <![CDATA[ and extract(year from trunc(tjsj))=extract(year from sysdate)]]>
+     group by to_char(TJSJ,'yyyyMM')) t2
+on t1.sj=t2.TJSJ
+order by t1.sj asc
+	</select>
+	
+<!-- 根据审核部门分组统计 -->
+	<select id="selectByDept" resultType="com.cist.Illegalbusiness.model.TblOffeVioWorkStat"
+		parameterType="java.util.HashMap">
+	    select
+       ssdw shr,
+      sum(t.shsl)shsl,sum(yxsl)yxsl,listagg(wfxwtj,'@') within group(order by wfxwtj)wfxwtj from
+    CISTSYS.TBL_OFFE_VIO_WORK_STAT t where
+     <![CDATA[ tjsj>=#{kssj} and tjsj<=#{jssj}]]>
+      group by 
+       ssdw
+	</select>
+	<select id="depart_infolist" resultType="com.cist.Illegalbusiness.model.DeptInfo"
+		parameterType="java.lang.Integer">
+		select t.dept_pk,t.dept_code,t.dept_name as name,t.DEPT_SUPERIOR from
+		sys_depart_info t
+		<where>
+			<if test="_parameter  == null or _parameter  == ''">
+				t.DEPT_SUPERIOR is null
+			</if>
+			<if test="_parameter  != null and _parameter  != ''">
+				t.DEPT_SUPERIOR=#{_parameter}
+			</if>
+		</where>
+	</select>
+	
+		<!--查询个人工作信息根据时间分组 -->
+	<select id="selectAllCount" resultType="com.cist.personalstats.model.PersonalStats"
+	parameterType="java.util.HashMap">
+	SELECT fzsj, COUNT (shbz) as shzs,
+	SUM ( CASE WHEN shbz = '1' THEN 1 ELSE 0 END ) AS cstg,
+	SUM ( CASE WHEN shbz = '2' THEN 1 ELSE 0 END ) AS fstg,
+	SUM ( CASE WHEN shbz = '3' THEN 1 ELSE 0 END ) AS cszf,
+	SUM ( CASE WHEN shbz = '4' THEN 1 ELSE 0 END ) AS fszf
+	FROM(SELECT TO_CHAR (cssj, 'YYYY-MM-DD') AS fzsj,shbz
+	FROM OEUSER.TBL_OFFE_EVDI  
+	<where>
+	  and  shbz in('1','2','3','4')
+	  and  cssj is not null
+	and extract(year from trunc(cssj))=extract(year from sysdate)
+    </where>
+	UNION ALL (
+	SELECT TO_CHAR (fssj, 'YYYY-MM-DD') as fzsj,shbz
+	FROM OEUSER.TBL_OFFE_EVDI 
+	<where>
+	    and  shbz in('1','2','3','4')
+	     and  fssj is not null
+	and extract(year from trunc(fssj))=extract(year from sysdate)
+	</where>
+	)
+	)
+	GROUP BY fzsj order by fzsj
+</select>
+</mapper>

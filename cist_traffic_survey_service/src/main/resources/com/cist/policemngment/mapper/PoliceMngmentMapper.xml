@@ -4,7 +4,7 @@
 	namespace="com.cist.policemngment.mapper.PoliceMngmentMapper">
 
 
-	<select id="selectByResourc"
+	<select id="SecurityByfk_dept_idTopk"
 		resultType="com.cist.policemngment.model.Jcsj_police_resourc"
 		parameterType="java.util.Map">
 		select * from jcsj_police_resources t
@@ -125,7 +125,7 @@
 
 	</select>
 
-	<select id="selectByPolice"
+	<select id="SecurityByglbmTocode"
 		resultType="com.cist.policemngment.model.Jcsj_Police_Res_Person"
 		parameterType="java.util.Map">
 
@@ -1141,7 +1141,7 @@
 
 
 	<!-- 警务通和350M查询 -->
-	<select id="selectByJW"
+	<select id="selectByJWSecurityByfk_dept_idTopk"
 		resultType="com.cist.policemngment.model.Jcsj_police_resourc"
 		parameterType="java.util.Map">
 
@@ -1169,7 +1169,7 @@
 
 
 	<!-- 查询GPS信息和相关车辆信息 -->
-	<select id="selectByGpsCar"
+	<select id="selectByGpsCarSecurityByfk_dept_idTopk"
 		resultType="com.cist.policemngment.model.Jcsj_police_resourc"
 		parameterType="java.util.Map">
 		select * from VW_JCSJ_GPS_CAR t
@@ -1319,6 +1319,16 @@
 		<if test="fc_pk != null and fc_pk != ''">
 			and fc_num=#{fc_pk}
 		</if>
+	</select>
+	<select id="querydeptByCode" parameterType="java.lang.String"
+	resultType="com.cist.policemngment.model.DeptInfo">
+		select t.dept_pk,t.dept_code,t.dept_name as name,t.DEPT_SUPERIOR from
+		sys_depart_info t
+		<where>
+			<if test="_parameter  != null and _parameter  != ''">
+				t.DEPT_CODE = #{_parameter}
+			</if>
+		</where>
 	</select>
 </mapper>
 	

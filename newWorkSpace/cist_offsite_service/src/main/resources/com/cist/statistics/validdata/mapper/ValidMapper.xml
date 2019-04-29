@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cist.statistics.validdata.mapper.ValidMapper">
+<select id="selectValid" resultType="com.cist.statistics.validdata.model.DataCount"
+parameterType="java.util.HashMap">
+ <!-- 2复审通过  4复审作废   -->
+select to_char(fssj, 'yyyy-mm-dd') as sssj,count(case when shbz='4' then 1 else null end ) as fszf,
+count(case when shbz='2' then 1 else null end ) as fstg, count(0) as
+    shzs from OEUSER.TBL_OFFE_EVDI  where shbz in('2','4')    
+    <if test="ecshsj1!=null and ecshsj1!=''">
+    <![CDATA[ and fssj >=to_date(#{ecshsj1},'yyyy-mm-dd HH24:mi:ss')]]>
+    </if>
+    <if test="ecshsj2!=null and ecshsj2!=''">
+    <![CDATA[ and fssj <=to_date(#{ecshsj2},'yyyy-mm-dd HH24:mi:ss')]]>
+    </if>
+     <if test="cjdw!=null and cjdw!=''">
+       and cjdw=#{cjdw}
+       </if>
+     group by to_char(fssj, 'yyyy-mm-dd') order by to_char(fssj, 'yyyy-mm-dd')
+</select>
+  <select id="selectData" resultType="com.cist.statistics.validdata.model.DataCount"
+  parameterType="java.util.Map">
+  select to_char(fssj, 'yyyy-mm-dd') as sssj,count(case when shbz='4' then 1 else null end ) as fszf,
+   count(case when shbz='2' then 1 else null end ) as fstg, count(0) as
+    shzs from OEUSER.TBL_OFFE_EVDI  where shbz in('2','4')    
+    <if test="ecshsj1!=null and ecshsj1!=''">
+    <![CDATA[ and fssj >=to_date(#{ecshsj1},'yyyy-mm-dd HH24:mi:ss')]]>
+    </if>
+    <if test="ecshsj2!=null and ecshsj2!=''">
+    <![CDATA[ and fssj <=to_date(#{ecshsj2},'yyyy-mm-dd HH24:mi:ss')]]>
+    </if>
+      <if test="cjdw!=null and cjdw!=''">
+	      and cjdw =#{cjdw}
+	     </if>
+     group by to_char(fssj, 'yyyy-mm-dd') order by to_char(fssj, 'yyyy-mm-dd')
+  </select>
+  <select id="selectDatas" resultType="com.cist.statistics.validdata.model.DataStatic"
+  parameterType="java.util.Map">
+  select to_char(fssj, 'yyyy-mm-dd') as sssj,count(case when shbz='4' then 1 else null end ) as fszf,
+   count(case when shbz='2' then 1 else null end ) as fstg, count(0) as
+    shzs from OEUSER.TBL_OFFE_EVDI  where shbz in('2','4')    
+     group by to_char(fssj, 'yyyy-mm-dd') order by to_char(fssj, 'yyyy-mm-dd')
+  </select>
+</mapper>

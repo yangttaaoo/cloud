@@ -1,0 +1,686 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper
+	namespace="com.cist.intersection.mapper.IntersectionMapper">
+		<!-- 行政区划下级-->
+<select id="kreisList" resultType="com.cist.roadsection.model.CKreisCode">
+		select *  from C_KREIS_CODE
+		<where>
+		<if test=" _parameter !=null and _parameter !=''">
+		TBEK_PARENT =#{_parameter}
+		</if>
+		</where>
+		order by tbek_pk desc
+	</select>
+	<!-- 查询协调路口名称 -->
+   <select id="selectXtlkName" resultType="com.cist.intersection.model.CRoadSegitemInfo" parameterType="java.util.Map">
+  select LKMC from C_ROAD_SEGITEM
+  where PK=#{lkxx}
+  </select>
+	<!-- 信控设备名称查询-->
+<select id="selectXksbName" resultType="com.cist.intersection.model.TblSegitemSignal" parameterType="java.util.HashMap">
+		select device_name  from JCSJ_DEVICE
+		<where>
+		pk_id =#{xksb}
+		</where>
+	</select>
+
+	<select id="selectRoadName" resultType="com.cist.intersection.model.C_road_item" parameterType="java.util.HashMap">
+	select t.ROIM_CODE ,t.roim_name  from C_ROAD_ITEM t where t.ROIM_CODE=#{dldm}
+	</select>
+	
+	<select id="selectRoadTree" resultType="com.cist.intersection.model.C_road_item" parameterType="string">
+	select t.ROIM_CODE ,t.roim_name  from C_ROAD_ITEM t where t.dept_code=#{dept_code}
+	</select>
+	
+		<select id="lukou" resultType="com.cist.intersection.model.C_road_item" parameterType="string">
+	    select t.PK as roim_code,t.LKMC as roim_name from C_ROAD_SEGITEM t where t.DLDM=#{roim_code}
+	</select>
+	<select id="checkLukou" resultType="com.cist.intersection.model.C_road_item" parameterType="java.util.HashMap">
+		         select t.ROIM_CODE ,t.roim_name  from C_ROAD_ITEM t where t.roim_code in (
+ select t.DLDM from C_ROAD_SEGITEM t where t.PK in
+<foreach item="w" collection="dept_pk" open="(" separator="," close=")">
+		            #{w}
+		        </foreach>
+group by t.DLDM
+ )
+	</select>
+	<select id="lukoudm" resultType="com.cist.intersection.model.C_road_item" parameterType="java.util.HashMap">
+	      
+	       select t.PK as roim_code,t.LKMC as roim_name from C_ROAD_SEGITEM t where t.DLDM=#{roim_code}
+	      and
+	      t.PK in
+	      <foreach item="w" collection="dept_pk" open="(" separator="," close=")">
+		            #{w}
+		        </foreach>
+	</select>
+		<select id="yijicdepartinfo" resultType="com.cist.intersection.model.Depart_info" parameterType="java.util.HashMap">
+		         select t.ROIM_CODE as tbec_kkbh ,t.roim_name as tbei_name from C_ROAD_ITEM t where t.roim_code in (
+select t.belonged_road_id from JCSJ_DEVICE t where t.PK_ID in
+<foreach item="w" collection="dept_pk" open="(" separator="," close=")">
+		            #{w}
+		        </foreach>
+group by t.belonged_road_id
+ )
+	</select>
+		<select id="kakouxiabu" resultType="com.cist.intersection.model.Depart_info" parameterType="java.util.HashMap">
+	      select t.PK_ID as Tbec_kkbh,t.DEVICE_NAME as tbei_name from JCSJ_DEVICE t where 
+	      t.belonged_road_id=#{tbec_kkbh} and
+	      t.PK_ID in
+	      <foreach item="w" collection="dept_pk" open="(" separator="," close=")">
+		            #{w}
+		        </foreach>
+	</select>
+		<select id="kakou" resultType="com.cist.intersection.model.Depart_info" parameterType="string">
+	    select t.PK_ID as Tbec_kkbh,t.DEVICE_NAME as tbei_name from JCSJ_DEVICE t where t.belonged_road_id=#{tbec_kkbh}
+	</select>
+	<!-- 根据部门code查询道路-->
+	<select id="road_point" resultType="com.cist.intersection.model.C_road_item" parameterType="java.util.HashMap" >
+    select M_NAME roim_name,M_CODE roim_code
+    from C_MONITOR_POINT_EX t
+    <where>
+		M_ROAD_CODE =#{_parameter}
+    </where>
+  </select>
+	<!-- 根据部门code查询道路-->
+	<select id="road_infolist" resultType="com.cist.intersection.model.C_road_item" parameterType="java.util.HashMap" >
+    select *
+    from C_ROAD_ITEM t
+    <where>
+	<if test="dept_code !=null">
+		and dept_code =#{dept_code}
+	</if>
+    </where>
+  </select>
+	<!--删除信控方案下的配时信息  -->
+	  <delete id="deletePsxx" parameterType="java.util.HashMap" >
+  begin 
+    delete from TBL_TIMPLAN_PHASE t1
+    where PSFA=#{pk}
+		;
+         delete from TBL_TIMPLAN_SEGITEM
+    where PK =#{pk}
+    ;
+    end;
+  </delete>
+  <!-- 相位关系信息更新 -->
+	<update id="updateXwxx" parameterType="java.util.HashMap" >  
+	 <foreach collection="list" item="item" index="index" open="begin" close=";end;" separator=";">
+	update TBL_TIMPLAN_PHASE T 
+	<trim prefix="set" suffixOverrides=",">
+		XWMC=#{item.xwmc},
+		SJ=#{item.sj},
+		<if test="item.bx!=null and item.bx!='' and item.bx!='null'">
+		BX=#{item.bx},
+		</if>
+		<if test="item.hz!=null and item.hz!='' and item.hz!='null'">
+		HZ=#{item.hz},
+		</if>
+		</trim>
+		where PSFA=#{pk}
+    </foreach>      
+	</update>
+	<!-- 配时信息存在即更新 -->
+	<update id="insertPsxx" parameterType="java.util.Map" >  
+	 <foreach collection="list" item="item" index="index" open="begin" close=";end;" separator=";">
+            update TBL_TIMPLAN_SEGITEM T
+            
+            <trim prefix="set" suffixOverrides=","> 
+           T.XKID=#{item.xkid,jdbcType=VARCHAR},
+	T.XH=#{item.xh,jdbcType=VARCHAR},
+		T.KSSJ=#{item.kssj,jdbcType=VARCHAR},
+		T.JSSJ=#{item.jssj,jdbcType=VARCHAR},
+	
+	T.FAH=#{item.fah,jdbcType=VARCHAR},
+	T.FABZ=#{item.fabz,jdbcType=VARCHAR},
+	T.XX=#{item.xx,jdbcType=VARCHAR},
+	T.ZQ=#{item.zq,jdbcType=VARCHAR},
+	T.XWC=#{item.xwc,jdbcType=VARCHAR},
+	</trim>
+	where PK=#{item.pk}
+	</foreach>
+     <!--    MERGE INTO TBL_TIMPLAN_SEGITEM T  
+        USING ( 
+        <foreach collection="list" item="item" index="index" separator="union" >
+            SELECT 
+             #{item.pk,jdbcType=DECIMAL} AS PK,
+            #{item.xkid,jdbcType=DECIMAL} AS XKID,
+            #{item.xh,jdbcType=VARCHAR} AS XH,
+            #{item.kssj,jdbcType=VARCHAR} AS KSSJ,
+            #{item.jssj,jdbcType=VARCHAR} AS JSSJ,
+            #{item.fah,jdbcType=VARCHAR} AS FAH,
+            #{item.fabz,jdbcType=VARCHAR} AS FABZ,
+            #{item.xx,jdbcType=VARCHAR} AS XX,
+            #{item.zq,jdbcType=VARCHAR} AS ZQ,
+            #{item.xwc,jdbcType=VARCHAR} AS XWC
+             FROM DUAL
+        </foreach>
+	) T1
+	ON (T1.PK= T.PK)
+	WHEN MATCHED THEN
+	UPDATE SET
+	T.XKID=T1.XKID,
+	T.XH=T1.XH,
+	T.KSSJ=T1.KSSJ,
+	T.JSSJ=T1.JSSJ,
+	T.FAH=T1.FAH,
+	T.FABZ=T1.FABZ,
+	T.XX=T1.XX,
+	T.ZQ=T1.ZQ,
+	T.XWC=T1.XWC
+	where PK=T1.PK
+	WHEN NOT MATCHED THEN
+	INSERT
+	(PK,XKID,XH,KSSJ,JSSJ,FAH,FABZ,XX,XWC)
+	VALUES
+	PK,XKID,XH,KSSJ,JSSJ,FAH,FABZ,XX, ,XWCcistsys.SEQ_TBL_TIMPLAN_SEGITEM_PK.nextval,T1.XKID, T1.XH,T1.KSSJ,T1.JSSJ,T1.FAH,T1.FABZ,T1.XX,,T1.XWC
+	(cistsys.SEQ_TBL_TIMPLAN_SEGITEM_PK.nextval,T1.XKID,T1.XH,T1.KSSJ,T1.JSSJ,T1.FAH,T1.FABZ,T1.XX,T1.XWC) 
+ -->
+      </update>  
+      <!-- 信控方案下的配时信息下的相位关系查询 -->
+	<select id="selectXwxx" resultType="com.cist.intersection.model.TblTimplanPhase" parameterType="java.util.HashMap" >
+    select *
+    from TBL_TIMPLAN_PHASE t
+    where
+		PSFA =#{psfa}
+		order by xwmc asc
+  </select>
+	<!-- 信控方案下的配时信息查询 -->
+	<select id="selectPsxx" resultType="com.cist.intersection.model.TblTimplanSegitem" parameterType="java.util.HashMap" >
+    select to_date(kssj,'HH24:mi')kssj,to_date(jssj,'HH24:mi')jssj,pk,xkid,xh,fah,fabz,xx,zq,xwc
+    from TBL_TIMPLAN_SEGITEM t
+    <where>
+	<if test="xkid !=null">
+		and XKID =#{xkid}
+	</if>
+    </where>
+  </select>
+    <delete id="delete" parameterType="java.util.HashMap" >
+    begin 
+               delete from TBL_TIMPLAN_PHASE
+    where PSFA in
+		 ( select PK  from TBL_TIMPLAN_SEGITEM  where XKID in(SELECT PK FROM TBL_SEGITEM_SIGNAL WHERE LKID in
+           <foreach item="items" collection="PK" open="(" separator="," close=")">
+            #{items}
+            </foreach>)
+            )
+            ;
+            
+             delete from TBL_TIMPLAN_SEGITEM
+    where XKID in
+		 (SELECT PK FROM TBL_SEGITEM_SIGNAL WHERE LKID in
+           <foreach item="items" collection="PK" open="(" separator="," close=")">
+            #{items}
+            </foreach>)
+            ;
+              delete from TBL_SIGCASE_SEGITEM
+    where XKFA in 
+           (SELECT PK FROM TBL_SEGITEM_SIGNAL WHERE LKID in
+           <foreach item="items" collection="PK" open="(" separator="," close=")">
+            #{items}
+            </foreach>)
+            ;
+            delete from TBL_SEGITEM_SIGNAL where LKID in
+            <foreach item="items" collection="PK" open="(" separator="," close=");">
+            #{items}
+        </foreach>
+    delete from C_ROAD_SEGITEM t1
+    where PK in
+		<foreach item="items" collection="PK" open="(" separator="," close=");">
+            #{items}
+        </foreach>
+        end;
+  </delete>
+    <delete id="deleteXkfa" parameterType="java.util.HashMap" >
+    begin 
+   
+          delete from TBL_SIGCASE_SEGITEM
+    where XKFA =#{pk}
+            ;
+    delete from TBL_SEGITEM_SIGNAL
+    where PK =#{pk};
+         delete from TBL_TIMPLAN_SEGITEM
+    where XKID =#{pk}
+    ;
+           
+        end;
+  </delete>
+  
+<!-- 更新信控方案信息 -->
+	<update id="updateSignal" parameterType="java.util.Map">
+  MERGE INTO TBL_SEGITEM_SIGNAL T  
+        USING ( 
+            SELECT 
+             #{pk,jdbcType=DECIMAL} AS PK,
+             #{lkid,jdbcType=DECIMAL} AS LKID,
+            #{famc,jdbcType=DECIMAL} AS FAMC,
+            #{fasd,jdbcType=VARCHAR} AS FASD,
+            #{zzsj,jdbcType=VARCHAR} AS ZZSJ,
+            #{xksb,jdbcType=VARCHAR} AS XKSB,
+            #{falx,jdbcType=VARCHAR} AS FALX,
+            #{pic,jdbcType=VARCHAR} AS XWXXT
+             FROM DUAL
+	) T1
+	ON (T1.PK= T.PK)
+	WHEN MATCHED THEN
+	UPDATE SET
+	T.LKID=T1.LKID,
+	T.FAMC=T1.FAMC,
+	T.FASD=T1.FASD,
+	T.ZZSJ=T1.ZZSJ,
+	T.XKSB=T1.XKSB,
+	T.FALX=T1.FALX,
+	T.XWXXT=T1.XWXXT
+	where PK=T1.PK
+	WHEN NOT MATCHED THEN
+	INSERT
+	(PK,LKID,FAMC,FASD,ZZSJ,XKSB,FALX,XWXXT)
+	VALUES
+	(cistsys.SEQ_TBL_SEGITEM_SIGNAL_PK.nextval,T1.LKID, T1.FAMC,T1.FASD,T1.ZZSJ,T1.XKSB,T1.FALX,T1.XWXXT) 
+
+	
+	</update>
+	<!-- 更新路口信息 -->
+	<update id="update" parameterType="java.util.Map">
+   
+		update C_ROAD_SEGITEM
+		set
+				glbm=#{glbm,jdbcType=VARCHAR},
+				xzqh=#{xzqh,jdbcType=VARCHAR},
+				dldm=#{dldm,jdbcType=VARCHAR},
+				lkdm=#{lkdm,jdbcType=VARCHAR},
+				lkmc=#{lkmc,jdbcType=VARCHAR},
+				lklx=#{lklx,jdbcType=VARCHAR},
+				lmjg=#{lmjg,jdbcType=VARCHAR},
+				qsms=#{qsms,jdbcType=VARCHAR},
+				jsms=#{jsms,jdbcType=VARCHAR},
+				pic=#{pic,jdbcType=VARCHAR}
+		where pk=#{pk}
+	</update>
+	<!--查询部门下的道路  -->
+	<select id="selectRoad" resultType="com.cist.intersection.model.Depart_info"
+		parameterType="java.lang.Integer">
+		select t.roim_code as dept_code,t.roim_name as name from C_ROAD_ITEM t
+		<where>
+			<if test="_parameter != null or _parameter != ''">
+				DEPT_CODE=#{_parameter}
+			</if>
+		</where>
+	</select>
+	
+	   <select id="Monitorpoint" resultType="com.cist.intersection.model.Depart_info" parameterType="string">
+   select t.tbmp_id as dept_code,t.tbmp_dept_code,t.tbmp_name as name,t.tbmp_azdz from c_monitor_point t  where t.tbmp_dept_code=#{_parameter}
+   </select>
+	<!--部门查询  -->
+	 <select id="depart_infolist" resultType="com.cist.intersection.model.Depart_info" parameterType="java.lang.Integer">
+select t.dept_pk,t.dept_code,t.dept_name as name,t.DEPT_SUPERIOR from sys_depart_info t 
+<where>
+		  <if test="_parameter  == null or _parameter  == ''">
+		     t.DEPT_SUPERIOR is null
+		   </if>
+		     <if test="_parameter  != null and _parameter  != ''">
+		     t.DEPT_SUPERIOR=#{_parameter}
+		   </if>
+</where>
+   </select>
+   
+	<select id="clickdepartinfo" resultType="com.cist.intersection.model.Depart_info" parameterType="string">
+	select t.ROIM_CODE as tbec_kkbh ,t.roim_name as tbei_name from C_ROAD_ITEM t where t.dept_code=#{dept_code}
+<!-- 	in (select t.dept_code from SYS_DEPART_INFO t where t.dept_pk=#{dept_pk}) -->
+	</select>
+	<!-- 顶级行政区划 或上级行政区划-->
+<select id="kreis" resultType="com.cist.roadsection.model.CKreisCode">
+		select *  from C_KREIS_CODE
+		<where>
+		<if test=" tbek_parent==null">
+		TBEK_PARENT is NULL
+		</if>
+		<if test=" tbek_parent !=null and tbek_parent !=''">
+		TBEK_PARENT =#{tbek_parent}
+		</if>
+		</where>
+	</select>
+	
+	<!-- 道路树-->
+<select id="roadList" resultType="com.cist.intersection.model.C_road_item">
+		select *  from C_ROAD_ITEM
+		<where>
+		<if test=" tbek_code !=null and tbek_code !=''">
+		instr(tbek_code,#{tbek_code})>0
+		</if>
+		</where>
+	</select>
+	<!-- 信控方案查询 根据路口id -->
+	<select id="selectSignal" resultMap="XtlkMap" parameterType="java.util.HashMap" >
+    select *
+    from TBL_SEGITEM_SIGNAL t
+    <where>
+	<if test="lkid !=null">
+		and LKID =#{lkid}
+	</if>
+    </where>
+  </select>
+    <resultMap id="BaseResultMap" type="com.cist.intersection.model.CRoadSegitemInfo" >
+    <id column="pk" property="pk" jdbcType="DECIMAL" />
+    <result column="glbm" property="glbm" jdbcType="VARCHAR" />
+    <result column="dldm" property="dldm" jdbcType="VARCHAR" />
+    <result column="lkdm" property="lkdm" jdbcType="VARCHAR" />
+    <result column="lkmc" property="lkmc" jdbcType="VARCHAR" />
+    <result column="lklx" property="lklx" jdbcType="VARCHAR" />
+    <result column="lmjg" property="lmjg" jdbcType="CHAR" />
+    <result column="dlxx" property="dlxx" jdbcType="VARCHAR" />
+    <result column="xzqh" property="xzqh" jdbcType="VARCHAR" />
+    <result column="qsms" property="qsms" jdbcType="DECIMAL" />
+    <result column="jsms" property="jsms" jdbcType="DECIMAL" />
+    <result column="pic" property="pic" jdbcType="VARCHAR" />
+    <collection property="xkfalist" ofType="com.cist.intersection.model.TblSegitemSignal"
+                    javaType="java.util.List" select="selectXkfa"
+                    column="pk">
+        </collection>
+  </resultMap>
+   <resultMap id="XtlkMap" type="com.cist.intersection.model.TblSegitemSignal" >
+    <id column="pk" property="pk" jdbcType="DECIMAL" />
+    <result column="lkid" property="lkid" jdbcType="DECIMAL" />
+    <result column="famc" property="famc" jdbcType="VARCHAR" />
+    <result column="fasd" property="fasd" jdbcType="VARCHAR" />
+    <result column="zzsj" property="zzsj" jdbcType="VARCHAR" />
+    <result column="xksb" property="xksb" jdbcType="DECIMAL" />
+    <result column="falx" property="falx" jdbcType="CHAR" />
+    <result column="xwxxt" property="xwxxt" jdbcType="VARCHAR" />
+     <collection property="xtlk" ofType="com.cist.intersection.model.TblSigcaseSegitem"
+                    javaType="java.util.List" select="selectXtlkList"
+                    column="pk">
+        </collection>
+  </resultMap>
+  <!-- 根据路口id查询对应的信控方案集合 -->
+	<select id="selectXkfa" resultMap="XtlkMap" parameterType="java.lang.Integer" >
+    select *
+    from TBL_SEGITEM_SIGNAL t
+    <where>
+		LKID =#{_parameter}
+    </where>
+  </select>
+    <!-- 查询信控方案对应的协调路口信息 -->
+   <select id="selectXtlkList" resultType="com.cist.intersection.model.TblSigcaseSegitem" parameterType="java.lang.Integer">
+  select * from VW_TBL_SIGCASE_SEGITEM 
+  where xkfa=#{_parameter}
+  </select>
+	<select id="list" resultMap="BaseResultMap" parameterType="java.util.HashMap" >
+    select *
+    from VW_C_ROAD_SEGITEM t
+    <where>
+	<if test="lkdm !=null and lkdm !='' and lkdm !='null'">
+		and lkdm like '%'||#{lkdm}||'%'
+	</if>
+	<if test="lkmc !=null and lkmc !='' and lkmc !='null'">
+     and lkmc like '%'||#{lkmc}||'%'
+	</if> 
+	<if test="dldm !=null and dldm !='' ">
+     and dldm =#{dldm}
+	</if> 
+	
+    </where>
+    order by t.pk desc
+    
+  </select>
+  <!-- 查询信控方案与协调路口关系 -->
+   <select id="selectXtlk" resultType="com.cist.intersection.model.TblSigcaseSegitem" parameterType="java.util.Map">
+  select * from TBL_SIGCASE_SEGITEM 
+  where xkfa=#{xkid}
+  </select>
+   <!-- 查询协调路口路段相关的部门 -->
+   <select id="selectXtlkDept" resultType="com.cist.intersection.model.C_road_item" parameterType="java.util.Map">
+select dept_code from C_ROAD_ITEM where roim_code in (select DLDM from C_ROAD_SEGITEM  where PK in(select LKXX from TBL_SIGCASE_SEGITEM  where LKXX in
+<foreach item="w" collection="lkxx" open="(" separator="," close=")">
+		            #{w.lkxx}
+		        </foreach>
+		        ) )
+  </select>
+   <!-- 查询信控设备相关的部门 -->
+   <select id="selectXksbDept" resultType="com.cist.intersection.model.C_road_item" parameterType="java.util.Map">
+select dept_code from C_ROAD_ITEM where roim_code in(select BELONGED_ROAD_ID from JCSJ_DEVICE  where PK_ID =#{xksb})
+
+  </select>
+   <!-- 信控方案与协调路口关系更新 -->
+   <delete id="deleteXtlk" parameterType="java.util.Map">
+   
+  delete  from TBL_SIGCASE_SEGITEM 
+  where xkfa=#{xkid}
+  </delete>
+  <!-- 信控方案与协调路口关系更新 -->
+   <update id="updateXtlk" parameterType="java.util.Map">
+   
+  update TBL_SIGCASE_SEGITEM set
+  
+  lkxx=#{lkxx}
+  
+  where xkfa=#{lkid}
+  </update>
+  <!-- 信控方案与协调路口关系插入 -->
+  <insert id="saveXtlk" parameterType="java.util.Map">
+  insert into TBL_SIGCASE_SEGITEM
+  <trim prefix="(" suffixOverrides="," suffix=")">
+		xkfa,lkxx
+	</trim>
+ select cd.* from(
+	<foreach item="dv" index="index" collection="lkxx" separator="union all"> 
+         SELECT  
+             #{xkid},
+			#{dv.lkxx}
+		FROM DUAL 
+    </foreach >
+		)cd
+<!--   values(#{xkid},#{lkxx}) -->
+  </insert>
+  <!--  批量插入配时信息下面的相位关系-->
+	<insert id="insertXwxx" parameterType="java.util.Map">
+	insert into TBL_TIMPLAN_PHASE
+	<trim prefix="(" suffixOverrides="," suffix=")">
+		pk,
+		psfa,
+		BX,
+		HZ,
+		SJ,
+		xwmc
+	</trim>
+	select cistsys.SEQ_TBL_TIMPLAN_SEGITEM_PK.nextval, cd.* from(
+	<foreach item="dv" index="index" collection="list" separator="union all"> 
+         SELECT  
+             #{psfa},
+			#{dv.bx},
+		
+			#{dv.hz},
+			
+			sysdate,
+			#{dv.xwmc}
+		FROM DUAL 
+    </foreach >
+		)cd
+</insert>
+   <!--  单个保存信控方案下对应的配时信息-->
+	<insert id="insertSegitem" parameterType="java.util.Map">
+	<selectKey keyProperty="psfa" resultType="java.lang.Integer" order="BEFORE">  
+            select cistsys.SEQ_TBL_SEGITEM_SIGNAL_PK.nextval as psfa from dual  
+        </selectKey> 
+	insert into TBL_TIMPLAN_SEGITEM
+	<trim prefix="(" suffixOverrides="," suffix=")">
+		pk,
+		xkid,
+		xh,
+		kssj,
+		jssj,
+		fah,
+		fabz,
+		xx,
+		zq,
+		xwc,
+	</trim>
+	<trim prefix="values(" suffixOverrides="," suffix=")">
+	        #{psfa,jdbcType=VARCHAR},
+			#{xkid,jdbcType=VARCHAR},
+			#{xh,jdbcType=VARCHAR},
+			#{kssj,jdbcType=VARCHAR},
+			#{jssj,jdbcType=VARCHAR},
+			#{fah,jdbcType=VARCHAR},
+			#{fabz,jdbcType=VARCHAR},
+			#{xx,jdbcType=VARCHAR},
+			#{zq,jdbcType=VARCHAR},
+			#{xwc,jdbcType=VARCHAR},
+</trim>
+</insert>
+   <!--  保存信控方案下对应的配时信息-->
+	<insert id="saveSegitem" parameterType="java.util.List">
+	<selectKey resultType="Long" order="BEFORE" keyProperty="pk">  
+            select cistsys.SEQ_TBL_TIMPLAN_SEGITEM_PK.nextval as pk from dual  
+        </selectKey> 
+	insert into TBL_TIMPLAN_SEGITEM
+	<trim prefix="(" suffixOverrides="," suffix=")">
+		pk,
+		xkid,
+		xh,
+		kssj,
+		jssj,
+		fah,
+		fabz,
+		xx,
+		zq,
+		xwc,
+	</trim>
+		select cistsys.SEQ_TBL_TIMPLAN_SEGITEM_PK.nextval, cd.* from(
+	<foreach item="dv" index="index" collection="list" separator="union all"> 
+         SELECT  
+            #{dv.xkid},
+			#{dv.xh},
+			#{dv.kssj},
+			#{dv.jssj},
+			#{dv.fah},
+			#{dv.fabz},
+			#{dv.xx},
+			#{dv.zq},
+			#{dv.xwc}
+		FROM DUAL 
+    </foreach >
+		)cd
+</insert>
+<insert id="insertSignal" parameterType="java.util.Map">
+<selectKey keyProperty="xkid" resultType="java.lang.Integer" order="BEFORE">  
+            select cistsys.SEQ_TBL_SEGITEM_SIGNAL_PK.nextval as xkid from dual  
+        </selectKey> 
+insert into TBL_SEGITEM_SIGNAL
+	<trim prefix="(" suffixOverrides="," suffix=")">
+	pk,
+	lkid,
+		famc,
+		fasd,
+		zzsj,
+		xksb,
+		falx,
+		xwxxt,
+	</trim>
+	<trim prefix="values(" suffixOverrides="," suffix=")">
+	    #{xkid,jdbcType=VARCHAR},
+		#{lkid,jdbcType=VARCHAR},
+		#{famc,jdbcType=VARCHAR},
+		#{fasd,jdbcType=VARCHAR},
+		#{zzsj,jdbcType=VARCHAR},
+		#{xksb,jdbcType=VARCHAR},
+		#{falx,jdbcType=VARCHAR},
+		#{xwxxt,jdbcType=VARCHAR},
+</trim>
+</insert>
+  <!--  保存信控方案-->
+	<insert id="saveSignal" parameterType="java.util.Map">
+	<selectKey keyProperty="xkid" resultType="java.lang.Integer" order="BEFORE">  
+            select cistsys.SEQ_TBL_SEGITEM_SIGNAL_PK.nextval as xkid from dual  
+        </selectKey> 
+<!-- 	insert into TBL_SEGITEM_SIGNAL
+	<trim prefix="(" suffixOverrides="," suffix=")">
+	pk,
+	lkid,
+		famc,
+		fasd,
+		zzsj,
+		xksb,
+		falx,
+		xwxxt,
+	</trim>
+	select cistsys.SEQ_TBL_SEGITEM_SIGNAL_PK.nextval, cd.* from(
+	<foreach item="item" index="index" collection="Long" separator="union all"> 
+
+         SELECT  
+		#{pk},
+		#{item.famc},
+		#{item.fasd},
+		#{item.zzsj},
+		#{item.xksb},
+		#{item.falx},
+		#{item.filePath}
+	FROM DUAL 
+    </foreach >
+		)cd -->
+		insert into TBL_SEGITEM_SIGNAL
+	<trim prefix="(" suffixOverrides="," suffix=")">
+	pk,
+	lkid,
+		famc,
+		fasd,
+		zzsj,
+		xksb,
+		falx,
+		xwxxt,
+	</trim>
+	<trim prefix="values(" suffixOverrides="," suffix=")">
+	    #{xkid},
+		#{pk},
+		#{famc},
+		#{fasd},
+		#{zzsj},
+		#{xksb},
+		#{falx},
+		#{filePath},
+</trim>
+</insert>
+   <!--  保存路口信息-->
+	<insert id="save" parameterType="java.util.Map">
+    <selectKey resultType="java.lang.Integer" order="BEFORE" keyProperty="pk">
+        SELECT cistsys.SEQ_C_ROAD_SEGITEM_PK.nextval FROM DUAL
+    </selectKey>
+	insert into C_ROAD_SEGITEM
+	(
+		pk,
+		glbm,
+		xzqh,
+		lkdm,
+		lkmc,
+			lklx,
+			lmjg,
+			dlxx,
+			qsms,
+			jsms,
+			pic,
+			dldm
+	)
+	VALUES (
+		#{pk,jdbcType=VARCHAR},
+		#{dept_code,jdbcType=VARCHAR},
+		#{tbek_code,jdbcType=VARCHAR},
+		#{lkdm,jdbcType=VARCHAR},
+		#{lkmc,jdbcType=VARCHAR},
+			#{lklx,jdbcType=VARCHAR},
+			#{lmjg,jdbcType=VARCHAR},
+			#{dlxx,jdbcType=VARCHAR},
+			#{qsms,jdbcType=VARCHAR},
+			#{jsms,jdbcType=VARCHAR},
+			#{pic,jdbcType=VARCHAR},
+			#{dldm,jdbcType=VARCHAR}
+	)
+</insert>
+	 <select id="getroimcode" resultType="int" parameterType="java.util.Map">
+	   select count(*) from C_ROAD_SEGITEM t WHERE t.LKDM=#{lkdm}
+	   	<if test="yuanlkdm!=null and yuanlkdm!=''">
+		   and t.LKDM!=#{yuanlkdm}
+		 </if>
+	    
+	</select>
+	</mapper>
+	

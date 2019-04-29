@@ -142,5 +142,12 @@ public class SysBaseDataCode {
 	//协议
 	public final static String SYS_XY = "TXXY";
 	
+	//警员信息
+	public final static String SYS_JY = "JY00";
+
+	//保险公司
+	public final static String SYS_BXGS = "JW01";
 	
+	//车辆分类
+	public final static String SYS_CLFL = "CLFL";
 }

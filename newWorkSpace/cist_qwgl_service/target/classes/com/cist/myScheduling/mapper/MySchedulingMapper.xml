@@ -1,0 +1,321 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper
+	namespace="com.cist.myScheduling.mapper.MySchedulingMapper">
+	<resultMap id="BaseResultMap"
+		type="com.cist.myScheduling.model.QwReport">
+		<result column="PK_ID" property="pk_id" jdbcType="DECIMAL" />
+		<result column="FK_DEPT_ID" property="fk_dept_id"
+			jdbcType="DECIMAL" />
+		<result column="FK_POLICE_TEAM_ID" property="fk_police_team_id"
+			jdbcType="VARCHAR" />
+		<result column="REPORT_TYPE" property="report_type"
+			jdbcType="CHAR" />
+		<result column="CAR_LIST_STR" property="car_list_str"
+			jdbcType="CLOB" />
+		<result column="PERSONNEL_LIST_STR"
+			property="personnel_list_str" jdbcType="CLOB" />
+		<result column="REPORT_PERSON_ID" property="report_person_id"
+			jdbcType="DECIMAL" />
+		<result column="REPORT_TIME" property="report_time"
+			jdbcType="TIMESTAMP" />
+		<result column="REPORT_PERIOD_TYPE"
+			property="report_period_type" jdbcType="TIMESTAMP" />
+		<discriminator javaType="String" column="report_type">
+			<case value="1" resultMap="streetMap" />
+			<case value="2" resultMap="dutyMap" />
+			<case value="4" resultMap="restMap" />
+			<case value="5" resultMap="officeMap" />
+		</discriminator>
+	</resultMap>
+
+	<resultMap id="CalenderMap" 
+		type="com.cist.myScheduling.model.QwReport">
+		<!-- <id column="pk_id" property="pk_id" /> -->
+		<result column="PK_ID" property="pk_id" jdbcType="DECIMAL" />
+		<result column="FK_DEPT_ID" property="fk_dept_id"
+			jdbcType="DECIMAL" />
+		<result column="FK_POLICE_TEAM_ID" property="fk_police_team_id"
+			jdbcType="VARCHAR" />
+		<result column="REPORT_TYPE" property="report_type"
+			jdbcType="CHAR" />
+		<result column="CAR_LIST_STR" property="car_list_str"
+			jdbcType="CLOB" />
+		<result column="PERSONNEL_LIST_STR"
+			property="personnel_list_str" jdbcType="CLOB" />
+		<result column="REPORT_PERSON_ID" property="report_person_id"
+			jdbcType="DECIMAL" />
+		<result column="REPORT_TIME" property="report_time"
+			jdbcType="TIMESTAMP" />
+		<result column="REPORT_PERIOD_TYPE"
+			property="report_period_type" jdbcType="TIMESTAMP" />
+		<collection  property="qwSignIn" column="spk"
+			ofType="com.cist.myScheduling.model.QwSignIn">
+			<!--  javaType="ArrayList"  -->
+			<id column="spk" property="pk_id" />
+			<result column="sign_time" property="sign_time"
+				jdbcType="TIMESTAMP" />
+			<result column="sign_in_type" property="sign_in_type"
+				jdbcType="CHAR" />
+	 	 </collection>
+<!-- 	 	 <collection  property="qw_patrol_alarm_log" column="pk"
+			ofType="com.cist.myScheduling.model.QwSignIn">
+			 javaType="ArrayList" 
+			<id column="pk" property="pk" />
+			<result column="sign_time" property="sign_time"
+				jdbcType="TIMESTAMP" />
+			<result column="sign_in_type" property="sign_in_type"
+				jdbcType="CHAR" />
+	 	 </collection> -->
+		<discriminator javaType="String" column="report_type">
+			<case value="1" resultMap="streetMap1" />
+			<case value="2" resultMap="dutyMap1" />
+			<case value="4" resultMap="restMap1" />
+			<case value="5" resultMap="officeMap1" />
+		</discriminator>
+	</resultMap>
+	<resultMap id="StreetResultMap" type="com.cist.myScheduling.model.QwReportStreet" >
+    <result column="PK_ID" property="pk_id" jdbcType="DECIMAL" />
+    <result column="FK_REPORT_ID" property="fk_report_id" jdbcType="DECIMAL" />
+    <result column="PATROL_CONTROL_TYPE" property="patrol_control_type" jdbcType="CHAR" />
+    <result column="ARMED_FORCES_TYPE" property="armed_forces_type" jdbcType="CHAR" />
+    <result column="DRESSING_TYPE" property="dressing_type" jdbcType="CHAR" />
+    <result column="FK_PATROL_AREA_ID" property="fk_patrol_area_id" jdbcType="DECIMAL" />
+    <result column="AREA_NAME" property="area_name" jdbcType="VARCHAR" />
+    <result column="AREA_TYPE" property="area_type" jdbcType="CHAR" />
+    <result column="FK_WORK_SHIFT_ID" property="fk_work_shift_id" jdbcType="DECIMAL" />
+    <result column="WORK_SHIFT_NAME" property="work_shift_name" jdbcType="VARCHAR" />
+    <result column="SERVICE_TYPE" property="service_type" jdbcType="VARCHAR" />
+    <result column="CHANNEL_NUM" property="channel_num" jdbcType="VARCHAR" />
+    <result column="CARLL_NUM" property="carll_num" jdbcType="VARCHAR" />
+    <result column="TELEPHONE" property="telephone" jdbcType="VARCHAR" />
+    <result column="WORK_SHIFT_END_TIME" property="work_shift_end_time" jdbcType="TIMESTAMP" />
+    <result column="SPAN_CYCLE" property="span_cycle" jdbcType="DECIMAL" />
+    <result column="WORK_SHIFT_START_TIME" property="work_shift_start_time" jdbcType="TIMESTAMP" />
+    <result column="GEO_SPATIAL" property="geo_spatial" jdbcType="CLOB" /> 
+     <collection property="qw_patrol_alarm_log" ofType="com.cist.myScheduling.model.Qw_patrol_alarm_log"
+                    javaType="java.util.ArrayList" select="selectAlarmLogs"
+                    column="pk_id">
+        </collection>
+  </resultMap>
+	<!--勤务报备下街面勤务 -->
+	<resultMap id="cMap"
+		type="com.cist.myScheduling.model.QwSignIn">
+
+	</resultMap>
+	<!-- 日历排班 -->
+	<select id="selectlist" resultMap="CalenderMap"
+		parameterType="java.util.HashMap">
+		select t.pk_id,
+		t.fk_dept_id,
+		t.fk_police_team_id,
+		t.report_type,
+		t.report_person_id,
+		t.report_time,
+		t.report_period_type,
+		t.car_list_str,
+		t.personnel_list_str,t1.sign_time,t1.sign_in_type,
+		t1.fk_report_id,
+		t1.pk_id  AS spk
+		from QW_REPORT t 
+		left join QW_SIGN_IN t1 on
+		t.pk_id=t1.fk_report_id
+		<!-- select * from QW_REPORT t -->
+		<where>
+			<if test=" qwyf != null and qwyf !=''">
+				<![CDATA[ and to_date(to_char(report_period_type,'yyyy-mm'),'yyyy-mm') = to_date(#{qwyf},'yyyy-mm') ]]>
+			</if>
+    	<![CDATA[ and instr(PERSONNEL_LIST_STR,#{report_person_id},1,1)<>0 ]]>
+		</where>
+		order by t.pk_id asc
+	</select>
+	<!--签到信息查询 -->
+	<select id="selectSign" parameterType="java.util.HashMap"
+		resultType="com.cist.myScheduling.model.QwSignIn">
+		select * from QW_SIGN_IN
+		where
+		FK_REPORT_ID=#{fk_report_id}
+		and fk_sign_in_user_id=#{fk_sign_in_user_id}
+	</select>
+	
+	<!--勤务报备下街面勤务 -->
+	<resultMap id="streetMap"
+		type="com.cist.myScheduling.model.QwReport" extends="BaseResultMap">
+		<association property="qwReportStreet" column="pk_id"
+			select="selectStreet" />
+	</resultMap>
+
+	<!--勤务报备下机关工作 -->
+	<resultMap id="officeMap"
+		type="com.cist.myScheduling.model.QwReport" extends="BaseResultMap">
+		<association property="qwReportOffice" column="pk_id"
+			select="selectOffice" />
+	</resultMap>
+
+	<!--勤务报备下轮休 -->
+	<resultMap id="restMap"
+		type="com.cist.myScheduling.model.QwReport" extends="BaseResultMap">
+		<association property="qwReportRest" column="pk_id"
+			select="selectRest" />
+	</resultMap>
+
+	<!--勤务报备下值班值守 -->
+	<resultMap id="dutyMap"
+		type="com.cist.myScheduling.model.QwReport" extends="BaseResultMap">
+		<association property="qwReportDuty" column="pk_id"
+			select="selectDuty" />
+	</resultMap>
+	
+	<!--勤务报备下街面勤务 -->
+	<resultMap id="streetMap1"
+		type="com.cist.myScheduling.model.QwReport" extends="CalenderMap">
+		<association property="qwReportStreet" column="pk_id"
+			select="selectStreet2" />
+
+	</resultMap>
+		<!--街面勤务信息查询 -->
+	<select id="selectStreet2" parameterType="java.util.HashMap"
+		resultMap="StreetResultMap">
+		select * from QW_REPORT_STREET
+		where
+		FK_REPORT_ID=#{pk_id}
+	</select>
+	
+
+	<!--勤务报备下机关工作 -->
+	<resultMap id="officeMap1"
+		type="com.cist.myScheduling.model.QwReport" extends="CalenderMap">
+		<association property="qwReportOffice" column="pk_id"
+			select="selectOffice" />
+	</resultMap>
+
+	<!--勤务报备下轮休 -->
+	<resultMap id="restMap1"
+		type="com.cist.myScheduling.model.QwReport" extends="CalenderMap">
+		<association property="qwReportRest" column="pk_id"
+			select="selectRest" />
+	</resultMap>
+
+	<!--勤务报备下值班值守 -->
+	<resultMap id="dutyMap1"
+		type="com.cist.myScheduling.model.QwReport" extends="CalenderMap">
+		<association property="qwReportDuty" column="pk_id"
+			select="selectDuty" />
+	</resultMap>
+
+	<!--街面勤务信息查询 -->
+	<select id="selectStreet" parameterType="java.util.HashMap"
+		resultType="com.cist.myScheduling.model.QwReportStreet">
+		select * from QW_REPORT_STREET
+		where
+		FK_REPORT_ID=#{pk_id}
+	</select>
+
+	<!--机关工作信息查询 -->
+	<select id="selectOffice" parameterType="java.util.HashMap"
+		resultType="com.cist.myScheduling.model.QwReportOffice">
+		select * from QW_REPORT_OFFICE
+		where
+		FK_REPORT_ID=#{pk_id}
+	</select>
+
+	<!--轮休信息查询 -->
+	<select id="selectRest" parameterType="java.util.HashMap"
+		resultType="com.cist.myScheduling.model.QwReportRest">
+		select * from QW_REPORT_REST
+		where
+		FK_REPORT_ID=#{pk_id}
+	</select>
+
+	<!--值班值守信息查询 -->
+	<select id="selectDuty" parameterType="java.util.HashMap"
+		resultType="com.cist.myScheduling.model.QwReportDuty">
+		select * from QW_REPORT_DUTY
+		where
+		FK_REPORT_ID=#{pk_id}
+	</select>
+
+	<!--班次信息查询 -->
+	<!-- <select id="selectBc" resultType="com.cist.myScheduling.model.Qwgl_bc_info" 
+		parameterType="java.util.HashMap"> select * from QWGL_BC_INFO where bc_pk=#{fk_work_shift_id} 
+		</select> -->
+
+	<!--巡区信息查询 -->
+	<!-- <select id="selectXq" resultType="com.cist.myScheduling.model.Qwpatrolarea" 
+		parameterType="java.util.HashMap"> select * from QW_PATROL_AREA where PK_ID=#{fk_patrol_area_id} 
+		</select> -->
+
+	<!-- 查询我的排班信息 -->
+	<!--resultType="com.cist.myScheduling.model.QwPoliceTeam" -->
+	<select id="list" resultMap="BaseResultMap"
+		parameterType="java.util.HashMap">
+		select *
+		from QW_REPORT t
+		<where>
+			<if test=" report_type != null and report_type !=''">
+				and report_type = #{report_type}
+			</if>
+			<if test=" kssj != null and kssj !=''">
+				<![CDATA[ and report_period_type >= to_date(#{kssj},'yyyy-mm-dd') ]]>
+			</if>
+			<if test=" jssj != null and jssj !=''">
+				<![CDATA[ and report_period_type <= to_date(#{jssj},'yyyy-mm-dd') ]]>
+			</if>
+			<![CDATA[ and instr(PERSONNEL_LIST_STR,#{report_person_id},1,1)<>0]]>
+		</where>
+	</select>
+
+
+	<!--基础数据查询 -->
+	<select id="selectBaseData"
+		resultType="com.cist.feedback.model.Sys_frm_code"
+		parameterType="java.util.HashMap">
+		select * from
+		SYS_FRM_CODE t
+		where
+		t.FCT_CODE=#{fct_code}
+		<if test="fc_code !=null and fc_code!='' and fc_code!='null'">
+			and t.fc_code=#{fc_code}
+		</if>
+
+	</select>
+
+	<!-- 查询装备详细信息 -->
+	<select id="queryequip" parameterType="java.util.HashMap"
+		resultType="com.cist.qwgl.jzgl.model.Qw_equip_info">
+		select * from QW_EQUIP_INFO k where
+		k.FK_REPORT_ID=#{fk_report_id}
+	</select>
+
+	<!-- 查询枪支关联警员表信息 -->
+	<select id="queryqw_guns_relation"
+		parameterType="java.util.HashMap"
+		resultType="com.cist.qwgl.jzgl.model.Qw_guns_relation">
+		select * from QW_GUNS_RELATION where fk_equip_id
+		=#{fk_equip_id}
+	</select>
+	
+	<!-- 查询街面勤务异常信息 -->
+	<select id="selectAlarmLog"
+		parameterType="java.util.HashMap"
+		resultType="com.cist.myScheduling.model.Qw_patrol_alarm_log">
+		select * from QW_PATROL_ALARM_LOG where JMQWBBID
+		=#{fk_report_id}
+	</select>
+	
+		<!-- 查询街面勤务异常信息 -->
+	<select id="selectAlarmLogs"
+		parameterType="java.util.HashMap"
+		resultType="com.cist.myScheduling.model.Qw_patrol_alarm_log">
+		select * from QW_PATROL_ALARM_LOG where JMQWBBID
+		=#{pk_id}
+	</select>
+
+  	<!-- 根据条件查询街面勤务异常日志 -->
+  	<select id="queryjmqwlog" parameterType="java.util.HashMap"
+  	 resultType="com.cist.myScheduling.model.Qw_patrol_alarm_log">
+  		select * from QW_PATROL_ALARM_LOG t where jmqwbbid= #{jmqwbbid}
+  	</select>
+  	
+</mapper>

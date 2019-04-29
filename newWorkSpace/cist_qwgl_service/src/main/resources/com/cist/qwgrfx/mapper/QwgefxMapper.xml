@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cist.qwgrfx.mapper.QwgefxMapper">
+
+	<select id="selectPersonAll" resultMap="BaseResultMap"
+		parameterType="java.util.Map">
+		<!-- select * from QW_CHECK_PUB t -->
+
+		select
+		t.*,t1.default_value,t1.topic_name,t2.metrics_num,t3.regulations_name
+		from QW_INDIVIDUAL_ASSESSMENT t left join QW_APPRAISE_TOPIC t1 on
+		t.fk_topic_id=t1.pk_id
+		left join QW_EVALUATE_METRICS t2 on t2.fk_relation_id=t1.pk_id left join
+		QW_APPRAISE_REGULATIONS t3 on t3.pk_id=t.fk_regulations_id
+
+
+		<where>
+			<if test="fk_user_id !=null and fk_user_id !=''">
+				and t.fk_user_id=#{fk_user_id}
+			</if>
+
+		</where>
+
+	</select>
+
+	<select id="selectAllList" resultType="com.cist.qwgrfx.model.Excels"
+		parameterType="java.util.HashMap">
+		select t.*,t1.default_value,t1.topic_name,t2.metrics_num,t3.regulations_name
+		from QW_INDIVIDUAL_ASSESSMENT t left join QW_APPRAISE_TOPIC t1 on
+		t.fk_topic_id=t1.pk_id
+		left join QW_EVALUATE_METRICS t2 on t2.fk_relation_id=t1.pk_id left join
+		QW_APPRAISE_REGULATIONS t3 on t3.pk_id=t.fk_regulations_id
+		
+		
+
+
+		<where>
+		rownum &lt; 101
+			<if test="fk_user_id !=null and fk_user_id !=''">
+				and t.fk_user_id=#{fk_user_id}
+			</if>
+
+		</where>
+
+
+	</select>
+
+
+	<select id="selectPolice" resultType="com.cist.qwgrfx.model.SysPoliceInfo">
+		select * from
+		sys_police_info t
+	</select>
+
+	<resultMap id="BaseResultMap" type="com.cist.qwgrfx.model.Qw_Check_Pub">
+		<result column="PK_ID" property="pk_id" jdbcType="DECIMAL" />
+		<result column="FK_DEPT_ID" property="fk_dept_id" jdbcType="DECIMAL" />
+		<result column="DATA_SOURCES_TYPE" property="data_sources_type"
+			jdbcType="DECIMAL" />
+		<result column="ASSESSMENT_TYPE" property="assessment_type"
+			jdbcType="CHAR" />
+		<result column="FK_USER_ID" property="fk_user_id" jdbcType="DECIMAL" />
+		<result column="FK_REPORT_ID" property="fk_report_id" jdbcType="DECIMAL" />
+		<result column="ASSESSMENT_NUM" property="assessment_num"
+			jdbcType="DECIMAL" />
+		<result column="VERIFY_NUM" property="verify_num" jdbcType="DECIMAL" />
+		<result column="FK_PATROL_AREA_ID" property="fk_patrol_area_id"
+			jdbcType="DECIMAL" />
+		<result column="OWN_GUNS" property="own_guns" jdbcType="CHAR" />
+		<result column="FK_TOPIC_ID" property="fk_topic_id" jdbcType="DECIMAL" />
+		<result column="FK_REGULATIONS_ID" property="fk_regulations_id"
+			jdbcType="DECIMAL" />
+		<result column="EXPLAIN" property="explain" jdbcType="VARCHAR" />
+		<result column="INPUT_PERSON" property="input_person" jdbcType="DECIMAL" />
+		<result column="INPUT_TIME" property="input_time" jdbcType="TIMESTAMP" />
+		<result column="VERIFY_STATUS" property="verify_status"
+			jdbcType="CHAR" />
+		<result column="FK_VERIFY_PERSON_ID" property="fk_verify_person_id"
+			jdbcType="DECIMAL" />
+		<result column="VERIFY_TIME" property="verify_time" jdbcType="TIMESTAMP" />
+		<result column="RECORD_INVALID_REASON" property="record_invalid_reason"
+			jdbcType="VARCHAR" />
+		<result column="VERIFY_NOT_PASS_REASON" property="verify_not_pass_deason"
+			jdbcType="VARCHAR" />
+		<result column="START_DATE" property="start_date" jdbcType="TIMESTAMP" />
+		<result column="END_DATE" property="end_date" jdbcType="TIMESTAMP" />
+		<result column="FK_REPORT_NAME" property="fk_report_name"
+			jdbcType="VARCHAR" />
+		<result column="FK_PATROL_AREA_NAME" property="fk_patrol_area_name"
+			jdbcType="VARCHAR" />
+		<collection property="tllist" ofType="com.cist.qwgrfx.model.IndividualInfo"
+			column="fk_regulations_id" javaType="java.util.ArrayList" select="selectReculation">
+		</collection>
+	</resultMap>
+
+
+
+	<select id="selectReculation" resultType="com.cist.khpdgl.model.Qw_Appraise_Reculations"
+		parameterType="java.util.Map">
+		select * from qw_appraise_regulations
+		where
+		fk_appraise_topic_id=#{fk_regulations_id}
+	</select>
+
+
+
+
+
+
+
+
+	<select id="selectPersonAllList" parameterType="java.util.Map"
+		resultType="com.cist.qwgrfx.model.IndividualInfo">
+		<!-- select * from QW_INDIVIDUAL_ASSESSMENT t where t.fk_regulations_id=#{fk_regulations_id} -->
+		select t.*,t3.regulations_name,t3.assessment_num
+		num,t3.assessment_rules from
+		QW_INDIVIDUAL_ASSESSMENT t left join QW_APPRAISE_REGULATIONS t3 on
+		t.fk_regulations_id=t3.pk_id
+
+		where t.fk_user_id =#{fk_user_id}
+	</select>
+
+
+	<!-- <select id="selectPolice" resultType="com.cist.qwgrfx.model.SysPoliceInfo"> 
+		select t.topic_name,sum(t1.metrics_num) num from qw_appraise_topic t left 
+		join QW_EVALUATE_METRICS t1 on t.pk_id=t1.fk_topic_id where t.create_person_id=4008 
+		group by t.topic_name </select> -->
+
+	<select id="selectReculations" resultType="com.cist.khpdgl.model.Qw_Appraise_Reculations"
+		parameterType="java.lang.Integer">
+		select * from qw_appraise_regulations
+		where
+		pk_id=#{fk_appraise_topic_id}
+	</select>
+
+	<select id="selectAll" resultType="com.cist.qwgrfx.model.NumList"
+		parameterType="java.util.HashMap">
+		select ap.topic_name , sum(t.total_defen) num ,sum(t.metrics_num) num1
+		from vm_qwgl_ztfx t left join QW_APPRAISE_TOPIC ap on
+		t.fk_topic_id=ap.pk_id
+		
+
+		<where>
+			<if test="fk_user_id !=null and fk_user_id !=''">
+				and t.fk_user_id=#{fk_user_id}
+			</if>
+		</where>
+
+		group by ap.topic_name
+	</select>
+
+	<select id="selectDesc" resultType="com.cist.qwgrfx.model.NumList"
+		parameterType="java.util.HashMap">
+
+		select ap.topic_name , sum(t.total_defen) num ,sum(t.metrics_num) num1
+		from vm_qwgl_ztfx t left join QW_APPRAISE_TOPIC ap on
+		t.fk_topic_id=ap.pk_id
+
+
+
+		
+
+		<where>
+			<if test="fk_user_id !=null and fk_user_id !=''">
+				and t.fk_user_id=#{fk_user_id}
+			</if>
+		</where>
+
+		group by ap.topic_name
+
+		order by num desc
+
+	</select>
+
+
+	<select id="querypersonageassessinfo" parameterType="java.util.HashMap"
+		resultType="com.cist.personageassess.model.Qw_individual_assessment">
+		select * from VW_PERSONAGEASSESS_INFO t where
+		pk_id=#{pk_id}
+
+	</select>
+</mapper>

@@ -1,5 +1,8 @@
-D:\soft\workspace\cistdb\src\main\java\com\cist\frame\page\PageInfo.java
-D:\soft\workspace\cistdb\src\main\java\com\cist\frame\pagePlugin\HelperPlugin.java
-D:\soft\workspace\cistdb\src\main\java\com\cist\frame\pageAop\PageAop.java
-D:\soft\workspace\cistdb\src\main\java\com\cist\frame\datasource\MasterDataSourcesConfig.java
-D:\soft\workspace\cistdb\src\main\java\com\cist\frame\pagePlugin\HelperBean.java
+D:\JiChuang\cistdb\src\main\java\com\cist\frame\pagePlugin\HelperBean.java
+D:\JiChuang\cistdb\src\main\java\com\cist\frame\pageAop\PageAop.java
+D:\JiChuang\cistdb\src\main\java\com\cist\frame\config\MybatisSqlInterceptor.java
+D:\JiChuang\cistdb\src\main\java\com\cist\frame\config\util.java
+D:\JiChuang\cistdb\src\main\java\com\cist\frame\datasource\MasterDataSourcesConfig.java
+D:\JiChuang\cistdb\src\main\java\com\cist\frame\config\MybatisInterceptorConfig.java
+D:\JiChuang\cistdb\src\main\java\com\cist\frame\pagePlugin\HelperPlugin.java
+D:\JiChuang\cistdb\src\main\java\com\cist\frame\page\PageInfo.java

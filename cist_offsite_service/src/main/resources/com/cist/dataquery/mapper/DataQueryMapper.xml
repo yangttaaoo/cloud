@@ -46,7 +46,7 @@
 			<if test="shbz!=null and shbz!=''">
 				and t.SHBZ =#{shbz}
 			</if>
-			and t.SHBZ in(0,1,2,3,4,7,8,11)
+			and t.SHBZ in(0,1,2,3,4,7,8,13)
 		</where>
 		order by t.wfsj desc
 	</select>

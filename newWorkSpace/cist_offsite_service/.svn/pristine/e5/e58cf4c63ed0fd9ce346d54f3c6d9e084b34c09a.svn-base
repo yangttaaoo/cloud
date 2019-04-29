@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cist.dataexport.mapper.DataExportMapper" >
+  <sql id="Base_Column_List" >
+    WFPK, WFBH, WFDD, WFXW, FXBH, HPZL, HPHM, HPYS, CLSD, WFKSSJ, WFSJ, WFJSSJ, KKBH, 
+    SBBH, WFZJ1, WFZJ2, WFZJ3, WFZJ4, CLBZ, SHBZ, SHR, SHSJ, ECSHR, ECSHSJ, SHSM, SJLY, 
+    CJDW, CLPP, CLLX, CSYS, BDSD, SYR, SYRDH, JSZH, ZPLX, LRR, LRSJ, SCSJ, SCBZ, SCDM, 
+    CSBZ, RESVE, CDBH
+  </sql>
+  <select id="depart_infolist" resultType="com.cist.dataexport.model.Depart_info" parameterType="java.lang.Integer">
+select t.dept_pk,t.dept_code,t.dept_name as name,t.DEPT_SUPERIOR from sys_depart_info t 
+<where>
+		  <if test="_parameter  == null or _parameter  == ''">
+		     t.DEPT_SUPERIOR is null
+		   </if>
+		     <if test="_parameter  != null and _parameter  != ''">
+		     t.DEPT_SUPERIOR=#{_parameter}
+		   </if>
+</where>
+   </select>
+   <select id="Monitorpoint" resultType="com.cist.dataexport.model.Depart_info" parameterType="string">
+   select t.tbmp_id as dept_code,t.tbmp_dept_code,t.tbmp_azdz as name,t.tbmp_azdz from c_monitor_point t  where t.tbmp_dept_code=#{_parameter}
+   </select>
+   <!-- 根据条件查询返回集合 -->
+  <select id="list" resultType="com.cist.offsite.invalidtrial.model.TblOffeEvdiInfo" parameterType="java.util.HashMap">
+    select * from OEUSER.TBL_OFFE_EVDI
+    <where>
+        <if test="wfpk != null and wfpk !=''">
+            and WFPk = #{wfpk}
+          </if>
+			<if test="hphm!=null and hphm!=''">
+				and hphm like '%'||#{hphm}||'%'
+			</if>
+			
+			<if test="hpzl!=null and hpzl!='' and hpzl!='null'">
+				and hpzl = #{hpzl}
+			</if>
+			<if test="wfdd!=null and wfdd!='' and wfdd!='null'">
+				and KKBH =#{wfdd}
+			</if>
+			<if test="wfxw!=null and wfxw!='' and wfxw!='null'">
+				and wfxw = #{wfxw}
+			</if>
+			<if test="wfkssj!=null and wfkssj!='' and wfkssj!='null'">
+		    <![CDATA[ and WFKSSJ >=to_date(#{wfkssj},'yyyy-mm-dd HH24:mi:ss')]]>
+	        </if>
+	        <if test="wfjssj!=null and wfjssj!='' and wfjssj!='null'">
+		    <![CDATA[and WFJSSJ <= to_date(#{wfjssj},'yyyy-mm-dd HH24:mi:ss') ]]>
+	        </if>
+	         <if test="list!=null">
+				and SBBH in
+				 <foreach collection="list" index="index" item="item"
+            open="(" separator="," close=")">
+            #{item}
+        </foreach>
+			<!-- 	<foreach item="t" collection="sbbh" open="(" separator="," close=")">
+		            #{t}
+		        </foreach> -->
+			</if>
+			<if test="shbz!=null and shbz!=''">
+				and shbz =#{shbz}
+				
+			</if>
+			<if test="fxbh !=null and fxbh!='' and fxbh !='null'">
+				and fxbh =#{fxbh}
+			</if>
+	       and HPHM not like '川'||'%'
+		</where>
+		order by wfsj desc
+  </select>
+    <!--所有方向查询  -->
+   <select id="selectCDirectionInfo" resultType="com.cist.offsite.invalidtrial.model.CDirectionInfo">
+ select DIR_CODE as dirCode,DIR_NAME as dirName from C_DIRECTION 
+  </select>
+	<!-- 更新导出过的数据的状态 -->
+	<update id="updateShbz" parameterType="java.util.HashMap">
+	update OEUSER.TBL_OFFE_EVDI set shbz='14'
+	where WFPK in (select WFPK from OEUSER.TBL_OFFE_EVDI where
+	HPHM not like '川'||'%' and rownum &lt;101 )
+	<if test="hphm != null and hphm!=''">
+		and HPHM like '%'||#{hphm}||'%'
+	</if>
+	<if test="hpzl != null and hpzl !=''">
+		and HPZL = #{hpzl}
+	</if>
+	<if test="wfdd != null and wfdd!=''">
+		and WFDD= #{wfdd}
+	</if>
+	<if test="wfkssj != null and wfkssj!=''">
+      <![CDATA[ and WFKSSJ >=to_date(#{wfkssj},'yyyy-mm-dd HH24:mi:ss')]]>
+	</if>
+	<if test="wfjssj != null and wfjssj!=''">
+      <![CDATA[ and WFJSSJ <=to_date(#{wfjssj},'yyyy-mm-dd HH24:mi:ss')]]>
+	</if>
+	<if test="fxbh != null and fxbh!=''">
+		and FXBH= #{fxbh}
+	</if>
+	<if test="wfxw != null and wfxw!=''">
+		and WFXW= #{wfxw}
+	</if>
+	<if test="sbbh.size()>0 ">
+		and SBBH in
+		<foreach item='item'  collection='sbbh' open='(' separator=',' close=')'>
+		 #{item}
+		</foreach>
+	</if>
+	<if test="shbz != null and shbz!=''">
+		and SHBZ= #{shbz}
+	</if>
+	</update>
+	<!--根据wfpk 单条数据查询 -->
+    <select id="selectByWfpk" resultType="com.cist.offsite.invalidtrial.model.TblOffeEvdiInfo" parameterType="java.util.HashMap">
+    select * from OEUSER.TBL_OFFE_EVDI  where WFPK =#{wfpk,jdbcType=DECIMAL}
+  </select>
+</mapper>

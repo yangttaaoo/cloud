@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cist.statistics.stataction.mapper.ActionMapper">
+	
+	<select id="showMap" resultType="com.cist.recheck.model.TblOffeCateInfo">
+		<!-- select wfxw,count(*) wfsl,trunc(ecshsj,'dd') 
+		from 
+			oeuser.tbl_offe_evdi 
+		group by 
+			wfxw,trunc(ecshsj,'dd') -->
+		select wfxw,count(*) wfsl,trunc(wfsj,'dd') 
+		from 
+			oeuser.tbl_offe_evdi
+		group by 
+			wfxw,trunc(wfsj,'dd')
+	</select>
+	
+	<select id="showList" resultType="com.cist.statistics.stataction.model.IllegalBehavior">
+		select wfxw_name,listagg(wfxw_code,',') WITHIN  GROUP(ORDER BY wfxw_code) wfxw_code
+		from 
+			illegal_behavior 
+		group by 
+			wfxw_name
+	</select>
+	
+<!-- 	<select id="selectZpsl" resultType="com.cist.statistics.stataction.model.EnsembleJob">
+		select wfxw,count(*) wfsl,trunc(wfsj,'dd') 
+		from 
+			oeuser.tbl_offe_evdi
+		group by 
+			wfxw,trunc(wfsj,'dd')
+	</select>
+	
+	<select id="selectShsl" resultType="com.cist.statistics.stataction.model.EnsembleJob">
+		select wfxw,count(*) wfsl,trunc(wfsj,'dd') 
+		from 
+			oeuser.tbl_offe_evdi
+		group by 
+			wfxw,trunc(wfsj,'dd')
+	</select> -->
+	
+</mapper>

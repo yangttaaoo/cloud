@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cist.duty.mapper.DutyMapper" >
+
+	<select id="rulelist" resultType="com.cist.duty.model.Rule_info" parameterType="java.util.HashMap">
+     	 select t.tlmc,t.pk from SYS_RULE_MANAGER t 
+     	 <where>
+     	 <if test="sjlm !=null and sjlm !=''">
+  				t.sjlm=#{sjlm}
+  		 </if>
+     	 </where>
+   	</select>
+   	
+   	<select id="infolist" resultType="com.cist.duty.model.Rule_info">
+     	 select t.lmmc,t.pk from SYS_RULE_MANAGER t where t.sjlm is null and t.lmlx = 1
+   	</select>
+   	
+   	<select id="depart_infolist" resultType="com.cist.duty.model.DeptInfo" parameterType="java.lang.Integer">
+select t.dept_pk,t.dept_code,t.dept_name as name,t.DEPT_SUPERIOR from sys_depart_info t 
+<where>
+		  <if test="_parameter  == null or _parameter  == ''">
+		     t.DEPT_SUPERIOR is null
+		   </if>
+		     <if test="_parameter  != null and _parameter  != ''">
+		     t.DEPT_SUPERIOR=#{_parameter}
+		   </if>
+</where>
+   </select>
+   	
+   	<select id="dutyInfopageList" resultType="com.cist.duty.model.DutyInfo" parameterType="java.util.HashMap">
+   select rownum as pm,p.* from 
+   		(select t.sypi_name,t.sypi_dept,t.sypi_pk,
+			case when c.eva_num is null then 0 else c.eva_num end as eva_num,
+			case when j.zf is null then 
+		(select lmfz from SYS_RULE_MANAGER 
+		<where>
+			<if test="sjlm !=null and sjlm !=''">
+  				pk=#{sjlm}
+  			</if>
+		</where>
+		) else j.zf end as zf,
+			case when 
+			(case when j.zf is null then 
+				(select lmfz from SYS_RULE_MANAGER 
+					<where>
+						<if test="sjlm !=null and sjlm !=''">
+							pk=#{sjlm}
+						</if>
+					</where>
+			) else j.zf end) >= (case when c.eva_num is null then 0 else c.eva_num end) then '合格' else '不合格' end as hg
+			from SYS_POLICE_INFO t LEFT OUTER JOIN SYS_ASSESS_TARGET c on t.sypi_pk=c.sypi_pk left join
+			(select (select lmfz from SYS_RULE_MANAGER 
+				<where>
+					<if test="sjlm !=null and sjlm !=''">
+						pk=#{sjlm}
+					</if>
+				</where>
+					)+sum(v.tlfz) as zf,
+					t.jybh from SYS_DUTY_ASSESSMENT t,SYS_RULE_MANAGER v 
+				<where>
+					t.khtl=v.pk 
+						<if test="sjlm !=null and sjlm !=''">
+							and v.sjlm=#{sjlm}
+						</if>
+				</where>
+					group by t.jybh) j
+						on  j.jybh = t.sypi_pk 
+				<where>
+				1=1
+					<if test="ssdw !=null and ssdw !=''">
+					and	t.sypi_dept=#{ssdw}
+					</if>
+					<if test="jybh !=null and jybh !=''">
+					  and 	t.sypi_code=#{jybh}
+					</if>
+					<if test="jymc !=null and jymc !=''" >
+	    			and t.sypi_name LIKE '%'||#{jymc}||'%'
+	    			</if>
+				</where>
+				ORDER BY hg DESC,zf DESC) p   
+				<where>
+				1=1
+				<if test="zbhg==1" >
+	    			and  p.hg = '合格'
+	    		</if>
+	    		<if test="zbhg==2" >
+	    			and  p.hg = '不合格'
+	    		</if>
+				</where>
+   		</select>
+   		
+   		<select id="dutyInfo" resultType="com.cist.duty.model.DutyInfo" parameterType="java.util.HashMap">
+   select rownum as pm,p.* from 
+   		(select t.sypi_name,t.sypi_dept,t.sypi_pk,
+			case when c.eva_num is null then 0 else c.eva_num end as eva_num,
+			case when j.zf is null then 
+		(select lmfz from SYS_RULE_MANAGER 
+		<where>
+			<if test="sjlm !=null and sjlm !=''">
+  				pk=#{sjlm}
+  			</if>
+		</where>
+		) else j.zf end as zf,
+			case when 
+			(case when j.zf is null then 
+				(select lmfz from SYS_RULE_MANAGER 
+					<where>
+						<if test="sjlm !=null and sjlm !=''">
+							pk=#{sjlm}
+						</if>
+					</where>
+			) else j.zf end) >= (case when c.eva_num is null then 0 else c.eva_num end) then '合格' else '不合格' end as hg
+			from SYS_POLICE_INFO t LEFT OUTER JOIN 
+			(select * from SYS_ASSESS_TARGET 
+			<where>
+			 <if test="sjlm !=null and sjlm !=''">
+				col_pk=#{sjlm}
+				</if>
+			</where>
+			) c on t.sypi_pk=c.sypi_pk left join
+			(select (select lmfz from SYS_RULE_MANAGER 
+				<where>
+					<if test="sjlm !=null and sjlm !=''">
+						pk=#{sjlm}
+					</if>
+				</where>
+					)+sum(v.tlfz) as zf,
+					t.jybh from SYS_DUTY_ASSESSMENT t,SYS_RULE_MANAGER v 
+				<where>
+					t.khtl=v.pk 
+						<if test="sjlm !=null and sjlm !=''">
+							and v.sjlm=#{sjlm}
+						</if>
+				</where>
+					group by t.jybh) j
+						on  j.jybh = t.sypi_pk 
+				<where>
+				1=1
+					<if test="ssdw !=null and ssdw !=''">
+					and	t.sypi_dept=#{ssdw}
+					</if>
+					<if test="jybh !=null and jybh !=''">
+					  and 	t.sypi_code=#{jybh}
+					</if>
+					<if test="jymc !=null and jymc !=''" >
+	    			and t.sypi_name LIKE '%'||#{jymc}||'%'
+	    			</if>
+				</where>
+				ORDER BY hg DESC,zf DESC) p   
+				<where>
+				1=1
+				<if test="zbhg==1" >
+	    			and  p.hg = '合格'
+	    		</if>
+	    		<if test="zbhg==2" >
+	    			and  p.hg = '不合格'
+	    		</if>
+				</where>
+   		</select>
+   
+   <select id="tllist" resultType="com.cist.duty.model.TlInfo" parameterType="java.util.HashMap">
+     	select
+ g.tlmc,
+ case when j.tlfz is null then 0 else j.tlfz end as tlfz,
+   case when j.jybh is null then to_char(#{jybh}) else j.jybh end as jybh
+     from 
+     (
+     select t.tlmc,t.pk from SYS_RULE_MANAGER t 
+    <where>
+    <if test="sjlm !=null and sjlm !=''">
+	    t.sjlm = #{sjlm}
+	</if>
+    </where>
+     ) g 
+     LEFT OUTER JOIN 
+     (
+     select t.pk,sum(t.tlfz) as tlfz,c.jybh from SYS_RULE_MANAGER t,SYS_DUTY_ASSESSMENT c 
+     <where>
+     t.pk = c.khtl
+    <if test="jybh !=null and jybh !=''">
+	    and c.jybh= #{jybh}
+	</if>
+    </where>
+     group by t.pk,c.jybh
+     ) j on g.pk = j.pk
+   	</select>
+   
+   <select id="getSypideptname" resultType="com.cist.duty.model.DutyInfo" parameterType="java.lang.Integer">
+ 		select t.dept_name as sypi_dept_name from SYS_DEPART_INFO t
+    	<where>
+   			<if test="_parameter!=null and _parameter!='' ">
+   				and dept_pk=#{_parameter}
+  			</if>
+    	</where>
+  	</select>
+  	<select id="tlecharts" resultType="com.cist.duty.model.EchartsInfo" parameterType="java.util.HashMap">
+ 		select j.tlmc,case when y.fz is null then 0 else y.fz end as fz from SYS_RULE_MANAGER j LEFT OUTER JOIN (select t.pk,sum(t.tlfz) as fz from SYS_DUTY_ASSESSMENT c,SYS_RULE_MANAGER t 
+ 		<where>
+ 		t.pk = c.khtl 
+ 		<if test="sjlm!=null and sjlm!='' ">
+   			and t.sjlm=#{sjlm}
+  		</if>
+ 		</where>
+ 		group by t.pk
+ 		) y on y.pk = j.pk 
+ 		<where>
+ 		j.pdgz = '1'
+ 		<if test="sjlm!=null and sjlm!='' ">
+   			and j.sjlm=#{sjlm}
+  		</if>
+ 		</where>
+  	</select>
+  	
+  	<select id="lmecharts" resultType="com.cist.duty.model.EchartsInfo" parameterType="java.util.HashMap">
+ 		select j.lmmc,abs(case when y.fz is null then 0 else y.fz end) as fz from SYS_RULE_MANAGER j LEFT OUTER JOIN (select t.sjlm,sum(t.tlfz) as fz from SYS_DUTY_ASSESSMENT c,SYS_RULE_MANAGER t where t.pk = c.khtl and t.pdgz='1'  group by t.sjlm) y on y.sjlm = j.pk where j.sjlm is null and j.lmlx=1
+  	</select>
+  	
+  	<select id="hgecharts" resultType="com.cist.duty.model.EchartsInfo" parameterType="java.util.HashMap">
+	select l.hg,o.bhg from
+	(select  count(*) as hg from 
+	SYS_POLICE_INFO t LEFT OUTER JOIN SYS_ASSESS_TARGET c on t.sypi_pk=c.sypi_pk left join
+	(select 
+	(select lmfz from SYS_RULE_MANAGER 
+	<where>
+ 		<if test="sjlm!=null and sjlm!='' ">
+		 pk=#{sjlm}
+  		</if>
+ 	</where>
+	)+sum(v.tlfz) as zf,t.jybh from SYS_DUTY_ASSESSMENT t,SYS_RULE_MANAGER v 
+	<where>
+		t.khtl=v.pk
+ 		<if test="sjlm!=null and sjlm!='' ">
+		 and v.sjlm=#{sjlm}
+  		</if>
+ 	</where>
+	group by t.jybh) j
+	on  j.jybh = t.sypi_pk 
+	<where>
+	(case when j.zf is null then (select lmfz from SYS_RULE_MANAGER 
+	<where>
+	<if test="sjlm!=null and sjlm!='' ">
+	pk=#{sjlm}
+	</if>
+	</where>
+	) else j.zf end) >= (case when c.eva_num is null then 0 else c.eva_num end)
+	</where>
+	) l,
+	(select  count(*) as bhg from 
+	SYS_POLICE_INFO t LEFT OUTER JOIN 
+	(select *from SYS_ASSESS_TARGET
+	<where>
+	<if test="sjlm !=null and sjlm !=''">
+		col_pk=#{sjlm}
+	</if>
+	</where>
+	) c on t.sypi_pk=c.sypi_pk left join
+	(select (select lmfz from SYS_RULE_MANAGER 
+	<where>
+	<if test="sjlm!=null and sjlm!='' ">
+	pk=#{sjlm}
+	</if>
+	</where>
+	)+sum(v.tlfz) as zf,t.jybh from 
+	SYS_DUTY_ASSESSMENT t,SYS_RULE_MANAGER v 
+	<where>
+	t.khtl=v.pk 
+	<if test="sjlm!=null and sjlm!='' ">
+	and v.sjlm=#{sjlm}
+	</if>
+	</where>
+	group by t.jybh) j
+	on  j.jybh = t.sypi_pk 
+	<where>
+	(case when j.zf is null then 
+	(select lmfz from SYS_RULE_MANAGER 
+	<where>
+	<if test="sjlm!=null and sjlm!='' ">
+	pk=#{sjlm}
+	</if>
+	</where>
+	) else j.zf end) &lt; (case when c.eva_num is null then 0 else c.eva_num end)
+	</where>
+	) o
+  	</select>
+  	
+</mapper>

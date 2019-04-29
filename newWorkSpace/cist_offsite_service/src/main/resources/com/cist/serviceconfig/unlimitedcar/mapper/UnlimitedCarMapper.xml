@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cist.serviceconfig.unlimitedcar.mapper.UnlimitedCarMapper">
+<!-- 查询不限行车辆信息 -->
+ <select id="selectNoCar" resultType="com.cist.serviceconfig.unlimitedcar.model.CarManage"
+ parameterType="java.util.HashMap">
+   select * from tbl_car_white_info 
+    <where>
+    <if test="hphm!=null and hphm!=''">
+     lower(twi_plate_no) like lower('%'||#{hphm}||'%')	
+    </if>
+    <if test="hpzl!=null and hpzl!='' and hpzl!='null'">
+     and  twi_plate_type=#{hpzl}
+    </if>
+    <if test="cllx!=null and cllx!=''and cllx!='null'">
+     and twi_type_code=#{cllx}
+    </if>
+   <!-- 有效 -->
+    <if test="clzt==1 and clzt!=''">
+     and  (sysdate <![CDATA[>=]]> twi_s_date and sysdate<![CDATA[<=]]> twi_e_date)
+    </if>
+   <!-- 无效 -->
+    <if test="clzt==2 and clzt!=''">
+      and  (sysdate <![CDATA[<]]> twi_s_date or sysdate<![CDATA[>]]> twi_e_date)
+    </if>   
+    </where>
+    order by twi_pk desc
+ </select>
+   <!--增加不限行管理信息 -->
+  <insert id="insertInfo"  parameterType="java.util.HashMap" >
+   insert into cistsys.tbl_car_white_info
+    (twi_pk,twi_plate_no,twi_plate_type,twi_type_code,twi_s_date,twi_e_date,twi_desc) 
+   values(
+       cistsys.SEQ_CAR_WHILTE_INFO.nextval,
+	   #{hphm,jdbcType=VARCHAR},
+	   #{hpzl,jdbcType=VARCHAR},
+	   #{cllx,jdbcType=VARCHAR},
+ 	   to_date(#{kssj},'yyyy-mm-dd'),
+ 		to_date(#{jssj},'yyyy-mm-dd'), 
+	   #{desc,jdbcType=VARCHAR}
+   )
+  </insert>
+  <!--删除 -->
+	<delete id="delectInfo" parameterType="java.util.HashMap">
+		delete FROM tbl_car_white_info  
+		WHERE 
+		twi_pk=#{pk}
+	</delete>  
+	  <!-- 批量删除 -->
+	<delete id="deleteAll" parameterType="java.util.HashMap">
+		delete FROM tbl_car_white_info  
+		WHERE twi_pk in
+		<foreach item="pk" collection="array" open="(" separator="," close=")">
+            #{pk}
+        </foreach>  
+	</delete>  
+    <!-- 查询号牌号码 -->
+	<select id="selectById"  resultType="com.cist.serviceconfig.unlimitedcar.model.Didels"
+	 parameterType="java.util.HashMap">
+	  select twi_plate_no from tbl_car_white_info where twi_plate_no=#{hphm}
+	</select> 
+    <!--更新数据 -->
+    <update id="updateById"  parameterType="java.util.HashMap">
+	 update cistsys.tbl_car_white_info set 
+	   twi_plate_no=#{hphm,jdbcType=VARCHAR},
+	   twi_plate_type=#{hpzl,jdbcType=VARCHAR},
+	   twi_desc=#{desc,jdbcType=VARCHAR},
+	   twi_type_code=#{cllx,jdbcType=VARCHAR},
+	   twi_s_date=to_date(#{kssj},'yyyy-mm-dd'),
+	   twi_e_date=to_date(#{jssj},'yyyy-mm-dd')
+	   where twi_pk=#{pk}
+	 </update>
+	 <select id="selectAll" resultType="com.cist.serviceconfig.unlimitedcar.model.NoLimited"
+          parameterType="java.util.HashMap">
+       select twi_plate_no,twi_plate_type,twi_type_code,twi_s_date as kssj,
+      twi_e_date as jssj,twi_desc
+     from tbl_car_white_info 
+ </select>
+</mapper>

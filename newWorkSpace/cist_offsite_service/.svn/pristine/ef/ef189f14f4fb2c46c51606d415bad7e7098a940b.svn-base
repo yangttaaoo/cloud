@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cist.statistics.ensemblejob.mapper.EnsembleJobMapper">
+	<!-- 查询抓拍数量 -->     
+	<select id="selectzpsl" parameterType="java.util.HashMap"
+	resultType="com.cist.statistics.ensemblejob.model.EnsembleJob">
+		select trunc(t.wfsj,'dd') sj,t.wfxw,count(*) zpsl from 
+			oeuser.tbl_offe_evdi t
+			<where>
+				<!-- <if test="kssj!=null">
+					and t.fssj &gt; #{kssj}
+				</if>
+				<if test="jssj!=null">
+					and t.fssj &lt; #{jssj}
+				</if> -->
+				<if test="kssj!=null and kssj!=''">
+		    		<![CDATA[ and t.fssj >=to_date(#{kssj},'yyyy-mm-dd HH24:mi:ss')]]>
+		    		<!-- to_date(#{kssj},'yyyy-mm-dd HH24:mi:ss') -->
+		        </if>
+		        <if test="jssj!=null and jssj!=''">
+			    	<![CDATA[and t.fssj <= to_date(#{jssj},'yyyy-mm-dd HH24:mi:ss') ]]>
+		        </if>
+				<if test="cjdw!=null and cjdw!=''">
+					and t.cjdw = #{cjdw}
+				</if>
+			</where>
+		 group by t.wfxw, trunc(t.wfsj,'dd') order by sj
+	</select>
+	<!-- 查询审核数量 -->
+	<select id="selectshsl" parameterType="java.util.HashMap"
+	resultType="com.cist.statistics.ensemblejob.model.EnsembleJob">
+		select trunc(t.fssj,'dd') sj,t.wfxw,count(*) shsl from oeuser.tbl_offe_evdi t
+	<where>
+			<!-- 	<if test="kssj!=null">
+					and t.fssj &gt; #{kssj}
+				</if>
+				<if test="jssj!=null">
+					and t.fssj &lt; #{jssj}
+				</if> -->
+			<if test="kssj!=null and kssj!=''">
+		    	<![CDATA[ and t.fssj >=to_date(#{kssj},'yyyy-mm-dd HH24:mi:ss')]]>
+	        </if>
+	        <if test="jssj!=null and jssj!=''">
+		    	<![CDATA[and t.fssj <= to_date(#{jssj},'yyyy-mm-dd HH24:mi:ss') ]]>
+	        </if>
+				<if test="cjdw!=null and cjdw!=''">
+					and t.cjdw = #{cjdw}
+				</if>
+				and shbz in('2','4','6')
+			</where>
+ group by t.wfxw, trunc(t.fssj,'dd') order by sj desc
+	</select>
+	<!-- 违法行为 -->
+	<select id="selectwfxw" resultType="com.cist.statistics.ensemblejob.model.Illegal_Behavior">
+		select wfxw_name,listagg(wfxw_code,',') WITHIN  GROUP(ORDER BY wfxw_code) wfxw_id from illegal_behavior group by wfxw_name
+	</select>
+	<!-- 审核总数 -->
+	<select id="selectshzs"  parameterType="com.cist.statistics.ensemblejob.model.EnsembleJob"
+	resultType="com.cist.statistics.ensemblejob.model.EnsembleJob">
+		select trunc(t.fssj,'dd') sj,count(*) shsl from oeuser.tbl_offe_evdi t
+		<where>
+				<!-- <if test="kssj!=null">
+					and t.fssj &gt; #{kssj}
+				</if>
+				<if test="jssj!=null">
+					and t.fssj &lt; #{jssj}
+				</if> -->
+				<if test="kssj!=null">
+		    		<![CDATA[ and t.fssj >=#{kssj}]]>
+		        </if>
+		        <if test="jssj!=null">
+			    	<![CDATA[and t.fssj <= #{jssj} ]]>
+		        </if>
+				<if test="cjdw!=null and cjdw!=''">
+					and t.cjdw = #{cjdw}
+				</if>
+				and shbz in('2','4','6')
+			</where>
+			 group by trunc(t.fssj,'dd') order by sj
+		
+	</select>
+	<!-- 审核通过数量 -->
+	<select id="selecttgzs"  parameterType="com.cist.statistics.ensemblejob.model.EnsembleJob"
+	resultType="com.cist.statistics.ensemblejob.model.EnsembleJob">
+		select trunc(t.fssj,'dd') sj,count(*) tgsl from oeuser.tbl_offe_evdi t
+			<where>
+				<if test="kssj!=null">
+					and t.fssj &gt; #{kssj}
+				</if>
+				<if test="jssj!=null">
+					and t.fssj &lt; #{jssj}
+				</if>
+				<if test="cjdw!=null and cjdw!=''">
+					and t.cjdw = #{cjdw}
+				</if>
+				and shbz ='2'
+			</where> 
+			group by trunc(t.fssj,'dd') order by sj
+		
+	</select>
+	<!-- 抓拍数量 -->
+	<select id="selectzpzs"  parameterType="com.cist.statistics.ensemblejob.model.EnsembleJob"
+	resultType="com.cist.statistics.ensemblejob.model.EnsembleJob">
+		select trunc(t.wfsj,'dd') sj,count(*) zpsl from 
+			oeuser.tbl_offe_evdi t
+			<where>
+				<if test="kssj!=null">
+					and t.fssj &gt; #{kssj}
+				</if>
+				<if test="jssj!=null">
+					and t.fssj &lt; #{jssj}
+				</if>
+				<if test="cjdw!=null and cjdw!=''">
+					and t.cjdw = #{cjdw}
+				</if>
+			</where> 
+      group by trunc(t.wfsj,'dd') order by sj
+		
+	</select>
+	<!-- 违法数据类型统计 -->
+	<select id="wfxwlxtj" parameterType="com.cist.statistics.ensemblejob.model.EnsembleJob"
+	resultType="com.cist.statistics.ensemblejob.model.EnsembleJob">
+		select wfxw,count(*) wfxwlxsl from oeuser.tbl_offe_evdi t
+		<where>
+				<if test="kssj!=null">
+					and t.wfsj &gt; #{kssj}
+				</if>
+				<if test="jssj!=null">
+					and t.wfsj &lt; #{jssj}
+				</if>
+				<if test="cjdw!=null and cjdw!=''">
+					and t.cjdw = #{cjdw}
+				</if>
+			</where> 
+		 group by wfxw
+	</select>
+</mapper>

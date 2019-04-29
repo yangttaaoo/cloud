@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="VcsDirectoryMappings">
+    <mapping directory="" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/cist-comm-service" vcs="svn" />
+    <mapping directory="$PROJECT_DIR$/cistLog" vcs="svn" />
+    <mapping directory="$PROJECT_DIR$/cist_base_sevice" vcs="svn" />
+    <mapping directory="$PROJECT_DIR$/cist_devmanage_service" vcs="svn" />
+    <mapping directory="$PROJECT_DIR$/cist_devregister_service" vcs="svn" />
+    <mapping directory="$PROJECT_DIR$/cist_door_service" vcs="svn" />
+    <mapping directory="$PROJECT_DIR$/cist_exchange_service" vcs="svn" />
+    <mapping directory="$PROJECT_DIR$/cist_jcbk_service" vcs="svn" />
+    <mapping directory="$PROJECT_DIR$/cist_offsite_service" vcs="svn" />
+    <mapping directory="$PROJECT_DIR$/cist_preserve_service" vcs="svn" />
+    <mapping directory="$PROJECT_DIR$/cist_proof_service" vcs="svn" />
+    <mapping directory="$PROJECT_DIR$/cist_qwgl_service" vcs="svn" />
+    <mapping directory="$PROJECT_DIR$/cist_traffic_survey_service" vcs="svn" />
+    <mapping directory="$PROJECT_DIR$/cist_zhdd_service" vcs="svn" />
+    <mapping directory="$PROJECT_DIR$/cistdb" vcs="svn" />
+    <mapping directory="$PROJECT_DIR$/config-server" vcs="svn" />
+  </component>
+</project>

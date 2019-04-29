@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cist.qwkhgrfb.mapper.PublishMapper">
+<!-- 查询数据 -->
+<select id="selectData" resultType="com.cist.qwkhgrfb.model.Qw_Check_Pub"
+parameterType="java.util.HashMap">
+  select * from QW_CHECK_PUB 
+  <where>
+    khlx=1
+    <if test="dept!=null and dept!=''">
+      and  gldw=#{dept}
+    </if>
+    <if test="name!=null and name!=''">
+     and khbh=(select sypi_pk from sys_police_info where sypi_name=#{name} or sypi_code=#{name})
+    </if>
+    <if test="sfhg!=null and sfhg!=''">
+     and sfhg=#{sfhg}
+    </if>
+    <if test="zbrq!=null and zbrq!=''">
+     and zbrq=#{zbrq}
+    </if>
+  </where>
+</select>
+
+<select id="downloadList" resultType="com.cist.qwkhgrfb.model.Publish"
+parameterType="java.util.HashMap">
+  select * from QW_CHECK_PUB 
+  <where>
+    khlx=1
+    <if test="dept!=null and dept!=''">
+      and  gldw=#{dept}
+    </if>
+    <if test="name!=null and name!=''">
+     and khbh=(select sypi_pk from sys_police_info where sypi_name=#{name} or sypi_code=#{name})
+    </if>
+    <if test="sfhg!=null and sfhg!=''">
+     and sfhg=#{sfhg}
+    </if>
+    <if test="zbrq!=null and zbrq!=''">
+     and zbrq=#{zbrq}
+    </if>
+  </where>
+</select>
+</mapper>

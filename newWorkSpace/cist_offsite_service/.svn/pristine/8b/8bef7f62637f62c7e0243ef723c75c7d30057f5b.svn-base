@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cist.filing.mapper.FilingMapper">
+
+	<select id="queryAll" resultType="com.cist.filing.model.Vw_dev_info">	
+ 		select tv.addr_name, tv.tbec_kkbh ,tv.tbec_dept_id ,count(1)num
+ 		from 
+ 			(select tc.*,vw.* from cistsys.c_monitor_point tc left 
+ 		join 
+ 			cistsys.vw_dev_info vw on tc.tbmp_id = vw.tbec_kkbh) tv 
+ 			<if test="tbei_name != null and tbei_name !='' and tbei_name != 'null' ">
+				and TBEI_NAME= #{tbei_name}
+			</if>
+
+			<if test="tbei_code != null and tbei_code !='' and tbei_code != 'null' ">
+				and TBEI_CODE= #{tbei_code}
+			</if>
+			
+			<if test="tbet_type != null and tbet_type !='' and tbet_type != 'null' ">
+				and TBEI_TYPE= #{tbet_type}
+			</if>
+			
+			<if test="tbec_ip != null and tbec_ip !='' and tbec_ip != 'null' ">
+				and TBEC_IP= #{tbec_ip}
+			</if>
+			
+			<if test="tbet_model != null and tbet_model !='' and tbet_model != 'null' ">
+				and TBET_MODEL= #{tbet_model}
+			</if>
+			
+ 		group by tv.addr_name, tv.tbec_kkbh ,tv.tbec_dept_id
+		
+		<!-- order by desc  -->
+	</select>
+	
+	<select id="queryToMonitor" resultType="com.cist.filing.model.Monitor">
+		select *  from c_monitor_point t 
+	</select>
+	
+	<select id="queryTwoList" resultType="com.cist.filing.model.Vw_dev_info">
+		select * from cistsys.vw_dev_info v  where v.TBEC_KKBH=#{tbec_kkbh,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="queryDetails" resultType="com.cist.filing.model.Tbl_dev_vio_config">
+		select * from tbl_dev_vio_config_ex t  where t.DVC_PK=#{dvc_pk,jdbcType=INTEGER}
+	</select>
+	<select id="queryMonitor" resultType="com.cist.filing.model.C_Monitor_Point_Ex">
+		select * from c_monitor_point_ex
+	</select>
+	
+	<select id="queryXzgh" resultType="com.cist.filing.model.C_road_info">
+		select * from c_road_info
+	</select>
+	
+	<select id="queryMv" resultType="com.cist.filing.model.Tbl_dev_vio_config">
+		select * from tbl_dev_vio_config_ex 
+	</select>
+	
+	<select id="queryFrmType" resultType="com.cist.filing.model.Sys_frm_code_type">
+		select * from sys_frm_code_type 
+	</select>
+	
+	<select id="queryFrm" resultType="com.cist.filing.model.Sys_frm_code">
+		select * from sys_frm_code 
+	</select>
+	 <select id="queryFrmCode" resultType="com.cist.filing.model.Sys_frm_code">
+		
+select * from sys_frm_code_type a left join sys_frm_code b on a.fct_code=b.fct_code 
+
+ where a.fct_code=(select fct_code from sys_frm_code where fc_name = #{fc_name})
+	</select> 
+	
+	<!-- <select id="queryListAll"   resultType="com.cist.filing.model.Sys_frm_code_type">
+		select * from sys_frm_code_type
+	</select> -->
+	<select id="queryListAll"   resultType="com.cist.filing.model.Sys_frm_code">
+		select * from sys_frm_code
+	</select>
+	<insert id="addMonitor"  parameterType="java.util.Map">
+		insert into c_monitor_point_ex
+		(
+			m_pk,
+			m_dept_code,
+			m_type_pk,
+			m_road_code,
+			m_name,
+			m_code,
+			m_byname,
+			m_kreis_code,
+			m_mapx,
+			m_mapy,
+			m_address
+		)
+		values
+		(
+			cistsys.SEQ_MONITOR_PK.nextval,
+			#{m_dept_code,jdbcType=VARCHAR},
+			#{m_type_pk,jdbcType=VARCHAR},
+			#{m_road_code,jdbcType=VARCHAR},
+			#{m_name,jdbcType=VARCHAR},
+			#{m_code,jdbcType=VARCHAR},
+			#{m_byname,jdbcType=VARCHAR},
+			#{m_kreis_code,jdbcType=VARCHAR},
+			#{m_mapx,jdbcType=DOUBLE},
+			#{m_mapy,jdbcType=DOUBLE},
+			#{m_address,jdbcType=VARCHAR}
+		)
+
+	</insert>
+	
+	<insert id="addVideo">
+		insert into tbl_dev_vio_config_ex
+		(
+			dvc_pk,
+			dvc_code,
+			dvc_name,
+			dvc_comp_pk,
+			dvc_brand_pk,
+			dvc_model_pk,
+			dvc_dir,
+			dvc_ip,
+			dvc_chl,
+			dvc_admin_url,
+			dvc_user,
+			dvc_pwd,
+			dvc_port,
+			dvc_rtsp,
+			dvc_rtmp,
+			dvc_http,
+			dvc_ptz,
+			dvc_type_pk,
+			dvc_px_pk,
+			dvc_encoder_pk,
+			dvc_bitrate_pk
+		)
+		values
+		(
+			cistsys.SEQ_DEV_VIO_CONFIG.nextval,
+			#{dvc_code,jdbcType=VARCHAR},
+			#{dvc_name,jdbcType=VARCHAR},
+			#{dvc_comp_pk,jdbcType=INTEGER},
+			#{dvc_brand_pk,jdbcType=INTEGER},
+			#{dvc_model_pk,jdbcType=INTEGER},
+			#{dvc_dir,jdbcType=VARCHAR},
+			#{dvc_ip,jdbcType=VARCHAR},
+			#{dvc_chl,jdbcType=VARCHAR},
+			#{dvc_admin_url,jdbcType=VARCHAR},
+			#{dvc_user,jdbcType=VARCHAR},
+			#{dvc_pwd,jdbcType=VARCHAR},
+			#{dvc_port,jdbcType=VARCHAR},
+			#{dvc_rtsp,jdbcType=VARCHAR},
+			#{dvc_rtmp,jdbcType=VARCHAR},
+			#{dvc_http,jdbcType=VARCHAR},
+			#{dvc_ptz,jdbcType=VARCHAR},
+			#{dvc_type_pk,jdbcType=INTEGER},
+			#{dvc_px_pk,jdbcType=INTEGER},
+			#{dvc_encoder_pk,jdbcType=INTEGER},
+			#{dvc_bitrate_pk,jdbcType=INTEGER}
+		)
+
+	</insert>
+	
+
+	
+	<delete id="deleteVideo" parameterType="java.util.Map">
+		DELETE FROM cistsys.tbl_dev_vio_config_ex t
+		WHERE  t.dvc_pk=#{pk} 
+	</delete>
+	
+	<delete id="deleteManage" parameterType="java.util.Map">
+		DELETE FROM cistsys.vw_dev_info t
+		WHERE  t.tbec_kkbh = #{pk}  
+	</delete>
+	<delete id="deleteList" parameterType="java.util.Map">
+		DELETE FROM cistsys.c_monitor_point t WHERE  t.tbmp_id=#{tbmp_id}
+	</delete>
+	
+		<update id="update"  parameterType="java.util.Map">
+		update tbl_dev_vio_config_ex 
+		<set>
+			<if test="dvc_name != null and dvc_name !=''">
+				DVC_NAME = #{dvc_name},
+			</if>
+			<if test="dvc_dir != null and dvc_dir !=''">
+				DVC_DIR = #{dvc_dir},
+			</if>
+			<if test="dvc_brand_pk != null and dvc_brand_pk !=''">
+				DVC_BRAND_PK = #{dvc_brand_pk},
+			</if>
+			<if test="dvc_type_pk != null and dvc_type_pk !=''">
+				DVC_TYPE_PK = #{dvc_type_pk},
+			</if>
+			<if test="dvc_ptz != null and dvc_ptz !=''">
+				DVC_PTZ = #{dvc_ptz},
+			</if>
+			<if test="dvc_ip != null and dvc_ip !=''">
+				DVC_IP = #{dvc_ip},
+			</if>
+
+			
+		</set>
+		where DVC_PK = #{dvc_pk,jdbcType=DECIMAL}
+	</update>
+	
+	
+</mapper>

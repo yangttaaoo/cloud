@@ -1,0 +1,359 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cist.fieid.mapper.FieidMapper">
+
+   <select id="auditnumber" resultType="int" parameterType="java.util.HashMap">
+    select count(*) from oeuser.tbl_offe_evdi t where t.shbz=0 and t.wfsj BETWEEN 
+		     to_date(#{wfkssj},'yyyy-mm-dd hh24:mi:ss') and to_date(#{wfjssj},'yyyy-mm-dd hh24:mi:ss')
+   </select>
+   <select id="getjintiri" resultType="int" parameterType="java.util.HashMap">
+select count(*) from OEUSER.TBL_OFFE_EVDI t where trunc(sysdate)=trunc(t.cssj) and t.shbz in (1,3)
+and HPHM not like '川'||'%'
+   </select>
+   <select id="sycivalue" resultType="int" parameterType="java.util.HashMap">
+   select t.syci_value from SYS_CONFIG t where t.syci_pk=6
+   </select>
+  <!--查询限行违法数据是否存在  -->
+    <select id="selectRestriction" resultType="com.cist.fieid.model.TblOffeEvdiInfo" parameterType="java.util.HashMap">
+     select * from OEUSER.TBL_OFFE_EVDI
+     where 
+    <![CDATA[  and trunc(WFSJ) =trunc(sysdate)]]>
+     and HPZL=#{hpzl},
+     and HPHM=#{hphm},
+     and wfxw='1344'
+     and SHBZ ='1'
+   </select>
+     <select id="selectValid" resultType="com.cist.fieid.model.TblOffeEvdiInfo" parameterType="java.util.HashMap">
+     select * from OEUSER.TBL_OFFE_EVDI
+     where
+    <![CDATA[  and WFSJ > to_date(#{wfsj},'yyyy-mm-dd HH24:mi:ss')-5/24/60/60 ]]>
+      <![CDATA[  and WFSJ < to_date(#{wfsj},'yyyy-mm-dd HH24:mi:ss')+5/24/60/60 ]]>
+      and hphm=#{hphm}
+     and WFDD=#{wfdd}
+     and SHBZ ='1'
+   </select>
+    <select id="selectStatus" resultType="com.cist.fieid.model.TblOffeEvdiInfo" parameterType="java.util.HashMap">
+     select * from OEUSER.TBL_OFFE_EVDI
+     where wfpk=#{wfpk}
+     and hphm not like '%'||'川'||'%'
+     and SHBZ ='0'
+   </select>
+	<insert id="insertBus">
+		insert into TXZ_VEH_BUS
+		<trim prefix="(" suffixOverrides="," suffix=")">
+			PK,
+			HPZL,
+			HPHM,
+			<if test=" cllx !=null and cllx !=''">
+			CLLX,
+			</if>
+			<if test=" syxz !=null and syxz !=''">
+			SYXZ,
+			</if>
+			
+			<if test=" clyt !=null and clyt !=''">
+				CLYT,
+			</if>
+			<if test=" clbz !=null and clbz !=''">
+				CLBZ,
+			</if>
+			
+			<if test=" sxrq !=null and sxrq !=''">
+				SXRQ,
+			</if>
+			<if test=" yxqz !=null and yxqz !=''">
+				YXQZ,
+			</if>
+
+			<if test="clms !='' and clms!=null">
+				CLMS,
+			</if>
+		</trim>
+		<trim prefix="values(" suffixOverrides="," suffix=")">
+			cistsys.SEQ_C_VEH_BUS_PK.NEXTVAL,
+			#{hpzl},
+			#{hphm},
+			<if test=" cllx !=null and cllx !=''">
+			#{cllx},
+			</if>
+			<if test=" syxz !=null and syxz !=''">
+			#{syxz},
+			</if>
+			
+			<if test=" clyt !=null and clyt !=''">
+				#{clyt},
+			</if>
+			<if test=" clbz !=null and clbz !=''">
+				#{clbz},
+			</if>
+
+			<if test=" sxrq !=null and sxrq !=''">
+				to_date(#{sxrq},'yyyy-MM-dd'),
+			</if>
+			<if test=" yxqz !=null and yxqz !=''">
+				to_date(#{yxqz},'yyyy-MM-dd'),
+			</if>
+			<if test="clms !='' and clms!=null">
+				#{clms},
+			</if>
+
+		</trim>
+	</insert>
+	<!-- 根据条件查询返回集合 -->
+
+	<select id="selectAll" resultType="com.cist.fieid.model.TblOffeEvdiInfo"
+		parameterType="java.util.HashMap">
+		select * from (select * from OEUSER.TBL_OFFE_EVDI
+		 where hphm not like '%'||'川'||'%' 
+		) t
+		<where>
+			<if test="wfpk != null and wfpk !=''">
+				and t.WFPk = #{wfpk}
+			</if>
+			<if test="hphm!=null and hphm!=''">
+				and lower(t.hphm) like lower('%'||#{hphm}||'%')
+			</if>
+
+			<if test="hpzl!=null and hpzl!='' and hpzl!='null'">
+				and t.hpzl = #{hpzl}
+			</if>
+			<if test="wfdd!=null and wfdd!='' and wfdd!='null'">
+				and t.wfdd = #{wfdd}
+			</if>
+			<if test="wfxw!=null and wfxw!='' and wfxw!='null'">
+				and t.wfxw = #{wfxw}
+			</if>
+			<if test="sbbh!=null and sbbh!='' and sbbh!='null'">
+		     	and sbbh in
+			    <foreach item="w" collection="sbbh" open="(" separator="," close=")">
+		           		 #{w}
+		        </foreach>
+		  	</if>
+			<if test="clpp!=null and clpp!='' and clpp!='null'">
+				and t.clpp=#{clpp}
+			</if>
+			<if test="csys!=null and csys!='' and csys!='null'">
+				and t.csys=#{csys}
+			</if>
+			<if test="fxbh!=null and fxbh!='' and fxbh!='null'">
+				and t.fxbh=#{fxbh}
+			</if>
+			<if test="wfkssj!=null and wfkssj!='' and wfkssj!='null'">
+		    <![CDATA[ and t.WFKSSJ >=to_date(#{wfkssj},'yyyy-mm-dd HH24:mi:ss')]]>
+			</if>
+			<if test="wfjssj!=null and wfjssj!='' and wfjssj!='null'">
+		    <![CDATA[and t.WFJSSJ <= to_date(#{wfjssj},'yyyy-mm-dd HH24:mi:ss') ]]>
+			</if>
+			and shbz='0'
+			 
+		</where>
+		order by wfsj desc
+	</select>
+	<!-- 初审上一条 -->
+	<select id="getPreData" resultType="com.cist.fieid.model.TblOffeEvdiInfo"
+	parameterType="java.util.HashMap">
+	  select * from OEUSER.TBL_OFFE_EVDI where wfpk = (
+       select c.p from (
+              select t.wfpk, lead(t.wfpk, 1, 0) over(order by t.wfsj) as p
+                       from  (
+                             select * from OEUSER.TBL_OFFE_EVDI
+                             <where>
+                            	 hphm not like '%'||'川'||'%'
+									<!-- 判断车牌号码是否为空-->
+									<if test="hphm!=null and hphm!=''">
+										and lower(hphm) like lower('%'||#{hphm}||'%')
+									</if>
+									<!-- 判断号牌种类 -->
+									<if test="hpzl!=null and hpzl!='' and hpzl!='null'">
+										and hpzl = #{hpzl}
+									</if>
+									<!-- 判断违法地点 -->
+									<if test="wfdd!=null and wfdd!=''">
+										and wfdd like '%'||#{wfdd}||'%'
+									</if>
+									<if test="fxbh!=null and fxbh!='' and fxbh!='null'">
+										and t.fxbh=#{fxbh}
+									</if>
+									<!-- 判断违法行为 -->
+									<if test="wfxw!=null and wfxw!='' and wfxw!='null'">
+										and wfxw = #{wfxw}
+									</if>
+									<if test="wfkssj!=null and wfkssj!='' and wfkssj!='null'">
+								    <![CDATA[and WFKSSJ >=to_date(#{wfkssj},'yyyy-mm-dd HH24:mi:ss')]]>
+									</if>
+									<if test="wfjssj!=null and wfjssj!='' and wfjssj!='null'">
+								    <![CDATA[and WFJSSJ <= to_date(#{wfjssj},'yyyy-mm-dd HH24:mi:ss') ]]>
+									</if>
+									<if test="sbbh!=null and sbbh!=''">
+		     							and sbbh in
+			    							<foreach item="w" collection="sbbh" open="(" separator="," close=")">
+		           								 #{w}
+		        							</foreach>
+		  							 </if>
+									and SHBZ ='0'
+                             </where>
+                       ) t
+       ) c where c.wfpk =#{wfpk,jdbcType=INTEGER}
+)
+	</select>
+	<!-- 下一条数据 -->
+	<select id="getNextData" resultType="com.cist.fieid.model.TblOffeEvdiInfo"
+	parameterType="java.util.HashMap">
+	 select * from OEUSER.TBL_OFFE_EVDI where wfpk = (
+       select c.p from (
+              select t.wfpk, lead(t.wfpk, 1, 0) over(order by t.wfsj desc) as p
+                       from  (
+                         select * from OEUSER.TBL_OFFE_EVDI
+                             <where>
+                            	 hphm not like '%'||'川'||'%'
+									<!-- 判断车牌号码是否为空-->
+									<if test="hphm!=null and hphm!=''">
+										and lower(hphm) like lower('%'||#{hphm}||'%')
+									</if>
+									<!-- 判断号牌种类 -->
+									<if test="hpzl!=null and hpzl!=''">
+										and hpzl = #{hpzl}
+									</if>
+									<!-- 判断违法地点 -->
+									<if test="wfdd!=null and wfdd!=''">
+										and wfdd like '%'||#{wfdd}||'%'
+									</if>
+									<!-- 判断违法行为 -->
+									<if test="wfxw!=null and wfxw!='' and wfxw!='null'">
+										and wfxw = #{wfxw}
+									</if>
+									<if test="wfkssj!=null and wfkssj!='' and wfkssj!='null'">
+								    	<![CDATA[ and WFKSSJ >=to_date(#{wfkssj},'yyyy-mm-dd HH24:mi:ss')]]>
+									</if>
+									<if test="wfjssj!=null and wfjssj!='' and wfjssj!='null'">
+								    	<![CDATA[and WFJSSJ <= to_date(#{wfjssj},'yyyy-mm-dd HH24:mi:ss') ]]>
+									</if>
+									<if test="sbbh!=null and sbbh!=''">
+		     							and sbbh in
+			    							<foreach item="w" collection="sbbh" open="(" separator="," close=")">
+		           								 #{w}
+		        							</foreach>
+		  							 </if>
+									and SHBZ ='0'
+                             </where>
+                       ) t
+       ) c where c.wfpk =#{wfpk,jdbcType=INTEGER}
+)
+	</select>
+
+	<select id="selectBywfpk" resultType="com.cist.fieid.model.TblOffeEvdiInfo"
+			parameterType="java.lang.Long">
+		select * from (select * from OEUSER.TBL_OFFE_EVDI
+		) t where t.wfpk = #{wfpk}
+	</select>
+	<!-- <select id="selectHphm" resultType="com.cist.recheck.model.TblOffeEvdiInfo" 
+		parameterType="java.util.HashMap"> select * from (select * from OEUSER.TBL_OFFE_EVDI 
+		where hphm not like '%'||'川'||'%') t </select> -->
+
+	<select id="runDirection" parameterType="com.cist.fieid.model.C_direction"
+		resultType="com.cist.fieid.model.C_direction">
+		select * from c_direction
+		<where>
+			<if test="dir_code!=null and dir_code!=''">
+				and dir_code =#{dir_code}
+			</if>
+		</where>
+	</select>
+
+	<update id="updateState" parameterType="com.cist.fieid.model.TblOffeEvdiInfo">
+		update OEUSER.TBL_OFFE_EVDI
+		<set>
+			<if test="hphm != null and hphm !=''">
+				HPHM = #{hphm},
+			</if>
+			<if test="hpzl!= null and hpzl !=''">
+				HPZL = #{hpzl},
+			</if>
+			<if test="hpys!= null and hpys !=''">
+				HPYS = #{hpys},
+			</if>
+			<if test="wfxw!= null and wfxw !=''">
+				WFXW = #{wfxw},
+			</if>
+			<if test="shbz!= null and shbz !=''">
+				SHBZ = #{shbz},
+			</if>
+			<if test="cszfbz!= null and cszfbz !=''">
+				CSZFBZ = #{cszfbz},
+			</if>
+			cssj=sysdate
+		</set>
+		where WFPK = #{wfpk,jdbcType=DECIMAL}
+	</update>
+	<select id="selectByCPlateKerisInfo" resultType="com.cist.offsite.invalidtrial.model.CPlateKerisInfo">
+    	select * from C_PLATE_KERIS <!-- t where t.name not like '%'||'川'||'%' -->
+  	</select>
+  	<select id="selectByCPlateColorInfo" resultType="com.cist.offsite.invalidtrial.model.CPlateColorInfo" parameterType="com.cist.offsite.invalidtrial.model.CPlateColorInfo">
+    select * from C_PLATE_COLOR
+  </select>
+  <select id="selectByCPlateTypeInfo" resultType="com.cist.offsite.invalidtrial.model.CPlateTypeInfo" parameterType="com.cist.offsite.invalidtrial.model.CPlateTypeInfo">
+    select * from C_PLATE_TYPE
+  </select>
+  <select id="getDeptCode" resultType="java.lang.Long">
+		SELECT dept_code FROM  SYS_DEPART_INFO where dept_pk=#{deptId}
+	</select>
+ <!-- 保存操作日志 -->
+  <insert id="saveLog">
+  insert into TBL_OFFE_OPT_LOG
+  (
+  TOOL_PK,
+  TOOL_USER,
+  TOOL_IP,
+  TOOL_TIME,
+  TOOL_DEPT_CODE,
+  TOOL_TYPE,
+  TOOL_RESULT,
+  TOOL_SIGN,
+  TOOL_WFXH,
+  TOOL_SRC,
+  TOOL_DEST
+ )
+  values(
+ cistsys.SEQ_IMGNAME_PK.NEXTVAL,
+  #{tool_user},
+  #{tool_ip},
+  sysdate,
+  #{tool_dept_code},
+  #{tool_type},
+  #{tool_result},
+  #{tool_sign},
+  #{tool_wfxh},
+  #{tool_src,jdbcType=CLOB},
+  #{tool_dest,jdbcType=CLOB}
+  )
+  </insert>
+  
+  		
+  		<insert id="saveVehBus" parameterType="java.util.HashMap">
+		  insert into txz_veh_bus
+		  (
+		  PK,
+		  HPZL,
+		  HPHM,
+		  CLLX,
+		  SYXZ,
+		  CLYT,
+		  CLBZ,
+		  SXRQ,
+		  YXQZ,
+		  CLMS
+		 )
+		  values(
+		 cistsys.SEQ_VEHBUS_PK.NEXTVAL,
+		  #{hpzl},
+		  #{hphm},
+		  #{cllx},
+		  #{syxz},
+		  #{clyt},
+		  #{clbz},
+		  to_date(#{sxrq},'yyyy-mm-dd HH24:mi:ss'),
+		  to_date(#{yxqz},'yyyy-mm-dd HH24:mi:ss'),
+		  #{clms}
+		  )
+  		</insert>
+</mapper>

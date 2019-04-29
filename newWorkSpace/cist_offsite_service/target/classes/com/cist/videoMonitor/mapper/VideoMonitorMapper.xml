@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper
+	namespace="com.cist.videoMonitor.mapper.VideoMonitorMapper">
+	<select id="getDeptNode" resultType="com.cist.videoMonitor.model.VideoMonitorTree">
+		SELECT dept_code key,dept_name title FROM  SYS_DEPART_INFO
+	</select>
+	<select id="getRoadNode" resultType="com.cist.videoMonitor.model.VideoMonitorTree" parameterType="java.util.HashMap">
+	SELECT ROIM_CODE key,ROIM_NAME title FROM  C_ROAD_ITEM where DEPT_CODE=#{deptId} 
+	</select>
+	<select id="getVideoMonitorNode" resultType="com.cist.videoMonitor.model.VideoMonitorTree" parameterType="java.util.HashMap">
+	SELECT m_pk key,m_name title FROM  C_MONITOR_POINT_EX WHERE m_dept_code=#{deptId}  AND m_road_code=#{roadId}
+	</select>
+	<select id="getMonitorDevNode" parameterType="java.util.HashMap" resultType="com.cist.videoMonitor.model.VideoMonitorTree">
+	SELECT dvc_code key,dvc_name title FROM TBL_DEV_VIO_CONFIG_EX  WHERE dve_pk=#{devId}
+	</select>
+	<select id="getVideoMonitorInfo"  resultType="com.cist.patrolplan.model.Tbl_Dev_Info"  parameterType="java.util.HashMap" >
+	SELECT * FROM  TBL_DEV_VIO_CONFIG_EX    where dvc_code=#{dvc_code}
+	</select>
+	<select id="getVioPrestConfig"  resultType="com.cist.videoMonitor.model.Tbl_VioPrestConfig"  parameterType="java.util.HashMap" >
+	SELECT * FROM   TBL_VIO_PREST_CONFIG  WHERE DVC_PK=#{devId}
+	</select>
+	<select id="getPrestByVpcPrest"  resultType="com.cist.videoMonitor.model.Tbl_VioPrestConfig"  parameterType="java.util.HashMap">
+	SELECT * FROM   TBL_VIO_PREST_CONFIG WHERE vpc_prest=#{param.vpc_prest} AND dvc_pk=#{param.dvc_pk}
+	</select>
+	<insert id="addPrest"  parameterType="java.util.HashMap">
+	INSERT INTO TBL_VIO_PREST_CONFIG  VALUES(seq_on_prest.nextval,#{param.dvc_pk},#{param.vpc_prest},#{param.vpc_byname})
+	</insert>
+	<update id="updatePrest"  parameterType="java.util.HashMap">
+	UPDATE TBL_VIO_PREST_CONFIG SET dvc_pk=#{param.dvc_pk},vpc_byname=#{param.vpc_byname} WHERE  vpc_pk=#{vpc_pk} 
+	</update>
+	<delete id="delPrest" parameterType="java.util.List">
+	DELETE FROM TBL_VIO_PREST_CONFIG WHERE vpc_pk  IN 
+	<foreach collection="list" index="index" item="id" open="(" close=")" separator=",">
+	#{id}
+	</foreach>
+	</delete>
+	</mapper>

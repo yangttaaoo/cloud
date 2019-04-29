@@ -36,7 +36,7 @@
 				is null)
 			</if>
 			<if test=" topic_name !=null and topic_name !=''">
-				and topic_name=#{topic_name}
+				and fk_topic_id=#{topic_name}
 			</if>
 			<if test=" verify_status !=null and verify_status !=''">
 				and verify_status=#{verify_status}

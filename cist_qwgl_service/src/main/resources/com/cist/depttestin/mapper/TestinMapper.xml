@@ -2,15 +2,19 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.cist.depttestin.mapper.TestinMapper">
 <!-- 查询数据 -->
-<select id="selectData" resultType="com.cist.depttestin.model.Testin"
+<select id="selectData" resultMap="getIndividualInfo"
 parameterType="java.util.HashMap">
-  select * from QW_COMPANY_ASSESSMENT q left join QW_COMPANY_ASSESSMENT_METRICS s  on  q.pk_id=s.fk_comp_assessment_id
+select * from (
+select  q.*,(select c.dept_pk from SYS_DEPART_INFO c where c.dept_code=q.fk_dept_id) as dept_pk from (
+ select * from QW_COMPANY_ASSESSMENT q left join QW_COMPANY_ASSESSMENT_METRICS s  on  q.pk_id=s.fk_comp_assessment_id
+)q
+)q
   <where>
     <if test="dept!=null and dept!=''">
       and q.fk_dept_id=#{dept}
     </if>
     <if test="id!=null and id!=''">
-     and s.fk_topic_id=#{id}
+     and q.fk_topic_id=#{id}
     </if>
     <if test="type!=null and type!=''">
      and q.verify_status=#{type}
@@ -23,6 +27,16 @@ parameterType="java.util.HashMap">
     </if>
   </where>
 </select>
+   	<resultMap type="com.cist.depttestin.model.Testin" id="getIndividualInfo">
+   	<id property="pk_id" column="pk_id" /><!-- 勤务报备id -->
+		<association property="edit_reason" column="pk_id"
+			javaType="java.lang.String" select="getqwvv" />
+   	</resultMap>
+   	<select id="getqwvv" resultType="java.lang.String">
+   	<![CDATA[  
+select c.EDIT_REASON from (select * from (select * from QW_OPERATION_LOG b where b.fk_relation_id=#{pk_id} )c order by c.pk_id desc)c where rownum<=1
+   ]]>
+   	</select>
   <!-- 增加单位勤务考核-->
   <insert id="addData" parameterType="java.util.HashMap"  >
 	insert into qw_company_assessment
@@ -95,7 +109,7 @@ parameterType="java.util.HashMap">
       and attachment_source=#{attachment_source}
     </update>
     <!--单位树  -->
-    	<select id="depart_infolist" resultType="com.cist.depttestin.model.DeptInfo" parameterType="java.lang.Integer">
+    	<select id="depart_infolist" resultType="com.cist.depttestin.model.DeptInfo" parameterType="java.lang.String">
 select t.dept_pk,t.dept_code,t.dept_name as name,t.DEPT_SUPERIOR from sys_depart_info t 
 <where>
 		  <if test="_parameter  == null or _parameter  == ''">
@@ -137,7 +151,7 @@ select t.dept_pk,t.dept_code,t.dept_name as name,t.DEPT_SUPERIOR from sys_depart
      )
    </insert>
    <!--查询PK -->
-   <select id="selectPk" resultType="java.lang.Integer">
+   <select id="selectPk" resultType="java.lang.String">
     select max(t.pk_id) from qw_company_assessment t
    </select>
    <!-- 查询附件 -->
@@ -170,7 +184,7 @@ select t.dept_pk,t.dept_code,t.dept_name as name,t.DEPT_SUPERIOR from sys_depart
    </update>
    <!--查询指标信息  -->
    <select id="selectTargetData" resultType="com.cist.depttestin.model.TargetInfo"
-parameterType="java.lang.Integer">
+parameterType="java.lang.String">
   select topic_name from qw_appraise_topic where pk_id=#{pk}
 </select>
 </mapper>

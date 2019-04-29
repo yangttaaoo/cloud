@@ -3,13 +3,13 @@
 <mapper
 	namespace="com.cist.bayonetRegister.mapper.BayonetRegisterMapper">
 	<!-- 分页查询卡口信息 -->
-	<select id="queryDeviceList" parameterType="java.util.HashMap"
+	<select id="SecurityByfk_dept_idTocode"  parameterType="java.util.HashMap"
 		resultType="com.cist.devRegister.model.DeviceList">
 		select
-		pk_id,device_name,device_num,road_name,device_type_name,dept_name,validity_date
-		from VM_DEVICE v
+		v.fk_dept_id,v.pk_id,v.device_name,v.device_num,v.road_name,v.device_type_name,v.dept_name,v.validity_date,p.bayonet_type
+		from VM_DEVICE v left join  JCSJ_DEVICE_BAYONET_PARAM  p on v.pk_id=p.device_id
 		where v.fk_device_type='KK'
-		<if test="deptId !=null and deptId !='' "> and v.fk_dept_id=#{deptId}</if>
+		<if test="fk_dept_id !=null and fk_dept_id !='' "> and v.fk_dept_id=#{fk_dept_id}</if>
 		<if test="create_time_start !=null and create_time_start !='' ">and v.enable_date &gt;= to_date(#{
 			create_time_start},'yyyy-mm-dd HH24:mi:ss')
 			and v.enable_date &lt;= to_date(#{ create_time_end},'yyyy-mm-dd
@@ -19,7 +19,7 @@
 		<if test="road !=null and road !='' ">and v.belonged_road_id=#{road}</if>
 		<if test="device_num !=null and device_num !='' ">and v.device_num=#{device_num}</if>
 		<if test="crossroads.size() >0">
-			and v.belonged_road_id||v.kilometre_num in
+			and v.belonged_road_id||'-'||v.kilometre_num in
 			<foreach collection="crossroads" item="item" index="index"
 				separator="," open="(" close=")">
 				#{item}
@@ -38,7 +38,7 @@
 		p.device_id,p.check_person_id,p.check_person_dept_id,p.check_time,p.check_status,p.uncheck_reason,
 		m.device_manufacturer,m.device_brand,m.device_model,m.ip_address,m.port,m.channel,m.access_address,m.access_user_name,m.access_password,m.contacts_num
 		maintenance_contacts_num,m.contacts_person maintenance_contacts_person
-		from JCSJ_DEVICE d join JCSJ_DEVICE_MAINTENANCE m on
+		from JCSJ_DEVICE d left join JCSJ_DEVICE_MAINTENANCE m on
 		d.pk_id=m.device_id
 		left join JCSJ_DEVICE_AUDIT_PROCESS p on d.pk_id=p.device_id where
 		d.pk_id=#{pk_id} and d.fk_device_type='KK'

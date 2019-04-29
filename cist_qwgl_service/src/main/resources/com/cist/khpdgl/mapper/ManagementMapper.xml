@@ -10,7 +10,6 @@
 		select q.pk_id,q.topic_name,q.default_value,q1.regulations_name,q1.assessment_num,q1.assessment_rules ,q1.enabled_state,
 q1.create_person_id,q1.create_time
 from qw_appraise_topic q 
-
 left join qw_appraise_regulations q1 on q1.FK_APPRAISE_TOPIC_ID = q.pk_id
 		
 		<where>

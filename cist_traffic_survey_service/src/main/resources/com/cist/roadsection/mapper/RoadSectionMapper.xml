@@ -56,7 +56,7 @@
     where
     FCT_CODE=#{fct_code}
   </select>
-	 <select id="list" resultType="com.cist.roadsection.model.CRoadItemInfo" parameterType="java.util.HashMap" >
+	 <select id="listSecurityBydept_codeTocode" resultType="com.cist.roadsection.model.CRoadItemInfo" parameterType="java.util.HashMap" >
     select *
     from C_ROAD_ITEM t
     <where>

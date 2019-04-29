@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cist.qwgl.qylxgl.mapper.QylxglMapper" >
+	<!-- 查询区域类型信息 -->
+	<select id="queryqylx" parameterType="java.util.HashMap" 
+	resultType="com.cist.qwgl.qylxgl.model.QWGL_QYLX_TYPE">
+		select * from QWGL_QYLX_TYPE
+		<where>
+			<if test="qylx_pk!=null and qylx_pk!=''">
+				and qylx_pk like '%'||#{qylx_pk}||'%'
+			</if>
+			<if test="qylx_name !=null and qylx_name !=''">
+				and qylx_name like '%'||#{qylx_name}||'%'
+			</if>
+			<if test="sfqy!=null and sfqy!=''">
+				and sfqy = #{sfqy}
+			</if>
+		</where>
+		order by pk desc
+	</select>
+	<!-- 添加区域类型信息 -->
+	<insert id="addqylx" parameterType="java.util.HashMap">
+		insert into QWGL_QYLX_TYPE(pk,qylx_pk,qylx_name,sfqy)
+		values(#{pk},#{qylx_pk},#{qylx_name,jdbcType=VARCHAR},#{sfqy})
+	</insert>
+	<!-- 更新区域类型信息 -->
+	<update id="updateqylx" parameterType="java.util.HashMap">
+		update QWGL_QYLX_TYPE
+		<trim prefix="set" suffixOverrides=",">
+			<if test="qylx_pk!=null">qylx_pk = #{qylx_pk,jdbcType=VARCHAR},</if>
+			<if test="qylx_name!=null">qylx_name = #{qylx_name,jdbcType=VARCHAR},</if>
+			<if test="sfqy!=null">sfqy = #{sfqy,jdbcType=VARCHAR},</if>
+		</trim>
+		where pk=#{pk}
+	</update>
+	<!-- 删除区域1类型信息 -->
+	<delete id="deleteqylx" parameterType="java.util.HashMap">
+		delete from QWGL_QYLX_TYPE where pk in
+		<foreach item="w" collection="pk" open="(" separator="," close=")">
+		       #{w}
+		 </foreach>
+	</delete>
+	<!-- 查询区域类型信息中最大的pk值 -->
+	<select id="querymaxpk"  resultType="java.lang.Integer">
+		select max(pk) from QWGL_QYLX_TYPE
+	</select>
+	
+</mapper>

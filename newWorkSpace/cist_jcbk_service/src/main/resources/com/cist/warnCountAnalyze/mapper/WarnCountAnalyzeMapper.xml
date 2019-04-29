@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper
+	namespace="com.cist.warnCountAnalyze.mapper.WarnCountAnalyzeMapper">
+
+	<select id="queryCarAlarmStatList"
+		parameterType="java.util.HashMap"
+		resultType="com.cist.warnCountAnalyze.model.CarAlarmStat">
+		select s.* from JCBK_CAR_ALARM_STAT s 
+			<where>
+		<if test="startTime !=null and startTime !=''">
+				<![CDATA[ and s.tjsj >=to_date(#{startTime},'yyyy-mm-dd HH24:mi:ss')]]>
+			</if>
+			<if test="endTime !=null and endTime !=''">
+				<![CDATA[and s.tjsj <= to_date(#{endTime},'yyyy-mm-dd HH24:mi:ss') ]]>
+			</if>
+			<if test="glbmList != null and glbmList.size()>0">
+		and  s.glbm in
+		<foreach collection="glbmList" close=")" index="index" item="item" open="(" separator=",">
+		#{item.glbm}
+		</foreach>
+		</if>
+		</where>
+		
+	</select>
+	
+		<!-- 根据数据字典索引查询对应信息 -->
+	<select id="queryBaseDataByFct_Code"
+		resultType="com.cist.warnCountAnalyze.model.BaseData">
+		select f.fc_pk pk,f.fc_code code,f.fc_name name from
+		SYS_FRM_CODE f join
+		SYS_FRM_CODE_TYPE t on f.FCT_CODE=t.FCT_CODE where
+		t.FCT_CODE=#{FCT_CODE} order by f.FC_NUM
+	</select>
+	<select id="queryList"
+		parameterType="java.util.HashMap"
+		resultType="com.cist.warnCountAnalyze.model.CarAlarmStat">
+		select s.glbm from JCBK_CAR_ALARM_STAT s 
+		<where>
+		<if test="deptId != null and deptId !=''">
+		and s.glbm=#{deptId}
+		</if>
+		<if test="startTime !=null and startTime !=''">
+				<![CDATA[ and s.tjsj >=to_date(#{startTime},'yyyy-mm-dd HH24:mi:ss')]]>
+			</if>
+			<if test="endTime !=null and endTime !=''">
+				<![CDATA[and s.tjsj <= to_date(#{endTime},'yyyy-mm-dd HH24:mi:ss') ]]>
+			</if>
+		</where>
+		 group by s.glbm 
+	</select>
+</mapper>

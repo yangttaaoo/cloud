@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper
+	namespace="com.cist.endNumberLimit.mapper.EndNumberLimitMapper">
+	<select id="queryList"
+		resultType="com.cist.endNumberLimit.model.CarLimtRules"
+		parameterType="java.util.HashMap">
+		
+		select * from tbl_car_limit_rules where  1=1
+		<if test="tlr_name !=null and tlr_name !='' and  tlr_name != 'null'">
+		and tlr_name  like '%'||#{tlr_name}||'%'
+		</if>
+		<if test="tlr_flag !=null and tlr_flag !='' and tlr_flag!= 'null'">
+		and tlr_flag  =#{tlr_flag}
+		</if>
+		
+		<if test="tlr_start_date !=null and tlr_start_date !='' and tlr_start_date  !='null'">
+			and tlr_start_date &gt;=to_date(#{tlr_start_date},'yyyy-mm-dd HH24:mi:ss')
+		</if>        
+		<if test="tlr_end_date !=null and tlr_end_date !=''  and tlr_end_date  !='null'">
+			and tlr_end_date &lt;=to_date(#{tlr_end_date},'yyyy-mm-dd HH24:mi:ss')
+		</if>
+	</select>
+	
+		<insert id="insertData" parameterType="java.util.HashMap">
+		insert into tbl_car_limit_rules(tlr_pk,tlr_name,tlr_name_spell,tlr_point_ids,tlr_type
+		<if test="tlr_type==2">
+		<if test="tlr_mon !='' and tlr_mon !=null and tlr_mon !='null'">,tlr_mon</if>
+		<if test="tlr_tue !='' and tlr_tue !=null and tlr_tue !='null'">,tlr_tue</if>
+		<if test="tlr_wed !='' and tlr_wed !=null and tlr_wed !='null'">,tlr_wed</if>
+		<if test="tlr_thu !='' and tlr_thu !=null and  tlr_thu !='null'">,tlr_thu</if>
+		<if test="tlr_fri !='' and tlr_fri !=null and  tlr_fri !='null'">,tlr_fri</if>
+		<if test="tlr_sat !='' and tlr_sat !=null and  tlr_sat !='null'">,tlr_sat</if>
+		<if test="tlr_sun !='' and tlr_sun !=null and  tlr_sun !='null'">,tlr_sun</if>
+		</if>
+		<if test="tlr_type==1">
+		<if test="tlr_odd !='' and tlr_odd !=null  and tlr_odd !='null'">,tlr_odd</if>
+		<if test="tlr_even !='' and tlr_even !=null and tlr_even !='null'">,tlr_even</if>
+		</if>
+		,tlr_start_date,tlr_end_date,tlr_start_time,tlr_end_time,tlr_flag)
+		
+		values(tbl_car_limit_rules_pk.nextval,#{tlr_name},#{tlr_name_spell},#{tlr_point_ids},#{tlr_type}
+		<if test="tlr_type==2">
+		<if test="tlr_mon !='' and tlr_mon !=null and tlr_mon !='null'">,#{tlr_mon}</if>
+		<if test="tlr_tue !='' and tlr_tue !=null and tlr_tue !='null'">,#{tlr_tue}</if>
+		<if test="tlr_wed !='' and tlr_wed !=null and tlr_wed !='null'">,#{tlr_wed}</if>
+		<if test="tlr_thu !='' and tlr_thu !=null and tlr_thu !='null'">,#{tlr_thu}</if>
+		<if test="tlr_fri !='' and tlr_fri !=null and tlr_fri !='null'">,#{tlr_fri}</if>
+		<if test="tlr_sat !='' and tlr_sat !=null and tlr_sat !='null'">,#{tlr_sat}</if>
+		<if test="tlr_sun !='' and tlr_sun !=null and tlr_sun !='null'">,#{tlr_sun}</if>
+		</if>
+			<if test="tlr_type==1">
+			<if test="tlr_odd !='' and tlr_odd !=null and tlr_odd !='null'">,#{tlr_odd}</if>
+		<if test="tlr_even !='' and tlr_even !=null and tlr_even !='null'">,#{tlr_even}</if>
+	
+		</if>
+		,to_date(#{tlr_start_date},'yyyy-mm-dd HH24:mi:ss'),to_date(#{tlr_end_date},'yyyy-mm-dd HH24:mi:ss'),#{tlr_start_time},#{tlr_end_time},#{tlr_flag}
+		)
+		</insert>
+		<update id="update" parameterType="java.util.HashMap">
+		update  tbl_car_limit_rules  set  tlr_name=#{tlr_name},tlr_name_spell=#{tlr_name_spell}
+		,tlr_point_ids=#{tlr_point_ids},tlr_type=#{tlr_type}
+		<if test="tlr_type==2">
+		<if test="tlr_mon !='' and tlr_mon !=null and tlr_mon !='null'">,tlr_mon=#{tlr_mon}</if>
+		<if test="tlr_tue !='' and tlr_tue !=null and tlr_tue !='null'">,tlr_tue=#{tlr_tue}</if>
+		<if test="tlr_wed !='' and tlr_wed !=null and tlr_wed !='null'">,tlr_wed=#{tlr_wed}</if>
+		<if test="tlr_thu !='' and tlr_thu !=null and tlr_thu !='null'">,tlr_thu=#{tlr_thu}</if>
+		<if test="tlr_fri !='' and tlr_fri !=null and tlr_fri !='null'">,tlr_fri=#{tlr_fri}</if>
+		<if test="tlr_sat !='' and tlr_sat !=null and tlr_sat !='null'">,tlr_sat=#{tlr_sat}</if>
+		<if test="tlr_sun !='' and tlr_sun !=null and  tlr_sun !='null'">,tlr_sun=#{tlr_sun}</if>
+		</if>
+		
+		<if test="tlr_type==1">
+		<if test="tlr_odd !='' and tlr_odd !=null and tlr_odd !='null'">,tlr_odd=#{tlr_odd}</if>
+		<if test="tlr_even !='' and tlr_even !=null and tlr_even !='null'">,tlr_even=#{tlr_even}</if>
+		</if>
+		,tlr_start_date=to_date(#{tlr_start_date},'yyyy-mm-dd HH24:mi:ss')
+		,tlr_end_date=to_date(#{tlr_end_date},'yyyy-mm-dd HH24:mi:ss'),
+		tlr_start_time=#{tlr_start_time},
+		tlr_end_time=#{tlr_end_time},tlr_flag=#{tlr_flag}
+		where tlr_pk=#{tlr_pk}           
+		
+		</update>
+		<select id="queryParentNode" resultType="com.cist.endNumberLimit.model.MountTree">
+		select tbmp_id key,tbmp_name title,tbmp_dire_id,tbmp_dire_no from  C_MONITOR_POINT where TBMP_FAULT_TYPE='卡口'
+		</select>
+		<select id="querChildrenNode" resultType="com.cist.endNumberLimit.model.MountTree" parameterType="java.util.HashMap">
+		<!-- select TBEI_CODE key,ADDR_NAME title from  VW_DEV_INFO  where TBEC_DIRE_ID='0001' and TBEC_KKBH='820041002000' -->
+		select TBEI_CODE key,TBEI_NAME title from  VW_DEV_INFO  where TBEC_DIRE_ID=#{direId} and TBEC_KKBH=#{pointId} 
+		</select>
+		<delete id="delData" parameterType="java.util.HashMap">
+		<if test="tlr_pk !=null and tlr_pk !=''">
+		delete from tbl_car_limit_rules where tlr_pk=#{tlr_pk}
+		</if>
+		</delete>
+			<delete id="delAllData" parameterType="java.util.List">
+		delete from tbl_car_limit_rules  where tlr_pk in 
+		<foreach collection="list" index="index" close=")" open="(" separator="," item="id">
+		#{id}
+		</foreach>
+		</delete>
+	</mapper>

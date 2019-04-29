@@ -1,0 +1,913 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cist.devRegister.mapper.DevRegisterMapper">
+	<!-- 添加设备基础信息 -->
+	<insert id="addDeviceInfo" parameterType="java.util.HashMap">
+		<selectKey resultType="java.math.BigDecimal" order="BEFORE"
+			keyProperty="pk_id">
+			SELECT SEQ_DEVREGISTER.nextval as pk_id from DUAL
+		</selectKey>
+		insert into JCSJ_DEVICE(pk_id,fk_dept_id
+		<if test="create_person !=null and create_person !=''">,create_person</if>
+		<if test="create_time !=null and create_time !=''">,create_time</if>
+		,enable_date,validity_date
+		<if test="contacts_person !=null and contacts_person !=''">,contacts_person</if>
+		<if test="contacts_num !=null and contacts_num !=''">,contacts_num</if>
+		<if test="remarks !=null and remarks !=''">,remarks</if>
+		,fk_device_type,device_name,device_num
+		<if test="belonged_road_id !=null and belonged_road_id !=''">,belonged_road_id</if>
+		<if test="kilometre_num !=null and kilometre_num !=''">,kilometre_num</if>
+		<if test="meter_num !=null and meter_num !=''">,meter_num</if>
+		<if test="road_name !=null and road_name !=''">,road_name</if>
+		<if test="longitude !=null and longitude !=''">,longitude</if>
+		<if test="latitude !=null and latitude !=''">,latitude</if>
+		<if test="network_location !=null and network_location !=''">,network_location</if>
+		<if test="upload_mode !=null and upload_mode !=''">,upload_mode</if>
+		<if test="device_source !=null and device_source !=''">,device_source</if>
+		<if test="xzqh !=null and xzqh !=''">,xzqh</if>
+		<if test="direction !=null and direction !=''">,direction</if>
+		)
+		VALUES(#{pk_id},#{ fk_dept_id}
+		<if test="create_person !=null and create_person !=''">,#{ create_person}</if>
+		<if test="create_time !=null and create_time !=''">,to_date(#{create_time},'yyyy-mm-dd HH24:mi:ss')</if>
+		,to_date(#{enable_date},'yyyy-mm-dd HH24:mi:ss'),to_date(#{
+		validity_date},'yyyy-mm-dd HH24:mi:ss')
+		<if test="contacts_person !=null and contacts_person !=''">,#{ contacts_person}</if>
+		<if test="contacts_num !=null and contacts_num !=''">,#{ contacts_num}</if>
+		<if test="remarks !=null and remarks !=''">,#{remarks}</if>
+		,#{fk_device_type},#{device_name},#{device_num}
+		<if test="belonged_road_id !=null and belonged_road_id !=''">,#{belonged_road_id}</if>
+		<if test="kilometre_num !=null and kilometre_num !=''">,#{kilometre_num}</if>
+		<if test="meter_num !=null and meter_num !=''">,#{meter_num}</if>
+		<if test="road_name !=null and road_name !=''">,#{road_name}</if>
+		<if test="longitude !=null and longitude !=''">,#{longitude}</if>
+		<if test="latitude !=null and latitude !=''">,#{latitude}</if>
+		<if test="network_location !=null and network_location !=''">,#{network_location}</if>
+		<if test="upload_mode !=null and upload_mode !=''">,#{upload_mode}</if>
+		<if test="device_source !=null and device_source !=''">,#{device_source}</if>
+		<if test="xzqh !=null and xzqh !=''">,#{xzqh}</if>
+		<if test="direction !=null and direction !=''">,#{direction}</if>
+		)
+	</insert>
+
+	<!-- 更新设备基础信息 -->
+	<update id="updateDeviceInfo" parameterType="java.util.HashMap">
+		update JCSJ_DEVICE set fk_dept_id=#{fk_dept_id}
+		<if test="create_person !=null and create_person !=''">,create_person=#{create_person}</if>
+		<if test="create_time !=null and create_time !=''">,create_time=to_date(#{create_time},'yyyy-mm-dd
+			HH24:mi:ss')
+		</if>
+
+		,enable_date=to_date(#{enable_date},'yyyy-mm-dd
+		HH24:mi:ss'),validity_date=to_date(#{ validity_date},'yyyy-mm-dd
+		HH24:mi:ss')
+
+		<if test="contacts_person !=null and contacts_person !=''">,contacts_person=#{contacts_person}</if>
+		<if test="contacts_num !=null and contacts_num !=''">,contacts_num=#{contacts_num}</if>
+		<if test="remarks !=null and remarks !=''">,remarks=#{remarks}</if>
+		,fk_device_type
+		=#{fk_device_type},device_name=#{device_name},device_num=#{device_num}
+		<if test="belonged_road_id !=null and belonged_road_id !=''">,belonged_road_id=#{belonged_road_id}</if>
+		<if test="kilometre_num !=null and kilometre_num !=''">,kilometre_num=#{kilometre_num}</if>
+		<if test="meter_num !=null and meter_num !=''">,meter_num=#{meter_num}</if>
+
+		<if test="xzqh !=null and xzqh !=''">,xzqh=#{xzqh}</if>
+		<if test="latitude !=null and latitude !=''">,latitude=#{latitude}</if>
+		<if test="network_location !=null and network_location !=''">,network_location=#{network_location}</if>
+		<if test="upload_mode !=null and upload_mode !=''">,upload_mode=#{upload_mode}</if>
+		<if test="device_source !=null and device_source !=''">,device_source=#{device_source}</if>
+		<if test="road_name !=null and road_name !=''">,road_name=#{road_name}</if>
+		<if test="longitude !=null and longitude !=''">,longitude=#{longitude}</if>
+		<if test="direction !=null and direction !=''">,direction=#{direction}</if>
+		where pk_id=#{pk_id}
+	</update>
+
+
+	<select id="queryDeviceById" parameterType="java.util.HashMap"
+		resultType="com.cist.devRegister.model.Device">
+		select d.*,
+		p.device_id,p.check_person_id,p.check_person_dept_id,p.check_time,p.check_status,p.uncheck_reason,
+		m.device_manufacturer,m.device_brand,m.device_model,m.ip_address,m.port,m.channel,m.access_address,m.access_user_name,m.access_password,m.contacts_num
+		maintenance_contacts_num,m.contacts_person maintenance_contacts_person
+		from JCSJ_DEVICE d left join JCSJ_DEVICE_MAINTENANCE m on
+		d.pk_id=m.device_id
+		left join JCSJ_DEVICE_AUDIT_PROCESS p on d.pk_id=p.device_id where
+		d.pk_id=#{pk_id}
+		order by d.pk_id desc
+	</select>
+
+	<select id="queryDeviceByDeviceNum" parameterType="java.util.HashMap"
+		resultType="java.lang.Long">
+		select count(d.pk_id) count from  jcsj_device d where d.device_num=#{device_num}
+		<if test="pk_id !=null and pk_id !=''">
+		and d.pk_id &lt;&gt;#{pk_id}
+		</if>
+	</select>
+	<!-- 添加设备厂商维护信息 -->
+	<insert id="addDevMaintenance" parameterType="java.util.HashMap">
+		insert into JCSJ_DEVICE_MAINTENANCE(device_id
+		<if test="device_manufacturer !=null and device_manufacturer !=''">,device_manufacturer</if>
+		<if test="device_brand !=null and device_brand !=''">,device_brand</if>
+		<if test="device_model !=null and device_model !=''">,device_model</if>
+		<if
+			test="maintenance_contacts_person !=null and maintenance_contacts_person !=''">,contacts_person</if>
+		<if
+			test="maintenance_contacts_num !=null and maintenance_contacts_num !=''">,contacts_num</if>
+		<if test="ip_address !=null and ip_address !=''">,ip_address</if>
+		<if test="port !=null and port !=''">,port</if>
+		<if test="channel !=null and port !=''">,channel</if>
+		<if test="access_address !=null and access_address !=''">,access_address</if>
+		<if test="access_user_name !=null and access_user_name !=''">,access_user_name</if>
+		<if test="access_password !=null and access_password !=''">,access_password</if>
+		) values(
+		#{pk_id}
+		<if test="device_manufacturer !=null and device_manufacturer !=''">,#{device_manufacturer}</if>
+		<if test="device_brand !=null and device_brand !=''">,#{device_brand}</if>
+		<if test="device_model !=null and device_model !=''">,#{device_model}</if>
+		<if
+			test="maintenance_contacts_person !=null and maintenance_contacts_person !=''">,#{maintenance_contacts_person}</if>
+		<if
+			test="maintenance_contacts_num !=null and maintenance_contacts_num !=''">,#{maintenance_contacts_num}</if>
+		<if test="ip_address !=null and ip_address !=''">,#{ip_address}</if>
+		<if test="port !=null and port !=''">,#{port}</if>
+		<if test="channel !=null and port !=''">,#{channel}</if>
+		<if test="access_address !=null and access_address !=''">,#{access_address}</if>
+		<if test="access_user_name !=null and access_user_name !=''">,#{access_user_name}</if>
+		<if test="access_password !=null and access_password !=''">,#{access_password}</if>
+		)
+	</insert>
+
+
+	<!-- 更新设备厂商维护信息 -->
+	<update id="updateDevMaintenance"
+		parameterType="java.util.HashMap">
+		update JCSJ_DEVICE_MAINTENANCE set device_id=#{pk_id}
+
+		<if test="device_manufacturer !=null and device_manufacturer !=''">,device_manufacturer=#{device_manufacturer}</if>
+		<if test="device_brand !=null and device_brand !=''">,device_brand=#{device_brand}</if>
+		<if test="device_model !=null and device_model !=''">,device_model=#{device_model}</if>
+		<if
+			test="maintenance_contacts_person !=null and maintenance_contacts_person !=''">,contacts_person=#{maintenance_contacts_person}</if>
+		<if
+			test="maintenance_contacts_num !=null and maintenance_contacts_num !=''">,contacts_num=#{maintenance_contacts_num}</if>
+		<if test="ip_address !=null and ip_address !=''">,ip_address=#{ip_address}</if>
+		<if test="port !=null and port !=''">,port=#{port}</if>
+		<if test="channel !=null and port !=''">,channel=#{channel}</if>
+		<if test="access_address !=null and access_address !=''">,access_address=#{access_address}</if>
+		<if test="access_user_name !=null and access_user_name !=''">,access_user_name=#{access_user_name}</if>
+		<if test="access_password !=null and access_password !=''">,access_password=#{access_password}</if>
+		where device_id=#{pk_id}
+	</update>
+
+
+
+	<!-- 添加监控参数 -->
+	<insert id="addCameraParam" parameterType="java.util.HashMap">
+		insert into JCSJ_DEVICE_CAMERA_PARAM(device_id
+		<if test="image_size_id !=null and image_size_id !=''">,image_size_id</if>
+		<if test="imaging_color_id !=null and imaging_color_id !=''">,imaging_color_id</if>
+		<if test="structure_type_id !=null and structure_type_id !=''">,structure_type_id</if>
+		<if test="code_stream_type_id !=null and code_stream_type_id !=''">,code_stream_type_id</if>
+		<if
+			test="cloud_platform_type_id !=null and cloud_platform_type_id !=''">,cloud_platform_type_id</if>
+		<if test="ptz_control_type_id !=null and ptz_control_type_id !=''">,ptz_control_type_id</if>
+		<if
+			test="event_detection_sign !=null and event_detection_sign !=''">,event_detection_sign</if>
+		) values(
+		#{pk_id}
+		<if test="image_size_id !=null and image_size_id !=''">,#{image_size_id}</if>
+		<if test="imaging_color_id !=null and imaging_color_id !=''">,#{imaging_color_id}</if>
+		<if test="structure_type_id !=null and structure_type_id !=''">,#{structure_type_id}</if>
+		<if test="code_stream_type_id !=null and code_stream_type_id !=''">,#{code_stream_type_id}</if>
+		<if
+			test="cloud_platform_type_id !=null and cloud_platform_type_id !=''">,#{cloud_platform_type_id}</if>
+		<if test="ptz_control_type_id !=null and ptz_control_type_id !=''">,#{ptz_control_type_id}</if>
+		<if
+			test="event_detection_sign !=null and event_detection_sign !=''">,#{event_detection_sign}</if>
+		)
+	</insert>
+	<!-- 获取监控参数 -->
+	<select id="getDeviceCameraParam"
+		resultType="com.cist.devRegister.model.DeviceCameraParam">
+		select * from JCSJ_DEVICE_CAMERA_PARAM where
+		device_id=#{pk_id}
+	</select>
+	<!-- 更新监控参数 -->
+	<update id="updateCameraParam" parameterType="java.util.HashMap">
+		update JCSJ_DEVICE_CAMERA_PARAM set device_id=#{pk_id}
+		<if test="image_size_id !=null and image_size_id !=''">,image_size_id=#{image_size_id}</if>
+		<if test="imaging_color_id !=null and imaging_color_id !=''">,imaging_color_id=#{imaging_color_id}</if>
+		<if test="structure_type_id !=null and structure_type_id !=''">,structure_type_id=#{structure_type_id}</if>
+		<if test="code_stream_type_id !=null and code_stream_type_id !=''">,code_stream_type_id=#{code_stream_type_id}</if>
+		<if
+			test="cloud_platform_type_id !=null and cloud_platform_type_id !=''">,cloud_platform_type_id=#{cloud_platform_type_id}</if>
+		<if test="ptz_control_type_id !=null and ptz_control_type_id !=''">,ptz_control_type_id=#{ptz_control_type_id}</if>
+		<if
+			test="event_detection_sign !=null and event_detection_sign !=''">,event_detection_sign=#{event_detection_sign}</if>
+		where device_id=#{pk_id}
+	</update>
+	<!-- 添加事件监听 -->
+	<insert id="addDevEventAct" parameterType="java.util.HashMap">
+		insert into JCSJ_DEVICE_EVENT_ACT(device_id,fk_event_act_id)
+		SELECT A.*
+		FROM(
+		<foreach collection="list" item="id" index="index"
+			separator="UNION ALL">
+			SELECT
+			#{pk_id} device_id,
+			#{id} fk_event_act_id
+			FROM dual
+		</foreach>
+		)A
+	</insert>
+	<!-- 删除流量监测 -->
+	<delete id="deleteDevFlowMonitor"
+		parameterType="java.util.HashMap">
+		delete from JCSJ_DEVICE_FLOW_ACT where
+		device_id=#{pk_id}
+	</delete>
+	<!-- 删除设备关联事件检测 -->
+	<delete id="deleteDevEventAct" parameterType="java.util.HashMap">
+		delete from
+		JCSJ_DEVICE_EVENT_ACT where device_id=#{pk_id}
+	</delete>
+	<!--添加设备具备功能 -->
+	<insert id="addDevHaveFunction1"
+		parameterType="java.util.HashMap">
+		insert into JCSJ_DEVICE_HAVE_FUNCTION(device_id,fk_have_function)
+		SELECT A.*
+		FROM(
+		<foreach collection="list" item="list" index="index"
+			separator="UNION ALL">
+			SELECT
+			#{pk_id} device_id,
+			#{list} fk_have_function
+			FROM dual
+		</foreach>
+		)A
+	</insert>
+	<!-- 删除设备具备功能 -->
+	<delete id="deleteDevHaveFunction"
+		parameterType="java.util.HashMap">
+		delete from JCSJ_DEVICE_HAVE_FUNCTION where
+		device_id=#{pk_id}
+	</delete>
+	<!-- 添加测速参数 -->
+	<insert id="addDevSpeedLimit" parameterType="java.util.HashMap">
+		insert into JCSJ_DEVICE_SPEED_LIMIT(device_id
+		<if test="maximum_speed_limit !=null and maximum_speed_limit !=''">,maximum_speed_limit</if>
+		<if test="minimum_speed_limit !=null and minimum_speed_limit !=''">,minimum_speed_limit</if>
+		)
+		values (#{pk_id}
+		<if test="maximum_speed_limit !=null and maximum_speed_limit !=''">,#{maximum_speed_limit}</if>
+		<if test="minimum_speed_limit !=null and minimum_speed_limit !=''">,#{minimum_speed_limit}</if>
+		)
+
+	</insert>
+
+	<!-- 更新测速参数 -->
+	<update id="updateDevSpeedLimit"
+		parameterType="java.util.HashMap">
+		update JCSJ_DEVICE_SPEED_LIMIT set device_id=#{pk_id}
+		<if test="maximum_speed_limit !=null and maximum_speed_limit !=''">,maximum_speed_limit=#{maximum_speed_limit}</if>
+		<if test="minimum_speed_limit !=null and minimum_speed_limit !=''">,minimum_speed_limit=#{minimum_speed_limit}</if>
+		where device_id=#{pk_id}
+	</update>
+	<!-- 添加抓拍违法行为 -->
+	<insert id="addDevOffeCate" parameterType="java.util.HashMap">
+		insert into JCSJ_DEVICE_ILLEGAL_ACT(device_id,fk_illegal_act_id)
+		SELECT A.*
+		FROM(
+		<foreach collection="list" item="id" index="index"
+			separator="UNION ALL">
+			SELECT
+			#{pk_id} device_id,
+			#{id} fk_illegal_act_id
+			FROM dual
+		</foreach>
+		)A
+	</insert>
+	<!-- 更新抓拍违法行为 -->
+	<insert id="updateDevOffeCate" parameterType="java.util.HashMap">
+		insert into JCSJ_DEVICE_ILLEGAL_ACT(device_id,fk_illegal_act_id)
+		SELECT A.*
+		FROM(
+		<foreach collection="list" item="id" index="index"
+			separator="UNION ALL">
+			SELECT
+			#{pk_id} device_id,
+			#{id} fk_illegal_act_id
+			FROM dual
+		</foreach>
+		)A
+	</insert>
+	<!-- 删除相关的抓拍违法行为 -->
+	<delete id="deleteDevOffeCate" parameterType="java.util.HashMap">
+		delete from
+		JCSJ_DEVICE_ILLEGAL_ACT where device_id=#{pk_id}
+	</delete>
+	<!-- 添加诱导屏参数信息 -->
+	<insert id="addDevLedParam" parameterType="java.util.HashMap">
+		insert into JCSJ_DEVICE_LED_PARAM(device_id
+		<if test="led_type_id !=null and led_type_id !=''">,led_type_id</if>
+		<if test="release_mode_id !=null and release_mode_id !=''">,release_mode_id</if>
+		<if test="height !=null and height !=''">,height</if>
+		<if test="wight !=null and wight !=''">,wight</if>
+		<if test="resolution !=null and resolution !=''">,resolution</if>
+		<if test="point_spacing_id !=null and point_spacing_id !=''">,point_spacing_id</if>
+		<if
+			test="display_performance_id !=null and display_performance_id !=''">,display_performance_id</if>
+		<if
+			test="image_distribution_id !=null and image_distribution_id !=''">,image_distribution_id</if>
+		<if  test="led_mode !=null and led_mode !=''">,led_mode</if>
+		<if  test="led_size !=null and led_size !=''">,led_size</if>
+		) values(#{pk_id}
+		<if test="led_type_id !=null and led_type_id !=''">,#{led_type_id}</if>
+		<if test="release_mode_id !=null and release_mode_id !=''">,#{release_mode_id}</if>
+		<if test="height !=null and height !=''">,#{height}</if>
+		<if test="wight !=null and wight !=''">,#{wight}</if>
+		<if test="resolution !=null and resolution !=''">,#{resolution}</if>
+		<if test="point_spacing_id !=null and point_spacing_id !=''">,#{point_spacing_id}</if>
+		<if
+			test="display_performance_id !=null and display_performance_id !=''">,#{display_performance_id}</if>
+		<if
+			test="image_distribution_id !=null and image_distribution_id !=''">,#{image_distribution_id}</if>
+				<if  test="led_mode !=null and led_mode !=''">,#{led_mode}</if>
+		<if  test="led_size !=null and led_size !=''">,#{led_size}</if>
+		)
+	</insert>
+	<!-- 根据设备ID对应的诱导屏类型查询诱导屏参数 -->
+	<select id="getDevRelationYDInfo"
+		resultType="com.cist.devRegister.model.DeviceLedParam">
+		select * from JCSJ_DEVICE_LED_PARAM where
+		device_id=#{pk_id}
+	</select>
+	<!-- 根据设备ID对应的诱导屏类型更新设备诱导屏参数 -->
+	<update id="updateDevRelationYDInfo">
+		update JCSJ_DEVICE_LED_PARAM set
+		device_id=#{pk_id}
+		<if test="led_type_id !=null and led_type_id !=''">,led_type_id=#{led_type_id}</if>
+		<if test="release_mode_id !=null and release_mode_id !=''">,release_mode_id=#{release_mode_id}</if>
+		<if test="height !=null and height !=''">,height=#{height}</if>
+		<if test="wight !=null and wight !=''">,wight=#{wight}</if>
+		<if test="resolution !=null and resolution !=''">,resolution=#{resolution}</if>
+		<if test="point_spacing_id !=null and point_spacing_id !=''">,point_spacing_id=#{point_spacing_id}</if>
+		<if
+			test="display_performance_id !=null and display_performance_id !=''">,display_performance_id=#{display_performance_id}</if>
+		<if
+			test="image_distribution_id !=null and image_distribution_id !=''">,image_distribution_id=#{image_distribution_id}</if>
+		<if
+			test="image_distribution_id !=null and image_distribution_id !=''">,image_distribution_id=#{image_distribution_id}</if>
+		<if test="led_mode !=null and led_mode !=''">,led_mode=#{led_mode}</if>
+			<if test="led_size !=null and led_size !=''">,led_size=#{led_size}</if>
+		where device_id=#{pk_id}
+	</update>
+	<!-- 分页查询设备List -->
+	<select id="SecurityByfk_dept_idTocode" parameterType="java.util.HashMap"
+		resultType="com.cist.devRegister.model.DeviceList">
+		select
+		pk_id,device_name,device_num,road_name,device_type_name,dept_name,validity_date
+		from VM_DEVICE v
+		where v.device_type_name  <![CDATA[!= ]]>
+		'卡口' and v.device_type_name  <![CDATA[!= ]]>
+		'区间测速'
+		<if test="fk_dept_id !=null and fk_dept_id !='' "> and v.fk_dept_id=#{fk_dept_id}</if>
+		<if test="create_time_start !=null and create_time_start !='' ">and v.enable_date &gt;= to_date(#{
+			create_time_start},'yyyy-mm-dd HH24:mi:ss')
+			and v.enable_date &lt;=
+			to_date(#{ create_time_end},'yyyy-mm-dd
+			HH24:mi:ss')
+		</if>
+		<if test="devName !=null and devName !='' ">and v.device_name like '%'||#{devName}||'%'</if>
+		<if test="road !=null and road !='' ">and v.belonged_road_id=#{road}</if>
+		<if test="crossroads.size() >0">
+			and v.belonged_road_id||'-'||v.kilometre_num in
+			<foreach collection="crossroads" item="item" index="index"
+				separator="," open="(" close=")">
+				#{item}
+			</foreach>
+		</if>
+		<if test="xzqh !=null and xzqh !='' ">and v.xzqh=#{xzqh}</if>
+		<if test="device_num !=null and device_num !='' ">and v.device_num=#{device_num}</if>
+		<if test="state !=-1 ">
+			<if test="state ==0 ">and v.ISDEVAUDIT=0</if>
+			<if test="state ==1 ">and v.ISDEVAUDIT=1</if>
+		</if>
+		<if test="kilometre_num !=null and kilometre_num !='' ">and v.kilometre_num=#{kilometre_num}</if>
+		<if test=" devType.size() >0  ">
+			and v.fk_device_type in
+			<foreach collection="devType" item="type" index="index"
+				separator="," open="(" close=")">
+				#{type}
+			</foreach>
+		</if>
+	</select>
+	<!-- 查询部门最上级 -->
+	<select id="queryDeptParent"
+		resultType="com.cist.devRegister.model.DeptTree">
+		select DEPT_PK,DEPT_NAME TITLE,DEPT_CODE KEY,DEPT_SUPERIOR
+		from
+		SYS_DEPART_INFO where DEPT_SUPERIOR is null
+	</select>
+	<!-- 根据部门上级查询下级 -->
+	<select id="queryDeptChildren"
+		resultType="com.cist.devRegister.model.DeptTree"
+		parameterType="java.lang.Integer">
+		select DEPT_PK,DEPT_NAME TITLE,DEPT_CODE
+		KEY,DEPT_SUPERIOR from
+		SYS_DEPART_INFO where DEPT_SUPERIOR=#{parentId}
+	</select>
+	<!-- 根据数据字典索引查询对应信息 -->
+	<select id="queryBaseDateByFct_Code"
+		resultType="com.cist.devRegister.util.TempModel">
+		select f.fc_pk pk,f.fc_code code,f.fc_name name from
+		SYS_FRM_CODE f join
+		SYS_FRM_CODE_TYPE t on f.FCT_CODE=t.FCT_CODE where
+		t.FCT_CODE=#{FCT_CODE} order by f.FC_NUM
+	</select>
+	<select id="queryDevType"
+		resultType="com.cist.devRegister.util.TempModel">
+
+		select f.fc_pk pk,f.fc_code code,f.fc_name name from
+		SYS_FRM_CODE f
+		join SYS_FRM_CODE_TYPE t on f.FCT_CODE=t.FCT_CODE where
+		t.FCT_CODE=#{FCT_CODE} and f.fc_code not in('KK','QJCS')
+
+		order by
+		f.FC_NUM
+	</select>
+	<!-- 查询道路List -->
+	<select id="queryRoadList"
+		resultType="com.cist.devRegister.util.TempModel" parameterType="java.util.HashMap">
+		select roim_pk pk,roim_code code,roim_name name,roim_type
+		type from
+		C_ROAD_ITEM 
+	</select>
+	<!-- 根据部门和行政区域获取道路list -->
+	<select id="queryRoadList1"
+		resultType="com.cist.devRegister.util.TempModel" parameterType="java.util.HashMap">
+		select roim_pk pk,roim_code code,roim_name name,roim_type
+		type from
+		C_ROAD_ITEM  
+		<where>
+		<if test="dept_code !=null and dept_code !='' ">
+			dept_code=#{dept_code}
+		</if>
+		<if test="tbek_code !=null and tbek_code !='' ">
+			and instr(tbek_code,#{tbek_code})>0
+		</if>
+		</where>
+	</select>
+	<!-- 查询抓拍的违法行为 -->
+	<select id="queryOffenceList"
+		resultType="com.cist.devRegister.util.TempModel">
+		select TBOC_PK pk,TBOC_CODE code,TBOC_NAME name from
+		TBL_OFFE_CATE
+	</select>
+	<!-- 根据设备ID获取具备功能的信息 -->
+	<select id="getBaseinfo"
+		resultType="com.cist.devRegister.util.TempModel"
+		parameterType="java.util.HashMap">
+		select c.fc_pk pk,c.fc_code code,c.fc_name name from
+		JCSJ_DEVICE_HAVE_FUNCTION f join SYS_FRM_CODE c on
+		f.fk_have_function=c.fc_pk where f.device_id=#{pk_id}
+	</select>
+	<!-- 根据设备ID获取测速参数信息 -->
+	<select id="getDeviceRelationCSInfo"
+		resultType="com.cist.devRegister.model.DeviceSpeedLimit"
+		parameterType="java.util.HashMap">
+		select * from JCSJ_DEVICE_SPEED_LIMIT where
+		device_id=#{pk_id}
+	</select>
+	<!-- 根据设备ID获取违法抓拍的信息 -->
+	<select id="getDevRelationWFZPInfo"
+		resultType="com.cist.devRegister.model.DeviceIllegalAct"
+		parameterType="java.util.HashMap">
+		select * from JCSJ_DEVICE_ILLEGAL_ACT where
+		device_id=#{pk_id}
+	</select>
+	<!-- 根据设备ID获取事件检测的信息 -->
+	<select id="getDevRelationSJJCInfo"
+		resultType="com.cist.devRegister.model.DeviceEventAct"
+		parameterType="java.util.HashMap">
+		select * from JCSJ_DEVICE_EVENT_ACT where
+		device_id=#{pk_id}
+	</select>
+	<!-- 添加设备类型为信号灯的信号灯参数信息 -->
+	<insert id="addDevRelationXHDInfo"
+		parameterType="java.util.HashMap">
+		insert into JCSJ_DEVICE_SIGNAL_PARAM (device_id
+		<if test="has_network !=null and has_network !=''">,has_network</if>
+		<if
+			test="access_command_center !=null and access_command_center !=''">,access_command_center</if>
+		)values(#{pk_id}
+		<if test="has_network !=null and has_network !=''">,#{has_network}</if>
+		<if
+			test="access_command_center !=null and access_command_center !=''">,#{access_command_center}</if>
+		)
+	</insert>
+	<!-- 获取设备类型为信号灯的信号灯参数信息 -->
+	<select id="getDevRelationXHDInfo"
+		resultType="com.cist.devRegister.model.DeviceSignalParam"
+		parameterType="java.util.HashMap">
+		select * from JCSJ_DEVICE_SIGNAL_PARAM where
+		device_id=#{pk_id}
+	</select>
+	<update id="updateDevRelationXHDInfo"
+		parameterType="java.util.HashMap">
+		update JCSJ_DEVICE_SIGNAL_PARAM set device_id=#{pk_id}
+		<if test="has_network !=null and has_network !=''">,has_network=#{has_network}</if>
+		<if
+			test="access_command_center !=null and access_command_center !=''">,access_command_center=#{access_command_center}</if>
+		where device_id=#{pk_id}
+	</update>
+	<!-- 根据设备ID查询设备审核信息 -->
+	<select id="getDeviceAuditProcessByDevId"
+		parameterType="java.util.HashMap"
+		resultType="com.cist.devRegister.model.DeviceAuditProcess">
+		select *
+		from JCSJ_DEVICE_AUDIT_PROCESS where
+		device_id=#{pk_id}
+	</select>
+	<!-- 审核设备 -->
+	<insert id="auditDev" parameterType="java.util.HashMap">
+		insert into
+		JCSJ_DEVICE_AUDIT_PROCESS(device_id,check_person_id,check_person_dept_id,check_time
+		,check_status
+		<if test="uncheck_reason !=null and uncheck_reason !=''">,uncheck_reason</if>
+		) values(
+		#{pk_id},#{check_person_id},#{check_person_dept_id},
+		to_date(#{check_time},'yyyy-mm-dd HH24:mi:ss')
+		,#{check_status}
+		<if test="uncheck_reason !=null and uncheck_reason !=''">,#{uncheck_reason}</if>
+		)
+	</insert>
+	<!-- 根据部门ID获取部门名字 -->
+	<select id="getDeptName" parameterType="java.util.HashMap"
+		resultType="com.cist.devRegister.util.TempModel">
+
+		select dept_pk pk , dept_name name ,dept_code code from
+		SYS_DEPART_INFO
+		where dept_code=#{check_person_dept_id}
+	</select>
+	<!-- 根据创建人ID获取创建人部门 -->
+	<select id="getCreatePersonDeptName"
+		parameterType="java.util.HashMap"
+		resultType="com.cist.devRegister.util.TempModel">
+		select p.sypi_dept pk,d.dept_name name,d.dept_code code from
+		sys_police_info p left join sys_depart_info d on p.sypi_dept=d.dept_pk
+		where p.sypi_pk=#{create_person}
+		<!-- select dept_pk pk , dept_name name ,dept_code code from SYS_DEPART_INFO 
+			where dept_code=#{check_person_dept_id} -->
+	</select>
+	<!--获取KK车道可关联的设备List -->
+	<select id="queryDeviceInfo"
+		resultType="com.cist.devRegister.util.TempModel" parameterType="java.util.HashMap">
+		select pk_id pk,device_name name,device_num code from
+		JCSJ_DEVICE where fk_device_type='KKSB' and belonged_road_id=#{belonged_road_id} and kilometre_num=#{kilometre_num}
+		<if test="meter_num !=null and meter_num !=''">
+		and meter_num=#{meter_num}
+		</if>
+	</select>
+
+	<!-- 添加卡口参数 -->
+	<insert id="addDeviceBayonetParam"
+		parameterType="java.util.HashMap">
+		insert into JCSJ_DEVICE_BAYONET_PARAM(
+		device_id
+		<if test="bayonet_type !=null and bayonet_type !=''">,bayonet_type</if>
+		<if test="bayonet_nature !=null and bayonet_nature !=''">,bayonet_nature</if>
+		<if test="sxfxbm !=null and sxfxbm !=''">,sxfxbm</if>
+		<if test="sxfxjclx !=null and sxfxjclx !=''">,sxfxjclx</if>
+		<if test="xxfxbm !=null and xxfxbm !=''">,xxfxbm</if>
+		<if test="xxfxjclx !=null and xxfxjclx !=''">,xxfxjclx</if>
+		) values(
+		#{pk_id}
+		<if test="bayonet_type !=null and bayonet_type !=''">,#{bayonet_type}</if>
+		<if test="bayonet_nature !=null and bayonet_nature !=''">,#{bayonet_nature}</if>
+		<if test="sxfxbm !=null and sxfxbm !=''">,#{sxfxbm}</if>
+		<if test="sxfxjclx !=null and sxfxjclx !=''">,#{sxfxjclx}</if>
+		<if test="xxfxbm !=null and xxfxbm !=''">,#{xxfxbm}</if>
+		<if test="xxfxjclx !=null and xxfxjclx !=''">,#{xxfxjclx}</if>
+		)
+	</insert>
+
+	<!-- <insert id="addDeviceBayonetLane" parameterType="java.util.HashMap" 
+		> insert into JCSJ_DEVICE_BAYONET_LANE(pk_id,device_id,lane_name, lane_alias_name,lane_type,in_out_type,speed_limit_big_car,speed_limit_small_car,speed_limit_minimum) 
+		SELECT DEV_CARD_ROAD_SEQ.nextval as pk_id,A.* FROM( <foreach collection="list" 
+		item="item" index="index" separator="UNION ALL"> SELECT #{device_id} device_id, 
+		#{item.lane_name} lane_name, #{item.lane_alias_name} lane_alias_name, #{item.lane_type} 
+		lane_type, #{item.in_out_type} in_out_type, #{item.speed_limit_big_car} speed_limit_big_car, 
+		#{item.speed_limit_small_car} speed_limit_small_car, #{item.speed_limit_minimum} 
+		speed_limit_minimum FROM dual </foreach> )A </insert> -->
+	<!-- 添加车道信息 -->
+	<insert id="addDeviceBayonetLane1"
+		parameterType="java.util.HashMap">
+		<selectKey resultType="java.lang.Long" order="BEFORE"
+			keyProperty="pk_id">
+			SELECT DEV_CARD_ROAD_SEQ.nextval as pk_id from DUAL
+		</selectKey>
+		insert into JCSJ_DEVICE_BAYONET_LANE(pk_id,device_id,lane_name
+		<if test="lane_alias_name !=null and lane_alias_name !=''">,lane_alias_name</if>
+		<if test="lane_type !=null and lane_type !=''">,lane_type</if>
+		<if test="in_out_type !=null and in_out_type !=''">,in_out_type</if>
+		<if test="speed_limit_big_car !=null and speed_limit_big_car !=''">,speed_limit_big_car</if>
+		<if
+			test="speed_limit_small_car !=null and speed_limit_small_car !=''">,speed_limit_small_car</if>
+		<if test="speed_limit_minimum !=null and speed_limit_minimum !=''">,speed_limit_minimum</if>
+		<if test="direction_type !=null and direction_type !=''">,direction_type</if>
+		)
+		values(#{pk_id},#{device_id},#{lane_name}
+		<if test="lane_alias_name !=null and lane_alias_name !=''">,#{lane_alias_name}</if>
+		<if test="lane_type !=null and lane_type !=''">,#{lane_type}</if>
+		<if test="in_out_type !=null and in_out_type !=''">,#{in_out_type}</if>
+		<if test="speed_limit_big_car !=null and speed_limit_big_car !=''">,#{speed_limit_big_car}</if>
+		<if
+			test="speed_limit_small_car !=null and speed_limit_small_car !=''">,#{speed_limit_small_car}</if>
+		<if test="speed_limit_minimum !=null and speed_limit_minimum !=''">,#{speed_limit_minimum}</if>
+		<if test="direction_type !=null and direction_type !=''">,#{direction_type}</if>
+		)
+	</insert>
+	<!-- 添加卡口某一车道关联设备Id -->
+	<insert id="addDeviceBayonetRelevance"
+		parameterType="java.util.HashMap">
+
+		insert into
+		jcsj_device_bayonet_relevance(device_id,lane_id,relevance_device_id)
+		SELECT A.*
+		FROM(
+		<foreach collection="devList" item="item" index="index"
+			separator="UNION ALL">
+			SELECT
+			#{device_id} device_id,
+			#{pk_id} lane_id,
+			#{item}
+			relevance_device_id
+			FROM dual
+		</foreach>
+		)A
+	</insert>
+	<!-- <select id="getKKParamInfo" resultType="com.cist.devRegister.model.DeviceBayonetInfo" 
+		parameterType="java.util.HashMap"> select * from VW_DEVICE_BAYONET v where 
+		v.DEVICE_ID=#{pk_id} </select> -->
+	<!-- 根据设备Id获取车道信息 -->
+	<select id="getCardRoadInfobyDevId"
+		resultType="com.cist.devRegister.model.DeviceBayonetLane"
+		parameterType="java.util.HashMap">
+		select * from JCSJ_DEVICE_BAYONET_LANE b where
+		b.DEVICE_ID=#{pk_id}
+	</select>
+	<!-- 根据设备ID和车道信息获取关联设备IDs -->
+	<select id="getConnectDevIds"
+		resultType="com.cist.devRegister.model.DeviceBayonetRelevance"
+		parameterType="java.util.HashMap">
+		select * from JCSJ_DEVICE_BAYONET_RELEVANCE where
+		device_id=#{device_id} and lane_id=#{lane_id}
+	</select>
+	<!-- 根据设备ID获取卡口参数信息 -->
+	<select id="getKKDevParamInfo"
+		resultType="com.cist.devRegister.model.DeviceBayonetParam"
+		parameterType="java.util.HashMap">
+		select * from JCSJ_DEVICE_BAYONET_PARAM where
+		device_id=#{pk_id}  
+	</select>
+	<!-- 根据设备ID删除与卡口关联的车道信息 -->
+	<delete id="deleteDevConnectCardRoad"
+		parameterType="java.util.HashMap">
+		DELETE FROM JCSJ_DEVICE_BAYONET_LANE P where
+		P.DEVICE_ID=#{pk_id}
+	</delete>
+	<!-- 根据设备ID删除与卡口关联的设备信息 -->
+	<delete id="deleteCardRoadConnectDev"
+		parameterType="java.util.HashMap">
+		DELETE FROM JCSJ_DEVICE_BAYONET_PARAM P where
+		P.DEVICE_ID=#{pk_id}
+	</delete>
+	<!-- 根据设备ID删除卡口相关信息 -->
+	<delete id="deleteDeviceKKParam"
+		parameterType="java.util.HashMap">
+		DELETE FROM JCSJ_DEVICE_BAYONET_RELEVANCE P where
+		P.DEVICE_ID=#{pk_id}
+	</delete>
+	<!-- <update id="updateDeviceKKParam" parameterType="java.util.HashMap"> 
+		update JCSJ_DEVICE_BAYONET_PARAM set device_id=#{pk_id} <if test="bayonet_type.code 
+		!=null and bayonet_type.code !=''">,bayonet_type=#{bayonet_type.code}</if> 
+		<if test="bayonet_nature !=null and bayonet_nature !=''">,bayonet_nature=#{bayonet_nature}</if> 
+		where device_id=#{pk_id} </update> -->
+	<!-- <update id="updateDeviceBayonetLane" parameterType="java.util.HashMap"> 
+		update JCSJ_DEVICE_BAYONET_LANE set(pk_id=#{pk_id},device_id=#{device_id},lane_name=#{lane_name} 
+		<if test="lane_alias_name !=null and lane_alias_name !=''">,lane_alias_name=#{lane_alias_name}</if> 
+		<if test="lane_type !=null and lane_type !=''">,lane_type=#{lane_type}</if> 
+		<if test="in_out_type !=null and in_out_type !=''">,speed_limit_big_car=#{in_out_type}</if> 
+		<if test="speed_limit_big_car !=null and speed_limit_big_car !=''">,speed_limit_big_car=#{speed_limit_big_car}</if> 
+		<if test="speed_limit_small_car !=null and speed_limit_small_car !=''">,speed_limit_small_car=#{speed_limit_small_car}</if> 
+		<if test="speed_limit_minimum !=null and speed_limit_minimum !=''">,speed_limit_minimum=#{speed_limit_minimum}</if> 
+		<if test="direction_type !=null and direction_type !=''">,direction_type=#{direction_type}</if> 
+		</update> -->
+
+	<!-- 根据设备ID删除基础设备备案信息 -->
+	<delete id="deleteDeviceInfo" parameterType="java.util.HashMap">
+		delete from
+		JCSJ_DEVICE where pk_id=#{pk_id}
+	</delete>
+	<!--根据设备ID删除设备厂商信息 -->
+	<delete id="deleteDevMaintenance"
+		parameterType="java.util.HashMap">
+		delete from JCSJ_DEVICE_MAINTENANCE where
+		device_id=#{pk_id}
+	</delete>
+	<!--根据<监控>设备ID删除摄像头参数信息 -->
+	<delete id="deleteCameraParam" parameterType="java.util.HashMap">
+		delete from
+		JCSJ_DEVICE_CAMERA_PARAM where device_id=#{pk_id}
+	</delete>
+	<!--根据设备ID删除测速参数信息 -->
+	<delete id="deleteCSParam" parameterType="java.util.HashMap">
+		delete from
+		JCSJ_DEVICE_SPEED_LIMIT where device_id=#{pk_id}
+	</delete>
+	<!--根据设备ID删除违法抓拍参数信息 -->
+	<delete id="deleteWFZPParam" parameterType="java.util.HashMap">
+		delete from
+		JCSJ_DEVICE_ILLEGAL_ACT where device_id=#{pk_id}
+	</delete>
+	<!--根据设备ID删除诱导信息 -->
+	<delete id="deleteDevRelationYDInfo"
+		parameterType="java.util.HashMap">
+		delete from JCSJ_DEVICE_LED_PARAM where
+		device_id=#{pk_id}
+	</delete>
+	<!--根据设备ID删除信号灯信息 -->
+	<delete id="deleteDevRelationXHDInfo"
+		parameterType="java.util.HashMap">
+		delete from JCSJ_DEVICE_SIGNAL_PARAM where
+		device_id=#{pk_id}
+	</delete>
+	<!--根据设备ID删除信号灯信息 -->
+	<select id="getDevice"
+		resultType="com.cist.devRegister.model.Device"
+		parameterType="java.util.HashMap">
+		select * from JCSJ_DEVICE where pk_id=#{pk_id}
+	</select>
+	<!-- 删除对设备审核的记录 -->
+	<delete id="deleteDeviceAuditProcess"
+		parameterType="java.util.HashMap">
+		delete from JCSJ_DEVICE_AUDIT_PROCESS where
+		device_id=#{pk_id}
+	</delete>
+	<!-- 根据设备类型CODE获取设备类型INFO -->
+	<select id="getDeviceType" parameterType="java.util.HashMap"
+		resultType="com.cist.devRegister.util.TempModel">
+		select f.fc_pk pk,f.fc_code code,f.fc_name name from
+		SYS_FRM_CODE f join SYS_FRM_CODE_TYPE t on f.FCT_CODE=t.FCT_CODE where
+		t.FCT_CODE='M001' and f.fc_code=#{fc_code}
+	</select>
+	<!-- 添加流量监测关联 -->
+	<insert id="addDevFlowMonitor" parameterType="java.util.HashMap">
+		insert into JCSJ_DEVICE_FLOW_ACT(device_id,fk_flow_act_id)
+		SELECT A.*
+		FROM(
+		<foreach collection="list" item="id" index="index"
+			separator="UNION ALL">
+			SELECT
+			#{pk_id} device_id,
+			#{id} fk_flow_act_id
+			FROM dual
+		</foreach>
+		)A
+	</insert>
+	<!-- 根据设备ID获取流量检测的信息 -->
+	<select id="getDevRelationLLJCInfo"
+		resultType="com.cist.devRegister.model.DeviceFlowAct"
+		parameterType="java.util.HashMap">
+		select * from JCSJ_DEVICE_FLOW_ACT where
+		device_id=#{pk_id}
+	</select>
+	<select id="queryImminentExpiryDevList"
+		parameterType="java.util.HashMap"
+		resultType="com.cist.devRegister.model.Device">
+		select
+		TO_NUMBER(TO_DATE(to_char(d.validity_date,'YYYY-MM-DD
+		HH24:MI:SS'),'YYYY-MM-DD HH24:MI:SS') - sysDate) AS TT,
+		TRUNC(TO_NUMBER(TO_DATE(to_char(d.validity_date,'YYYY-MM-DD
+		HH24:MI:SS'),'YYYY-MM-DD HH24:MI:SS') - sysDate)) AS TD ,d.*,
+		p.device_id,p.check_person_id,p.check_person_dept_id,p.check_time,p.check_status,p.uncheck_reason,
+		m.device_manufacturer,m.device_brand,m.device_model,m.ip_address,m.port,m.channel,m.access_address,m.access_user_name,m.access_password,m.contacts_num
+		maintenance_contacts_num,m.contacts_person maintenance_contacts_person
+		from JCSJ_DEVICE d left join JCSJ_DEVICE_MAINTENANCE m on
+		d.pk_id=m.device_id
+		left join JCSJ_DEVICE_AUDIT_PROCESS p on
+		d.pk_id=p.device_id
+
+		where 1=1 and d.fk_device_type  <![CDATA[!= ]]>'KK'
+		<if test="monthNumber !=null and monthNumber !=''">and
+			d.validity_date &lt;=add_months(SYSDATE,#{monthNumber})
+		</if>
+		<if test="state==1">and d.validity_date&gt;=SYSDATE</if>
+		<if test="state==0">and d.validity_date&lt;SYSDATE</if>
+	</select>
+	<select id="searchRoadSegite" parameterType="java.util.HashMap"
+		resultType="com.cist.devRegister.util.TempModel">
+		select s.PK pk,s.LKDM code,s.LKMC name from C_ROAD_SEGITEM
+		s where s.DLDM=#{code}
+	</select>
+	<select id="kerscodexia" parameterType="java.util.HashMap"
+		resultType="com.cist.devRegister.model.Ckreiscode">
+		select * from C_KREIS_CODE t
+		<where>
+			<if test="tbek_parent !=null and tbek_parent !=''">
+				t.tbek_parent=#{tbek_parent}
+			</if>
+			<if test="tbek_parent ==null">
+				t.TBEK_PARENT is null
+			</if>
+		</where>
+	</select>
+	<!-- 行政区划Tree查询 -->
+	<select id="queryAdministrativeAreas"
+		parameterType="java.util.HashMap"
+		resultType="com.cist.devRegister.model.AdministrativeAreasTree">
+		select t.tbek_pk pk,t.tbek_code key,t.tbek_name title,t.tbek_parent
+		parent_pk from C_KREIS_CODE t
+		<where>
+			<if test="parent_pk !=null and parent_pk !=''">
+				t.tbek_parent=#{parent_pk}
+			</if>
+			<if test="parent_pk ==null">
+				t.TBEK_PARENT is null
+			</if>
+		</where>
+	</select>
+	<!-- 添加摄像头国标参数 -->
+	<insert id="addDeviceCameraGb28181"
+		parameterType="java.util.HashMap">
+		<!-- pk_id 为添加的设备ID -->
+		insert into JCSJ_DEVICE_CAMERA_GB28181
+		values(#{pk_id},#{device_gb_serial}，#{device_gb_code}，#{device_gb_channel}，#{device_gb_ptz})
+	</insert>
+	<select id="getDevRelationSPInfo"
+		parameterType="java.util.HashMap"
+		resultType="com.cist.devRegister.model.DeviceCameraGb28181">
+		select * from JCSJ_DEVICE_CAMERA_GB28181 where
+		device_id=#{pk_id}
+
+	</select>
+	<!--根据设备ID删除摄像头国标参数 -->
+	<delete id="deleteSPParam" parameterType="java.util.HashMap">
+		delete from
+		JCSJ_DEVICE_CAMERA_GB28181 where device_id=#{pk_id}
+	</delete>
+	<!-- 查询所有道路 -->
+	<select id="queryAllRoad"
+		resultType="com.cist.devRegister.model.RoadTree" parameterType="java.util.HashMap">
+		select roim_code key,roim_name title,roim_type road_type
+		from C_ROAD_ITEM  where 1=1
+		<if test="tbek_code !=null and tbek_code !=''">
+		and instr(tbek_code,#{tbek_code})>0
+		</if>
+		<if test="dept_code !=null and dept_code !=''">
+		and dept_code=#{dept_code}
+		</if>
+	</select>
+	<!-- 根据道路code查询路口路段 -->
+	<select id="queryRoadSegiteByRoadCode"
+		parameterType="java.util.HashMap"
+		resultType="com.cist.devRegister.model.RoadTree">
+		select s.DLDM||'-'||s.LKDM key,s.LKMC title from C_ROAD_SEGITEM
+		s where s.DLDM=#{code}
+	</select>
+		<!-- 行政区划Tree查询 -->
+	<select id="queryAdministrativeAreas1"
+		parameterType="java.util.HashMap"
+		resultType="com.cist.devRegister.model.RoadTree">
+		select t.tbek_pk pk,t.tbek_code key,t.tbek_name title,t.tbek_parent
+		parent_pk from C_KREIS_CODE t  where 1=1
+			
+			<if test="tbek_code !=null and tbek_code !=''">
+				and t.tbek_code=#{tbek_code}
+			</if>
+			<if test="tbek_code ==null">
+				<if test="parent_pk !=null and parent_pk !=''">
+				and t.tbek_parent=#{parent_pk}
+			</if>
+			<if test="parent_pk ==null">
+				and t.TBEK_PARENT is null
+			</if>
+			</if>
+	</select>
+	<select id="queryExistRoad" parameterType="java.util.HashMap"
+		resultType="java.lang.Long">
+		   select count(d.pk_id) count from jcsj_device d where d.belonged_road_id=#{rodCode} 
+		   <if test="deviceFlag != 'all'">
+		     <if test="deviceFlag =='device'">
+		     and fk_device_type not in ('KK','QJCS')
+		   </if>
+		     <if test="deviceFlag !='device'">
+		     and fk_device_type =#{deviceFlag}
+		   </if>
+		   </if>
+		 
+		 
+		</select>
+</mapper>
+	

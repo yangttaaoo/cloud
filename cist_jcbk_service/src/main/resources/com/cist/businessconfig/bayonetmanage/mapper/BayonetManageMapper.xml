@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.cist.businessconfig.bayonetmanage.mapper.BayonetManageMapper" >
 	<!-- 查询单位 -->
-	<select id="getDeptNode" resultType="com.cist.businessconfig.bayonetmanage.model.BayonetTree">
+	<select id="getDeptNode" resultType="com.cist.businessconfig.bayonetmanage.model.NzTreeNode">
 			SELECT dept_code key,dept_name title FROM  SYS_DEPART_INFO
 			<!-- <where>
 				<if test="_parameter  == null or _parameter  == ''">
@@ -15,9 +15,9 @@
 	</select>
   	<!-- 查询卡口 -->
   	<select id="getBayonetNode" parameterType="java.lang.String"
-  	resultType="com.cist.businessconfig.bayonetmanage.model.BayonetTree">
-  			select device_name title,pk_id key from JCSJ_DEVICE t
-  			 where fk_dept_id = #{deptId} and fk_device_type = 'KK'
+  	resultType="com.cist.businessconfig.bayonetmanage.model.NzTreeNode">
+  		select device_name title,device_name,pk_id key,device_num,road_name,longitude,latitude,fk_dept_id from JCSJ_DEVICE t
+         where  fk_dept_id = #{deptId}  and fk_device_type = 'KK'
   	</select>
    	<!-- 查询卡口性质 -->
    	<select id="getNatureNode" parameterType="java.lang.String"
@@ -50,12 +50,27 @@
 	</select>
 	<select id="querykkinfo" parameterType="java.lang.String"
 	resultType="com.cist.businessconfig.bayonetmanage.model.Jcsj_device_bayonet_param">
-		select * from jcsj_device_bayonet_param where device_id = #{device_id}
-		and bayonet_nature is not null
+		select p.* from  jcsj_device_bayonet_param  p  where p.device_id = #{device_id}
+		and p.bayonet_nature is not null
 	</select>
+	<select id="queryBayonetArea" resultType="com.cist.businessconfig.bayonetmanage.model.BayonetArea" parameterType="java.util.HashMap">
+	select a.pk,a.kkbh,a.bkkk,a.qypk from JCBK_BAYONET_AREA a  where a.bkkk=#{bkkk}
+	</select>
+	<select id="queryBayonetDev" resultType="com.cist.businessconfig.bayonetmanage.model.BayonetDev" parameterType="java.util.HashMap">
+	select a.pk,a.bkkk,a.sbbh from JCBK_BAYONET_DEV a  where a.bkkk=#{bkkk}
+	</select>
+	
+	<resultMap type="com.cist.businessconfig.bayonetmanage.model.Jcbk_control_bayonet" id="bayonetinfo" autoMapping="true">
+		<id property="pk" column="pk"></id>
+	<collection property="bayonetAreaList" ofType="com.cist.businessconfig.bayonetmanage.model.BayonetArea" autoMapping="true" column="{bkkk=pk}" select="queryBayonetArea">
+	</collection>
+	<collection property="bayonetDevList" ofType="com.cist.businessconfig.bayonetmanage.model.BayonetDev" autoMapping="true" column="{bkkk=pk}" select="queryBayonetDev">
+	</collection>
+	</resultMap>
+	
 	<!-- 查询车辆布控卡口 -->
 	<select id="querybayonetinfo" parameterType="java.util.HashMap"
-	resultType="com.cist.businessconfig.bayonetmanage.model.Jcbk_control_bayonet">
+	resultMap="bayonetinfo">
 		select t.*,(select dept_name from sys_depart_info where dept_code = t.glbm)glbm_name,
 		(case when fxlx='1' then '上行('||(select sxfxbm from jcsj_device b left join jcsj_device_bayonet_param d on d.device_id=b.pk_id
 where b.device_num = t.kkbh
@@ -220,4 +235,44 @@ where b.device_num = t.kkbh
 				</trim>
 				where pk=#{pk}
 	</update>
+	<!--批量插入与布控卡口关联的拦截区域 -->
+	<insert id="addBayonetArea" parameterType="java.util.HashMap">
+	insert into  JCBK_BAYONET_AREA(pk,kkbh,bkkk,qypk)
+	select SEQ_JCBK_BAYONET_AREA.nextval,A.* from(
+	 <foreach collection="bayonetAreaList" item="item" index="index"   separator="union all">
+	 select 
+	 #{kkbh} kkbh,
+	 #{bayonetid} bkkk,
+	 #{item.qypk} qypk
+	  from dual
+	 </foreach>
+	)A
+	</insert>
+	<!--批量插入与布控卡口关联的设备 -->
+	<insert id="addBayonetDev" parameterType="java.util.HashMap">
+	insert into  JCBK_BAYONET_DEV(pk,bkkk,sbbh)
+	select SEQ_JCBK_BAYONET_DEV.nextval,A.* from(
+	 <foreach collection="bayonetDevList" item="item" index="index"   separator="union all">
+	 select 
+	 #{bayonetid} bkkk,
+	 #{item.sbbh} sbbh
+	  from dual
+	 </foreach>
+	)A
+	</insert>
+	
+	<delete id="delBayonetArea" parameterType="java.util.HashMap" >
+	delete from JCBK_BAYONET_AREA a where a.bkkk=#{pk}
+	</delete>
+	<delete id="delBayonetDev" parameterType="java.util.HashMap" >
+	delete from JCBK_BAYONET_DEV d where d.bkkk=#{pk}
+	</delete>
+	
+	<select  id="queryBayonetLane" resultType="com.cist.businessconfig.bayonetmanage.model.DeviceBayonetLane" parameterType="java.util.HashMap">
+	select b.device_id,b.pk_id from JCSJ_DEVICE_BAYONET_LANE b where b.device_id=#{device_id}  and  b.direction_type=#{direction_type}
+	</select>
+	
+	<select  id="queryBayonetLaneConnectDev" resultType="java.lang.String" parameterType="com.cist.businessconfig.bayonetmanage.model.DeviceBayonetLane">
+	select d.direction as connectDevDirection from jcsj_device d where d.device_num in (select r.relevance_device_id from JCSJ_DEVICE_BAYONET_RELEVANCE r where r.device_id=#{device_id} and r.lane_id=#{pk_id})
+	</select>
 </mapper>

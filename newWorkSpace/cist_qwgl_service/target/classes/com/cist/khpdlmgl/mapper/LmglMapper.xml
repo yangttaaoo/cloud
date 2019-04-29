@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cist.khpdlmgl.mapper.LmglMapper">
+<!-- 查询数据 -->
+<select id="selectData" resultType="com.cist.khpdlmgl.model.LmglTarget"
+parameterType="java.util.HashMap">
+  select * from QW_APPRAISE_TOPIC 
+  <where>
+    <if test="topic_name!=null and topic_name!=''">
+        topic_name like '%'||#{topic_name}||'%'
+    </if>
+    <if test="enabled_state!=null and enabled_state!=''">
+     and enabled_state=#{enabled_state}
+    </if>
+  </where>
+</select>
+  <!-- 增加考核栏目-->
+  <insert id="addData" parameterType="java.util.HashMap"  >
+	insert into QW_APPRAISE_TOPIC
+		    (pk_id,
+		    topic_name,
+		    default_value,
+		    topic_explain,
+		    fk_dept_id,
+		    create_person_id,
+		    create_time,
+		    enabled_state
+		    )
+		values(   
+          cistsys.SEQ_TXZ_PERMIT.nextval,
+          #{topic_name},
+          #{default_value},
+          #{topic_explain,jdbcType=VARCHAR},
+          #{fk_dept_id},
+          #{create_person_id},
+           sysdate,
+           '1'
+          ) 
+  </insert>
+  
+  <!-- 更新单位勤务考核 -->
+  <update id="updateData" parameterType="java.util.HashMap">
+    update QW_APPRAISE_TOPIC
+      set
+      topic_name=#{topic_name},
+      topic_explain=#{topic_explain},
+      default_value=#{default_value}
+      where pk_id=#{pk_id}  
+    </update>
+    
+     <!-- 批量删除 -->
+	<delete id="deleteData">
+		delete FROM QW_APPRAISE_TOPIC  
+		WHERE pk_id in
+		<foreach item="pk" collection="array" open="(" separator="," close=")">
+            #{pk}
+        </foreach>  
+	</delete> 
+	
+	  <!-- 删除 -->
+	<delete id="deletOneData"  parameterType="java.util.HashMap" >
+		delete FROM QW_APPRAISE_TOPIC  
+		WHERE pk_id=#{pk}
+	</delete>
+    </mapper>

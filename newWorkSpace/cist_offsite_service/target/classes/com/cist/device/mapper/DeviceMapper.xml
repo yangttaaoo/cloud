@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cist.device.mapper.DeviceMapper" >
+
+   <select id="querylist" resultType="com.cist.device.model.Sys_device_grouping">
+   select * from cistsys.TBL_DEVGROUP_INFO t
+   </select>
+   
+   <select id="querypolpageList" resultType="com.cist.device.model.Sys_device_grouping" parameterType="java.util.HashMap">
+   select distinct s.sypi_name,s.sypi_code,s.sypi_dept,t.sypi_pk from TBL_USER_DEV t,sys_police_info s	
+    <where>
+	    t.sypi_pk = s.sypi_pk
+	    <if test="sypi_code !=null and sypi_code !=''">
+	    and s.sypi_code = #{sypi_code}
+	    </if>
+	    <if test="sypi_name !=null and sypi_name !=''" >
+	    and s.sypi_name LIKE '%'||#{sypi_name}||'%'
+	    </if>
+	    </where>
+   </select>
+   
+   <select id="querydevicegro" resultType="com.cist.device.model.Sys_device_grouping" parameterType="java.util.HashMap">
+   select * from cistsys.TBL_DEVGROUP_INFO t where pk = #{pk}
+   </select>
+   
+   <select id="querydept"  resultType="com.cist.device.model.Sys_device_grouping" parameterType="java.lang.String">
+   select  t.tbei_name  from vw_dev_info t where t.tbei_code =  #{groud_dev}
+   </select>
+   <select id="querydevpol"  resultType="com.cist.device.model.Sys_device_grouping" parameterType="java.util.HashMap">
+    select t.*,c.DEPT_NAME from sys_police_info t,vw_dept_list c  
+     <where>
+      t.sypi_dept = c.DEPT_PK
+	    <if test="sypi_pk !=null and sypi_pk !=''">
+	    and t.sypi_pk = #{sypi_pk}
+	    </if>
+      </where>
+   </select>
+   
+   <select id="querydev"  resultType="com.cist.device.model.Sys_device_grouping">
+   select t.tbei_code,t.tbei_name,t.tbec_dept_id from vw_dev_info t
+   </select>
+   
+   <select id="querypolice"  resultType="com.cist.device.model.Sys_device_grouping">
+   select t.sypi_name,t.sypi_dept,t.syai_pk from vw_account_info t
+   </select>
+   
+   <insert id="addDevInfo" parameterType="java.util.HashMap">
+	   INSERT INTO TBL_DEVGROUP_INFO
+            (
+             pk,
+             groud_code,
+             groud_name,
+             groud_dev)
+       VALUES (
+       		cistsys.SEQ_DEVICE_GROUPING.nextval,
+            #{groud_code,jdbcType=VARCHAR},
+        	#{groud_name,jdbcType=VARCHAR},
+        	#{groud_dev,jdbcType=VARCHAR})
+	</insert>
+	
+	  <insert id="addDevGroud" parameterType="java.util.HashMap">
+	   INSERT INTO TBL_DEV_GROUP
+            (
+             GROUD_CODE,
+             tbei_code)
+       VALUES (
+            #{groud_code,jdbcType=VARCHAR},
+        	#{tbei_code,jdbcType=VARCHAR})
+	</insert>
+	
+	<insert id="addPolGroud" parameterType="java.util.HashMap">
+	   INSERT INTO TBL_USER_DEV
+            (
+             TBEI_CODE,
+             sypi_pk)
+       VALUES (
+            #{tbei_code,jdbcType=VARCHAR},
+        	#{sypi_pk,jdbcType=VARCHAR})
+	</insert>
+	
+	<delete id="delPol" parameterType="java.util.HashMap">
+		DELETE FROM TBL_USER_DEV WHERE sypi_pk = #{sypi_pk}
+	</delete>
+	
+	<delete id="delpolall" parameterType="java.util.List">
+		DELETE FROM TBL_USER_DEV WHERE sypi_pk in 
+		<foreach collection="list" index="index" close=")" open="(" separator="," item="pk">
+		#{pk}
+		</foreach>
+	</delete>
+	
+	 <select id="querypolgroud"  parameterType="java.lang.String"  resultType="com.cist.device.model.Sys_device_grouping">
+   		select t.tbei_code,c.tbei_name from TBL_USER_DEV t,VW_DEV_INFO c,SYS_POLICE_INFO g where t.tbei_code = c.tbei_code and t.sypi_pk = g.sypi_pk and g.sypi_code= #{_parameter}
+   </select>
+   
+   <select id="querydevgroud"  parameterType="java.lang.String"  resultType="com.cist.device.model.Sys_device_grouping">
+   select * from TBL_DEV_GROUP t where t.groud_code = #{groud_code}
+   </select>
+   
+   <delete id="delDev" parameterType="java.util.HashMap">
+		DELETE FROM TBL_DEV_GROUP WHERE GROUD_CODE = #{groud_code}
+	</delete>
+	
+	 <delete id="delDevInfo" parameterType="java.util.HashMap">
+		DELETE FROM TBL_DEVGROUP_INFO WHERE pk = #{pk}
+	</delete>
+	
+	<update id="editDev"  parameterType="com.cist.device.model.Sys_device_grouping">
+       UPDATE TBL_DEVGROUP_INFO SET 
+       	  groud_code = #{groud_code,jdbcType=VARCHAR},
+       	  groud_dev = #{groud_dev,jdbcType=VARCHAR},
+          groud_name = #{groud_name,jdbcType=VARCHAR}
+       where pk = #{pk}
+     </update>
+     
+     <select id="querygroudcode"  parameterType="java.lang.String"  resultType="com.cist.device.model.Sys_device_grouping">
+   select * from TBL_DEVGROUP_INFO t where t.groud_code = #{groud_code}
+   </select>
+   
+   <select id="depart_infolist" resultType="com.cist.device.model.DeptInfo" parameterType="java.lang.Integer">
+		select t.dept_pk,t.dept_code,t.dept_name as name,t.DEPT_SUPERIOR from sys_depart_info t 
+		<where>
+		  <if test="_parameter  == null or _parameter  == ''">
+		     t.DEPT_SUPERIOR is null
+		   </if>
+		     <if test="_parameter  != null and _parameter  != ''">
+		     t.DEPT_SUPERIOR=#{_parameter}
+		   </if>
+		</where>
+	</select>
+   <select id="Monitorpoint" resultType="com.cist.device.model.DeptInfo" parameterType="string">
+   select t.tbmp_id as dept_code,t.tbmp_dept_code,t.tbmp_name as name,t.tbmp_azdz from c_monitor_point t  where t.tbmp_dept_code=#{_parameter}
+   </select>
+   
+   <select id="Device" resultType="com.cist.device.model.DeptInfo" parameterType="string">
+   select t.tbei_code as dept_code,t.tbei_name as name,t.tbei_code from vw_dev_info t  where t.tbec_kkbh=#{_parameter}
+   </select>
+   
+    <select id="querydeptlist" resultType="com.cist.device.model.Sys_device_grouping">
+   select t.groud_code as id,t.groud_name as name from cistsys.TBL_DEVGROUP_INFO t
+   </select>
+   
+   <select id="police_infolist" resultType="com.cist.device.model.PoliceInfo" parameterType="java.lang.Integer">
+		select t.dept_pk,t.dept_code,t.dept_name as name,t.DEPT_SUPERIOR from sys_depart_info t 
+		<where>
+		  <if test="_parameter  == null or _parameter  == ''">
+		     t.DEPT_SUPERIOR is null
+		   </if>
+		     <if test="_parameter  != null and _parameter  != ''">
+		     t.DEPT_SUPERIOR=#{_parameter}
+		   </if>
+		</where>
+	</select>
+	
+	<select id="Police" resultType="com.cist.device.model.PoliceInfo" parameterType="java.lang.Integer">
+   		select t.sypi_pk as dept_code,t.sypi_name as name,t.sypi_code from SYS_POLICE_INFO t  where t.sypi_dept=#{_parameter}
+   </select>
+</mapper>

@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cist.qwgl.qwpb.mapper.QwpbMapper" >
+	<select id="querypb" parameterType="java.util.HashMap"
+	resultType="com.cist.qwgl.qwpb.model.QWGL_PBGL_PBINFO">
+		select * from QWGL_PBGL_PBINFO t 
+		left join QWGL_BC_INFO w on t.bc_pk = w.bc_pk 
+		left join QWGL_QW_TYPE g on w.qwlx_pk=g.qw_pk
+		left join SYS_DEPART_INFO j on w.dept_pk = j.dept_pk
+		<where>
+			<!-- 勤务名称 -->
+			<if test="qwname !=null and qwname!=''">
+				and t.qwname like '%'||#{qwname}||'%'
+			</if>
+			<!-- 勤务类型 -->
+			<if test="qw_pk !=null and qw_pk !=''">
+				and g.qw_pk = #{qw_pk}
+			</if>
+			<!-- 所属单位 -->
+			<if test="dept_pk!=null and dept_pk!=''">
+				and  w.dept_pk = #{dept_pk}
+			</if>
+			<!-- 勤务班次 -->
+			<if test="bc_name!=null and bc_name!=''">
+				and w.bc_name like '%'||#{bc_name}||'%'
+			</if>
+			<if test="qw_qy !=null and qw_qy!=''">
+				and t.qw_qy = #{qw_qy}
+			</if>
+		 	
+		</where>
+	</select>
+	<!-- 添加排班信息 -->
+	<insert id="addpb" parameterType="java.util.HashMap">
+		insert into QWGL_PBGL_PBINFO
+		<trim prefix="(" suffix=")" suffixOverrides="," >
+			pb_pk,qwname,qw_qy,bc_pk,kssj,jssj,
+			<if test="zbld !=null and zbld!=''">
+				zbld,
+			</if>
+			<if test="zbkz !=null and zbkz!=''">
+				zbkz,
+			</if>
+			<if test="zbmj !=null and zbmj !=''">
+				zbmj,
+			</if>
+			<if test="zbxj!=null and zbxj!=''">
+				zbxj,
+			</if>
+			<if test="bycl!=null and bycl!=''">
+				bycl,
+			</if>
+			<if test="pdh != null and pdh!=''">
+				pdh,
+			</if>
+			<if test="zbdh !=null and zbdh!=''">
+				zbdh,
+			</if>
+			<if test="bxfzr !=null and bxfzr!=''">
+				bxfzr,
+			</if>
+			<if test="zqmj !=null and zqmj !=''">
+				zqmj,
+			</if>
+			<if test="zqxj!=null and zqxj!=''">
+				zqxj,
+			</if>
+			<if test="zbbb !=null and zbbb!=''">
+				zbbb,
+			</if>
+			<if test="cx !=null and cx!=''">
+				cx,
+			</if>
+			<if test="hh !=null and hh !=''">
+				hh,
+			</if>
+		</trim>
+		<trim prefix="values(" suffix=")" suffixOverrides="," >
+			SEQ_QWGL_PBGL_PBINFO_PB_PK.NEXTVAL,
+			#{qwname},#{qw_qy},#{bc_pk},to_date(#{kssj},'yyyy-mm-dd HH24:mi:ss'),to_date(#{jssj},'yyyy-mm-dd HH24:mi:ss'),
+			<if test="zbld !=null and zbld!=''">
+				#{zbld},
+			</if>
+			<if test="zbkz !=null and zbkz!=''">
+				#{zbkz},
+			</if>
+			<if test="zbmj !=null and zbmj !=''">
+				#{zbmj},
+			</if>
+			<if test="zbxj!=null and zbxj!=''">
+				#{zbxj},
+			</if>
+			<if test="bycl!=null and bycl!=''">
+				#{bycl},
+			</if>
+			<if test="pdh != null and pdh!=''">
+				#{pdh},
+			</if>
+			<if test="zbdh !=null and zbdh!=''">
+				#{zbdh},
+			</if>
+			<if test="bxfzr !=null and bxfzr!=''">
+				#{bxfzr},
+			</if>
+			<if test="zqmj !=null and zqmj !=''">
+				#{zqmj},
+			</if>
+			<if test="zqxj!=null and zqxj!=''">
+				#{zqxj},
+			</if>
+			<if test="zbbb !=null and zbbb!=''">
+				#{zbbb},
+			</if>
+			<if test="cx !=null and cx!=''">
+				#{cx},
+			</if>
+			<if test="hh !=null and hh !=''">
+				#{hh},
+			</if>
+		</trim>
+	</insert>
+	<!--  -->
+	<select id="querysj" parameterType="java.lang.String"
+	resultType="com.cist.qwgl.bcgl.model.Qwgl_bc_info">
+		select * from QWGL_BC_INFO where bc_pk = #{bcpk}
+	</select>
+	<!-- 查询值班领导类型 -->
+	<select id="queryzbld" resultType="java.lang.Integer">
+		select fc_code from SYS_FRM_CODE where <![CDATA[ fc_code <> '1' ]]> and <![CDATA[ fc_code <> '2' ]]>
+		 and <![CDATA[ fc_code <> '3' ]]> and fct_code='RYLX'
+	</select>
+	<!-- 查询正常工作的领导 -->
+	<select id="queryld" parameterType="java.util.List" resultType="com.cist.qwgl.qwpb.model.ZB_Police">
+		select * from SYS_POLICE_INFO
+		where sypi_post in
+		<foreach collection="list" item="sypi_pk" index="index"
+            open="(" close=")" separator=",">
+            #{sypi_pk}
+            </foreach>
+	</select>
+	<!-- 查询值班科长 -->
+	<select id="queryzbkz"  resultType="com.cist.qwgl.qwpb.model.ZB_Police">
+		select * from SYS_POLICE_INFO
+		where sypi_post = '3'
+	</select>
+	<!-- 查询值班民警 -->
+	<select id="queryzbmj"  resultType="com.cist.qwgl.qwpb.model.ZB_Police">
+		select * from SYS_POLICE_INFO
+		where sypi_post = '1'
+	</select>
+	<!-- 查询值班协警 -->
+	<select id="queryzbxj"  resultType="com.cist.qwgl.qwpb.model.ZB_Police">
+		select * from SYS_POLICE_INFO
+		where sypi_post = '2'
+	</select>
+	<!-- 查询负责人 -->
+	<select id="queryfzr"  resultType="com.cist.qwgl.qwpb.model.ZB_Police">
+		select * from SYS_POLICE_INFO
+	</select>
+	<select id="querypolicecar" parameterType="java.util.HashMap"
+	 resultType="com.cist.qwgl.qwpb.model.QWGL_POLICE_CAR"> 
+		select t.pk car_pk,t.plateno car_name from Q_POLICE_CAR t
+		<where>
+			<if test="car_pk !=null and car_pk!=''">
+				and t.pk = #{car_pk}
+			</if>
+		</where>
+	</select>
+	<select id="queryhphm" parameterType="java.util.HashMap" resultType="com.cist.qwgl.qwpb.model.QWGL_POLICE_CAR">
+		select t.pk car_pk,t.plateno car_name from Q_POLICE_CAR t where t.pk in
+		<foreach collection="sypi_pk" item="sypi_pk" index="index"
+               open="(" close=")" separator=",">
+       		 #{sypi_pk}
+      </foreach>
+	</select>
+	<!-- 添加车巡信息 -->
+	<insert id="addcx" parameterType="java.util.HashMap">
+		insert into QWGL_PBGL_CXCL(pk,car_pk,hphm,fzr,zqmj,zqxj,cx)
+		values(SEQ_QWGL_PBGL_CXCL_PK.NEXTVAL,#{car_pk},#{hphm},#{fzr},#{zqmj},#{zqxj},#{cx})
+	</insert>
+	<!-- 查询所有呼号 -->
+	<select id="queryhh" resultType="com.cist.qwgl.qwpb.model.SYS_POLICE_INFO">
+		select sypi_caller,sypi_pk from SYS_POLICE_INFO where sypi_caller is not null group by sypi_caller,sypi_pk
+	</select>
+	<!-- 查询装备信息 -->
+	<select id="queryzbinfo" parameterType="java.util.HashMap"
+	resultType="com.cist.qwgl.qwpb.model.QWGL_ZB_INFO">
+		select * from QWGL_ZB_INFO
+		<where>
+			<if test="zb_pk !=null and zb_pk !=''">
+				and zb_pk = #{zb_pk}
+			</if>
+		</where>
+	</select>
+	<select id="queryzb" parameterType="java.util.HashMap"
+	resultType="com.cist.qwgl.qwpb.model.QWGL_ZB_INFO">
+		select * from QWGL_ZB_INFO where zb_pk in
+		<foreach collection="zb_pk" item="zb_pk" index="index"
+               open="(" close=")" separator=",">
+       		 #{zb_pk}
+      </foreach>
+	</select>
+	<insert id="addzbbb" parameterType="java.util.HashMap">
+		insert into QWGL_ZBBZ_INFO(pk,qwbb,zb_pk,zb_num)
+		values(SEQ_QWGL_ZBBZ_INFO_PK.NEXTVAL,#{qwbb,jdbcType=VARCHAR},#{zb_pk,jdbcType=INTEGER},#{zb_num,jdbcType=INTEGER})
+	</insert>
+	<!-- 统计 -->
+	<select id="querytj" parameterType="java.util.HashMap" resultType="com.cist.qwgl.qwpb.model.VW_QWGL_PB_INFO">
+		select * from VW_QWGL_PB_INFO 
+		<where>
+			<if test="sj !=null">
+				and kssj &lt; #{sj} and jssj &gt; #{sj}
+			</if>
+			<if test="dept_pk!=null and dept_pk!=''">
+				and dept_pk = #{dept_pk}
+			</if>
+			<if test="qw_name !=null and qw_name !=''">
+				and qw_name = #{qw_name}
+			</if>
+			<if test="qw_qy !=null and qw_qy!=''">
+				and qw_qy =#{qw_qy}
+			</if>
+		</where>
+	</select>
+	<!-- 查询结束时间最大值 -->
+	<select id="querymaxsj" parameterType="java.util.HashMap" resultType="java.util.Date">
+		select max(jssj) from VW_QWGL_PB_INFO 
+		<where>
+			<if test="dept_pk!=null and dept_pk!=''">
+				and dept_pk = #{dept_pk}
+			</if>
+		</where>
+	</select>
+	<!-- 查询开始时间 -->
+	<select id="queryminsj" parameterType="java.util.HashMap" resultType="java.util.Date">
+		select min(kssj) from VW_QWGL_PB_INFO 
+		<where>
+			<if test="dept_pk!=null and dept_pk!=''">
+				and dept_pk = #{dept_pk}
+			</if>
+		</where>
+	</select>
+	<!-- 查询单位 -->
+	<select id="querydeptname" resultType="com.cist.qwgl.qwpb.model.DEPT">
+		select dept_name from VW_QWGL_PB_INFO
+		<where>
+			<if test="sj !=null">
+				and kssj &lt; #{sj} and jssj &gt; #{sj}
+			</if>
+			<if test="dept_pk!=null and dept_pk!=''">
+				and dept_pk = #{dept_pk}
+			</if>
+		</where>
+		group by dept_name
+	</select>
+	
+	<select id="queryqwqy" parameterType="java.util.HashMap" resultType="com.cist.qwgl.qwpb.model.QWGL_QWPB_QWQY">
+		select qw_qy from VW_QWGL_PB_INFO
+		<where>
+			<if test="sj !=null">
+				and kssj &lt; #{sj} and jssj &gt; #{sj}
+			</if>
+			<if test="dept_pk!=null and dept_pk!=''">
+				and dept_pk = #{dept_pk}
+			</if>
+			<if test="qw_name !=null and qw_name !=''">
+				and qw_name = #{qw_name}
+			</if>
+		</where>
+		group by qw_qy
+	</select>
+	<!-- 查询警员并以，隔开 -->
+	<select id="querypolice" parameterType="java.util.HashMap" resultType="java.lang.String">
+		select listagg(sypi_name,',') within group( order by sypi_pk) as sypi_name 
+		from SYS_POLICE_INFO where sypi_pk in 
+		<foreach collection="sypi_pk" item="sypi_pk" index="index"
+               open="(" close=")" separator=",">
+       		 #{sypi_pk}
+      </foreach>
+	</select>
+	<!-- 查询车巡民警信息 -->
+	<select id="querycxmj" parameterType="java.util.HashMap" resultType="java.lang.String">
+		select listagg(zqmj,',') within group( order by pk)  as mj from QWGL_PBGL_CXCL where cx = #{cx}
+	</select>
+	<!-- 查询车巡协警信息 -->
+	<select id="querycxxj" parameterType="java.util.HashMap" resultType="java.lang.String">
+		select listagg(zqxj,',') within group( order by pk)  as xj from QWGL_PBGL_CXCL where cx = #{cx}
+	</select>
+	<!-- 查询车巡号牌号码 -->
+	<select id="querycxhphm" parameterType="java.util.HashMap" resultType="java.lang.String">
+		select listagg(hphm,',') within group( order by pk)  as hphm from QWGL_PBGL_CXCL where cx = #{cx}
+	</select>
+	<!-- 查询勤务区域 -->
+	<select id="queryqy" parameterType="java.util.HashMap" resultType="com.cist.qwgl.xqgl.model.QWGL_XQGL_INFO">
+		select * from QWGL_XQGL_INFO t
+	</select>
+</mapper>

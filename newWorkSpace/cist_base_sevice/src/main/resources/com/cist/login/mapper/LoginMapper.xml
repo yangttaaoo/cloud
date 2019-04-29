@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cist.login.mapper.LoginMapper">
+	
+	<resultMap id="UserDetailsResult" type="com.cist.login.model.UserDetails" >
+		<id property="sypi_pk" column="sypi_pk"/>
+		<id property="sypi_code" column="sypi_code"/>
+		<id property="sypi_name" column="sypi_name"/>
+		<id property="sypi_dept_name" column="sypi_dept_name"/>
+		<id property="sypi_dept_code" column="dept_code"/>
+		<id property="sypi_dept_pk" column="sypi_dept"/>
+		<id property="sypi_status" column="sypi_status"/>
+		<id property="sypi_status_name" column="sypi_status_name"/>
+		<id property="sypi_avp" column="sypi_avp"/>
+		<id property="sypi_pvp" column="sypi_pvp"/>
+		<id property="sypi_comp" column="sypi_comp"/>
+		<collection property="authority" column="sypi_pk" javaType="java.util.HashSet" ofType="com.cist.login.model.Authority" select="queryAuthorityByCode"></collection>
+	</resultMap>
+	
+	<select id="queryUserDetails" parameterType="java.util.Map" resultMap="UserDetailsResult">
+		select t.sypi_status,t.sypi_status_name,t.sypi_comp,t.sypi_avp,t.sypi_pvp, t.sypi_pk,t.sypi_code,t.sypi_name,t.sypi_dept_name,t.dept_code,t.sypi_dept from cistsys.vw_police_list t where t.sypi_code = #{sypi_code}
+	</select>
+	
+	<select id="queryAuthorityByCode" parameterType="int" resultType="com.cist.login.model.Authority">
+		select t.symi_tug,t.symi_pic_url, t.sypi_pk,t.symi_name,
+		t.symi_pk,t.symi_code,t.symi_url,t.symi_parent,t.symi_level,t.symi_type,t.symi_status
+		 from cistsys.vw_user_authority t
+		 where t.sypi_pk = #{sypi_pk} and t.symi_status=1
+	</select>
+</mapper>

@@ -85,6 +85,11 @@
 			<artifactId>camel-ftp</artifactId>
 			<version>2.13.2</version>
 		</dependency>
+			<dependency>
+			<groupId>com.alibaba</groupId>
+			<artifactId>fastjson</artifactId>
+			<version>1.2.47</version>
+		</dependency>
 	</dependencies>
 
 	<dependencyManagement>
@@ -126,7 +131,7 @@
 							</artifactItems>
 							<!-- <outputDirectory>${dist.console.war.dir}</outputDirectory> -->
 							<!--指定jar包保存地址 -->
-							<outputDirectory>D:\20180901itsjava\its</outputDirectory>
+							<outputDirectory>../its</outputDirectory>
 							<includes>
 								<include>*.jar</include>
 							</includes>

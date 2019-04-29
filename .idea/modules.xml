@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/JiChuang.iml" filepath="$PROJECT_DIR$/.idea/JiChuang.iml" />
+      <module fileurl="file://$PROJECT_DIR$/cist_base_sevice/cist-base-service.iml" filepath="$PROJECT_DIR$/cist_base_sevice/cist-base-service.iml" />
+      <module fileurl="file://$PROJECT_DIR$/cist-comm-service/cist-comm-service.iml" filepath="$PROJECT_DIR$/cist-comm-service/cist-comm-service.iml" />
+      <module fileurl="file://$PROJECT_DIR$/config-server/cist-config-service.iml" filepath="$PROJECT_DIR$/config-server/cist-config-service.iml" />
+      <module fileurl="file://$PROJECT_DIR$/cistdb/cist-db-utils.iml" filepath="$PROJECT_DIR$/cistdb/cist-db-utils.iml" />
+      <module fileurl="file://$PROJECT_DIR$/cist_devregister_service/cist-devregister-service.iml" filepath="$PROJECT_DIR$/cist_devregister_service/cist-devregister-service.iml" />
+      <module fileurl="file://$PROJECT_DIR$/cist_door_service/cist-door-service.iml" filepath="$PROJECT_DIR$/cist_door_service/cist-door-service.iml" />
+      <module fileurl="file://$PROJECT_DIR$/cist_qwgl_service/cist-duty-service.iml" filepath="$PROJECT_DIR$/cist_qwgl_service/cist-duty-service.iml" />
+      <module fileurl="file://$PROJECT_DIR$/cist_exchange_service/cist-exchange-service.iml" filepath="$PROJECT_DIR$/cist_exchange_service/cist-exchange-service.iml" />
+      <module fileurl="file://$PROJECT_DIR$/cist_jcbk_service/cist-jcbk-service.iml" filepath="$PROJECT_DIR$/cist_jcbk_service/cist-jcbk-service.iml" />
+      <module fileurl="file://$PROJECT_DIR$/cistLog/cist-log-service.iml" filepath="$PROJECT_DIR$/cistLog/cist-log-service.iml" />
+      <module fileurl="file://$PROJECT_DIR$/cist_offsite_service/cist-offsite-service.iml" filepath="$PROJECT_DIR$/cist_offsite_service/cist-offsite-service.iml" />
+      <module fileurl="file://$PROJECT_DIR$/cist_preserve_service/cist-preserve-service.iml" filepath="$PROJECT_DIR$/cist_preserve_service/cist-preserve-service.iml" />
+      <module fileurl="file://$PROJECT_DIR$/cist_traffic_survey_service/cist-traffic-survey-service.iml" filepath="$PROJECT_DIR$/cist_traffic_survey_service/cist-traffic-survey-service.iml" />
+      <module fileurl="file://$PROJECT_DIR$/cist_devmanage_service/cist-video-service.iml" filepath="$PROJECT_DIR$/cist_devmanage_service/cist-video-service.iml" />
+      <module fileurl="file://$PROJECT_DIR$/cist_zhdd_service/cist-zhdd-service.iml" filepath="$PROJECT_DIR$/cist_zhdd_service/cist-zhdd-service.iml" />
+      <module fileurl="file://$PROJECT_DIR$/cist_proof_service/cist_door_service.iml" filepath="$PROJECT_DIR$/cist_proof_service/cist_door_service.iml" />
+    </modules>
+  </component>
+</project>

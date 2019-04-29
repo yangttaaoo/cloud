@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="cist-devregister-service" />
+        <module name="cist-traffic-survey-service" />
+        <module name="cist-duty-service" />
+        <module name="cist-base-service" />
+        <module name="cist-door-service" />
+        <module name="cist-zhdd-service" />
+        <module name="cist-jcbk-service" />
+        <module name="cist-exchange-service" />
+        <module name="cist-comm-service" />
+        <module name="cist_door_service" />
+        <module name="cist-preserve-service" />
+        <module name="cist-db-utils" />
+        <module name="cist-log-service" />
+        <module name="cist-config-service" />
+        <module name="cist-video-service" />
+        <module name="cist-offsite-service" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="cist-base-service" target="1.8" />
+      <module name="cist-comm-service" target="1.8" />
+      <module name="cist-config-service" target="1.8" />
+      <module name="cist-db-utils" target="1.8" />
+      <module name="cist-devregister-service" target="1.8" />
+      <module name="cist-door-service" target="1.8" />
+      <module name="cist-duty-service" target="1.8" />
+      <module name="cist-exchange-service" target="1.8" />
+      <module name="cist-jcbk-service" target="1.8" />
+      <module name="cist-log-service" target="1.8" />
+      <module name="cist-offsite-service" target="1.8" />
+      <module name="cist-preserve-service" target="1.8" />
+      <module name="cist-traffic-survey-service" target="1.8" />
+      <module name="cist-video-service" target="1.8" />
+      <module name="cist-zhdd-service" target="1.8" />
+      <module name="cist_door_service" target="1.8" />
+    </bytecodeTargetLevel>
+  </component>
+</project>

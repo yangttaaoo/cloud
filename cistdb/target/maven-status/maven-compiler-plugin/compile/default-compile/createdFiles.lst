@@ -1,5 +1,8 @@
-com\cist\frame\pagePlugin\HelperPlugin.class
 com\cist\frame\datasource\MasterDataSourcesConfig.class
-com\cist\frame\pagePlugin\HelperBean.class
 com\cist\frame\pageAop\PageAop.class
+com\cist\frame\pagePlugin\HelperPlugin.class
 com\cist\frame\page\PageInfo.class
+com\cist\frame\config\MybatisSqlInterceptor.class
+com\cist\frame\config\MybatisInterceptorConfig.class
+com\cist\frame\pagePlugin\HelperBean.class
+com\cist\frame\config\ReflectUtil.class

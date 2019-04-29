@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cist.khpd.target.mapper.TargetMapper">
+<!-- 查询数据 -->
+<select id="selectAll" resultType="com.cist.khpd.target.model.Target"
+parameterType="java.util.HashMap">
+  select * from sys_assess_target 
+  <where>
+    col_pk = 0
+    <if test="ssdw!=null and ssdw!=''">
+      and sypi_pk=#{ssdw} or  
+    sypi_pk=(select sypi_pk from sys_police_info where sypi_dept=#{ssdw}) 
+    </if>
+    <if test="name!=null and name!=''">
+     and sypi_pk=(select sypi_pk from sys_police_info where sypi_name=#{name})
+    </if>
+    <if test="number!=null and number!=''">
+     and sypi_pk=(select sypi_pk from sys_police_info where sypi_code=#{number})
+    </if>
+      <if test="time!=null and time!=''">
+     <![CDATA[and eva_date>=to_date(#{time},'yyyy-mm-dd HH24:mi:ss')]]>
+    </if>
+      <if test="zblx!=null and zblx!=''">
+      and eva_type=#{zblx}
+    </if>
+  </where>
+</select>
+<!--查詢導出數據  -->
+<select id="selectExcel" resultType="com.cist.khpd.target.model.TargetMannage"
+parameterType="java.util.HashMap">
+  select * from vw_assess_target 
+  <where>
+    col_pk = 0
+    <if test="ssdw!=null and ssdw!=''">
+      and sypi_pk=#{ssdw} 
+    </if>
+    <if test="name!=null and name!=''">
+     and sypi_name=#{name}
+    </if>
+    <if test="number!=null and number!=''">
+     and sypi_code=#{number}
+    </if>
+      <if test="time!=null and time!=''">
+     <![CDATA[and eva_date>=to_date(#{time},'yyyy-mm-dd HH24:mi:ss')]]>
+    </if>
+      <if test="zblx!=null and zblx!=''">
+      and eva_type=#{zblx}
+    </if>
+  </where>
+</select>
+  <!--删除数据  -->
+  <delete id="deleteData" parameterType="java.util.HashMap">
+    delete from  sys_assess_target  where  sypi_pk=#{pk}
+  </delete>
+    <!--删除重複数据  -->
+  <delete id="deletePolice" parameterType="java.util.HashMap">
+  
+    delete from  sys_assess_target  where  sypi_pk=#{deptname} 
+    
+  </delete>
+  <!-- 增加部门指标-->
+  <insert id="addData" parameterType="java.util.HashMap"  >
+	insert into sys_assess_target
+		    (pk,
+		    sypi_pk,
+		    eva_date,
+		    col_pk,
+		    eva_num,
+		    eva_exl,
+		    eva_type)
+		values(   
+          cistsys.SEQ_ASSESS_TARGET.nextval,
+          #{deptname},
+          to_date(#{time},'yyyy-mm-dd'),
+          #{col_pk},
+          #{eva_num},
+          #{lmsm},
+          1
+          ) 
+  </insert>
+   <!-- 增加个人指标-->
+  <insert id="addPerson"  parameterType="java.util.HashMap">
+  insert into sys_assess_target
+		    (pk,
+		    sypi_pk,
+		    eva_date,
+		    col_pk,
+		    eva_num,
+		    eva_exl,
+		    eva_type)
+		values(   
+          cistsys.SEQ_ASSESS_TARGET.nextval,
+          #{names},
+          to_date(#{time},'yyyy-mm-dd'),
+          #{col_pk},
+          #{eva_num},
+          #{lmsm},
+          2
+          ) 
+  </insert>
+  <!-- 更新个人数据 -->
+  <update id="updateData" parameterType="java.util.HashMap">
+    update sys_assess_target
+      set
+      sypi_pk=#{names},
+      eva_date=to_date(#{time},'yyyy-mm-dd'),
+      eva_num=#{eva_num},
+      eva_exl=#{lmsm}
+      where sypi_pk=#{pk}  
+      and col_pk=#{col_pk}
+    </update>
+    <!--查询单位名称  -->
+  <select id="selectDepart" resultType="com.cist.khpd.target.model.Depart_info">
+     select *  from sys_depart_info 
+    </select>
+    <!--跟据pk查詢负责人-->
+    <select id="selectInfo" resultType="com.cist.khpd.target.model.Depart_info">
+      select dept_head  from sys_depart_info  where dept_pk=#{pk}
+    </select> 
+    <!--跟据pk查詢警员信息-->
+    <select id="selectPolice" resultType="com.cist.khpd.target.model.Police">
+      select sypi_pk,sypi_code,sypi_name  from sys_police_info  where sypi_dept=#{pk}
+    </select> 
+     <!--查询部门栏目名称  -->
+    <select id="selectDepat" resultType="com.cist.khpd.rules.model.Rule">
+     select lmmc,pk,lmfz from sys_rule_manager  where lmlx='2'
+    </select>
+    <!--查询个人栏目名称  -->
+    <select id="selectPorson" resultType="com.cist.khpd.rules.model.Rule">
+     select lmmc,pk,lmfz  from sys_rule_manager  where lmlx='1'
+    </select>
+    <!--查询部门和名字 -->
+    <select id="getDeptCodeNameHead" resultType="com.cist.khpd.target.model.Target" parameterType="java.lang.String">
+     select *  from sys_depart_info  where dept_pk=#{sypi_pk}
+    </select>
+     <!--查询警员 -->
+    <select id="getSypiCodeName" resultType="com.cist.khpd.target.model.Target" parameterType="java.lang.String">
+     select *  from sys_police_info  where sypi_pk=#{sypi_pk}
+    </select>
+    
+    <select id="getDeptName" resultType="com.cist.khpd.target.model.Target" parameterType="java.lang.String">
+     select v.dept_name from sys_police_info t,sys_depart_info v  where v.dept_pk= t.sypi_dept and t.sypi_pk=#{sypi_pk}
+    </select>
+    
+       <select id="selectTestInfo" resultType="com.cist.khpd.target.model.Target" parameterType="java.util.HashMap">
+        select * from sys_assess_target  where sypi_pk=#{sypi_pk}
+    </select>
+    <!--查询警员单位  -->
+    <select id="selectDepatInfo" resultType="java.lang.Integer" parameterType="java.util.HashMap">
+     select sypi_dept  from sys_police_info  where sypi_pk=#{sypi_pk}
+    </select>
+    <!--查询警员单位  -->
+    <select id="selectDepatInfos" resultType="java.lang.Integer" parameterType="java.util.HashMap">
+     select dept_pk  from sys_depart_info  where dept_pk=#{sypi_pk}
+    </select>
+</mapper>

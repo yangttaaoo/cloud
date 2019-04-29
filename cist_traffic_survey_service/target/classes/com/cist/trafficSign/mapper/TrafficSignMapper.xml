@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cist.trafficSign.mapper.TrafficSignMapper">
+<!-- 根据数据字典索引查询对应信息 -->
+	<select id="queryBaseDateName"
+		resultType="com.cist.devRegister.util.TempModel">
+		select f.fc_pk pk,f.fc_code code,f.fc_name name from
+		SYS_FRM_CODE f join
+		SYS_FRM_CODE_TYPE t on f.FCT_CODE=t.FCT_CODE where
+		t.FCT_CODE=#{FCT_CODE} and  f.fc_code=#{fc_code}
+	</select>
+	<!-- 查询交通标识 -->
+	<select id="SecurityByglbmTocode"
+		parameterType="java.util.HashMap"
+		resultType="com.cist.trafficSign.model.TrafficSign">
+
+		select v.* from JCSJ_TRAFFIC_SIGNS v  where 1=1
+		<if test="deptId !=null and deptId !='' "> and v.glbm=#{deptId}</if>
+		<if test="xzqh !=null and xzqh !='' ">and v.xzqh=#{xzqh}</if>
+		<if test="mark_name !=null and mark_name !='' ">and v.bzmc like '%'||#{mark_name}||'%'</if>
+		<if test="mark_type !=null and mark_type !='' ">and v.bzlx=#{mark_type}</if>
+		<if test="bzlx !=null and bzlx !='' ">and v.bzlx=#{mark_type}</if>
+		<if test="crossroads.size() >0">
+			and v.dldm||v.lddm in
+			<foreach collection="crossroads" item="item" index="index"
+				separator="," open="(" close=")">
+				#{item}
+			</foreach>
+		</if>
+		
+	</select>
+	<!-- 新增一条交通标志记录 -->
+	<insert id="addTrafficSign" parameterType="java.util.HashMap">
+		insert into
+		JCSJ_TRAFFIC_SIGNS(pk_id,bzmc,bzlx
+		<if test="bzsl !=null and bzsl !=''">,bzsl</if>
+		<if test="jyms !=null and jyms !=''">,jyms</if>
+		,zxbj
+		<if test="xzqh !=null and xzqh !=''">,xzqh</if>
+		<!-- <if test="jdbsc !=null and jdbsc !=''">,jdbsc</if> -->
+		<if test="szwz !=null and szwz !=''">,szwz</if>
+		<if test="jsdw !=null and jsdw !=''">,jsdw</if>
+		<if test="sgdw !=null and sgdw !=''">,sgdw</if>
+		<if test="jssj !=null and jssj !=''">,jssj</if>
+		<if test="syqxjzsj !=null and syqxjzsj !=''">,syqxjzsj</if>
+		<if test="syqxy !=null and syqxy !=''">,syqxy</if>
+		<if test="syqxm !=null and syqxm !=''">,syqxm</if>
+		<if test="zcfs !=null and zcfs !=''">,zcfs</if>
+		<if test="xz !=null and xz !=''">,xz</if>
+		<if test="cd !=null and cd !=''">cd</if>
+		<if test="kd !=null and kd !=''">,kd</if>
+		<if test="bc !=null and bc !=''">,bc</if>
+		<if test="zj !=null and zj !=''">,zj</if>
+		<if test="mj !=null and mj !=''">,mj</if>
+		<if test="fx !=null and fx !=''">,fx</if>
+		<if test="bzlxtp !=null and bzlxtp !=''">,bzlxtp</if>
+		<if test="bzsjtp !=null and bzsjtp !=''">,bzsjtp</if>
+		<if test="jdzb !=null and jdzb !=''">,jdzb</if>
+		<if test="wdzb !=null and wdzb !=''">,wdzb</if>
+		<if test="gxtx !=null and gxtx !=''">,gxtx</if>
+		<if test="xswz !=null and xswz !=''">,xswz</if>
+		<if test="bmxxfs !=null and bmxxfs !=''">,bmxxfs</if>
+		<if test="nylx !=null and nylx !=''">,nylx</if>
+		,dldm,dllx
+		<if test="lddm !=null and lddm !=''">,lddm</if>
+		<!-- <if test="gls !=null and gls !=''">,gls</if> -->
+		<if test="dlms !=null and dlms !=''">,dlms</if>
+		,dllxmc,glbm,cjr,cjsj
+		)values
+		(TRAFFICSIGNSEQ.nextval,#{bzmc},#{bzlx}
+		<if test="bzsl !=null and bzsl !=''">,#{bzsl}</if>
+		<if test="jyms !=null and jyms !=''">,#{jyms}</if>
+		,'1'
+		<if test="xzqh !=null and xzqh !=''">,#{xzqh}</if>
+		<if test="szwz !=null and szwz !=''">,#{szwz}</if>
+		<!-- <if test="jdbsc !=null and jdbsc !=''">,#{jdbsc}</if> -->
+		<if test="jsdw !=null and jsdw !=''">,#{jsdw}</if>
+		<if test="sgdw !=null and sgdw !=''">,#{sgdw}</if>
+		<if test="jssj !=null and jssj !=''">,to_date(#{jssj},'yyyy-mm-dd HH24:mi:ss')</if>
+		<if test="syqxjzsj !=null and syqxjzsj !=''">,to_date(#{syqxjzsj},'yyyy-mm-dd HH24:mi:ss')</if>
+		<if test="syqxy !=null and syqxy !=''">,#{syqxy}</if>
+		<if test="syqxm !=null and syqxm !=''">,#{syqxm}</if>
+		<if test="zcfs !=null and zcfs !=''">,#{zcfs}</if>
+		<if test="xz !=null and xz !=''">,#{xz}</if>
+		<if test="cd !=null and cd !=''">,#{cd}</if>
+		<if test="kd !=null and kd !=''">,#{kd}</if>
+		<if test="bc !=null and bc !=''">,#{bc}</if>
+		<if test="zj !=null and zj !=''">,#{zj}</if>
+		<if test="mj !=null and mj !=''">,#{mj}</if>
+		<if test="fx !=null and fx !=''">,#{fx}</if>
+		<if test="bzlxtp !=null and bzlxtp !=''">,#{bzlxtp}</if>
+		<if test="bzsjtp !=null and bzsjtp !=''">,#{bzsjtp}</if>
+		<if test="jdzb !=null and jdzb !=''">,#{jdzb}</if>
+		<if test="wdzb !=null and wdzb !=''">,#{wdzb}</if>
+		<if test="gxtx !=null and gxtx !=''">,#{gxtx}</if>
+		<if test="xswz !=null and xswz !=''">,#{xswz}</if>
+		<if test="bmxxfs !=null and bmxxfs !=''">,#{bmxxfs}</if>
+		<if test="nylx !=null and nylx !=''">,#{nylx}</if>
+		,#{dldm},#{dllx}
+		<if test="lddm !=null and lddm !=''">,#{lddm}</if>
+		<!-- <if test="gls !=null and gls !=''">,#{gls}</if> -->
+		<if test="dlms !=null and dlms !=''">,#{dlms}</if>
+		,#{dllxmc},#{glbm},#{cjr},SYSDATE
+		)
+
+	</insert>
+	<!-- 更新一条交通标志记录 -->
+	<update id="updateTrafficSignById"
+		parameterType="java.util.HashMap">
+		update JCSJ_TRAFFIC_SIGNS set
+		bzmc=#{bzmc},
+		bzlx=#{bzlx},
+		bzsl=#{bzsl,jdbcType=NUMERIC},
+		jyms=#{jyms,jdbcType=VARCHAR},
+		zxbj=#{zxbj},
+		xzqh=#{xzqh,jdbcType=CHAR},
+		szwz=#{szwz,jdbcType=VARCHAR},
+		<!-- jdbsc=#{jdbsc,jdbcType=VARCHAR}, -->
+		jsdw=#{jsdw,jdbcType=VARCHAR},
+		sgdw=#{sgdw,jdbcType=VARCHAR},
+		jssj=to_date(#{jssj,jdbcType=TIMESTAMP},'yyyy-mm-dd HH24:mi:ss'),
+		syqxjzsj=to_date(#{syqxjzsj,jdbcType=TIMESTAMP},'yyyy-mm-dd HH24:mi:ss'),
+		syqxy=#{syqxy,jdbcType=NUMERIC},
+		syqxm=#{syqxm,jdbcType=NUMERIC},
+		zcfs=#{zcfs,jdbcType=VARCHAR},
+		xz=#{xz,jdbcType=VARCHAR},
+		cd=#{cd,jdbcType=NUMERIC},
+		kd=#{kd,jdbcType=NUMERIC},
+		bc=#{bc,jdbcType=NUMERIC},
+		zj=#{zj,jdbcType=NUMERIC},
+		mj=#{mj,jdbcType=NUMERIC},
+		fx=#{fx,jdbcType=VARCHAR},
+		bzlxtp=#{bzlxtp,jdbcType=VARCHAR},
+		bzsjtp=#{bzsjtp,jdbcType=VARCHAR},
+		jdzb=#{jdzb,jdbcType=NUMERIC},
+		wdzb=#{wdzb,jdbcType=NUMERIC},
+		gxtx=#{gxtx,jdbcType=VARCHAR},
+		xswz=#{xswz,jdbcType=VARCHAR},
+		bmxxfs=#{bmxxfs,jdbcType=VARCHAR},
+		nylx=#{nylx,jdbcType=VARCHAR},
+		dldm=#{dldm},
+		dllx=#{dllx},
+		lddm=#{lddm,jdbcType=CHAR},
+		<!-- gls=#{gls,jdbcType=NUMERIC}, -->
+		dlms=#{dlms,jdbcType=CHAR},
+		dllxmc=#{dllxmc},
+		glbm=#{glbm}
+		where pk_id=#{pk_id}
+
+	</update>
+	<!-- 根据交通标志Id删除交通标志记录 -->
+	<delete id="deleteById" parameterType="java.util.HashMap">
+		delete from JCSJ_TRAFFIC_SIGNS where pk_id in
+		<foreach collection="TrafficSignIds" index="index"
+			item="pk_id" open="(" separator="," close=")">
+			#{pk_id}
+		</foreach>
+	</delete>
+</mapper>
+	

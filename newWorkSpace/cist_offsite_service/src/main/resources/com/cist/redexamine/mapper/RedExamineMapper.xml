@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cist.redexamine.mapper.RedExamineMapper" >
+  
+  <update id="examineRedInfo"  parameterType="java.util.HashMap">
+       UPDATE tbl_red_info SET 
+             YXSJ=to_date(#{yxsj},'yyyy-mm-dd HH24:mi:ss'),
+             SHSJ=to_date(#{shsj},'yyyy-mm-dd HH24:mi:ss'),
+             SHRY=#{shry,jdbcType=VARCHAR},
+             HPYS=#{hpys,jdbcType=VARCHAR},
+             CLPP=#{clpp,jdbcType=VARCHAR},
+             SSDW=#{ssdw,jdbcType=VARCHAR},
+             CXYY=#{cxyy,jdbcType=VARCHAR},
+             CLZT=#{clzt,jdbcType=VARCHAR},
+             CLLX=#{cllx,jdbcType=VARCHAR},
+             CSYS=#{csys,jdbcType=VARCHAR},
+             HPHM=#{hphm,jdbcType=VARCHAR},
+             HPZL=#{hpzl,jdbcType=VARCHAR}
+       where pk = #{pk}
+     </update>
+</mapper>

@@ -346,7 +346,7 @@ select t.dept_pk,t.dept_code,t.dept_name as name,t.DEPT_SUPERIOR from sys_depart
 		select *  from C_ROAD_ITEM
 		<where>
 		<if test=" tbek_code !=null and tbek_code !=''">
-		TBEK_CODE =#{tbek_code}
+		instr(tbek_code,#{tbek_code})>0
 		</if>
 		</where>
 	</select>
@@ -405,7 +405,7 @@ select t.dept_pk,t.dept_code,t.dept_name as name,t.DEPT_SUPERIOR from sys_depart
   select * from VW_TBL_SIGCASE_SEGITEM 
   where xkfa=#{_parameter}
   </select>
-	<select id="list" resultMap="BaseResultMap" parameterType="java.util.HashMap" >
+	<select id="listSecurityByglbmTocode" resultMap="BaseResultMap" parameterType="java.util.HashMap" >
     select *
     from C_ROAD_SEGITEM t
     <where>

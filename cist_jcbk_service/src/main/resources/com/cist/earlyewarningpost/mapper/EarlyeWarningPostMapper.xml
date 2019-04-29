@@ -4,27 +4,27 @@
 	namespace="com.cist.earlyewarningpost.mapper.EarlyeWarningPostMapper">
 
 
-	<select id="list"
+	<select id="SecurityByssbmTocode"
 		resultType="com.cist.earlyewarningpost.model.JcbkWarningVehicle"
 		parameterType="java.util.HashMap">
 		select * from VW_JCBK_WARNING_VEHICLE
 		<where>
 			<if
 				test="event_current_status !=null and event_current_status !=''">
-				event_current_status=#{event_current_status}
+				(event_current_status=#{event_current_status} or event_current_status is null )
 			</if>
-			<if test="bumenpk !=null and bumenpk.size()>0">
+			<if test="ssbm !=null and ssbm.size()>0">
 				and ssbm in
-				<foreach collection="bumenpk" index="index" item="item"
-					open="(" separator="," close=")">
+				<foreach collection="ssbm" index="index" item="item"
+					open="(" separator="," close=")" >
 					#{item}
 				</foreach>
-
 			</if>
+			and trunc(YJSJ) = trunc(sysdate)
 		</where>
 	</select>
 
-	<select id="selectList"
+	<select id="listSecurityByssbmTocode"
 		resultType="com.cist.earlyewarningpost.model.JcbkWarningVehicle"
 		parameterType="java.util.HashMap">
 		select * from VW_JCBK_WARNING_VEHICLE
@@ -64,29 +64,31 @@
 			</if>
 		</where>
 	</select>
-
-	<select id="selectYsl"
+<!-- 查询已受理的预警信息-->
+	<select id="yslSecurityByssbmTocode"
 		resultType="com.cist.earlyewarningpost.model.JcbkWarningVehicle"
 		parameterType="java.util.HashMap">
 		select * from VW_JCBK_WARNING_VEHICLE
 		where
 		event_current_status !='0'
-		<if test="bumenpk !=null and bumenpk.size()>0">
+		<if test="ssbm !=null and ssbm.size()>0">
 			and ssbm in
-			<foreach collection="bumenpk" index="index" item="item"
+			<foreach collection="ssbm" index="index" item="item"
 				open="(" separator="," close=")">
 				#{item}
 			</foreach>
 
 		</if>
+		and trunc(YJSJ) =trunc(sysdate)
 	</select>
 
 <!--警员信息查询  -->
-	<select id="gpsRecordList"
+	<select id="jySecurityBydept_pkTopk"
 		resultType="com.cist.earlyewarningpost.model.GpsRecord">
 		<!-- select * from QW_GPS_RECORD t -->
-		select t.*,( select RYFL from JCSJ_POLICE_RES_PERSON c where
-		c.rybh=t.ywbh) as jytype from VW_QW_GPS_RECORD t
+		<!-- ( select RYFL from JCSJ_POLICE_RES_PERSON c where
+		c.rybh=t.ywbh) as jytype -->
+		select t.*,t1.ryfl as jytype,t1.xm,t1.id,t1.rybh from VW_QW_GPS_RECORD t left join JCSJ_POLICE_RES_PERSON t1 on t.ywbh = t1.rybh
 	</select>
 
 <!-- 设备信息列表 -->
@@ -154,16 +156,29 @@
 
 	<select id="depart_infolist"
 		resultType="com.cist.earlyewarningpost.model.Depart_info"
-		parameterType="java.lang.Integer">
-		select t.dept_pk,t.dept_code,t.dept_name as name,t.DEPT_SUPERIOR from
+		parameterType="java.util.HashMap">
+		select t.dept_pk,t.dept_code,t.dept_name as name,t.DEPT_SUPERIOR,t.GEO_SPATIAL from
 		sys_depart_info t
 		<where>
-			<if test="_parameter  == null or _parameter  == ''">
+		<choose>
+		<when test="dept_code !=null and dept_code !=''">
+		t.DEPT_CODE =#{dept_code}
+		</when>
+		<otherwise>
+		<if test="dept_pk  == null or dept_pk  == ''">
+				t.DEPT_SUPERIOR is null
+			</if>
+			<if test="dept_pk  != null and dept_pk  != ''">
+				t.DEPT_SUPERIOR=#{dept_pk}
+			</if>
+		</otherwise>
+		</choose>
+			<!-- <if test="_parameter  == null or _parameter  == ''">
 				t.DEPT_SUPERIOR is null
 			</if>
 			<if test="_parameter  != null and _parameter  != ''">
 				t.DEPT_SUPERIOR=#{_parameter}
-			</if>
+			</if> -->
 		</where>
 	</select>
 	<select id="selectPoliceList" parameterType="java.util.HashMap"
@@ -642,7 +657,7 @@
 				</foreach>
 				</if>
 		and t.REPORT_TYPE='1'
-		and trunc(t.REPORT_PERIOD_TYPE)=trunc(sysdate)
+		<!-- and trunc(t.REPORT_PERIOD_TYPE)=trunc(sysdate) -->
 		</where>
 	</select>
 	
@@ -657,11 +672,36 @@
 		left join JCSJ_DEVICE_CAMERA_GB28181 t2 on  t2.DEVICE_ID=t.pk_id
 		where t4.ENABLE ='1' and t4.kkbh = #{kkbh}
 	</select>
-	
+	<!-- 查询配置国标视频地址 -->
 	<select id="selectConfig" parameterType="java.util.HashMap" resultType="com.cist.earlyewarningpost.model.SysConfig">
 	select * from SYS_CONFIG t 
 	<where>
 	syci_key = #{syci_key}
 	</where>
 	</select>
+	
+		<!-- 布控卡口的拦截区域 -->
+	<select id="selectArea" parameterType="java.util.HashMap" resultType="com.cist.earlyewarningpost.model.JcbkFenceArea">
+	select * from JCBK_FENCE_AREA t 
+	<where>
+	 exists (select * from JCBK_BAYONET_AREA t1 where t.pk=t1.qypk and t1.kkbh = #{kkbh})
+	</where>
+	</select>
+	
+	<!--查询警车警员历史定位信息  -->
+   		<select id="selectGpsHistory" resultType="com.cist.earlyewarningpost.model.Qw_gps_history" parameterType="java.util.HashMap">
+   select * from GPSUSER.QW_GPS_HISTORY t
+   <where>
+   <if test="kssj !=null and kssj !=''">
+   
+    <![CDATA[  and GPSTIME >= to_date(#{kssj},'yyyy-mm-dd hh24:mi:ss') ]]>
+   </if>
+   <if test="jssj !=null and jssj !=''">
+   <![CDATA[ and GPSTIME <= to_date(#{jssj},'yyyy-mm-dd hh24:mi:ss') ]]>
+   </if>
+   <if test="ywbh !=null and ywbh !=''">
+    and ywbh =#{ywbh}
+   </if>
+   </where>
+   	</select>
 </mapper>

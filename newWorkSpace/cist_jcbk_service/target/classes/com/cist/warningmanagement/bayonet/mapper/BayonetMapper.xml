@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cist.warningmanagement.bayonet.mapper.BayonetMapper">
+  <select id="selectAll" resultType="com.cist.warningmanagement.bayonet.model.Bayonet">
+     select * from  cistsys.vw_control_bayonet
+     <where>
+       <if test="kkbh!=null and kkbh!=''">
+       and enable=#{kkbh}
+       </if>
+       <if test="kkbh1!=null and kkbh1!=''">
+       and kkbh=#{kkbh1}
+       </if>
+     </where>
+  </select>
+  
+   <select id="depart_infolist" resultType="com.cist.warningmanagement.bayonet.model.DeptInfo" parameterType="java.lang.Integer">
+select t.dept_pk,t.dept_code,t.dept_name as name,t.DEPT_SUPERIOR from sys_depart_info t 
+<where>
+		  <if test="_parameter  == null or _parameter  == ''">
+		     t.DEPT_SUPERIOR is null
+		   </if>
+		     <if test="_parameter  != null and _parameter  != ''">
+		     t.DEPT_SUPERIOR=#{_parameter}
+		   </if>
+</where>
+</select>
+<!--查询卡口信息全部  -->
+<select id="selectKkxx"  parameterType="java.util.HashMap"  resultType="com.cist.warningmanagement.controlcar.model.Kklx" >
+   select  j.fk_dept_id,j.longitude,j.latitude,j.road_name, j.direction,j.device_name,j.device_num from  jcsj_device  j  join  jcsj_device_have_function  t  on  j.pk_id=t.device_id 
+     where j.fk_device_type='KK' and t.fk_have_function=322  and j.device_num=#{num}
+</select>
+  <!--删除数据  -->
+<delete id="deleteDada" parameterType="java.util.HashMap">
+  delete from tbl_control_bayonet where pk=#{pk}
+</delete> 
+  <!--删除卡口——区域  -->
+<delete id="deleteQy" parameterType="java.util.HashMap">
+  delete from tbl_bayonet_area where kkbh=#{kkbh}
+</delete> 
+  <!--删除卡口——部门  -->
+<delete id="deleteDept" parameterType="java.util.HashMap">
+  delete from tbl_bayonet_units where kkbh=#{kkbh}
+</delete> 
+
+  <!--查询区域类型  -->
+<select id="selectQylx" resultType="com.cist.warningmanagement.bayonet.model.Qylx" >
+  select * from jcbk_ljqy_info 
+  </select>
+ <!-- 批量删除 -->
+	<delete id="deleteAll" parameterType="java.util.HashMap">
+		delete FROM tbl_control_bayonet  
+		WHERE pk in
+		<foreach item="pk" collection="array" open="(" separator="," close=")">
+            #{pk}
+        </foreach>  
+	</delete> 
+<!--增加数据  -->
+<insert id="insertDada" parameterType="java.util.HashMap">
+    insert  into  cistsys.tbl_control_bayonet 
+<!--     <trim prefix="(" suffix=")" suffixOverrides=","> -->
+   ( pk,kkbh,enable,qc,ssbm,sfyjts,bkjl)
+<!--     </trim> -->
+ <!--    <trim prefix="values(" suffix=")" suffixOverrides=","> -->
+     values(cistsys.SEQ_TBL_CONTROL_VEHICLE.nextval,
+     #{kkbh},
+     #{enable},
+     #{qc},
+     #{ssbm},
+     #{sfyjts,jdbcType=CHAR},
+	 #{bkjl,jdbcType=VARCHAR})
+<!--    </trim> -->
+</insert>
+
+<!--增加区域  -->
+<insert id="insertQy" parameterType="java.util.HashMap">
+   insert  into tbl_bayonet_area 
+    (pk,kkbh,qy_code) 
+     values(
+      SEQ_BAYONET_AREA.nextval,
+       #{kkbh},
+       #{qy_code}
+       )
+</insert>
+<!--增加单位 -->
+<insert id="insertDept" parameterType="java.util.HashMap">
+    insert  into tbl_bayonet_units
+    (pk,kkbh,dept_code)
+     values(
+      SEQ_BAYONET_UNITS.nextval,
+       #{kkbh},
+       #{dept_code}
+     )
+</insert>
+<!--更新数据  -->
+<update id="updateDada" parameterType="java.util.HashMap">
+   update tbl_control_bayonet  
+   <trim prefix="set" suffixOverrides=",">
+   kkbh=#{kkbh},
+   enable=#{enable},
+   ssbm=#{ssbm},
+   qc=#{qc},
+   sfyjts=#{sfyjts},
+   <if test="bkjl!=null and bkjl!=''">
+      bkjl=#{bkjl}
+   </if>
+   where 
+   pk=#{pk}
+  </trim>
+</update>
+<!--c查询区域内容  -->
+<select id="selectQy" resultType="com.cist.warningmanagement.bayonet.model.Qy_Bm" parameterType="java.util.HashMap">
+  select * from tbl_bayonet_area 
+  <where>
+  <if test="kkbh!=null  and kkbh!=''">
+     kkbh=#{kkbh}
+  </if>
+  
+  </where>
+ </select>
+  <!--c查询部门内容  -->
+<select id="selectDept" resultType="com.cist.warningmanagement.bayonet.model.Qy_Bm" parameterType="java.util.HashMap">
+  select * from tbl_bayonet_units 
+  <where>
+  <if test="kkbh!=null  and kkbh!=''">
+     kkbh=#{kkbh}
+  </if>
+  </where>
+  </select>
+    <!--c查询部门是否重复  -->
+  <select id="selectDepatRepet" resultType="java.lang.Integer"  parameterType="java.util.HashMap">
+  select * from tbl_bayonet_units  where kkbh=#{kkbh} and dept_code=#{dept_code}
+  </select>
+      <!--c查询区域是否重复  -->
+  <select id="selectQyRepet" resultType="java.lang.Integer" parameterType="java.util.HashMap">
+  select * from tbl_bayonet_area  where kkbh=#{kkbh} and qy_code=#{qy_code}
+  </select>
+  </mapper>

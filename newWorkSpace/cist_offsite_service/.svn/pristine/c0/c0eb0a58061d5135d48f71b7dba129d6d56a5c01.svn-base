@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cist.user.mapper.FirstMapper">
+	<!-- 获取道路 -->
+	<select id="querylist" resultType="com.cist.user.model.PlateColor">
+		select * from cistsys.C_PLATE_COLOR
+	</select>
+</mapper>

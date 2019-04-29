@@ -1,0 +1,474 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cist.offsite.invalidtrial.mapper.TblOffeEvdiInfoMapper" >
+  <sql id="Base_Column_List" >
+    WFPK, WFBH, WFDD, WFXW, FXBH, HPZL, HPHM, HPYS, CLSD, WFKSSJ, WFSJ, WFJSSJ, KKBH, 
+    SBBH, WFZJ1, WFZJ2, WFZJ3, WFZJ4, CLBZ, SHBZ, SHR, SHSJ, ECSHR, ECSHSJ, SHSM, SJLY, 
+    CJDW, CLPP, CLLX, CSYS, BDSD, SYR, SYRDH, JSZH, ZPLX, LRR, LRSJ, SCSJ, SCBZ, SCDM, 
+    CSBZ, RESVE, CDBH
+  </sql>
+  
+    <!--查询审核人列表  -->
+    <select id="selectPolice" resultType="com.cist.offsite.invalidtrial.model.SysPoliceInfo" parameterType="java.util.HashMap">
+    select * from CISTSYS.SYS_POLICE_INFO t
+   </select>
+  <!--查询限行违法数据是否存在  -->
+    <select id="selectRestriction" resultType="com.cist.offsite.invalidtrial.model.TblOffeEvdiInfo" parameterType="java.util.HashMap">
+     select * from OEUSER.TBL_OFFE_EVDI
+     where 
+    <![CDATA[  and trunc(WFSJ) =trunc(sysdate)]]>
+     and HPZL=#{hpzl},
+     and HPHM=#{hphm},
+     and wfxw='1344'
+     and SHBZ ='5'
+   </select>
+  <!-- 更新六合一信息 -->
+	<update id="updateCarInfo" parameterType="java.util.HashMap">
+	update  OEUSER.TBL_OFFE_EVDI
+	<trim prefix="set" suffixOverrides=",">
+			<if test=" syxz != null and syxz !='' ">
+			syxz = #{syxz},
+			</if>
+			<if test=" fdjh != null and fdjh !='' ">
+			fdjh = #{fdjh},
+			</if>
+			<if test=" fzjg != null and fzjg !='' ">
+			fzjg = #{fzjg},
+			</if>
+			<if test=" clytName != null and clytName !='' ">
+			clyt = #{clytName},
+			</if>
+			<if test=" zsxxdz != null and zsxxdz !='' ">
+			zsxxdz = #{zsxxdz},
+			</if>
+			<if test=" csysName != null and csysName !='' ">
+			csysname = #{csysName},
+			</if>
+			<if test=" clxh != null and clxh !='' ">
+			clxh = #{clxh},
+			</if>
+			<if test=" syxzName != null and syxzName !='' ">
+			syxzname = #{syxzName},
+			</if>
+			<if test=" ztName != null and ztName !='' ">
+			clztname = #{ztName},
+			</if>
+			<if test=" dwbh != null and dwbh !='' ">
+			dwbh = #{dwbh},
+			</if>
+			<if test=" dwmc != null and dwmc !='' ">
+			dwmc = #{dwmc},
+			</if>
+			<if test=" yxqzName != null and yxqzName !='' ">
+			jyyxqz = #{yxqzName},
+			</if>
+			<if test=" qzbfqzName != null and qzbfqzName !='' ">
+			bfrq = #{qzbfqzName},
+			</if>
+			<if test=" cllxName != null and cllxName !='' ">
+			cllxname = #{cllxName},
+			</if>			
+			<if test=" clpp1 != null and clpp1 !='' ">
+			clpp1 = #{clpp1},
+			</if>	
+			<if test=" syr != null and syr !='' ">
+			jdcsyr = #{syr},
+			</if>	
+			<if test=" lxdh != null and lxdh !='' ">
+			syrdh = #{lxdh},
+			</if>	
+			<if test=" hpzlName != null and hpzlName !='' ">
+			hpzlname = #{hpzlName},
+			</if>			
+			<if test=" clsbdh != null and clsbdh !='' ">
+			clsbdm = #{clsbdh},
+			</if>
+			<if test=" clyt != null and clyt !='' ">
+			clyt_lhy = #{clyt},
+			</if>	
+			<if test=" gender != null and gender !='' ">
+			xb = #{gender},
+			</if>		
+			<if test=" cwkc != null and cwkc !='' ">
+			clwlc = #{cwkc},
+			</if>	
+			<if test=" cwkc != null and cwkc !='' ">
+			clwlc = #{cwkc},
+			</if>
+			<if test=" djrqName != null and djrqName !='' ">
+			DJRQ = #{djrqName},
+			</if>
+
+			LHYFLAG='1',
+		</trim>
+	where WFPK=#{wfpk}
+	</update>
+     <select id="auditnumber" resultType="int" parameterType="java.util.HashMap">
+    select count(*) from oeuser.tbl_offe_evdi t where t.shbz=0 and t.wfsj BETWEEN 
+		     to_date(#{wfkssj},'yyyy-mm-dd hh24:mi:ss') and to_date(#{wfjssj},'yyyy-mm-dd hh24:mi:ss')
+		     <if test="csr !=null and csr !='' ">
+		    and  csr=#{csr}
+		     </if>
+		      <if test="csr !=null and csr !='' ">
+		     and   fsr=#{fsr}
+		     </if>
+		     
+   </select>
+   <select id="getjintiri" resultType="int" parameterType="java.util.HashMap">
+   select count(*) from OEUSER.TBL_OFFE_EVDI t where trunc(sysdate)=trunc(t.wfsj) and t.shbz=1
+   </select>
+   <select id="sycivalue" resultType="int" parameterType="java.util.HashMap">
+   select t.syci_value from SYS_CONFIG t where t.syci_pk=6
+   </select>
+	<insert id="insertBus">
+		insert into TXZ_VEH_BUS
+		<trim prefix="(" suffixOverrides="," suffix=")">
+			PK,
+			HPZL,
+			HPHM,
+			<if test=" cllx !=null and cllx !=''">
+			CLLX,
+			</if>
+			<if test=" syxz !=null and syxz !=''">
+			SYXZ,
+			</if>
+			
+			<if test=" clyt !=null and clyt !=''">
+				CLYT,
+			</if>
+			<if test=" clbz !=null and clbz !=''">
+				CLBZ,
+			</if>
+			
+			<if test=" sxrq !=null and sxrq !=''">
+				SXRQ,
+			</if>
+			<if test=" yxqz !=null and yxqz !=''">
+				YXQZ,
+			</if>
+
+			<if test="clms !='' and clms!=null">
+				CLMS,
+			</if>
+		</trim>
+		<trim prefix="values(" suffixOverrides="," suffix=")">
+			cistsys.SEQ_C_VEH_BUS_PK.NEXTVAL,
+			#{hpzl},
+			#{hphm},
+			<if test=" cllx !=null and cllx !=''">
+			#{cllx},
+			</if>
+			<if test=" syxz !=null and syxz !=''">
+			#{syxz},
+			</if>
+			
+			<if test=" clyt !=null and clyt !=''">
+				#{clyt},
+			</if>
+			<if test=" clbz !=null and clbz !=''">
+				#{clbz},
+			</if>
+
+			<if test=" sxrq !=null and sxrq !=''">
+				to_date(#{sxrq},'yyyy-MM-dd'),
+			</if>
+			<if test=" yxqz !=null and yxqz !=''">
+				to_date(#{yxqz},'yyyy-MM-dd'),
+			</if>
+			<if test="clms !='' and clms!=null">
+				#{clms},
+			</if>
+
+		</trim>
+	</insert>
+  <select id="selectShr" resultType="com.cist.offsite.invalidtrial.model.SysPoliceInfo" parameterType="java.util.HashMap">
+     select sypi_name
+     from SYS_POLICE_INFO
+     where SYPI_PK=#{sypi_pk}
+   </select>
+   <select id="selectZfyy" resultType="com.cist.offsite.invalidtrial.model.Sys_frm_code" parameterType="java.util.HashMap">
+     select *
+     from SYS_FRM_CODE
+     where FC_CODE=#{fc_code}
+     and FCT_CODE=#{fct_code}
+   </select>
+   <select id="selectConfig" resultType="com.cist.offsite.invalidtrial.model.SysConfig" parameterType="java.util.HashMap">
+     select *
+     from SYS_CONFIG
+     where SYCI_KEY=#{syci_key}
+   </select>
+  <!-- 统计12日内审核情况 sum(case when shbz='0' then 1 else 0 end)-->
+  <select id="selectCount" resultType="com.cist.offsite.invalidtrial.model.TblOffeEvdiInfo" parameterType="java.util.HashMap">
+     select count(0)count,sum(case when 
+     <![CDATA[ ( csr=#{csr} and CSSJ > to_date(#{start},'yyyy-mm-dd HH24:mi:ss') and CSSJ < to_date(#{end},'yyyy-mm-dd HH24:mi:ss')) ]]>
+     or <![CDATA[fsr=#{fsr} and (FSSJ > to_date(#{start},'yyyy-mm-dd HH24:mi:ss') and FSSJ < to_date(#{end},'yyyy-mm-dd HH24:mi:ss'))  ]]>
+      then 1 else 0 end)shcount
+     from OEUSER.TBL_OFFE_EVDI
+     where 
+    <![CDATA[  WFSJ > sysdate-#{syci_value} ]]>
+      <![CDATA[  and WFSJ < sysdate ]]>
+   </select>
+     <select id="selectValid" resultType="com.cist.offsite.invalidtrial.model.TblOffeEvdiInfo" parameterType="java.util.HashMap">
+     select * from OEUSER.TBL_OFFE_EVDI
+     where 
+    <![CDATA[  and WFSJ > to_date(#{wfsj},'yyyy-mm-dd HH24:mi:ss')-5/24/60/60 ]]>
+      <![CDATA[  and WFSJ < to_date(#{wfsj},'yyyy-mm-dd HH24:mi:ss')+5/24/60/60 ]]>
+      hphm=#{hphm}
+     and WFDD=#{wfdd}
+     and SHBZ in('3','4','16')
+   </select>
+   
+    <select id="selectStatus" resultType="com.cist.offsite.invalidtrial.model.TblOffeEvdiInfo" parameterType="java.util.HashMap">
+     select * from OEUSER.TBL_OFFE_EVDI
+     where wfpk=#{wfpk}
+     and SHBZ in('3','4','16')
+   </select>
+   <!-- 保存操作日志 -->
+  <insert id="saveLog">
+  insert into TBL_OFFE_OPT_LOG
+  (
+  TOOL_PK,
+  TOOL_USER,
+  TOOL_IP,
+  TOOL_TIME,
+  TOOL_DEPT_CODE,
+  TOOL_TYPE,
+  TOOL_RESULT,
+  TOOL_SIGN,
+  TOOL_WFXH,
+  TOOL_SRC,
+  TOOL_DEST
+ )
+  values(
+ cistsys.SEQ_IMGNAME_PK.NEXTVAL,
+  #{tool_user},
+  #{tool_ip},
+  sysdate,
+  #{tool_dept_code},
+  #{tool_type},
+  #{tool_result},
+  #{tool_sign},
+  #{tool_wfxh},
+  #{tool_src,jdbcType=CLOB},
+  #{tool_dest,jdbcType=CLOB}
+  )
+  </insert>
+  
+   <select id="selectReason" resultType="com.cist.offsite.invalidtrial.model.CReason" parameterType="java.lang.Integer">
+     select * from C_REASON t
+   </select>
+    <select id="depart_infolist" resultType="com.cist.offsite.invalidtrial.model.Depart_info" parameterType="java.lang.Integer">
+select t.dept_pk,t.dept_code,t.dept_name as name,t.DEPT_SUPERIOR from sys_depart_info t 
+<where>
+		  <if test="_parameter  == null or _parameter  == ''">
+		     t.DEPT_SUPERIOR is null
+		   </if>
+		     <if test="_parameter  != null and _parameter  != ''">
+		     t.DEPT_SUPERIOR=#{_parameter}
+		   </if>
+</where>
+   </select>
+	<select id="selectRoad" resultType="com.cist.offsite.invalidtrial.model.CRoadItem"
+		parameterType="java.lang.Integer">
+		select * from C_ROAD_ITEM t
+		<where>
+			<if test="_parameter != null or _parameter != ''">
+				DEPT_CODE=#{_parameter}
+			</if>
+		</where>
+	</select>
+<select id="selectPoint"
+	resultType="com.cist.offsite.invalidtrial.model.C_Monitor_Point_Ex"
+	parameterType="java.lang.String">
+	select * from C_Monitor_Point_Ex t
+	<where>
+		<if test="_parameter != null or _parameter != ''">
+			M_ROAD_CODE=#{_parameter}
+		</if>
+	</where>
+</select>
+<select id="selectDev"
+	resultType="com.cist.offsite.invalidtrial.model.Tbl_dev_vio_config"
+	parameterType="java.lang.Integer">
+	select * from TBL_DEV_VIO_CONFIG_EX t
+	<where>
+		<if test="_parameter != null or _parameter != ''">
+			DVE_PK=#{_parameter}
+		</if>
+	</where>
+</select>
+	
+   <select id="Monitorpoint" resultType="com.cist.offsite.invalidtrial.model.Depart_info" parameterType="string">
+   select t.tbmp_id as dept_code,t.tbmp_dept_code,t.tbmp_azdz as name,t.tbmp_azdz from c_monitor_point t  where t.tbmp_dept_code=#{_parameter}
+   </select>
+    <!-- 根据条件查询返回集合 -->
+  <select id="selectExport" resultType="com.cist.offsite.invalidtrial.model.TblOffeEvdiInfo" parameterType="java.util.HashMap">
+    select * from OEUSER.TBL_OFFE_EVDI
+    <where>
+        <if test="wfpk != null and wfpk !=''">
+            and WFPk = #{wfpk}
+          </if>
+		</where>
+		</select>
+   <!-- 根据条件查询返回集合 -->
+  <select id="selectByCondition" resultType="com.cist.offsite.invalidtrial.model.TblOffeEvdiInfo" parameterType="java.util.HashMap">
+    select * from OEUSER.TBL_OFFE_EVDI
+    <where>
+        <if test="wfpk != null and wfpk !=''">
+            and WFPk = #{wfpk}
+          </if>
+			<if test="hphm!=null and hphm!=''">
+				and hphm like '%'||#{hphm}||'%'
+			</if>
+			
+			<if test="hpzl!=null and hpzl!='' and hpzl!='null'">
+				and hpzl = #{hpzl}
+			</if>
+			<if test="wfdd!=null and wfdd!='' and wfdd!='null' ">
+				and KKBH =#{wfdd}
+			</if>
+			<if test="wfxw!=null and wfxw!='' and wfxw!='null'">
+				and wfxw = #{wfxw}
+			</if>
+			<if test="wfkssj!=null and wfkssj!='' and wfkssj!='null'">
+		    <![CDATA[ and WFKSSJ >=to_date(#{wfkssj},'yyyy-mm-dd HH24:mi:ss')]]>
+	        </if>
+	        <if test="wfjssj!=null and wfjssj!='' and wfjssj!='null'">
+		    <![CDATA[and WFJSSJ <= to_date(#{wfjssj},'yyyy-mm-dd HH24:mi:ss') ]]>
+	        </if>
+	        <if test="shrname!=null and shrname!=''">
+				and  (csr=#{shrname} or fsr=#{shrname})
+			</if>
+	        <if test="list!=null">
+				and SBBH in
+				 <foreach collection="list" index="index" item="item"
+            open="(" separator="," close=")">
+            #{item}
+        </foreach>
+			<!-- 	<foreach item="t" collection="sbbh" open="(" separator="," close=")">
+		            #{t}
+		        </foreach> -->
+			</if>
+	        <!--3初审作废  4复审作废  -->
+	       and SHBZ in('3','4','16')
+		</where>
+		order by wfsj desc
+  </select>
+  <!--根据wfpk 单条数据查询 -->
+    <select id="selectByWfpk" resultType="com.cist.offsite.invalidtrial.model.TblOffeEvdiInfo" parameterType="java.util.HashMap">
+    select * from OEUSER.TBL_OFFE_EVDI  where WFPK =#{wfpk,jdbcType=DECIMAL}
+  </select>
+<!--根据wfpk返回单条记录  -->
+<!--    <select id="selectNextByWfpk" resultType="com.cist.offsite.invalidtrial.model.TblOffeEvdiInfo" parameterType="com.cist.offsite.invalidtrial.model.TblOffeEvdiInfo">
+   select * from OEUSER.TBL_OFFE_EVDI  where WFPK =#{wfpk,jdbcType=DECIMAL}
+  </select> -->
+  <!-- 数据库定位下一条 -->
+<!--  <select id="selectNextByWfpk" resultType="com.cist.offsite.invalidtrial.model.TblOffeEvdiInfo" parameterType="com.cist.offsite.invalidtrial.model.TblOffeEvdiInfo">
+   select * from OEUSER.TBL_OFFE_EVDI where WFPK=(select c.n from (select WFPK,lead(WFPK,1,0)  over (order by WFPK) as n from OEUSER.TBL_OFFE_EVDI) c where c.WFPK=#{wfpk,jdbcType=DECIMAL})
+  </select> -->
+	
+    <!-- 无效数据审核 -->
+  <update id="updateByWfpk"   parameterType="java.util.ArrayList"> 
+    update OEUSER.TBL_OFFE_EVDI
+    <set>
+    <if test="hphm != null and hphm !=''">
+      HPHM = #{hphm},
+    </if>
+     <if test="hpzl!= null and hpzl !=''">
+     HPZL = #{hpzl},
+    </if>
+    <if test="hpys!= null and hpys !=''">
+     HPYS = #{hpys,jdbcType=CHAR},
+    </if>
+     <if test="wfxw!= null and wfxw !=''">
+      WFXW = #{wfxw},
+    </if>
+      <if test="shbz!= null and shbz !=''">
+      SHBZ = #{shbz},
+    </if>
+        <if test="hpzlname!= null and hpzlname !=''">
+     HPZLNAME = #{hpzlname},
+    </if>
+    <if test="cszfbz != null and cszfbz !='' and cszfbz !='null'">
+    CSZFBZ = #{cszfbz},
+    </if>
+      <if test="fszfbz != null and fszfbz !='' and fszfbz !='null' ">
+     FSZFBZ = #{fszfbz},
+    </if>
+    </set>
+    where WFPK = #{wfpk,jdbcType=DECIMAL}
+  </update>
+  
+  <select id="selectByVwDevInfo" resultType="com.cist.offsite.invalidtrial.model.VwDevInfo" parameterType="com.cist.offsite.invalidtrial.model.VwDevInfo">
+    select * from VW_DEV_INFO t
+  </select>
+   <select id="selectSysFrmCode" resultType="com.cist.offsite.invalidtrial.model.Sys_frm_code" parameterType="java.lang.String">
+    select * from SYS_FRM_CODE
+    where
+    FCT_CODE=#{fct_code}
+  </select>
+   <select id="selectByCPlateColorInfo" resultType="com.cist.offsite.invalidtrial.model.CPlateColorInfo" parameterType="com.cist.offsite.invalidtrial.model.CPlateColorInfo">
+    select * from C_PLATE_COLOR
+  </select>
+  <select id="selectByCPlateKerisInfo" resultType="com.cist.offsite.invalidtrial.model.CPlateKerisInfo" parameterType="com.cist.offsite.invalidtrial.model.CPlateKerisInfo">
+    select * from C_PLATE_KERIS
+  </select>
+  <!--号牌种类对应信息查询  -->
+  <select id="selectByHpzl" resultType="com.cist.offsite.invalidtrial.model.Sys_frm_code">
+ select * from SYS_FRM_CODE
+    <where>
+   <if test="hpzl!=null and hpzl!='' ">
+   and FC_CODE=#{hpzl}
+   and FCT_CODE='C001'
+   </if>
+    </where>
+  </select>
+  <!--号牌颜色对应信息查询  -->
+  <select id="selectByHpys" resultType="com.cist.offsite.invalidtrial.model.CPlateColorInfo">
+ select * from C_PLATE_COLOR 
+    <where>
+   <if test="hpys!=null and hpys!='' ">
+   and CODE=#{hpys}
+   </if>
+    </where>
+  </select>
+   <!--违法行为对应信息查询  -->
+   <select id="selectByWfxw" resultType="com.cist.picture.model.Tbl_offe_cate" parameterType="java.util.HashMap">
+         select * from TBL_OFFE_CATE
+     <where>
+       <if test="wfxw !=null and wfxw!='' ">
+         and TBOC_CODE=#{wfxw}
+       </if>
+       <if test="tboc_name!=null and tboc_name!='' ">
+       and TBOC_NAME=#{tboc_name}
+       </if>
+     </where>
+   </select>
+   <!--采集单位对应信息查询  -->
+   <select id="selectByCjdw" resultType="com.cist.offsite.invalidtrial.model.SysDepartInfo">
+      select DEPT_NAME as deptName,DEPT_CODE as deptCode from SYS_DEPART_INFO 
+    <where>
+   <if test="cjdw!=null and cjdw!='' ">
+   and DEPT_CODE=#{cjdw}
+   </if>
+    </where>
+  </select>
+  <!--采集设备对应信息查询  -->
+   <select id="selectByCjsb" resultType="com.cist.offsite.invalidtrial.model.Jcsj_Device">
+ select device_name as tbeiName from JCSJ_DEVICE 
+    <where>
+   <if test="sbbh!=null and sbbh!='' ">
+   and device_num=#{sbbh}
+   </if>
+    </where>
+  </select>
+   <!--方向单挑记录查询  -->
+   <select id="selectByFxbh" resultType="com.cist.offsite.invalidtrial.model.CDirectionInfo">
+ select DIR_CODE as dirCode,DIR_NAME as dirName from C_DIRECTION 
+    <where>
+   <if test="fxbh!=null and fxbh!='' ">
+   and DIR_CODE=#{fxbh}
+   </if>
+    </where>
+  </select>
+</mapper>

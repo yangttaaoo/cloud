@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cist.isolationfacility.mapper.IsolationFacilityMapper">
+	<!-- 新增隔离设施信息 -->
+	<insert id="insertJcsj_barrier_facilities" parameterType="java.util.Map">
+		insert into JCSJ_BARRIER_FACILITIES
+		<trim prefix="(" suffixOverrides="," suffix=")">
+			pk_id,
+			glbm,
+			<if test="xzqh != null and xzqh != ''">
+				xzqh,
+			</if>
+			dldm,
+			dllx,
+			lddm,
+			dlms,
+			dllxmc,
+			<if test="jdzb != null and jdzb != ''">
+				jdzb,
+			</if>
+			<if test="wdzb != null and wdzb != ''">
+				wdzb,
+			</if>
+			<if test="jyms != null and jyms != ''">
+				jyms,
+			</if>
+				glsslx,
+			<if test="glsscd != null and glsscd != ''">
+				glsscd,
+			</if>
+			<if test="glssgd != null and glssgd != ''">
+				glssgd,
+			</if>
+				glsscl,
+			<if test="jsdw != null and jsdw != ''">
+				jsdw,
+			</if>
+			<if test="sgdw != null and sgdw != ''">
+				sgdw,
+			</if>
+			<if test="jssj != null and jssj != ''">
+				jssj,
+			</if>
+			<if test="syqxjzsj != null and syqxjzsj != ''">
+				syqxjzsj,
+			</if>
+			<if test="syqxy != null and syqxy != ''">
+				syqxy,
+			</if>
+			<if test="syqxm != null and syqxm != ''">
+				syqxm,
+			</if>
+			<if test="glsssjtp != null and glsssjtp != ''">
+				glsssjtp,
+			</if>
+		</trim>
+		<trim prefix="values(" suffixOverrides="," suffix=")">
+			SEQ_JCSJ_SAD_INFO_PK.nextval,
+			#{glbm},
+			<if test="xzqh != null and xzqh != ''">
+				#{xzqh},
+			</if>
+				#{dldm},
+				#{dllx},
+				#{lddm},
+				#{dlms},
+				#{dllxmc},
+			<if test="jdzb != null and jdzb != ''">
+				#{jdzb},
+			</if>
+			<if test="wdzb != null and wdzb != ''">
+				#{wdzb},
+			</if>
+			<if test="jyms != null and jyms != ''">
+				#{jyms},
+			</if>
+				#{glsslx},
+			<if test="glsscd != null and glsscd != ''">
+				#{glsscd},
+			</if>
+			<if test="glssgd != null and glssgd != ''">
+				#{glssgd},
+			</if>
+				#{glsscl},
+			<if test="jsdw != null and jsdw != ''">
+				#{jsdw},
+			</if>
+			<if test="sgdw != null and sgdw != ''">
+				#{sgdw},
+			</if>
+			<if test="jssj != null and jssj != ''">
+				to_date(#{jssj},'yyyy-mm-dd HH24:mi:ss'),
+			</if>
+			<if test="syqxjzsj != null and syqxjzsj != ''">
+				to_date(#{syqxjzsj},'yyyy-mm-dd HH24:mi:ss'),
+			</if>
+			<if test="syqxy != null and syqxy != ''">
+				#{syqxy},
+			</if>
+			<if test="syqxm != null and syqxm != ''">
+				#{syqxm},
+			</if>
+			<if test="glsssjtp != null and glsssjtp != ''">
+				#{glsssjtp},
+			</if>
+		</trim>
+	</insert>
+	<!-- 查询隔离设施信息 -->
+	<select id="queryJcsj_barrier_facilities" parameterType="java.util.HashMap"
+	resultType="com.cist.isolationfacility.model.Jcsj_barrier_facilities">
+		select t.*,(select b.dept_name from SYS_DEPART_INFO b where b.dept_code=t.glbm) glbm_name,
+		(select fc_name from sys_frm_code where fct_code='GLLX' and fc_code=t.glsslx) glsslx_name,
+		(select fc_name from sys_frm_code where fct_code='GLCL' and fc_code=t.glsscl) glsscl_name,
+		(select tbek_name from C_KREIS_CODE where tbek_code=t.xzqh) xzqh_name,
+		(select r.roim_name from C_ROAD_ITEM r where  r.dept_code=t.glbm and r.roim_code = to_char(t.dldm)) dldm_name from Jcsj_barrier_facilities t
+		<where>
+			<if test="glbm !=null and glbm !=''">
+				and glbm = #{glbm}
+			</if>
+			<if test="xzqh !=null and xzqh !=''">
+				and xzqh = #{xzqh}
+			</if>
+			<if test="glsslx !=null and glsslx !=''">
+				and glsslx = #{glsslx}
+			</if>
+			<if test="kssj!=null and kssj!=''">
+				<![CDATA[ and syqxjzsj >=to_date(#{kssj},'yyyy-mm-dd HH24:mi:ss')]]>
+			</if>
+			<if test="jssj!=null and jssj!=''">
+				<![CDATA[and syqxjzsj <= to_date(#{jssj},'yyyy-mm-dd HH24:mi:ss') ]]>
+			</if>
+		</where>
+	</select>
+	<!-- 更新隔离设施信息 -->
+	<update id="updateJcsj_barrier_facilities" parameterType="java.util.Map">
+			update Jcsj_barrier_facilities T 
+			<trim prefix="set" suffixOverrides=",">
+				<if test="glbm !=null and glbm !=''">
+					glbm=#{glbm},
+				</if>
+				<if test="xzqh !=null and xzqh !=''">
+					xzqh=#{xzqh},
+				</if>
+				<if test="dldm !=null and dldm !=''">
+					dldm=#{dldm},
+				</if>
+				<if test="dllx !=null and dllx !=''">
+					dllx=#{dllx},
+				</if>
+				<if test="lddm !=null and lddm !=''">
+					lddm=#{lddm},
+				</if>
+				<if test="dlms !=null and dlms !=''">
+					dlms=#{dlms},
+				</if>
+				<if test="dllxmc !=null and dllxmc !=''">
+					dllxmc=#{dllxmc},
+				</if>
+				<if test="jdzb !=null and jdzb !=''">
+					jdzb=#{jdzb},
+				</if>
+				<if test="wdzb !=null and wdzb !=''">
+					wdzb=#{wdzb},
+				</if>
+				<if test="jyms !=null and jyms !=''">
+					jyms=#{jyms},
+				</if>
+				<if test="glsslx !=null and glsslx !=''">
+					glsslx=#{glsslx},
+				</if>
+				<if test="glsscd !=null and glsscd !=''">
+					glsscd=#{glsscd},
+				</if>
+				<if test="glssgd !=null and glssgd !=''">
+					glssgd=#{glssgd},
+				</if>
+				<if test="glsscl !=null and glsscl !=''">
+					glsscl=#{glsscl},
+				</if>
+				<if test="jsdw !=null and jsdw !=''">
+					jsdw=#{jsdw},
+				</if>
+				<if test="sgdw !=null and sgdw !=''">
+					sgdw=#{sgdw},
+				</if>
+				<if test="jssj !=null and jssj !=''">
+					jssj=to_date(#{jssj},'yyyy-mm-dd HH24:mi:ss'),
+				</if>
+				<if test="syqxjzsj !=null and syqxjzsj !=''">
+					syqxjzsj=to_date(#{syqxjzsj},'yyyy-mm-dd HH24:mi:ss'),
+				</if>
+				<if test="syqxy !=null and syqxy !=''">
+					syqxy=#{syqxy},
+				</if>
+				<if test="syqxm !=null and syqxm !=''">
+					syqxm=#{syqxm},
+				</if>
+				<if test="glsssjtp !=null and glsssjtp !=''">
+					glsssjtp=#{glsssjtp}
+				</if>
+			</trim>
+			where pk_id=#{pk_id}
+	</update>
+	<!-- 删除隔离设施信息（单条/批量） -->
+	<delete id="deleteJcsj_barrier_facilities" parameterType="java.util.HashMap">
+		delete from Jcsj_barrier_facilities where pk_id in
+			<foreach item="w" collection="list" open="(" separator="," close=")">
+			       #{w}
+			 </foreach> 
+	</delete>
+</mapper>
+	

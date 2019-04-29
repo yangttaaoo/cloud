@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cist.menupurview.mapper.MenuPurviewMapper" >
+  <sql id="Base_Column_List" >
+    SYMI_PK, SYMI_PARENT, SYMI_CODE, SYMI_NAME, SYMI_LEVEL, SYMI_URL, SYMI_TYPE, SYMI_STATUS, 
+    SYMI_PIC_URL, SYMI_FLAG, SYMI_TUG
+  </sql>
+  <select id="selectMenu" resultType="com.cist.menupurview.model.SysModuleInfo" parameterType="java.util.HashMap" >
+    select 
+    *
+    from SYS_MODULE_INFO
+    <where>
+    <if test="symi_code!=null and symi_code !='' ">
+     SYMI_CODE=#{symi_code}
+    </if>
+    <if test="symi_level !=null and symi_level !='' ">
+     symi_level=#{symi_level}
+    </if>
+      <if test="symi_parent !=null and symi_parent !='' ">
+     symi_parent=#{symi_parent}
+    </if>
+    </where>
+   
+  </select>
+   <select id="selectParent" resultType="com.cist.menupurview.model.SysModuleInfo" parameterType="java.util.HashMap" >
+    select 
+    *
+    from SYS_MODULE_INFO
+    <where>
+      <if test="symi_parent !=null and symi_parent !='' ">
+     symi_pk=#{symi_parent}
+    </if>
+    </where>
+   
+  </select>
+  <select id="list" resultType="com.cist.menupurview.model.SysModuleInfo" parameterType="java.util.HashMap" >
+    select 
+    *
+    from SYS_MODULE_INFO
+    <where>
+    <if test="symi_name!=null and symi_name !='' ">
+     and symi_name  like '%'||#{symi_name}||'%'
+    </if>
+    <if test="symi_code!=null and symi_code !='' ">
+     and SYMI_CODE=#{symi_code}
+    </if>
+    <if test="symi_level !=null and symi_level !='' ">
+    and symi_level=#{symi_level}
+    </if>
+    <if test="symi_status !=null and symi_status !='' ">
+    and symi_status=#{symi_status}
+    </if>
+     <if test="symi_parent !=null and symi_parent !='' ">
+    and symi_parent=#{symi_parent}
+    </if>
+    </where>
+    order by symi_parent desc
+  </select>
+  <select id="acquisition" resultType="com.cist.menupurview.model.SysModuleInfo" parameterType="java.lang.Integer">
+    select  *
+    from SYS_MODULE_INFO
+    <where>
+    <if test="_parameter!=null and _parameter!='' ">
+     symi_parent=#{symi_parent}
+    </if>
+    </where>
+  </select>
+  <select id="menuInfoList" resultType="com.cist.menupurview.model.SysModuleInfo"  parameterType="java.lang.Integer">
+    select 
+     *
+    from SYS_MODULE_INFO
+    <where>
+    <if test="_parameter!=null and _parameter!='' ">
+     symi_pk=#{symi_pk}
+    </if>
+    </where>
+   
+  </select>
+  <delete id="delete" parameterType="java.util.HashMap" >
+    delete from SYS_MODULE_INFO 
+    where 
+    SYMI_PK in
+		<foreach item="items" collection="symi_pk" open="(" separator="," close=")">
+            #{items}
+        </foreach>
+  </delete>
+
+  <insert id="save" parameterType="java.util.HashMap" >
+    insert into SYS_MODULE_INFO
+     <trim prefix="(" suffix=")" suffixOverrides="," >
+     symi_pk,
+      <if test="symi_parent != null and symi_parent != '' ">
+        SYMI_PARENT,
+      </if>
+      <if test="symi_code != null and symi_code != ''">
+        SYMI_CODE,
+      </if>
+      <if test="symi_name != null and symi_name != ''" >
+        SYMI_NAME,
+      </if>
+      <if test="symi_level != null and symi_level !='' " >
+        SYMI_LEVEL,
+      </if>
+      <if test="symi_url != null and symi_url != ''">
+        SYMI_URL,
+      </if>
+      <if test="symi_type != null and symi_type != ''" >
+        SYMI_TYPE,
+      </if>
+      <if test="symi_status != null and symi_status != ''">
+        SYMI_STATUS,
+      </if>
+      <if test="symi_pic_url != null and symi_pic_url!= ''">
+        SYMI_PIC_URL,
+      </if>
+      <if test="symi_flag != null and symi_flag != ''" >
+        SYMI_FLAG,
+      </if>
+      <if test="symi_tug != null and symi_tug !='' " >
+        SYMI_TUG,
+      </if>
+      </trim>
+       <trim prefix="values (" suffix=")" suffixOverrides="," >
+       SEQ_SYS_MODEL.NEXTVAL,
+      <if test="symi_parent != null and symi_parent != '' " >
+        #{symi_parent,jdbcType=DECIMAL},
+      </if>
+      <if test="symi_code != null and symi_code != ''" >
+        #{symi_code,jdbcType=VARCHAR},
+      </if>
+      <if test="symi_name != null and symi_name != ''" >
+        #{symi_name,jdbcType=VARCHAR},
+      </if>
+      <if test="symi_level != null and symi_level != ''" >
+        #{symi_level,jdbcType=DECIMAL},
+      </if>
+      <if test="symi_url != null and symi_url != ''" >
+        #{symi_url,jdbcType=VARCHAR},
+      </if>
+      <if test="symi_type != null and symi_type != ''" >
+        #{symi_type,jdbcType=DECIMAL},
+      </if>
+      <if test="symi_status != null  and symi_status != ''" >
+        #{symi_status,jdbcType=DECIMAL},
+      </if>
+      <if test=" symi_pic_url != null  and symi_pic_url != ''" >
+        #{symi_pic_url,jdbcType=VARCHAR},
+      </if>
+      <if test="symi_flag != null and symi_flag != ''" >
+        #{symi_flag,jdbcType=DECIMAL},
+      </if>
+      <if test="symi_tug != null and symi_tug !='' " >
+        #{symi_tug,jdbcType=VARCHAR},
+      </if>
+      </trim>
+  </insert>
+  <update id="update" parameterType="com.cist.menupurview.model.SysModuleInfo" >
+    update SYS_MODULE_INFO
+    <set >
+      <if test="symi_parent != null and symi_parent != '' ">
+        SYMI_PARENT=#{symi_parent},
+      </if>
+      <if test="symi_code != null and symi_code != ''">
+        SYMI_CODE=#{symi_code},
+      </if>
+      <if test="symi_name != null and symi_name != ''" >
+        SYMI_NAME=#{symi_name},
+      </if>
+      <if test="symi_level != null and symi_level != ''" >
+        SYMI_LEVEL=#{symi_level},
+      </if>
+      <if test="symi_url != null and symi_url != ''">
+        SYMI_URL=#{symi_url},
+      </if>
+      <if test="symi_type != null and symi_type != ''" >
+        SYMI_TYPE=#{symi_type},
+      </if>
+      <if test="symi_status != null  and symi_status != ''">
+        SYMI_STATUS=#{symi_status},
+      </if>
+      <if test="symi_pic_url != null and symi_pic_url != ''">
+        SYMI_PIC_URL=#{symi_pic_url},
+      </if>
+      <if test="symi_flag != null and symi_flag != ''" >
+        SYMI_FLAG=#{symi_flag},
+      </if>
+      <if test="symi_tug != null and symi_tug !='' " >
+        SYMI_TUG=#{symi_tug},
+      </if>
+    </set>
+    where SYMI_PK = #{symi_pk,jdbcType=DECIMAL}
+  </update>
+</mapper>

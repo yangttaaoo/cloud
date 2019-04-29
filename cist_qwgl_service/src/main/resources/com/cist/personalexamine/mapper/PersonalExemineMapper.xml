@@ -3,11 +3,18 @@
 <mapper namespace="com.cist.personalexamine.mapper.PersonalExemineMapper">
    	
    	<select id="ExamineInfopageList" resultType="com.cist.personalentry.model.IndividualInfo" parameterType="java.util.HashMap">
-      select t.*,y.sypi_name as fk_user_name,to_char(t.input_time,'yyyy-mm-dd HH24:mi:ss') as input_time_name,to_char(t.start_date,'yyyy-mm-dd HH24:mi:ss') as start_date_name,to_char(t.end_date,'yyyy-mm-dd HH24:mi:ss') as end_date_name,k.dept_name as fk_dept_name from QW_INDIVIDUAL_ASSESSMENT t,SYS_POLICE_INFO y,sys_depart_info k
+ select * from (
+ select t.*,(select c.dept_name from SYS_DEPART_INFO c where c.dept_code=t.fk_dept_id) as fk_dept_name,
+ (select d.xm from JCSJ_POLICE_RES_PERSON d where d.rybh=t.fk_user_id) as fk_user_name,
+ to_char(t.input_time,'yyyy-mm-dd HH24:mi:ss') as input_time_name,
+ to_char(t.start_date,'yyyy-mm-dd HH24:mi:ss') as start_date_name,to_char(t.end_date,'yyyy-mm-dd HH24:mi:ss') as end_date_name,
+ (select k.sypi_name from SYS_POLICE_INFO k where k.sypi_pk=t.data_sources_type) as sypi_name
+  from QW_INDIVIDUAL_ASSESSMENT t
+)t
       <where>
-      	t.fk_user_id = y.sypi_pk and t.fk_dept_id = k.dept_code and t.VERIFY_STATUS = 0
+        t.VERIFY_STATUS = 0
       	<if  test="khry!=null and khry!=''">
-      	  and sypi_name LIKE '%'||#{khry}||'%'
+      	  and t.fk_user_name LIKE '%'||#{khry}||'%'
       	</if>
       	<if  test="ssbm!=null and ssbm!=''">
       	  and fk_dept_id = #{ssbm}

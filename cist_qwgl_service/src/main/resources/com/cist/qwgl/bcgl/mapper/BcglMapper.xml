@@ -40,15 +40,15 @@
 	<!-- 管理部门树 -->
 	<select id="depart_infolist"
 		resultType="com.cist.qwgl.bcgl.model.DeptInfo"
-		parameterType="java.lang.Integer">
+		parameterType="java.util.HashMap">
 		select t.dept_pk,t.dept_code,t.dept_name as name,t.DEPT_SUPERIOR,t.geo_spatial from
 		sys_depart_info t
 		<where>
-			<if test="_parameter  == null or _parameter  == ''">
-				t.DEPT_SUPERIOR is null
+			<if test="superior  == null or superior  == ''">
+				t.dept_code = #{dept_code1}
 			</if>
-			<if test="_parameter  != null and _parameter  != ''">
-				t.DEPT_SUPERIOR=#{_parameter}
+			<if test="superior  != null and superior  != ''">
+				t.DEPT_SUPERIOR=#{superior}
 			</if>
 		</where>
 	</select>

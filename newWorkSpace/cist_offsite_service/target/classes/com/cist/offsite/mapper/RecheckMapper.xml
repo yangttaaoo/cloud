@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cist.offsite.mapper.RecheckMapper" >
+  <resultMap id="BaseResultMap" type="com.cist.offsite.model.TblOffeEvdiInfo" >
+    <id column="WFPK" property="wfpk" jdbcType="DECIMAL" />
+    <result column="WFBH" property="wfbh" jdbcType="VARCHAR" />
+    <result column="WFDD" property="wfdd" jdbcType="VARCHAR" />
+    <result column="WFXW" property="wfxw" jdbcType="VARCHAR" />
+    <result column="FXBH" property="fxbh" jdbcType="CHAR" />
+    <result column="HPZL" property="hpzl" jdbcType="CHAR" />
+    <result column="HPHM" property="hphm" jdbcType="VARCHAR" />
+    <result column="HPYS" property="hpys" jdbcType="CHAR" />
+    <result column="CLSD" property="clsd" jdbcType="DECIMAL" />
+    <result column="WFKSSJ" property="wfkssj" jdbcType="TIMESTAMP" />
+    <result column="WFSJ" property="wfsj" jdbcType="TIMESTAMP" />
+    <result column="WFJSSJ" property="wfjssj" jdbcType="TIMESTAMP" />
+    <result column="KKBH" property="kkbh" jdbcType="VARCHAR" />
+    <result column="SBBH" property="sbbh" jdbcType="CHAR" />
+    <result column="WFZJ1" property="wfzj1" jdbcType="VARCHAR" />
+    <result column="WFZJ2" property="wfzj2" jdbcType="VARCHAR" />
+    <result column="WFZJ3" property="wfzj3" jdbcType="VARCHAR" />
+    <result column="WFZJ4" property="wfzj4" jdbcType="VARCHAR" />
+    <result column="CLBZ" property="clbz" jdbcType="DECIMAL" />
+    <result column="SHBZ" property="shbz" jdbcType="DECIMAL" />
+    <result column="SHR" property="shr" jdbcType="VARCHAR" />
+    <result column="SHSJ" property="shsj" jdbcType="TIMESTAMP" />
+    <result column="ECSHR" property="ecshr" jdbcType="VARCHAR" />
+    <result column="ECSHSJ" property="ecshsj" jdbcType="TIMESTAMP" />
+    <result column="SHSM" property="shsm" jdbcType="VARCHAR" />
+    <result column="SJLY" property="sjly" jdbcType="DECIMAL" />
+    <result column="CJDW" property="cjdw" jdbcType="VARCHAR" />
+    <result column="CLPP" property="clpp" jdbcType="VARCHAR" />
+    <result column="CLLX" property="cllx" jdbcType="VARCHAR" />
+    <result column="CSYS" property="csys" jdbcType="VARCHAR" />
+    <result column="BDSD" property="bdsd" jdbcType="DECIMAL" />
+    <result column="SYR" property="syr" jdbcType="VARCHAR" />
+    <result column="SYRDH" property="syrdh" jdbcType="VARCHAR" />
+    <result column="JSZH" property="jszh" jdbcType="VARCHAR" />
+    <result column="ZPLX" property="zplx" jdbcType="VARCHAR" />
+    <result column="LRR" property="lrr" jdbcType="VARCHAR" />
+    <result column="LRSJ" property="lrsj" jdbcType="TIMESTAMP" />
+    <result column="SCSJ" property="scsj" jdbcType="TIMESTAMP" />
+    <result column="SCBZ" property="scbz" jdbcType="DECIMAL" />
+    <result column="SCDM" property="scdm" jdbcType="VARCHAR" />
+    <result column="CSBZ" property="csbz" jdbcType="VARCHAR" />
+    <result column="RESVE" property="resve" jdbcType="VARCHAR" />
+    <result column="CDBH" property="cdbh" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    WFPK, WFBH, WFDD, WFXW, FXBH, HPZL, HPHM, HPYS, CLSD, WFKSSJ, WFSJ, WFJSSJ, KKBH, 
+    SBBH, WFZJ1, WFZJ2, WFZJ3, WFZJ4, CLBZ, SHBZ, SHR, SHSJ, ECSHR, ECSHSJ, SHSM, SJLY, 
+    CJDW, CLPP, CLLX, CSYS, BDSD, SYR, SYRDH, JSZH, ZPLX, LRR, LRSJ, SCSJ, SCBZ, SCDM, 
+    CSBZ, RESVE, CDBH
+  </sql>
+
+  <select id="SelectInvalidTrial" resultType="com.cist.offsite.model.TblOffeEvdiInfo">
+    select * from OEUSER.TBL_OFFE_EVDI
+  </select>
+  
+   <select id="showRecheck" resultType="com.cist.offsite.model.TblOffeEvdiInfo">
+    select * from OEUSER.TBL_OFFE_EVDI
+  </select>
+  
+  
+  
+  <select id="SelectByCondition" resultMap="BaseResultMap" parameterType="java.util.Map">
+    select * from OEUSER.TBL_OFFE_EVDI
+    <where>
+    <if test="hphm!=null and hphm!=''">
+		     HPHM like '%' #{hphm} '%'
+	</if>
+	<if test="hpzl!=null and hpzl!=''">
+		     HPZL like '%' #{hpzl} '%'
+	</if>
+	<if test="wfdd!=null and wfdd!=''">
+		     WFDD like '%' #{wfdd} '%'
+	</if>
+	<if test="wfxw!=null and wfxw!=''">
+		     WFXW like '%' #{wfxw} '%'
+	</if>
+	<if test="datemin!=null and datemin!=''">
+		     <![CDATA[ WFSJ>=STR_TO_DATE(#{datemin},'%Y-%m-%d %H:%i:%s')]]>
+	</if>
+	<if test="datemax!=null and datemax!=''">
+		     <![CDATA[ WFSJ<=STR_TO_DATE(#{datemax},'%Y-%m-%d %H:%i:%s')]]>
+	</if>
+	<if test="cjsb!=null and cjsb!=''">
+		     CJSB like '%' #{cjsb} '%'
+	</if>
+    </where>
+  </select>
+</mapper>

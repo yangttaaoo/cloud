@@ -1,0 +1,9 @@
+server.context-path=/zdcl
+server.port=8613
+spring.application.name=service-zdcl-wt
+spring.http.multipart.maxFileSize=50MB
+spring.http.multipart.maxRequestSize=50MB
+spring.http.encoding.force=true
+spring.http.encoding.charset=UTF-8
+spring.http.encoding.enabled=true
+server.tomcat.uri-encoding=UTF-8

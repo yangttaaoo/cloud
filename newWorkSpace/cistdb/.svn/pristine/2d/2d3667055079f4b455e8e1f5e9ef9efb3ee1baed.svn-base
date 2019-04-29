@@ -1,0 +1,5 @@
+com\cist\frame\pagePlugin\HelperPlugin.class
+com\cist\frame\datasource\MasterDataSourcesConfig.class
+com\cist\frame\pagePlugin\HelperBean.class
+com\cist\frame\pageAop\PageAop.class
+com\cist\frame\page\PageInfo.class

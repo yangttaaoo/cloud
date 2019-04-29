@@ -1,0 +1,4 @@
+#项目部署名
+server.context-path=/zhdd
+server.port=8916
+spring.application.name=service-zhdd

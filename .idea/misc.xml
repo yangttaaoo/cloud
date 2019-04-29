@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="JavaScriptSettings">
+    <option name="languageLevel" value="ES6" />
+  </component>
+  <component name="MavenProjectsManager">
+    <option name="originalFiles">
+      <list>
+        <option value="$PROJECT_DIR$/cist-comm-service/pom.xml" />
+        <option value="$PROJECT_DIR$/cist_base_sevice/pom.xml" />
+        <option value="$PROJECT_DIR$/cist_devmanage_service/pom.xml" />
+        <option value="$PROJECT_DIR$/cist_devregister_service/pom.xml" />
+        <option value="$PROJECT_DIR$/cist_door_service/pom.xml" />
+        <option value="$PROJECT_DIR$/cist_exchange_service/pom.xml" />
+        <option value="$PROJECT_DIR$/cist_jcbk_service/pom.xml" />
+        <option value="$PROJECT_DIR$/cist_offsite_service/pom.xml" />
+        <option value="$PROJECT_DIR$/cist_preserve_service/pom.xml" />
+        <option value="$PROJECT_DIR$/cist_proof_service/pom.xml" />
+        <option value="$PROJECT_DIR$/cist_qwgl_service/pom.xml" />
+        <option value="$PROJECT_DIR$/cist_traffic_survey_service/pom.xml" />
+        <option value="$PROJECT_DIR$/cist_zhdd_service/pom.xml" />
+        <option value="$PROJECT_DIR$/cistdb/pom.xml" />
+        <option value="$PROJECT_DIR$/cistLog/pom.xml" />
+        <option value="$PROJECT_DIR$/config-server/pom.xml" />
+      </list>
+    </option>
+  </component>
+</project>

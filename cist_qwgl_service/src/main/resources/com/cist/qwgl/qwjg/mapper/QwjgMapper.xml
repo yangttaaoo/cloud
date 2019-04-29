@@ -21,12 +21,12 @@
 		FK_REPORT_ID=t.pk_id) as ren2,
 		( select count(*) from QW_GUNS_RELATION where FK_EQUIP_ID in(select
 		pk_id from QW_EQUIP_INFO where FK_REPORT_ID =t.pk_id)) as qiangzhi,
-		t.* from QW_REPORT t where t.REPORT_TYPE=1 and
-		trunc(t.REPORT_PERIOD_TYPE) = trunc(sysdate)<!-- 查询今天的 -->
+		t.* from QW_REPORT t where t.REPORT_TYPE=1 <!-- and
+		trunc(t.REPORT_PERIOD_TYPE) = trunc(sysdate) --><!-- 查询今天的 -->
 		)t
 		left join QW_REPORT_STREET c on c.FK_REPORT_ID=t.pk_id
-		<where>
-			<!-- 勤务监督 查询现在的时间 当前的勤务班次时间 -->
+		<!-- <where>
+			勤务监督 查询现在的时间 当前的勤务班次时间
 			   to_char(sysdate,'yyyy-mm-dd hh24:mi') between
 			to_char(c.work_shift_start_time,'yyyy-mm-dd hh24:mi') and
 			to_char(c.work_shift_end_time,'yyyy-mm-dd hh24:mi')
@@ -36,7 +36,7 @@
 			<if test="qiangzhi!=null and qiangzhi!=''">
 				and t.qiangzhi!=0
 			</if>
-		</where>
+		</where> -->
 	</select>
 		<select id="kaoheselectQwreport" parameterType="java.util.HashMap"
 		resultMap="messageResultMap">
@@ -664,7 +664,7 @@ left join JCSJ_DEVICE_STATUS_BASIC c on t.pk_id=c.fk_device_id
     </where>
    </delete>
    
-   <select id="jcsj_police_resources" parameterType="java.util.HashMap" resultMap="getGpsRecordinfo" resultType="com.cist.qwgl.qwjg.model.Jcsj_police_resources">
+   <select id="carSecurityByfk_dept_idTocode" parameterType="java.util.HashMap" resultMap="getGpsRecordinfo" resultType="com.cist.qwgl.qwjg.model.Jcsj_police_resources">
      select * from JCSJ_POLICE_RESOURCES t where t.RESOURCES_TYPE in(1,5,6)
      <if test="listjc !=null and  listjc.size() > 0">
 		and t.car_num  not in 
@@ -685,7 +685,7 @@ left join JCSJ_DEVICE_STATUS_BASIC c on t.pk_id=c.fk_device_id
     <select id="getGpsRecordinfocha" parameterType="java.util.HashMap" resultType="com.cist.qwgl.qwjg.model.GpsRecord">
       select * from QW_GPS_RECORD t where t.ywbh=#{car_num} and trunc(t.gpstime) = trunc(sysdate)
    </select>
-   <select id="jcsjpolicerespersoninfo" parameterType="java.util.HashMap" resultMap="hdjnagyuandata">
+   <select id="policeSecurityByglbmTocode" parameterType="java.util.HashMap" resultMap="hdjnagyuandata">
         select t.*,(select c.dept_name from SYS_DEPART_INFO c where c.dept_code=t.GLBM) as  dept_name from JCSJ_POLICE_RES_PERSON t
      <where>
         <if test="listjy !=null and  listjy.size() > 0">
@@ -704,7 +704,7 @@ left join JCSJ_DEVICE_STATUS_BASIC c on t.pk_id=c.fk_device_id
 			select="getGpsRecordinfochagg" />
 	</resultMap>
     <select id="getGpsRecordinfochagg" parameterType="java.util.HashMap" resultType="com.cist.qwgl.qwjg.model.GpsRecord">
-      select * from QW_GPS_RECORD t where t.ywbh=#{rybh} and trunc(t.gpstime) = trunc(sysdate)
+      select * from QW_GPS_RECORD t where t.ywbh=#{rybh} and t.gpstime > sysdate-5/(24*60)
    </select>
    <select id="onduty" parameterType="java.util.HashMap" resultType="com.cist.qwgl.qwjg.model.Onduty">
 
