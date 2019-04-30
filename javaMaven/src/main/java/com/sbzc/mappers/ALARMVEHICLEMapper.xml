@@ -1,0 +1,3972 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sbzc.mappers.ALARMVEHICLEMapper">
+  <resultMap id="BaseResultMap" type="com.sbzc.model.ALARMVEHICLE">
+    <result column="PK" jdbcType="DECIMAL" property="pk" />
+    <result column="YJXH" jdbcType="VARCHAR" property="yjxh" />
+    <result column="HPHM" jdbcType="VARCHAR" property="hphm" />
+    <result column="HPZL" jdbcType="VARCHAR" property="hpzl" />
+    <result column="GCSJ" jdbcType="TIMESTAMP" property="gcsj" />
+    <result column="YJSJ" jdbcType="TIMESTAMP" property="yjsj" />
+    <result column="YJLX" jdbcType="VARCHAR" property="yjlx" />
+    <result column="CLFL" jdbcType="VARCHAR" property="clfl" />
+    <result column="CDBH" jdbcType="VARCHAR" property="cdbh" />
+    <result column="CSYS" jdbcType="VARCHAR" property="csys" />
+    <result column="CLLX" jdbcType="VARCHAR" property="cllx" />
+    <result column="SSDL" jdbcType="VARCHAR" property="ssdl" />
+    <result column="LDDM" jdbcType="VARCHAR" property="lddm" />
+    <result column="LDMS" jdbcType="VARCHAR" property="ldms" />
+    <result column="DLLX" jdbcType="VARCHAR" property="dllx" />
+    <result column="SBFX" jdbcType="VARCHAR" property="sbfx" />
+    <result column="SBBH" jdbcType="VARCHAR" property="sbbh" />
+    <result column="TPSL" jdbcType="VARCHAR" property="tpsl" />
+    <result column="CPTPLJ" jdbcType="VARCHAR" property="cptplj" />
+    <result column="TPLJ1" jdbcType="VARCHAR" property="tplj1" />
+    <result column="TPLJ2" jdbcType="VARCHAR" property="tplj2" />
+    <result column="TPLJ3" jdbcType="VARCHAR" property="tplj3" />
+    <result column="YJDD" jdbcType="VARCHAR" property="yjdd" />
+    <result column="XSSD" jdbcType="DECIMAL" property="xssd" />
+    <result column="SSBM" jdbcType="VARCHAR" property="ssbm" />
+    <result column="XSQY" jdbcType="VARCHAR" property="xsqy" />
+    <result column="SSGS" jdbcType="DECIMAL" property="ssgs" />
+    <result column="GSMC" jdbcType="VARCHAR" property="gsmc" />
+    <result column="GSFZR" jdbcType="VARCHAR" property="gsfzr" />
+    <result column="GSFZRDH" jdbcType="VARCHAR" property="gsfzrdh" />
+    <result column="EVENT_CURRENT_STATUS" jdbcType="VARCHAR" property="eventCurrentStatus" />
+  </resultMap>
+  <insert id="insert" parameterType="com.sbzc.model.ALARMVEHICLE">
+    insert into ZDCL_ALARM_VEHICLE (PK, YJXH, HPHM, 
+      HPZL, GCSJ, YJSJ, 
+      YJLX, CLFL, CDBH, CSYS, 
+      CLLX, SSDL, LDDM, LDMS, 
+      DLLX, SBFX, SBBH, TPSL, 
+      CPTPLJ, TPLJ1, TPLJ2, 
+      TPLJ3, YJDD, XSSD, 
+      SSBM, XSQY, SSGS, GSMC, 
+      GSFZR, GSFZRDH, EVENT_CURRENT_STATUS
+      )
+    values (#{pk,jdbcType=DECIMAL}, #{yjxh,jdbcType=VARCHAR}, #{hphm,jdbcType=VARCHAR}, 
+      #{hpzl,jdbcType=VARCHAR}, #{gcsj,jdbcType=TIMESTAMP}, #{yjsj,jdbcType=TIMESTAMP}, 
+      #{yjlx,jdbcType=VARCHAR}, #{clfl,jdbcType=VARCHAR}, #{cdbh,jdbcType=VARCHAR}, #{csys,jdbcType=VARCHAR}, 
+      #{cllx,jdbcType=VARCHAR}, #{ssdl,jdbcType=VARCHAR}, #{lddm,jdbcType=VARCHAR}, #{ldms,jdbcType=VARCHAR}, 
+      #{dllx,jdbcType=VARCHAR}, #{sbfx,jdbcType=VARCHAR}, #{sbbh,jdbcType=VARCHAR}, #{tpsl,jdbcType=VARCHAR}, 
+      #{cptplj,jdbcType=VARCHAR}, #{tplj1,jdbcType=VARCHAR}, #{tplj2,jdbcType=VARCHAR}, 
+      #{tplj3,jdbcType=VARCHAR}, #{yjdd,jdbcType=VARCHAR}, #{xssd,jdbcType=DECIMAL}, 
+      #{ssbm,jdbcType=VARCHAR}, #{xsqy,jdbcType=VARCHAR}, #{ssgs,jdbcType=DECIMAL}, #{gsmc,jdbcType=VARCHAR}, 
+      #{gsfzr,jdbcType=VARCHAR}, #{gsfzrdh,jdbcType=VARCHAR}, #{eventCurrentStatus,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.sbzc.model.ALARMVEHICLE">
+    insert into ZDCL_ALARM_VEHICLE
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="pk != null">
+        PK,
+      </if>
+      <if test="yjxh != null">
+        YJXH,
+      </if>
+      <if test="hphm != null">
+        HPHM,
+      </if>
+      <if test="hpzl != null">
+        HPZL,
+      </if>
+      <if test="gcsj != null">
+        GCSJ,
+      </if>
+      <if test="yjsj != null">
+        YJSJ,
+      </if>
+      <if test="yjlx != null">
+        YJLX,
+      </if>
+      <if test="clfl != null">
+        CLFL,
+      </if>
+      <if test="cdbh != null">
+        CDBH,
+      </if>
+      <if test="csys != null">
+        CSYS,
+      </if>
+      <if test="cllx != null">
+        CLLX,
+      </if>
+      <if test="ssdl != null">
+        SSDL,
+      </if>
+      <if test="lddm != null">
+        LDDM,
+      </if>
+      <if test="ldms != null">
+        LDMS,
+      </if>
+      <if test="dllx != null">
+        DLLX,
+      </if>
+      <if test="sbfx != null">
+        SBFX,
+      </if>
+      <if test="sbbh != null">
+        SBBH,
+      </if>
+      <if test="tpsl != null">
+        TPSL,
+      </if>
+      <if test="cptplj != null">
+        CPTPLJ,
+      </if>
+      <if test="tplj1 != null">
+        TPLJ1,
+      </if>
+      <if test="tplj2 != null">
+        TPLJ2,
+      </if>
+      <if test="tplj3 != null">
+        TPLJ3,
+      </if>
+      <if test="yjdd != null">
+        YJDD,
+      </if>
+      <if test="xssd != null">
+        XSSD,
+      </if>
+      <if test="ssbm != null">
+        SSBM,
+      </if>
+      <if test="xsqy != null">
+        XSQY,
+      </if>
+      <if test="ssgs != null">
+        SSGS,
+      </if>
+      <if test="gsmc != null">
+        GSMC,
+      </if>
+      <if test="gsfzr != null">
+        GSFZR,
+      </if>
+      <if test="gsfzrdh != null">
+        GSFZRDH,
+      </if>
+      <if test="eventCurrentStatus != null">
+        EVENT_CURRENT_STATUS,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="pk != null">
+        #{pk,jdbcType=DECIMAL},
+      </if>
+      <if test="yjxh != null">
+        #{yjxh,jdbcType=VARCHAR},
+      </if>
+      <if test="hphm != null">
+        #{hphm,jdbcType=VARCHAR},
+      </if>
+      <if test="hpzl != null">
+        #{hpzl,jdbcType=VARCHAR},
+      </if>
+      <if test="gcsj != null">
+        #{gcsj,jdbcType=TIMESTAMP},
+      </if>
+      <if test="yjsj != null">
+        #{yjsj,jdbcType=TIMESTAMP},
+      </if>
+      <if test="yjlx != null">
+        #{yjlx,jdbcType=VARCHAR},
+      </if>
+      <if test="clfl != null">
+        #{clfl,jdbcType=VARCHAR},
+      </if>
+      <if test="cdbh != null">
+        #{cdbh,jdbcType=VARCHAR},
+      </if>
+      <if test="csys != null">
+        #{csys,jdbcType=VARCHAR},
+      </if>
+      <if test="cllx != null">
+        #{cllx,jdbcType=VARCHAR},
+      </if>
+      <if test="ssdl != null">
+        #{ssdl,jdbcType=VARCHAR},
+      </if>
+      <if test="lddm != null">
+        #{lddm,jdbcType=VARCHAR},
+      </if>
+      <if test="ldms != null">
+        #{ldms,jdbcType=VARCHAR},
+      </if>
+      <if test="dllx != null">
+        #{dllx,jdbcType=VARCHAR},
+      </if>
+      <if test="sbfx != null">
+        #{sbfx,jdbcType=VARCHAR},
+      </if>
+      <if test="sbbh != null">
+        #{sbbh,jdbcType=VARCHAR},
+      </if>
+      <if test="tpsl != null">
+        #{tpsl,jdbcType=VARCHAR},
+      </if>
+      <if test="cptplj != null">
+        #{cptplj,jdbcType=VARCHAR},
+      </if>
+      <if test="tplj1 != null">
+        #{tplj1,jdbcType=VARCHAR},
+      </if>
+      <if test="tplj2 != null">
+        #{tplj2,jdbcType=VARCHAR},
+      </if>
+      <if test="tplj3 != null">
+        #{tplj3,jdbcType=VARCHAR},
+      </if>
+      <if test="yjdd != null">
+        #{yjdd,jdbcType=VARCHAR},
+      </if>
+      <if test="xssd != null">
+        #{xssd,jdbcType=DECIMAL},
+      </if>
+      <if test="ssbm != null">
+        #{ssbm,jdbcType=VARCHAR},
+      </if>
+      <if test="xsqy != null">
+        #{xsqy,jdbcType=VARCHAR},
+      </if>
+      <if test="ssgs != null">
+        #{ssgs,jdbcType=DECIMAL},
+      </if>
+      <if test="gsmc != null">
+        #{gsmc,jdbcType=VARCHAR},
+      </if>
+      <if test="gsfzr != null">
+        #{gsfzr,jdbcType=VARCHAR},
+      </if>
+      <if test="gsfzrdh != null">
+        #{gsfzrdh,jdbcType=VARCHAR},
+      </if>
+      <if test="eventCurrentStatus != null">
+        #{eventCurrentStatus,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <resultMap id="BaseResultMap" type="com.sbzc.model.ALARMVEHICLE">
+    <result column="PK" jdbcType="DECIMAL" property="pk" />
+    <result column="YJXH" jdbcType="VARCHAR" property="yjxh" />
+    <result column="HPHM" jdbcType="VARCHAR" property="hphm" />
+    <result column="HPZL" jdbcType="VARCHAR" property="hpzl" />
+    <result column="GCSJ" jdbcType="TIMESTAMP" property="gcsj" />
+    <result column="YJSJ" jdbcType="TIMESTAMP" property="yjsj" />
+    <result column="YJLX" jdbcType="VARCHAR" property="yjlx" />
+    <result column="CLFL" jdbcType="VARCHAR" property="clfl" />
+    <result column="CDBH" jdbcType="VARCHAR" property="cdbh" />
+    <result column="CSYS" jdbcType="VARCHAR" property="csys" />
+    <result column="CLLX" jdbcType="VARCHAR" property="cllx" />
+    <result column="SSDL" jdbcType="VARCHAR" property="ssdl" />
+    <result column="LDDM" jdbcType="VARCHAR" property="lddm" />
+    <result column="LDMS" jdbcType="VARCHAR" property="ldms" />
+    <result column="DLLX" jdbcType="VARCHAR" property="dllx" />
+    <result column="SBFX" jdbcType="VARCHAR" property="sbfx" />
+    <result column="SBBH" jdbcType="VARCHAR" property="sbbh" />
+    <result column="TPSL" jdbcType="VARCHAR" property="tpsl" />
+    <result column="CPTPLJ" jdbcType="VARCHAR" property="cptplj" />
+    <result column="TPLJ1" jdbcType="VARCHAR" property="tplj1" />
+    <result column="TPLJ2" jdbcType="VARCHAR" property="tplj2" />
+    <result column="TPLJ3" jdbcType="VARCHAR" property="tplj3" />
+    <result column="YJDD" jdbcType="VARCHAR" property="yjdd" />
+    <result column="XSSD" jdbcType="DECIMAL" property="xssd" />
+    <result column="SSBM" jdbcType="VARCHAR" property="ssbm" />
+    <result column="XSQY" jdbcType="VARCHAR" property="xsqy" />
+    <result column="SSGS" jdbcType="DECIMAL" property="ssgs" />
+    <result column="GSMC" jdbcType="VARCHAR" property="gsmc" />
+    <result column="GSFZR" jdbcType="VARCHAR" property="gsfzr" />
+    <result column="GSFZRDH" jdbcType="VARCHAR" property="gsfzrdh" />
+    <result column="EVENT_CURRENT_STATUS" jdbcType="VARCHAR" property="eventCurrentStatus" />
+  </resultMap>
+  <insert id="insert" parameterType="com.sbzc.model.ALARMVEHICLE">
+    insert into ZDCL_ALARM_VEHICLE (PK, YJXH, HPHM, 
+      HPZL, GCSJ, YJSJ, 
+      YJLX, CLFL, CDBH, CSYS, 
+      CLLX, SSDL, LDDM, LDMS, 
+      DLLX, SBFX, SBBH, TPSL, 
+      CPTPLJ, TPLJ1, TPLJ2, 
+      TPLJ3, YJDD, XSSD, 
+      SSBM, XSQY, SSGS, GSMC, 
+      GSFZR, GSFZRDH, EVENT_CURRENT_STATUS
+      )
+    values (#{pk,jdbcType=DECIMAL}, #{yjxh,jdbcType=VARCHAR}, #{hphm,jdbcType=VARCHAR}, 
+      #{hpzl,jdbcType=VARCHAR}, #{gcsj,jdbcType=TIMESTAMP}, #{yjsj,jdbcType=TIMESTAMP}, 
+      #{yjlx,jdbcType=VARCHAR}, #{clfl,jdbcType=VARCHAR}, #{cdbh,jdbcType=VARCHAR}, #{csys,jdbcType=VARCHAR}, 
+      #{cllx,jdbcType=VARCHAR}, #{ssdl,jdbcType=VARCHAR}, #{lddm,jdbcType=VARCHAR}, #{ldms,jdbcType=VARCHAR}, 
+      #{dllx,jdbcType=VARCHAR}, #{sbfx,jdbcType=VARCHAR}, #{sbbh,jdbcType=VARCHAR}, #{tpsl,jdbcType=VARCHAR}, 
+      #{cptplj,jdbcType=VARCHAR}, #{tplj1,jdbcType=VARCHAR}, #{tplj2,jdbcType=VARCHAR}, 
+      #{tplj3,jdbcType=VARCHAR}, #{yjdd,jdbcType=VARCHAR}, #{xssd,jdbcType=DECIMAL}, 
+      #{ssbm,jdbcType=VARCHAR}, #{xsqy,jdbcType=VARCHAR}, #{ssgs,jdbcType=DECIMAL}, #{gsmc,jdbcType=VARCHAR}, 
+      #{gsfzr,jdbcType=VARCHAR}, #{gsfzrdh,jdbcType=VARCHAR}, #{eventCurrentStatus,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.sbzc.model.ALARMVEHICLE">
+    insert into ZDCL_ALARM_VEHICLE
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="pk != null">
+        PK,
+      </if>
+      <if test="yjxh != null">
+        YJXH,
+      </if>
+      <if test="hphm != null">
+        HPHM,
+      </if>
+      <if test="hpzl != null">
+        HPZL,
+      </if>
+      <if test="gcsj != null">
+        GCSJ,
+      </if>
+      <if test="yjsj != null">
+        YJSJ,
+      </if>
+      <if test="yjlx != null">
+        YJLX,
+      </if>
+      <if test="clfl != null">
+        CLFL,
+      </if>
+      <if test="cdbh != null">
+        CDBH,
+      </if>
+      <if test="csys != null">
+        CSYS,
+      </if>
+      <if test="cllx != null">
+        CLLX,
+      </if>
+      <if test="ssdl != null">
+        SSDL,
+      </if>
+      <if test="lddm != null">
+        LDDM,
+      </if>
+      <if test="ldms != null">
+        LDMS,
+      </if>
+      <if test="dllx != null">
+        DLLX,
+      </if>
+      <if test="sbfx != null">
+        SBFX,
+      </if>
+      <if test="sbbh != null">
+        SBBH,
+      </if>
+      <if test="tpsl != null">
+        TPSL,
+      </if>
+      <if test="cptplj != null">
+        CPTPLJ,
+      </if>
+      <if test="tplj1 != null">
+        TPLJ1,
+      </if>
+      <if test="tplj2 != null">
+        TPLJ2,
+      </if>
+      <if test="tplj3 != null">
+        TPLJ3,
+      </if>
+      <if test="yjdd != null">
+        YJDD,
+      </if>
+      <if test="xssd != null">
+        XSSD,
+      </if>
+      <if test="ssbm != null">
+        SSBM,
+      </if>
+      <if test="xsqy != null">
+        XSQY,
+      </if>
+      <if test="ssgs != null">
+        SSGS,
+      </if>
+      <if test="gsmc != null">
+        GSMC,
+      </if>
+      <if test="gsfzr != null">
+        GSFZR,
+      </if>
+      <if test="gsfzrdh != null">
+        GSFZRDH,
+      </if>
+      <if test="eventCurrentStatus != null">
+        EVENT_CURRENT_STATUS,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="pk != null">
+        #{pk,jdbcType=DECIMAL},
+      </if>
+      <if test="yjxh != null">
+        #{yjxh,jdbcType=VARCHAR},
+      </if>
+      <if test="hphm != null">
+        #{hphm,jdbcType=VARCHAR},
+      </if>
+      <if test="hpzl != null">
+        #{hpzl,jdbcType=VARCHAR},
+      </if>
+      <if test="gcsj != null">
+        #{gcsj,jdbcType=TIMESTAMP},
+      </if>
+      <if test="yjsj != null">
+        #{yjsj,jdbcType=TIMESTAMP},
+      </if>
+      <if test="yjlx != null">
+        #{yjlx,jdbcType=VARCHAR},
+      </if>
+      <if test="clfl != null">
+        #{clfl,jdbcType=VARCHAR},
+      </if>
+      <if test="cdbh != null">
+        #{cdbh,jdbcType=VARCHAR},
+      </if>
+      <if test="csys != null">
+        #{csys,jdbcType=VARCHAR},
+      </if>
+      <if test="cllx != null">
+        #{cllx,jdbcType=VARCHAR},
+      </if>
+      <if test="ssdl != null">
+        #{ssdl,jdbcType=VARCHAR},
+      </if>
+      <if test="lddm != null">
+        #{lddm,jdbcType=VARCHAR},
+      </if>
+      <if test="ldms != null">
+        #{ldms,jdbcType=VARCHAR},
+      </if>
+      <if test="dllx != null">
+        #{dllx,jdbcType=VARCHAR},
+      </if>
+      <if test="sbfx != null">
+        #{sbfx,jdbcType=VARCHAR},
+      </if>
+      <if test="sbbh != null">
+        #{sbbh,jdbcType=VARCHAR},
+      </if>
+      <if test="tpsl != null">
+        #{tpsl,jdbcType=VARCHAR},
+      </if>
+      <if test="cptplj != null">
+        #{cptplj,jdbcType=VARCHAR},
+      </if>
+      <if test="tplj1 != null">
+        #{tplj1,jdbcType=VARCHAR},
+      </if>
+      <if test="tplj2 != null">
+        #{tplj2,jdbcType=VARCHAR},
+      </if>
+      <if test="tplj3 != null">
+        #{tplj3,jdbcType=VARCHAR},
+      </if>
+      <if test="yjdd != null">
+        #{yjdd,jdbcType=VARCHAR},
+      </if>
+      <if test="xssd != null">
+        #{xssd,jdbcType=DECIMAL},
+      </if>
+      <if test="ssbm != null">
+        #{ssbm,jdbcType=VARCHAR},
+      </if>
+      <if test="xsqy != null">
+        #{xsqy,jdbcType=VARCHAR},
+      </if>
+      <if test="ssgs != null">
+        #{ssgs,jdbcType=DECIMAL},
+      </if>
+      <if test="gsmc != null">
+        #{gsmc,jdbcType=VARCHAR},
+      </if>
+      <if test="gsfzr != null">
+        #{gsfzr,jdbcType=VARCHAR},
+      </if>
+      <if test="gsfzrdh != null">
+        #{gsfzrdh,jdbcType=VARCHAR},
+      </if>
+      <if test="eventCurrentStatus != null">
+        #{eventCurrentStatus,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <resultMap id="BaseResultMap" type="com.sbzc.model.ALARMVEHICLE">
+    <result column="PK" jdbcType="DECIMAL" property="pk" />
+    <result column="YJXH" jdbcType="VARCHAR" property="yjxh" />
+    <result column="HPHM" jdbcType="VARCHAR" property="hphm" />
+    <result column="HPZL" jdbcType="VARCHAR" property="hpzl" />
+    <result column="GCSJ" jdbcType="TIMESTAMP" property="gcsj" />
+    <result column="YJSJ" jdbcType="TIMESTAMP" property="yjsj" />
+    <result column="YJLX" jdbcType="VARCHAR" property="yjlx" />
+    <result column="CLFL" jdbcType="VARCHAR" property="clfl" />
+    <result column="CDBH" jdbcType="VARCHAR" property="cdbh" />
+    <result column="CSYS" jdbcType="VARCHAR" property="csys" />
+    <result column="CLLX" jdbcType="VARCHAR" property="cllx" />
+    <result column="SSDL" jdbcType="VARCHAR" property="ssdl" />
+    <result column="LDDM" jdbcType="VARCHAR" property="lddm" />
+    <result column="LDMS" jdbcType="VARCHAR" property="ldms" />
+    <result column="DLLX" jdbcType="VARCHAR" property="dllx" />
+    <result column="SBFX" jdbcType="VARCHAR" property="sbfx" />
+    <result column="SBBH" jdbcType="VARCHAR" property="sbbh" />
+    <result column="TPSL" jdbcType="VARCHAR" property="tpsl" />
+    <result column="CPTPLJ" jdbcType="VARCHAR" property="cptplj" />
+    <result column="TPLJ1" jdbcType="VARCHAR" property="tplj1" />
+    <result column="TPLJ2" jdbcType="VARCHAR" property="tplj2" />
+    <result column="TPLJ3" jdbcType="VARCHAR" property="tplj3" />
+    <result column="YJDD" jdbcType="VARCHAR" property="yjdd" />
+    <result column="XSSD" jdbcType="DECIMAL" property="xssd" />
+    <result column="SSBM" jdbcType="VARCHAR" property="ssbm" />
+    <result column="XSQY" jdbcType="VARCHAR" property="xsqy" />
+    <result column="SSGS" jdbcType="DECIMAL" property="ssgs" />
+    <result column="GSMC" jdbcType="VARCHAR" property="gsmc" />
+    <result column="GSFZR" jdbcType="VARCHAR" property="gsfzr" />
+    <result column="GSFZRDH" jdbcType="VARCHAR" property="gsfzrdh" />
+    <result column="EVENT_CURRENT_STATUS" jdbcType="VARCHAR" property="eventCurrentStatus" />
+  </resultMap>
+  <insert id="insert" parameterType="com.sbzc.model.ALARMVEHICLE">
+    insert into ZDCL_ALARM_VEHICLE (PK, YJXH, HPHM, 
+      HPZL, GCSJ, YJSJ, 
+      YJLX, CLFL, CDBH, CSYS, 
+      CLLX, SSDL, LDDM, LDMS, 
+      DLLX, SBFX, SBBH, TPSL, 
+      CPTPLJ, TPLJ1, TPLJ2, 
+      TPLJ3, YJDD, XSSD, 
+      SSBM, XSQY, SSGS, GSMC, 
+      GSFZR, GSFZRDH, EVENT_CURRENT_STATUS
+      )
+    values (#{pk,jdbcType=DECIMAL}, #{yjxh,jdbcType=VARCHAR}, #{hphm,jdbcType=VARCHAR}, 
+      #{hpzl,jdbcType=VARCHAR}, #{gcsj,jdbcType=TIMESTAMP}, #{yjsj,jdbcType=TIMESTAMP}, 
+      #{yjlx,jdbcType=VARCHAR}, #{clfl,jdbcType=VARCHAR}, #{cdbh,jdbcType=VARCHAR}, #{csys,jdbcType=VARCHAR}, 
+      #{cllx,jdbcType=VARCHAR}, #{ssdl,jdbcType=VARCHAR}, #{lddm,jdbcType=VARCHAR}, #{ldms,jdbcType=VARCHAR}, 
+      #{dllx,jdbcType=VARCHAR}, #{sbfx,jdbcType=VARCHAR}, #{sbbh,jdbcType=VARCHAR}, #{tpsl,jdbcType=VARCHAR}, 
+      #{cptplj,jdbcType=VARCHAR}, #{tplj1,jdbcType=VARCHAR}, #{tplj2,jdbcType=VARCHAR}, 
+      #{tplj3,jdbcType=VARCHAR}, #{yjdd,jdbcType=VARCHAR}, #{xssd,jdbcType=DECIMAL}, 
+      #{ssbm,jdbcType=VARCHAR}, #{xsqy,jdbcType=VARCHAR}, #{ssgs,jdbcType=DECIMAL}, #{gsmc,jdbcType=VARCHAR}, 
+      #{gsfzr,jdbcType=VARCHAR}, #{gsfzrdh,jdbcType=VARCHAR}, #{eventCurrentStatus,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.sbzc.model.ALARMVEHICLE">
+    insert into ZDCL_ALARM_VEHICLE
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="pk != null">
+        PK,
+      </if>
+      <if test="yjxh != null">
+        YJXH,
+      </if>
+      <if test="hphm != null">
+        HPHM,
+      </if>
+      <if test="hpzl != null">
+        HPZL,
+      </if>
+      <if test="gcsj != null">
+        GCSJ,
+      </if>
+      <if test="yjsj != null">
+        YJSJ,
+      </if>
+      <if test="yjlx != null">
+        YJLX,
+      </if>
+      <if test="clfl != null">
+        CLFL,
+      </if>
+      <if test="cdbh != null">
+        CDBH,
+      </if>
+      <if test="csys != null">
+        CSYS,
+      </if>
+      <if test="cllx != null">
+        CLLX,
+      </if>
+      <if test="ssdl != null">
+        SSDL,
+      </if>
+      <if test="lddm != null">
+        LDDM,
+      </if>
+      <if test="ldms != null">
+        LDMS,
+      </if>
+      <if test="dllx != null">
+        DLLX,
+      </if>
+      <if test="sbfx != null">
+        SBFX,
+      </if>
+      <if test="sbbh != null">
+        SBBH,
+      </if>
+      <if test="tpsl != null">
+        TPSL,
+      </if>
+      <if test="cptplj != null">
+        CPTPLJ,
+      </if>
+      <if test="tplj1 != null">
+        TPLJ1,
+      </if>
+      <if test="tplj2 != null">
+        TPLJ2,
+      </if>
+      <if test="tplj3 != null">
+        TPLJ3,
+      </if>
+      <if test="yjdd != null">
+        YJDD,
+      </if>
+      <if test="xssd != null">
+        XSSD,
+      </if>
+      <if test="ssbm != null">
+        SSBM,
+      </if>
+      <if test="xsqy != null">
+        XSQY,
+      </if>
+      <if test="ssgs != null">
+        SSGS,
+      </if>
+      <if test="gsmc != null">
+        GSMC,
+      </if>
+      <if test="gsfzr != null">
+        GSFZR,
+      </if>
+      <if test="gsfzrdh != null">
+        GSFZRDH,
+      </if>
+      <if test="eventCurrentStatus != null">
+        EVENT_CURRENT_STATUS,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="pk != null">
+        #{pk,jdbcType=DECIMAL},
+      </if>
+      <if test="yjxh != null">
+        #{yjxh,jdbcType=VARCHAR},
+      </if>
+      <if test="hphm != null">
+        #{hphm,jdbcType=VARCHAR},
+      </if>
+      <if test="hpzl != null">
+        #{hpzl,jdbcType=VARCHAR},
+      </if>
+      <if test="gcsj != null">
+        #{gcsj,jdbcType=TIMESTAMP},
+      </if>
+      <if test="yjsj != null">
+        #{yjsj,jdbcType=TIMESTAMP},
+      </if>
+      <if test="yjlx != null">
+        #{yjlx,jdbcType=VARCHAR},
+      </if>
+      <if test="clfl != null">
+        #{clfl,jdbcType=VARCHAR},
+      </if>
+      <if test="cdbh != null">
+        #{cdbh,jdbcType=VARCHAR},
+      </if>
+      <if test="csys != null">
+        #{csys,jdbcType=VARCHAR},
+      </if>
+      <if test="cllx != null">
+        #{cllx,jdbcType=VARCHAR},
+      </if>
+      <if test="ssdl != null">
+        #{ssdl,jdbcType=VARCHAR},
+      </if>
+      <if test="lddm != null">
+        #{lddm,jdbcType=VARCHAR},
+      </if>
+      <if test="ldms != null">
+        #{ldms,jdbcType=VARCHAR},
+      </if>
+      <if test="dllx != null">
+        #{dllx,jdbcType=VARCHAR},
+      </if>
+      <if test="sbfx != null">
+        #{sbfx,jdbcType=VARCHAR},
+      </if>
+      <if test="sbbh != null">
+        #{sbbh,jdbcType=VARCHAR},
+      </if>
+      <if test="tpsl != null">
+        #{tpsl,jdbcType=VARCHAR},
+      </if>
+      <if test="cptplj != null">
+        #{cptplj,jdbcType=VARCHAR},
+      </if>
+      <if test="tplj1 != null">
+        #{tplj1,jdbcType=VARCHAR},
+      </if>
+      <if test="tplj2 != null">
+        #{tplj2,jdbcType=VARCHAR},
+      </if>
+      <if test="tplj3 != null">
+        #{tplj3,jdbcType=VARCHAR},
+      </if>
+      <if test="yjdd != null">
+        #{yjdd,jdbcType=VARCHAR},
+      </if>
+      <if test="xssd != null">
+        #{xssd,jdbcType=DECIMAL},
+      </if>
+      <if test="ssbm != null">
+        #{ssbm,jdbcType=VARCHAR},
+      </if>
+      <if test="xsqy != null">
+        #{xsqy,jdbcType=VARCHAR},
+      </if>
+      <if test="ssgs != null">
+        #{ssgs,jdbcType=DECIMAL},
+      </if>
+      <if test="gsmc != null">
+        #{gsmc,jdbcType=VARCHAR},
+      </if>
+      <if test="gsfzr != null">
+        #{gsfzr,jdbcType=VARCHAR},
+      </if>
+      <if test="gsfzrdh != null">
+        #{gsfzrdh,jdbcType=VARCHAR},
+      </if>
+      <if test="eventCurrentStatus != null">
+        #{eventCurrentStatus,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <resultMap id="BaseResultMap" type="com.sbzc.model.ALARMVEHICLE">
+    <result column="PK" jdbcType="DECIMAL" property="pk" />
+    <result column="YJXH" jdbcType="VARCHAR" property="yjxh" />
+    <result column="HPHM" jdbcType="VARCHAR" property="hphm" />
+    <result column="HPZL" jdbcType="VARCHAR" property="hpzl" />
+    <result column="GCSJ" jdbcType="TIMESTAMP" property="gcsj" />
+    <result column="YJSJ" jdbcType="TIMESTAMP" property="yjsj" />
+    <result column="YJLX" jdbcType="VARCHAR" property="yjlx" />
+    <result column="CLFL" jdbcType="VARCHAR" property="clfl" />
+    <result column="CDBH" jdbcType="VARCHAR" property="cdbh" />
+    <result column="CSYS" jdbcType="VARCHAR" property="csys" />
+    <result column="CLLX" jdbcType="VARCHAR" property="cllx" />
+    <result column="SSDL" jdbcType="VARCHAR" property="ssdl" />
+    <result column="LDDM" jdbcType="VARCHAR" property="lddm" />
+    <result column="LDMS" jdbcType="VARCHAR" property="ldms" />
+    <result column="DLLX" jdbcType="VARCHAR" property="dllx" />
+    <result column="SBFX" jdbcType="VARCHAR" property="sbfx" />
+    <result column="SBBH" jdbcType="VARCHAR" property="sbbh" />
+    <result column="TPSL" jdbcType="VARCHAR" property="tpsl" />
+    <result column="CPTPLJ" jdbcType="VARCHAR" property="cptplj" />
+    <result column="TPLJ1" jdbcType="VARCHAR" property="tplj1" />
+    <result column="TPLJ2" jdbcType="VARCHAR" property="tplj2" />
+    <result column="TPLJ3" jdbcType="VARCHAR" property="tplj3" />
+    <result column="YJDD" jdbcType="VARCHAR" property="yjdd" />
+    <result column="XSSD" jdbcType="DECIMAL" property="xssd" />
+    <result column="SSBM" jdbcType="VARCHAR" property="ssbm" />
+    <result column="XSQY" jdbcType="VARCHAR" property="xsqy" />
+    <result column="SSGS" jdbcType="DECIMAL" property="ssgs" />
+    <result column="GSMC" jdbcType="VARCHAR" property="gsmc" />
+    <result column="GSFZR" jdbcType="VARCHAR" property="gsfzr" />
+    <result column="GSFZRDH" jdbcType="VARCHAR" property="gsfzrdh" />
+    <result column="EVENT_CURRENT_STATUS" jdbcType="VARCHAR" property="eventCurrentStatus" />
+  </resultMap>
+  <insert id="insert" parameterType="com.sbzc.model.ALARMVEHICLE">
+    insert into ZDCL_ALARM_VEHICLE (PK, YJXH, HPHM, 
+      HPZL, GCSJ, YJSJ, 
+      YJLX, CLFL, CDBH, CSYS, 
+      CLLX, SSDL, LDDM, LDMS, 
+      DLLX, SBFX, SBBH, TPSL, 
+      CPTPLJ, TPLJ1, TPLJ2, 
+      TPLJ3, YJDD, XSSD, 
+      SSBM, XSQY, SSGS, GSMC, 
+      GSFZR, GSFZRDH, EVENT_CURRENT_STATUS
+      )
+    values (#{pk,jdbcType=DECIMAL}, #{yjxh,jdbcType=VARCHAR}, #{hphm,jdbcType=VARCHAR}, 
+      #{hpzl,jdbcType=VARCHAR}, #{gcsj,jdbcType=TIMESTAMP}, #{yjsj,jdbcType=TIMESTAMP}, 
+      #{yjlx,jdbcType=VARCHAR}, #{clfl,jdbcType=VARCHAR}, #{cdbh,jdbcType=VARCHAR}, #{csys,jdbcType=VARCHAR}, 
+      #{cllx,jdbcType=VARCHAR}, #{ssdl,jdbcType=VARCHAR}, #{lddm,jdbcType=VARCHAR}, #{ldms,jdbcType=VARCHAR}, 
+      #{dllx,jdbcType=VARCHAR}, #{sbfx,jdbcType=VARCHAR}, #{sbbh,jdbcType=VARCHAR}, #{tpsl,jdbcType=VARCHAR}, 
+      #{cptplj,jdbcType=VARCHAR}, #{tplj1,jdbcType=VARCHAR}, #{tplj2,jdbcType=VARCHAR}, 
+      #{tplj3,jdbcType=VARCHAR}, #{yjdd,jdbcType=VARCHAR}, #{xssd,jdbcType=DECIMAL}, 
+      #{ssbm,jdbcType=VARCHAR}, #{xsqy,jdbcType=VARCHAR}, #{ssgs,jdbcType=DECIMAL}, #{gsmc,jdbcType=VARCHAR}, 
+      #{gsfzr,jdbcType=VARCHAR}, #{gsfzrdh,jdbcType=VARCHAR}, #{eventCurrentStatus,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.sbzc.model.ALARMVEHICLE">
+    insert into ZDCL_ALARM_VEHICLE
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="pk != null">
+        PK,
+      </if>
+      <if test="yjxh != null">
+        YJXH,
+      </if>
+      <if test="hphm != null">
+        HPHM,
+      </if>
+      <if test="hpzl != null">
+        HPZL,
+      </if>
+      <if test="gcsj != null">
+        GCSJ,
+      </if>
+      <if test="yjsj != null">
+        YJSJ,
+      </if>
+      <if test="yjlx != null">
+        YJLX,
+      </if>
+      <if test="clfl != null">
+        CLFL,
+      </if>
+      <if test="cdbh != null">
+        CDBH,
+      </if>
+      <if test="csys != null">
+        CSYS,
+      </if>
+      <if test="cllx != null">
+        CLLX,
+      </if>
+      <if test="ssdl != null">
+        SSDL,
+      </if>
+      <if test="lddm != null">
+        LDDM,
+      </if>
+      <if test="ldms != null">
+        LDMS,
+      </if>
+      <if test="dllx != null">
+        DLLX,
+      </if>
+      <if test="sbfx != null">
+        SBFX,
+      </if>
+      <if test="sbbh != null">
+        SBBH,
+      </if>
+      <if test="tpsl != null">
+        TPSL,
+      </if>
+      <if test="cptplj != null">
+        CPTPLJ,
+      </if>
+      <if test="tplj1 != null">
+        TPLJ1,
+      </if>
+      <if test="tplj2 != null">
+        TPLJ2,
+      </if>
+      <if test="tplj3 != null">
+        TPLJ3,
+      </if>
+      <if test="yjdd != null">
+        YJDD,
+      </if>
+      <if test="xssd != null">
+        XSSD,
+      </if>
+      <if test="ssbm != null">
+        SSBM,
+      </if>
+      <if test="xsqy != null">
+        XSQY,
+      </if>
+      <if test="ssgs != null">
+        SSGS,
+      </if>
+      <if test="gsmc != null">
+        GSMC,
+      </if>
+      <if test="gsfzr != null">
+        GSFZR,
+      </if>
+      <if test="gsfzrdh != null">
+        GSFZRDH,
+      </if>
+      <if test="eventCurrentStatus != null">
+        EVENT_CURRENT_STATUS,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="pk != null">
+        #{pk,jdbcType=DECIMAL},
+      </if>
+      <if test="yjxh != null">
+        #{yjxh,jdbcType=VARCHAR},
+      </if>
+      <if test="hphm != null">
+        #{hphm,jdbcType=VARCHAR},
+      </if>
+      <if test="hpzl != null">
+        #{hpzl,jdbcType=VARCHAR},
+      </if>
+      <if test="gcsj != null">
+        #{gcsj,jdbcType=TIMESTAMP},
+      </if>
+      <if test="yjsj != null">
+        #{yjsj,jdbcType=TIMESTAMP},
+      </if>
+      <if test="yjlx != null">
+        #{yjlx,jdbcType=VARCHAR},
+      </if>
+      <if test="clfl != null">
+        #{clfl,jdbcType=VARCHAR},
+      </if>
+      <if test="cdbh != null">
+        #{cdbh,jdbcType=VARCHAR},
+      </if>
+      <if test="csys != null">
+        #{csys,jdbcType=VARCHAR},
+      </if>
+      <if test="cllx != null">
+        #{cllx,jdbcType=VARCHAR},
+      </if>
+      <if test="ssdl != null">
+        #{ssdl,jdbcType=VARCHAR},
+      </if>
+      <if test="lddm != null">
+        #{lddm,jdbcType=VARCHAR},
+      </if>
+      <if test="ldms != null">
+        #{ldms,jdbcType=VARCHAR},
+      </if>
+      <if test="dllx != null">
+        #{dllx,jdbcType=VARCHAR},
+      </if>
+      <if test="sbfx != null">
+        #{sbfx,jdbcType=VARCHAR},
+      </if>
+      <if test="sbbh != null">
+        #{sbbh,jdbcType=VARCHAR},
+      </if>
+      <if test="tpsl != null">
+        #{tpsl,jdbcType=VARCHAR},
+      </if>
+      <if test="cptplj != null">
+        #{cptplj,jdbcType=VARCHAR},
+      </if>
+      <if test="tplj1 != null">
+        #{tplj1,jdbcType=VARCHAR},
+      </if>
+      <if test="tplj2 != null">
+        #{tplj2,jdbcType=VARCHAR},
+      </if>
+      <if test="tplj3 != null">
+        #{tplj3,jdbcType=VARCHAR},
+      </if>
+      <if test="yjdd != null">
+        #{yjdd,jdbcType=VARCHAR},
+      </if>
+      <if test="xssd != null">
+        #{xssd,jdbcType=DECIMAL},
+      </if>
+      <if test="ssbm != null">
+        #{ssbm,jdbcType=VARCHAR},
+      </if>
+      <if test="xsqy != null">
+        #{xsqy,jdbcType=VARCHAR},
+      </if>
+      <if test="ssgs != null">
+        #{ssgs,jdbcType=DECIMAL},
+      </if>
+      <if test="gsmc != null">
+        #{gsmc,jdbcType=VARCHAR},
+      </if>
+      <if test="gsfzr != null">
+        #{gsfzr,jdbcType=VARCHAR},
+      </if>
+      <if test="gsfzrdh != null">
+        #{gsfzrdh,jdbcType=VARCHAR},
+      </if>
+      <if test="eventCurrentStatus != null">
+        #{eventCurrentStatus,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <resultMap id="BaseResultMap" type="com.sbzc.model.ALARMVEHICLE">
+    <result column="PK" jdbcType="DECIMAL" property="pk" />
+    <result column="YJXH" jdbcType="VARCHAR" property="yjxh" />
+    <result column="HPHM" jdbcType="VARCHAR" property="hphm" />
+    <result column="HPZL" jdbcType="VARCHAR" property="hpzl" />
+    <result column="GCSJ" jdbcType="TIMESTAMP" property="gcsj" />
+    <result column="YJSJ" jdbcType="TIMESTAMP" property="yjsj" />
+    <result column="YJLX" jdbcType="VARCHAR" property="yjlx" />
+    <result column="CLFL" jdbcType="VARCHAR" property="clfl" />
+    <result column="CDBH" jdbcType="VARCHAR" property="cdbh" />
+    <result column="CSYS" jdbcType="VARCHAR" property="csys" />
+    <result column="CLLX" jdbcType="VARCHAR" property="cllx" />
+    <result column="SSDL" jdbcType="VARCHAR" property="ssdl" />
+    <result column="LDDM" jdbcType="VARCHAR" property="lddm" />
+    <result column="LDMS" jdbcType="VARCHAR" property="ldms" />
+    <result column="DLLX" jdbcType="VARCHAR" property="dllx" />
+    <result column="SBFX" jdbcType="VARCHAR" property="sbfx" />
+    <result column="SBBH" jdbcType="VARCHAR" property="sbbh" />
+    <result column="TPSL" jdbcType="VARCHAR" property="tpsl" />
+    <result column="CPTPLJ" jdbcType="VARCHAR" property="cptplj" />
+    <result column="TPLJ1" jdbcType="VARCHAR" property="tplj1" />
+    <result column="TPLJ2" jdbcType="VARCHAR" property="tplj2" />
+    <result column="TPLJ3" jdbcType="VARCHAR" property="tplj3" />
+    <result column="YJDD" jdbcType="VARCHAR" property="yjdd" />
+    <result column="XSSD" jdbcType="DECIMAL" property="xssd" />
+    <result column="SSBM" jdbcType="VARCHAR" property="ssbm" />
+    <result column="XSQY" jdbcType="VARCHAR" property="xsqy" />
+    <result column="SSGS" jdbcType="DECIMAL" property="ssgs" />
+    <result column="GSMC" jdbcType="VARCHAR" property="gsmc" />
+    <result column="GSFZR" jdbcType="VARCHAR" property="gsfzr" />
+    <result column="GSFZRDH" jdbcType="VARCHAR" property="gsfzrdh" />
+    <result column="EVENT_CURRENT_STATUS" jdbcType="VARCHAR" property="eventCurrentStatus" />
+  </resultMap>
+  <insert id="insert" parameterType="com.sbzc.model.ALARMVEHICLE">
+    insert into ZDCL_ALARM_VEHICLE (PK, YJXH, HPHM, 
+      HPZL, GCSJ, YJSJ, 
+      YJLX, CLFL, CDBH, CSYS, 
+      CLLX, SSDL, LDDM, LDMS, 
+      DLLX, SBFX, SBBH, TPSL, 
+      CPTPLJ, TPLJ1, TPLJ2, 
+      TPLJ3, YJDD, XSSD, 
+      SSBM, XSQY, SSGS, GSMC, 
+      GSFZR, GSFZRDH, EVENT_CURRENT_STATUS
+      )
+    values (#{pk,jdbcType=DECIMAL}, #{yjxh,jdbcType=VARCHAR}, #{hphm,jdbcType=VARCHAR}, 
+      #{hpzl,jdbcType=VARCHAR}, #{gcsj,jdbcType=TIMESTAMP}, #{yjsj,jdbcType=TIMESTAMP}, 
+      #{yjlx,jdbcType=VARCHAR}, #{clfl,jdbcType=VARCHAR}, #{cdbh,jdbcType=VARCHAR}, #{csys,jdbcType=VARCHAR}, 
+      #{cllx,jdbcType=VARCHAR}, #{ssdl,jdbcType=VARCHAR}, #{lddm,jdbcType=VARCHAR}, #{ldms,jdbcType=VARCHAR}, 
+      #{dllx,jdbcType=VARCHAR}, #{sbfx,jdbcType=VARCHAR}, #{sbbh,jdbcType=VARCHAR}, #{tpsl,jdbcType=VARCHAR}, 
+      #{cptplj,jdbcType=VARCHAR}, #{tplj1,jdbcType=VARCHAR}, #{tplj2,jdbcType=VARCHAR}, 
+      #{tplj3,jdbcType=VARCHAR}, #{yjdd,jdbcType=VARCHAR}, #{xssd,jdbcType=DECIMAL}, 
+      #{ssbm,jdbcType=VARCHAR}, #{xsqy,jdbcType=VARCHAR}, #{ssgs,jdbcType=DECIMAL}, #{gsmc,jdbcType=VARCHAR}, 
+      #{gsfzr,jdbcType=VARCHAR}, #{gsfzrdh,jdbcType=VARCHAR}, #{eventCurrentStatus,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.sbzc.model.ALARMVEHICLE">
+    insert into ZDCL_ALARM_VEHICLE
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="pk != null">
+        PK,
+      </if>
+      <if test="yjxh != null">
+        YJXH,
+      </if>
+      <if test="hphm != null">
+        HPHM,
+      </if>
+      <if test="hpzl != null">
+        HPZL,
+      </if>
+      <if test="gcsj != null">
+        GCSJ,
+      </if>
+      <if test="yjsj != null">
+        YJSJ,
+      </if>
+      <if test="yjlx != null">
+        YJLX,
+      </if>
+      <if test="clfl != null">
+        CLFL,
+      </if>
+      <if test="cdbh != null">
+        CDBH,
+      </if>
+      <if test="csys != null">
+        CSYS,
+      </if>
+      <if test="cllx != null">
+        CLLX,
+      </if>
+      <if test="ssdl != null">
+        SSDL,
+      </if>
+      <if test="lddm != null">
+        LDDM,
+      </if>
+      <if test="ldms != null">
+        LDMS,
+      </if>
+      <if test="dllx != null">
+        DLLX,
+      </if>
+      <if test="sbfx != null">
+        SBFX,
+      </if>
+      <if test="sbbh != null">
+        SBBH,
+      </if>
+      <if test="tpsl != null">
+        TPSL,
+      </if>
+      <if test="cptplj != null">
+        CPTPLJ,
+      </if>
+      <if test="tplj1 != null">
+        TPLJ1,
+      </if>
+      <if test="tplj2 != null">
+        TPLJ2,
+      </if>
+      <if test="tplj3 != null">
+        TPLJ3,
+      </if>
+      <if test="yjdd != null">
+        YJDD,
+      </if>
+      <if test="xssd != null">
+        XSSD,
+      </if>
+      <if test="ssbm != null">
+        SSBM,
+      </if>
+      <if test="xsqy != null">
+        XSQY,
+      </if>
+      <if test="ssgs != null">
+        SSGS,
+      </if>
+      <if test="gsmc != null">
+        GSMC,
+      </if>
+      <if test="gsfzr != null">
+        GSFZR,
+      </if>
+      <if test="gsfzrdh != null">
+        GSFZRDH,
+      </if>
+      <if test="eventCurrentStatus != null">
+        EVENT_CURRENT_STATUS,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="pk != null">
+        #{pk,jdbcType=DECIMAL},
+      </if>
+      <if test="yjxh != null">
+        #{yjxh,jdbcType=VARCHAR},
+      </if>
+      <if test="hphm != null">
+        #{hphm,jdbcType=VARCHAR},
+      </if>
+      <if test="hpzl != null">
+        #{hpzl,jdbcType=VARCHAR},
+      </if>
+      <if test="gcsj != null">
+        #{gcsj,jdbcType=TIMESTAMP},
+      </if>
+      <if test="yjsj != null">
+        #{yjsj,jdbcType=TIMESTAMP},
+      </if>
+      <if test="yjlx != null">
+        #{yjlx,jdbcType=VARCHAR},
+      </if>
+      <if test="clfl != null">
+        #{clfl,jdbcType=VARCHAR},
+      </if>
+      <if test="cdbh != null">
+        #{cdbh,jdbcType=VARCHAR},
+      </if>
+      <if test="csys != null">
+        #{csys,jdbcType=VARCHAR},
+      </if>
+      <if test="cllx != null">
+        #{cllx,jdbcType=VARCHAR},
+      </if>
+      <if test="ssdl != null">
+        #{ssdl,jdbcType=VARCHAR},
+      </if>
+      <if test="lddm != null">
+        #{lddm,jdbcType=VARCHAR},
+      </if>
+      <if test="ldms != null">
+        #{ldms,jdbcType=VARCHAR},
+      </if>
+      <if test="dllx != null">
+        #{dllx,jdbcType=VARCHAR},
+      </if>
+      <if test="sbfx != null">
+        #{sbfx,jdbcType=VARCHAR},
+      </if>
+      <if test="sbbh != null">
+        #{sbbh,jdbcType=VARCHAR},
+      </if>
+      <if test="tpsl != null">
+        #{tpsl,jdbcType=VARCHAR},
+      </if>
+      <if test="cptplj != null">
+        #{cptplj,jdbcType=VARCHAR},
+      </if>
+      <if test="tplj1 != null">
+        #{tplj1,jdbcType=VARCHAR},
+      </if>
+      <if test="tplj2 != null">
+        #{tplj2,jdbcType=VARCHAR},
+      </if>
+      <if test="tplj3 != null">
+        #{tplj3,jdbcType=VARCHAR},
+      </if>
+      <if test="yjdd != null">
+        #{yjdd,jdbcType=VARCHAR},
+      </if>
+      <if test="xssd != null">
+        #{xssd,jdbcType=DECIMAL},
+      </if>
+      <if test="ssbm != null">
+        #{ssbm,jdbcType=VARCHAR},
+      </if>
+      <if test="xsqy != null">
+        #{xsqy,jdbcType=VARCHAR},
+      </if>
+      <if test="ssgs != null">
+        #{ssgs,jdbcType=DECIMAL},
+      </if>
+      <if test="gsmc != null">
+        #{gsmc,jdbcType=VARCHAR},
+      </if>
+      <if test="gsfzr != null">
+        #{gsfzr,jdbcType=VARCHAR},
+      </if>
+      <if test="gsfzrdh != null">
+        #{gsfzrdh,jdbcType=VARCHAR},
+      </if>
+      <if test="eventCurrentStatus != null">
+        #{eventCurrentStatus,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <resultMap id="BaseResultMap" type="com.sbzc.model.ALARMVEHICLE">
+    <result column="PK" jdbcType="DECIMAL" property="pk" />
+    <result column="YJXH" jdbcType="VARCHAR" property="yjxh" />
+    <result column="HPHM" jdbcType="VARCHAR" property="hphm" />
+    <result column="HPZL" jdbcType="VARCHAR" property="hpzl" />
+    <result column="GCSJ" jdbcType="TIMESTAMP" property="gcsj" />
+    <result column="YJSJ" jdbcType="TIMESTAMP" property="yjsj" />
+    <result column="YJLX" jdbcType="VARCHAR" property="yjlx" />
+    <result column="CLFL" jdbcType="VARCHAR" property="clfl" />
+    <result column="CDBH" jdbcType="VARCHAR" property="cdbh" />
+    <result column="CSYS" jdbcType="VARCHAR" property="csys" />
+    <result column="CLLX" jdbcType="VARCHAR" property="cllx" />
+    <result column="SSDL" jdbcType="VARCHAR" property="ssdl" />
+    <result column="LDDM" jdbcType="VARCHAR" property="lddm" />
+    <result column="LDMS" jdbcType="VARCHAR" property="ldms" />
+    <result column="DLLX" jdbcType="VARCHAR" property="dllx" />
+    <result column="SBFX" jdbcType="VARCHAR" property="sbfx" />
+    <result column="SBBH" jdbcType="VARCHAR" property="sbbh" />
+    <result column="TPSL" jdbcType="VARCHAR" property="tpsl" />
+    <result column="CPTPLJ" jdbcType="VARCHAR" property="cptplj" />
+    <result column="TPLJ1" jdbcType="VARCHAR" property="tplj1" />
+    <result column="TPLJ2" jdbcType="VARCHAR" property="tplj2" />
+    <result column="TPLJ3" jdbcType="VARCHAR" property="tplj3" />
+    <result column="YJDD" jdbcType="VARCHAR" property="yjdd" />
+    <result column="XSSD" jdbcType="DECIMAL" property="xssd" />
+    <result column="SSBM" jdbcType="VARCHAR" property="ssbm" />
+    <result column="XSQY" jdbcType="VARCHAR" property="xsqy" />
+    <result column="SSGS" jdbcType="DECIMAL" property="ssgs" />
+    <result column="GSMC" jdbcType="VARCHAR" property="gsmc" />
+    <result column="GSFZR" jdbcType="VARCHAR" property="gsfzr" />
+    <result column="GSFZRDH" jdbcType="VARCHAR" property="gsfzrdh" />
+    <result column="EVENT_CURRENT_STATUS" jdbcType="VARCHAR" property="eventCurrentStatus" />
+  </resultMap>
+  <insert id="insert" parameterType="com.sbzc.model.ALARMVEHICLE">
+    insert into ZDCL_ALARM_VEHICLE (PK, YJXH, HPHM, 
+      HPZL, GCSJ, YJSJ, 
+      YJLX, CLFL, CDBH, CSYS, 
+      CLLX, SSDL, LDDM, LDMS, 
+      DLLX, SBFX, SBBH, TPSL, 
+      CPTPLJ, TPLJ1, TPLJ2, 
+      TPLJ3, YJDD, XSSD, 
+      SSBM, XSQY, SSGS, GSMC, 
+      GSFZR, GSFZRDH, EVENT_CURRENT_STATUS
+      )
+    values (#{pk,jdbcType=DECIMAL}, #{yjxh,jdbcType=VARCHAR}, #{hphm,jdbcType=VARCHAR}, 
+      #{hpzl,jdbcType=VARCHAR}, #{gcsj,jdbcType=TIMESTAMP}, #{yjsj,jdbcType=TIMESTAMP}, 
+      #{yjlx,jdbcType=VARCHAR}, #{clfl,jdbcType=VARCHAR}, #{cdbh,jdbcType=VARCHAR}, #{csys,jdbcType=VARCHAR}, 
+      #{cllx,jdbcType=VARCHAR}, #{ssdl,jdbcType=VARCHAR}, #{lddm,jdbcType=VARCHAR}, #{ldms,jdbcType=VARCHAR}, 
+      #{dllx,jdbcType=VARCHAR}, #{sbfx,jdbcType=VARCHAR}, #{sbbh,jdbcType=VARCHAR}, #{tpsl,jdbcType=VARCHAR}, 
+      #{cptplj,jdbcType=VARCHAR}, #{tplj1,jdbcType=VARCHAR}, #{tplj2,jdbcType=VARCHAR}, 
+      #{tplj3,jdbcType=VARCHAR}, #{yjdd,jdbcType=VARCHAR}, #{xssd,jdbcType=DECIMAL}, 
+      #{ssbm,jdbcType=VARCHAR}, #{xsqy,jdbcType=VARCHAR}, #{ssgs,jdbcType=DECIMAL}, #{gsmc,jdbcType=VARCHAR}, 
+      #{gsfzr,jdbcType=VARCHAR}, #{gsfzrdh,jdbcType=VARCHAR}, #{eventCurrentStatus,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.sbzc.model.ALARMVEHICLE">
+    insert into ZDCL_ALARM_VEHICLE
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="pk != null">
+        PK,
+      </if>
+      <if test="yjxh != null">
+        YJXH,
+      </if>
+      <if test="hphm != null">
+        HPHM,
+      </if>
+      <if test="hpzl != null">
+        HPZL,
+      </if>
+      <if test="gcsj != null">
+        GCSJ,
+      </if>
+      <if test="yjsj != null">
+        YJSJ,
+      </if>
+      <if test="yjlx != null">
+        YJLX,
+      </if>
+      <if test="clfl != null">
+        CLFL,
+      </if>
+      <if test="cdbh != null">
+        CDBH,
+      </if>
+      <if test="csys != null">
+        CSYS,
+      </if>
+      <if test="cllx != null">
+        CLLX,
+      </if>
+      <if test="ssdl != null">
+        SSDL,
+      </if>
+      <if test="lddm != null">
+        LDDM,
+      </if>
+      <if test="ldms != null">
+        LDMS,
+      </if>
+      <if test="dllx != null">
+        DLLX,
+      </if>
+      <if test="sbfx != null">
+        SBFX,
+      </if>
+      <if test="sbbh != null">
+        SBBH,
+      </if>
+      <if test="tpsl != null">
+        TPSL,
+      </if>
+      <if test="cptplj != null">
+        CPTPLJ,
+      </if>
+      <if test="tplj1 != null">
+        TPLJ1,
+      </if>
+      <if test="tplj2 != null">
+        TPLJ2,
+      </if>
+      <if test="tplj3 != null">
+        TPLJ3,
+      </if>
+      <if test="yjdd != null">
+        YJDD,
+      </if>
+      <if test="xssd != null">
+        XSSD,
+      </if>
+      <if test="ssbm != null">
+        SSBM,
+      </if>
+      <if test="xsqy != null">
+        XSQY,
+      </if>
+      <if test="ssgs != null">
+        SSGS,
+      </if>
+      <if test="gsmc != null">
+        GSMC,
+      </if>
+      <if test="gsfzr != null">
+        GSFZR,
+      </if>
+      <if test="gsfzrdh != null">
+        GSFZRDH,
+      </if>
+      <if test="eventCurrentStatus != null">
+        EVENT_CURRENT_STATUS,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="pk != null">
+        #{pk,jdbcType=DECIMAL},
+      </if>
+      <if test="yjxh != null">
+        #{yjxh,jdbcType=VARCHAR},
+      </if>
+      <if test="hphm != null">
+        #{hphm,jdbcType=VARCHAR},
+      </if>
+      <if test="hpzl != null">
+        #{hpzl,jdbcType=VARCHAR},
+      </if>
+      <if test="gcsj != null">
+        #{gcsj,jdbcType=TIMESTAMP},
+      </if>
+      <if test="yjsj != null">
+        #{yjsj,jdbcType=TIMESTAMP},
+      </if>
+      <if test="yjlx != null">
+        #{yjlx,jdbcType=VARCHAR},
+      </if>
+      <if test="clfl != null">
+        #{clfl,jdbcType=VARCHAR},
+      </if>
+      <if test="cdbh != null">
+        #{cdbh,jdbcType=VARCHAR},
+      </if>
+      <if test="csys != null">
+        #{csys,jdbcType=VARCHAR},
+      </if>
+      <if test="cllx != null">
+        #{cllx,jdbcType=VARCHAR},
+      </if>
+      <if test="ssdl != null">
+        #{ssdl,jdbcType=VARCHAR},
+      </if>
+      <if test="lddm != null">
+        #{lddm,jdbcType=VARCHAR},
+      </if>
+      <if test="ldms != null">
+        #{ldms,jdbcType=VARCHAR},
+      </if>
+      <if test="dllx != null">
+        #{dllx,jdbcType=VARCHAR},
+      </if>
+      <if test="sbfx != null">
+        #{sbfx,jdbcType=VARCHAR},
+      </if>
+      <if test="sbbh != null">
+        #{sbbh,jdbcType=VARCHAR},
+      </if>
+      <if test="tpsl != null">
+        #{tpsl,jdbcType=VARCHAR},
+      </if>
+      <if test="cptplj != null">
+        #{cptplj,jdbcType=VARCHAR},
+      </if>
+      <if test="tplj1 != null">
+        #{tplj1,jdbcType=VARCHAR},
+      </if>
+      <if test="tplj2 != null">
+        #{tplj2,jdbcType=VARCHAR},
+      </if>
+      <if test="tplj3 != null">
+        #{tplj3,jdbcType=VARCHAR},
+      </if>
+      <if test="yjdd != null">
+        #{yjdd,jdbcType=VARCHAR},
+      </if>
+      <if test="xssd != null">
+        #{xssd,jdbcType=DECIMAL},
+      </if>
+      <if test="ssbm != null">
+        #{ssbm,jdbcType=VARCHAR},
+      </if>
+      <if test="xsqy != null">
+        #{xsqy,jdbcType=VARCHAR},
+      </if>
+      <if test="ssgs != null">
+        #{ssgs,jdbcType=DECIMAL},
+      </if>
+      <if test="gsmc != null">
+        #{gsmc,jdbcType=VARCHAR},
+      </if>
+      <if test="gsfzr != null">
+        #{gsfzr,jdbcType=VARCHAR},
+      </if>
+      <if test="gsfzrdh != null">
+        #{gsfzrdh,jdbcType=VARCHAR},
+      </if>
+      <if test="eventCurrentStatus != null">
+        #{eventCurrentStatus,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <resultMap id="BaseResultMap" type="com.sbzc.model.ALARMVEHICLE">
+    <result column="PK" jdbcType="DECIMAL" property="pk" />
+    <result column="YJXH" jdbcType="VARCHAR" property="yjxh" />
+    <result column="HPHM" jdbcType="VARCHAR" property="hphm" />
+    <result column="HPZL" jdbcType="VARCHAR" property="hpzl" />
+    <result column="GCSJ" jdbcType="TIMESTAMP" property="gcsj" />
+    <result column="YJSJ" jdbcType="TIMESTAMP" property="yjsj" />
+    <result column="YJLX" jdbcType="VARCHAR" property="yjlx" />
+    <result column="CLFL" jdbcType="VARCHAR" property="clfl" />
+    <result column="CDBH" jdbcType="VARCHAR" property="cdbh" />
+    <result column="CSYS" jdbcType="VARCHAR" property="csys" />
+    <result column="CLLX" jdbcType="VARCHAR" property="cllx" />
+    <result column="SSDL" jdbcType="VARCHAR" property="ssdl" />
+    <result column="LDDM" jdbcType="VARCHAR" property="lddm" />
+    <result column="LDMS" jdbcType="VARCHAR" property="ldms" />
+    <result column="DLLX" jdbcType="VARCHAR" property="dllx" />
+    <result column="SBFX" jdbcType="VARCHAR" property="sbfx" />
+    <result column="SBBH" jdbcType="VARCHAR" property="sbbh" />
+    <result column="TPSL" jdbcType="VARCHAR" property="tpsl" />
+    <result column="CPTPLJ" jdbcType="VARCHAR" property="cptplj" />
+    <result column="TPLJ1" jdbcType="VARCHAR" property="tplj1" />
+    <result column="TPLJ2" jdbcType="VARCHAR" property="tplj2" />
+    <result column="TPLJ3" jdbcType="VARCHAR" property="tplj3" />
+    <result column="YJDD" jdbcType="VARCHAR" property="yjdd" />
+    <result column="XSSD" jdbcType="DECIMAL" property="xssd" />
+    <result column="SSBM" jdbcType="VARCHAR" property="ssbm" />
+    <result column="XSQY" jdbcType="VARCHAR" property="xsqy" />
+    <result column="SSGS" jdbcType="DECIMAL" property="ssgs" />
+    <result column="GSMC" jdbcType="VARCHAR" property="gsmc" />
+    <result column="GSFZR" jdbcType="VARCHAR" property="gsfzr" />
+    <result column="GSFZRDH" jdbcType="VARCHAR" property="gsfzrdh" />
+    <result column="EVENT_CURRENT_STATUS" jdbcType="VARCHAR" property="eventCurrentStatus" />
+  </resultMap>
+  <insert id="insert" parameterType="com.sbzc.model.ALARMVEHICLE">
+    insert into ZDCL_ALARM_VEHICLE (PK, YJXH, HPHM, 
+      HPZL, GCSJ, YJSJ, 
+      YJLX, CLFL, CDBH, CSYS, 
+      CLLX, SSDL, LDDM, LDMS, 
+      DLLX, SBFX, SBBH, TPSL, 
+      CPTPLJ, TPLJ1, TPLJ2, 
+      TPLJ3, YJDD, XSSD, 
+      SSBM, XSQY, SSGS, GSMC, 
+      GSFZR, GSFZRDH, EVENT_CURRENT_STATUS
+      )
+    values (#{pk,jdbcType=DECIMAL}, #{yjxh,jdbcType=VARCHAR}, #{hphm,jdbcType=VARCHAR}, 
+      #{hpzl,jdbcType=VARCHAR}, #{gcsj,jdbcType=TIMESTAMP}, #{yjsj,jdbcType=TIMESTAMP}, 
+      #{yjlx,jdbcType=VARCHAR}, #{clfl,jdbcType=VARCHAR}, #{cdbh,jdbcType=VARCHAR}, #{csys,jdbcType=VARCHAR}, 
+      #{cllx,jdbcType=VARCHAR}, #{ssdl,jdbcType=VARCHAR}, #{lddm,jdbcType=VARCHAR}, #{ldms,jdbcType=VARCHAR}, 
+      #{dllx,jdbcType=VARCHAR}, #{sbfx,jdbcType=VARCHAR}, #{sbbh,jdbcType=VARCHAR}, #{tpsl,jdbcType=VARCHAR}, 
+      #{cptplj,jdbcType=VARCHAR}, #{tplj1,jdbcType=VARCHAR}, #{tplj2,jdbcType=VARCHAR}, 
+      #{tplj3,jdbcType=VARCHAR}, #{yjdd,jdbcType=VARCHAR}, #{xssd,jdbcType=DECIMAL}, 
+      #{ssbm,jdbcType=VARCHAR}, #{xsqy,jdbcType=VARCHAR}, #{ssgs,jdbcType=DECIMAL}, #{gsmc,jdbcType=VARCHAR}, 
+      #{gsfzr,jdbcType=VARCHAR}, #{gsfzrdh,jdbcType=VARCHAR}, #{eventCurrentStatus,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.sbzc.model.ALARMVEHICLE">
+    insert into ZDCL_ALARM_VEHICLE
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="pk != null">
+        PK,
+      </if>
+      <if test="yjxh != null">
+        YJXH,
+      </if>
+      <if test="hphm != null">
+        HPHM,
+      </if>
+      <if test="hpzl != null">
+        HPZL,
+      </if>
+      <if test="gcsj != null">
+        GCSJ,
+      </if>
+      <if test="yjsj != null">
+        YJSJ,
+      </if>
+      <if test="yjlx != null">
+        YJLX,
+      </if>
+      <if test="clfl != null">
+        CLFL,
+      </if>
+      <if test="cdbh != null">
+        CDBH,
+      </if>
+      <if test="csys != null">
+        CSYS,
+      </if>
+      <if test="cllx != null">
+        CLLX,
+      </if>
+      <if test="ssdl != null">
+        SSDL,
+      </if>
+      <if test="lddm != null">
+        LDDM,
+      </if>
+      <if test="ldms != null">
+        LDMS,
+      </if>
+      <if test="dllx != null">
+        DLLX,
+      </if>
+      <if test="sbfx != null">
+        SBFX,
+      </if>
+      <if test="sbbh != null">
+        SBBH,
+      </if>
+      <if test="tpsl != null">
+        TPSL,
+      </if>
+      <if test="cptplj != null">
+        CPTPLJ,
+      </if>
+      <if test="tplj1 != null">
+        TPLJ1,
+      </if>
+      <if test="tplj2 != null">
+        TPLJ2,
+      </if>
+      <if test="tplj3 != null">
+        TPLJ3,
+      </if>
+      <if test="yjdd != null">
+        YJDD,
+      </if>
+      <if test="xssd != null">
+        XSSD,
+      </if>
+      <if test="ssbm != null">
+        SSBM,
+      </if>
+      <if test="xsqy != null">
+        XSQY,
+      </if>
+      <if test="ssgs != null">
+        SSGS,
+      </if>
+      <if test="gsmc != null">
+        GSMC,
+      </if>
+      <if test="gsfzr != null">
+        GSFZR,
+      </if>
+      <if test="gsfzrdh != null">
+        GSFZRDH,
+      </if>
+      <if test="eventCurrentStatus != null">
+        EVENT_CURRENT_STATUS,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="pk != null">
+        #{pk,jdbcType=DECIMAL},
+      </if>
+      <if test="yjxh != null">
+        #{yjxh,jdbcType=VARCHAR},
+      </if>
+      <if test="hphm != null">
+        #{hphm,jdbcType=VARCHAR},
+      </if>
+      <if test="hpzl != null">
+        #{hpzl,jdbcType=VARCHAR},
+      </if>
+      <if test="gcsj != null">
+        #{gcsj,jdbcType=TIMESTAMP},
+      </if>
+      <if test="yjsj != null">
+        #{yjsj,jdbcType=TIMESTAMP},
+      </if>
+      <if test="yjlx != null">
+        #{yjlx,jdbcType=VARCHAR},
+      </if>
+      <if test="clfl != null">
+        #{clfl,jdbcType=VARCHAR},
+      </if>
+      <if test="cdbh != null">
+        #{cdbh,jdbcType=VARCHAR},
+      </if>
+      <if test="csys != null">
+        #{csys,jdbcType=VARCHAR},
+      </if>
+      <if test="cllx != null">
+        #{cllx,jdbcType=VARCHAR},
+      </if>
+      <if test="ssdl != null">
+        #{ssdl,jdbcType=VARCHAR},
+      </if>
+      <if test="lddm != null">
+        #{lddm,jdbcType=VARCHAR},
+      </if>
+      <if test="ldms != null">
+        #{ldms,jdbcType=VARCHAR},
+      </if>
+      <if test="dllx != null">
+        #{dllx,jdbcType=VARCHAR},
+      </if>
+      <if test="sbfx != null">
+        #{sbfx,jdbcType=VARCHAR},
+      </if>
+      <if test="sbbh != null">
+        #{sbbh,jdbcType=VARCHAR},
+      </if>
+      <if test="tpsl != null">
+        #{tpsl,jdbcType=VARCHAR},
+      </if>
+      <if test="cptplj != null">
+        #{cptplj,jdbcType=VARCHAR},
+      </if>
+      <if test="tplj1 != null">
+        #{tplj1,jdbcType=VARCHAR},
+      </if>
+      <if test="tplj2 != null">
+        #{tplj2,jdbcType=VARCHAR},
+      </if>
+      <if test="tplj3 != null">
+        #{tplj3,jdbcType=VARCHAR},
+      </if>
+      <if test="yjdd != null">
+        #{yjdd,jdbcType=VARCHAR},
+      </if>
+      <if test="xssd != null">
+        #{xssd,jdbcType=DECIMAL},
+      </if>
+      <if test="ssbm != null">
+        #{ssbm,jdbcType=VARCHAR},
+      </if>
+      <if test="xsqy != null">
+        #{xsqy,jdbcType=VARCHAR},
+      </if>
+      <if test="ssgs != null">
+        #{ssgs,jdbcType=DECIMAL},
+      </if>
+      <if test="gsmc != null">
+        #{gsmc,jdbcType=VARCHAR},
+      </if>
+      <if test="gsfzr != null">
+        #{gsfzr,jdbcType=VARCHAR},
+      </if>
+      <if test="gsfzrdh != null">
+        #{gsfzrdh,jdbcType=VARCHAR},
+      </if>
+      <if test="eventCurrentStatus != null">
+        #{eventCurrentStatus,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <resultMap id="BaseResultMap" type="com.sbzc.model.ALARMVEHICLE">
+    <result column="PK" jdbcType="DECIMAL" property="pk" />
+    <result column="YJXH" jdbcType="VARCHAR" property="yjxh" />
+    <result column="HPHM" jdbcType="VARCHAR" property="hphm" />
+    <result column="HPZL" jdbcType="VARCHAR" property="hpzl" />
+    <result column="GCSJ" jdbcType="TIMESTAMP" property="gcsj" />
+    <result column="YJSJ" jdbcType="TIMESTAMP" property="yjsj" />
+    <result column="YJLX" jdbcType="VARCHAR" property="yjlx" />
+    <result column="CLFL" jdbcType="VARCHAR" property="clfl" />
+    <result column="CDBH" jdbcType="VARCHAR" property="cdbh" />
+    <result column="CSYS" jdbcType="VARCHAR" property="csys" />
+    <result column="CLLX" jdbcType="VARCHAR" property="cllx" />
+    <result column="SSDL" jdbcType="VARCHAR" property="ssdl" />
+    <result column="LDDM" jdbcType="VARCHAR" property="lddm" />
+    <result column="LDMS" jdbcType="VARCHAR" property="ldms" />
+    <result column="DLLX" jdbcType="VARCHAR" property="dllx" />
+    <result column="SBFX" jdbcType="VARCHAR" property="sbfx" />
+    <result column="SBBH" jdbcType="VARCHAR" property="sbbh" />
+    <result column="TPSL" jdbcType="VARCHAR" property="tpsl" />
+    <result column="CPTPLJ" jdbcType="VARCHAR" property="cptplj" />
+    <result column="TPLJ1" jdbcType="VARCHAR" property="tplj1" />
+    <result column="TPLJ2" jdbcType="VARCHAR" property="tplj2" />
+    <result column="TPLJ3" jdbcType="VARCHAR" property="tplj3" />
+    <result column="YJDD" jdbcType="VARCHAR" property="yjdd" />
+    <result column="XSSD" jdbcType="DECIMAL" property="xssd" />
+    <result column="SSBM" jdbcType="VARCHAR" property="ssbm" />
+    <result column="XSQY" jdbcType="VARCHAR" property="xsqy" />
+    <result column="SSGS" jdbcType="DECIMAL" property="ssgs" />
+    <result column="GSMC" jdbcType="VARCHAR" property="gsmc" />
+    <result column="GSFZR" jdbcType="VARCHAR" property="gsfzr" />
+    <result column="GSFZRDH" jdbcType="VARCHAR" property="gsfzrdh" />
+    <result column="EVENT_CURRENT_STATUS" jdbcType="VARCHAR" property="eventCurrentStatus" />
+  </resultMap>
+  <insert id="insert" parameterType="com.sbzc.model.ALARMVEHICLE">
+    insert into ZDCL_ALARM_VEHICLE (PK, YJXH, HPHM, 
+      HPZL, GCSJ, YJSJ, 
+      YJLX, CLFL, CDBH, CSYS, 
+      CLLX, SSDL, LDDM, LDMS, 
+      DLLX, SBFX, SBBH, TPSL, 
+      CPTPLJ, TPLJ1, TPLJ2, 
+      TPLJ3, YJDD, XSSD, 
+      SSBM, XSQY, SSGS, GSMC, 
+      GSFZR, GSFZRDH, EVENT_CURRENT_STATUS
+      )
+    values (#{pk,jdbcType=DECIMAL}, #{yjxh,jdbcType=VARCHAR}, #{hphm,jdbcType=VARCHAR}, 
+      #{hpzl,jdbcType=VARCHAR}, #{gcsj,jdbcType=TIMESTAMP}, #{yjsj,jdbcType=TIMESTAMP}, 
+      #{yjlx,jdbcType=VARCHAR}, #{clfl,jdbcType=VARCHAR}, #{cdbh,jdbcType=VARCHAR}, #{csys,jdbcType=VARCHAR}, 
+      #{cllx,jdbcType=VARCHAR}, #{ssdl,jdbcType=VARCHAR}, #{lddm,jdbcType=VARCHAR}, #{ldms,jdbcType=VARCHAR}, 
+      #{dllx,jdbcType=VARCHAR}, #{sbfx,jdbcType=VARCHAR}, #{sbbh,jdbcType=VARCHAR}, #{tpsl,jdbcType=VARCHAR}, 
+      #{cptplj,jdbcType=VARCHAR}, #{tplj1,jdbcType=VARCHAR}, #{tplj2,jdbcType=VARCHAR}, 
+      #{tplj3,jdbcType=VARCHAR}, #{yjdd,jdbcType=VARCHAR}, #{xssd,jdbcType=DECIMAL}, 
+      #{ssbm,jdbcType=VARCHAR}, #{xsqy,jdbcType=VARCHAR}, #{ssgs,jdbcType=DECIMAL}, #{gsmc,jdbcType=VARCHAR}, 
+      #{gsfzr,jdbcType=VARCHAR}, #{gsfzrdh,jdbcType=VARCHAR}, #{eventCurrentStatus,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.sbzc.model.ALARMVEHICLE">
+    insert into ZDCL_ALARM_VEHICLE
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="pk != null">
+        PK,
+      </if>
+      <if test="yjxh != null">
+        YJXH,
+      </if>
+      <if test="hphm != null">
+        HPHM,
+      </if>
+      <if test="hpzl != null">
+        HPZL,
+      </if>
+      <if test="gcsj != null">
+        GCSJ,
+      </if>
+      <if test="yjsj != null">
+        YJSJ,
+      </if>
+      <if test="yjlx != null">
+        YJLX,
+      </if>
+      <if test="clfl != null">
+        CLFL,
+      </if>
+      <if test="cdbh != null">
+        CDBH,
+      </if>
+      <if test="csys != null">
+        CSYS,
+      </if>
+      <if test="cllx != null">
+        CLLX,
+      </if>
+      <if test="ssdl != null">
+        SSDL,
+      </if>
+      <if test="lddm != null">
+        LDDM,
+      </if>
+      <if test="ldms != null">
+        LDMS,
+      </if>
+      <if test="dllx != null">
+        DLLX,
+      </if>
+      <if test="sbfx != null">
+        SBFX,
+      </if>
+      <if test="sbbh != null">
+        SBBH,
+      </if>
+      <if test="tpsl != null">
+        TPSL,
+      </if>
+      <if test="cptplj != null">
+        CPTPLJ,
+      </if>
+      <if test="tplj1 != null">
+        TPLJ1,
+      </if>
+      <if test="tplj2 != null">
+        TPLJ2,
+      </if>
+      <if test="tplj3 != null">
+        TPLJ3,
+      </if>
+      <if test="yjdd != null">
+        YJDD,
+      </if>
+      <if test="xssd != null">
+        XSSD,
+      </if>
+      <if test="ssbm != null">
+        SSBM,
+      </if>
+      <if test="xsqy != null">
+        XSQY,
+      </if>
+      <if test="ssgs != null">
+        SSGS,
+      </if>
+      <if test="gsmc != null">
+        GSMC,
+      </if>
+      <if test="gsfzr != null">
+        GSFZR,
+      </if>
+      <if test="gsfzrdh != null">
+        GSFZRDH,
+      </if>
+      <if test="eventCurrentStatus != null">
+        EVENT_CURRENT_STATUS,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="pk != null">
+        #{pk,jdbcType=DECIMAL},
+      </if>
+      <if test="yjxh != null">
+        #{yjxh,jdbcType=VARCHAR},
+      </if>
+      <if test="hphm != null">
+        #{hphm,jdbcType=VARCHAR},
+      </if>
+      <if test="hpzl != null">
+        #{hpzl,jdbcType=VARCHAR},
+      </if>
+      <if test="gcsj != null">
+        #{gcsj,jdbcType=TIMESTAMP},
+      </if>
+      <if test="yjsj != null">
+        #{yjsj,jdbcType=TIMESTAMP},
+      </if>
+      <if test="yjlx != null">
+        #{yjlx,jdbcType=VARCHAR},
+      </if>
+      <if test="clfl != null">
+        #{clfl,jdbcType=VARCHAR},
+      </if>
+      <if test="cdbh != null">
+        #{cdbh,jdbcType=VARCHAR},
+      </if>
+      <if test="csys != null">
+        #{csys,jdbcType=VARCHAR},
+      </if>
+      <if test="cllx != null">
+        #{cllx,jdbcType=VARCHAR},
+      </if>
+      <if test="ssdl != null">
+        #{ssdl,jdbcType=VARCHAR},
+      </if>
+      <if test="lddm != null">
+        #{lddm,jdbcType=VARCHAR},
+      </if>
+      <if test="ldms != null">
+        #{ldms,jdbcType=VARCHAR},
+      </if>
+      <if test="dllx != null">
+        #{dllx,jdbcType=VARCHAR},
+      </if>
+      <if test="sbfx != null">
+        #{sbfx,jdbcType=VARCHAR},
+      </if>
+      <if test="sbbh != null">
+        #{sbbh,jdbcType=VARCHAR},
+      </if>
+      <if test="tpsl != null">
+        #{tpsl,jdbcType=VARCHAR},
+      </if>
+      <if test="cptplj != null">
+        #{cptplj,jdbcType=VARCHAR},
+      </if>
+      <if test="tplj1 != null">
+        #{tplj1,jdbcType=VARCHAR},
+      </if>
+      <if test="tplj2 != null">
+        #{tplj2,jdbcType=VARCHAR},
+      </if>
+      <if test="tplj3 != null">
+        #{tplj3,jdbcType=VARCHAR},
+      </if>
+      <if test="yjdd != null">
+        #{yjdd,jdbcType=VARCHAR},
+      </if>
+      <if test="xssd != null">
+        #{xssd,jdbcType=DECIMAL},
+      </if>
+      <if test="ssbm != null">
+        #{ssbm,jdbcType=VARCHAR},
+      </if>
+      <if test="xsqy != null">
+        #{xsqy,jdbcType=VARCHAR},
+      </if>
+      <if test="ssgs != null">
+        #{ssgs,jdbcType=DECIMAL},
+      </if>
+      <if test="gsmc != null">
+        #{gsmc,jdbcType=VARCHAR},
+      </if>
+      <if test="gsfzr != null">
+        #{gsfzr,jdbcType=VARCHAR},
+      </if>
+      <if test="gsfzrdh != null">
+        #{gsfzrdh,jdbcType=VARCHAR},
+      </if>
+      <if test="eventCurrentStatus != null">
+        #{eventCurrentStatus,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <resultMap id="BaseResultMap" type="com.sbzc.model.ALARMVEHICLE">
+    <result column="PK" jdbcType="DECIMAL" property="pk" />
+    <result column="YJXH" jdbcType="VARCHAR" property="yjxh" />
+    <result column="HPHM" jdbcType="VARCHAR" property="hphm" />
+    <result column="HPZL" jdbcType="VARCHAR" property="hpzl" />
+    <result column="GCSJ" jdbcType="TIMESTAMP" property="gcsj" />
+    <result column="YJSJ" jdbcType="TIMESTAMP" property="yjsj" />
+    <result column="YJLX" jdbcType="VARCHAR" property="yjlx" />
+    <result column="CLFL" jdbcType="VARCHAR" property="clfl" />
+    <result column="CDBH" jdbcType="VARCHAR" property="cdbh" />
+    <result column="CSYS" jdbcType="VARCHAR" property="csys" />
+    <result column="CLLX" jdbcType="VARCHAR" property="cllx" />
+    <result column="SSDL" jdbcType="VARCHAR" property="ssdl" />
+    <result column="LDDM" jdbcType="VARCHAR" property="lddm" />
+    <result column="LDMS" jdbcType="VARCHAR" property="ldms" />
+    <result column="DLLX" jdbcType="VARCHAR" property="dllx" />
+    <result column="SBFX" jdbcType="VARCHAR" property="sbfx" />
+    <result column="SBBH" jdbcType="VARCHAR" property="sbbh" />
+    <result column="TPSL" jdbcType="VARCHAR" property="tpsl" />
+    <result column="CPTPLJ" jdbcType="VARCHAR" property="cptplj" />
+    <result column="TPLJ1" jdbcType="VARCHAR" property="tplj1" />
+    <result column="TPLJ2" jdbcType="VARCHAR" property="tplj2" />
+    <result column="TPLJ3" jdbcType="VARCHAR" property="tplj3" />
+    <result column="YJDD" jdbcType="VARCHAR" property="yjdd" />
+    <result column="XSSD" jdbcType="DECIMAL" property="xssd" />
+    <result column="SSBM" jdbcType="VARCHAR" property="ssbm" />
+    <result column="XSQY" jdbcType="VARCHAR" property="xsqy" />
+    <result column="SSGS" jdbcType="DECIMAL" property="ssgs" />
+    <result column="GSMC" jdbcType="VARCHAR" property="gsmc" />
+    <result column="GSFZR" jdbcType="VARCHAR" property="gsfzr" />
+    <result column="GSFZRDH" jdbcType="VARCHAR" property="gsfzrdh" />
+    <result column="EVENT_CURRENT_STATUS" jdbcType="VARCHAR" property="eventCurrentStatus" />
+  </resultMap>
+  <insert id="insert" parameterType="com.sbzc.model.ALARMVEHICLE">
+    insert into ZDCL_ALARM_VEHICLE (PK, YJXH, HPHM, 
+      HPZL, GCSJ, YJSJ, 
+      YJLX, CLFL, CDBH, CSYS, 
+      CLLX, SSDL, LDDM, LDMS, 
+      DLLX, SBFX, SBBH, TPSL, 
+      CPTPLJ, TPLJ1, TPLJ2, 
+      TPLJ3, YJDD, XSSD, 
+      SSBM, XSQY, SSGS, GSMC, 
+      GSFZR, GSFZRDH, EVENT_CURRENT_STATUS
+      )
+    values (#{pk,jdbcType=DECIMAL}, #{yjxh,jdbcType=VARCHAR}, #{hphm,jdbcType=VARCHAR}, 
+      #{hpzl,jdbcType=VARCHAR}, #{gcsj,jdbcType=TIMESTAMP}, #{yjsj,jdbcType=TIMESTAMP}, 
+      #{yjlx,jdbcType=VARCHAR}, #{clfl,jdbcType=VARCHAR}, #{cdbh,jdbcType=VARCHAR}, #{csys,jdbcType=VARCHAR}, 
+      #{cllx,jdbcType=VARCHAR}, #{ssdl,jdbcType=VARCHAR}, #{lddm,jdbcType=VARCHAR}, #{ldms,jdbcType=VARCHAR}, 
+      #{dllx,jdbcType=VARCHAR}, #{sbfx,jdbcType=VARCHAR}, #{sbbh,jdbcType=VARCHAR}, #{tpsl,jdbcType=VARCHAR}, 
+      #{cptplj,jdbcType=VARCHAR}, #{tplj1,jdbcType=VARCHAR}, #{tplj2,jdbcType=VARCHAR}, 
+      #{tplj3,jdbcType=VARCHAR}, #{yjdd,jdbcType=VARCHAR}, #{xssd,jdbcType=DECIMAL}, 
+      #{ssbm,jdbcType=VARCHAR}, #{xsqy,jdbcType=VARCHAR}, #{ssgs,jdbcType=DECIMAL}, #{gsmc,jdbcType=VARCHAR}, 
+      #{gsfzr,jdbcType=VARCHAR}, #{gsfzrdh,jdbcType=VARCHAR}, #{eventCurrentStatus,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.sbzc.model.ALARMVEHICLE">
+    insert into ZDCL_ALARM_VEHICLE
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="pk != null">
+        PK,
+      </if>
+      <if test="yjxh != null">
+        YJXH,
+      </if>
+      <if test="hphm != null">
+        HPHM,
+      </if>
+      <if test="hpzl != null">
+        HPZL,
+      </if>
+      <if test="gcsj != null">
+        GCSJ,
+      </if>
+      <if test="yjsj != null">
+        YJSJ,
+      </if>
+      <if test="yjlx != null">
+        YJLX,
+      </if>
+      <if test="clfl != null">
+        CLFL,
+      </if>
+      <if test="cdbh != null">
+        CDBH,
+      </if>
+      <if test="csys != null">
+        CSYS,
+      </if>
+      <if test="cllx != null">
+        CLLX,
+      </if>
+      <if test="ssdl != null">
+        SSDL,
+      </if>
+      <if test="lddm != null">
+        LDDM,
+      </if>
+      <if test="ldms != null">
+        LDMS,
+      </if>
+      <if test="dllx != null">
+        DLLX,
+      </if>
+      <if test="sbfx != null">
+        SBFX,
+      </if>
+      <if test="sbbh != null">
+        SBBH,
+      </if>
+      <if test="tpsl != null">
+        TPSL,
+      </if>
+      <if test="cptplj != null">
+        CPTPLJ,
+      </if>
+      <if test="tplj1 != null">
+        TPLJ1,
+      </if>
+      <if test="tplj2 != null">
+        TPLJ2,
+      </if>
+      <if test="tplj3 != null">
+        TPLJ3,
+      </if>
+      <if test="yjdd != null">
+        YJDD,
+      </if>
+      <if test="xssd != null">
+        XSSD,
+      </if>
+      <if test="ssbm != null">
+        SSBM,
+      </if>
+      <if test="xsqy != null">
+        XSQY,
+      </if>
+      <if test="ssgs != null">
+        SSGS,
+      </if>
+      <if test="gsmc != null">
+        GSMC,
+      </if>
+      <if test="gsfzr != null">
+        GSFZR,
+      </if>
+      <if test="gsfzrdh != null">
+        GSFZRDH,
+      </if>
+      <if test="eventCurrentStatus != null">
+        EVENT_CURRENT_STATUS,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="pk != null">
+        #{pk,jdbcType=DECIMAL},
+      </if>
+      <if test="yjxh != null">
+        #{yjxh,jdbcType=VARCHAR},
+      </if>
+      <if test="hphm != null">
+        #{hphm,jdbcType=VARCHAR},
+      </if>
+      <if test="hpzl != null">
+        #{hpzl,jdbcType=VARCHAR},
+      </if>
+      <if test="gcsj != null">
+        #{gcsj,jdbcType=TIMESTAMP},
+      </if>
+      <if test="yjsj != null">
+        #{yjsj,jdbcType=TIMESTAMP},
+      </if>
+      <if test="yjlx != null">
+        #{yjlx,jdbcType=VARCHAR},
+      </if>
+      <if test="clfl != null">
+        #{clfl,jdbcType=VARCHAR},
+      </if>
+      <if test="cdbh != null">
+        #{cdbh,jdbcType=VARCHAR},
+      </if>
+      <if test="csys != null">
+        #{csys,jdbcType=VARCHAR},
+      </if>
+      <if test="cllx != null">
+        #{cllx,jdbcType=VARCHAR},
+      </if>
+      <if test="ssdl != null">
+        #{ssdl,jdbcType=VARCHAR},
+      </if>
+      <if test="lddm != null">
+        #{lddm,jdbcType=VARCHAR},
+      </if>
+      <if test="ldms != null">
+        #{ldms,jdbcType=VARCHAR},
+      </if>
+      <if test="dllx != null">
+        #{dllx,jdbcType=VARCHAR},
+      </if>
+      <if test="sbfx != null">
+        #{sbfx,jdbcType=VARCHAR},
+      </if>
+      <if test="sbbh != null">
+        #{sbbh,jdbcType=VARCHAR},
+      </if>
+      <if test="tpsl != null">
+        #{tpsl,jdbcType=VARCHAR},
+      </if>
+      <if test="cptplj != null">
+        #{cptplj,jdbcType=VARCHAR},
+      </if>
+      <if test="tplj1 != null">
+        #{tplj1,jdbcType=VARCHAR},
+      </if>
+      <if test="tplj2 != null">
+        #{tplj2,jdbcType=VARCHAR},
+      </if>
+      <if test="tplj3 != null">
+        #{tplj3,jdbcType=VARCHAR},
+      </if>
+      <if test="yjdd != null">
+        #{yjdd,jdbcType=VARCHAR},
+      </if>
+      <if test="xssd != null">
+        #{xssd,jdbcType=DECIMAL},
+      </if>
+      <if test="ssbm != null">
+        #{ssbm,jdbcType=VARCHAR},
+      </if>
+      <if test="xsqy != null">
+        #{xsqy,jdbcType=VARCHAR},
+      </if>
+      <if test="ssgs != null">
+        #{ssgs,jdbcType=DECIMAL},
+      </if>
+      <if test="gsmc != null">
+        #{gsmc,jdbcType=VARCHAR},
+      </if>
+      <if test="gsfzr != null">
+        #{gsfzr,jdbcType=VARCHAR},
+      </if>
+      <if test="gsfzrdh != null">
+        #{gsfzrdh,jdbcType=VARCHAR},
+      </if>
+      <if test="eventCurrentStatus != null">
+        #{eventCurrentStatus,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <resultMap id="BaseResultMap" type="com.sbzc.model.ALARMVEHICLE">
+    <result column="PK" jdbcType="DECIMAL" property="pk" />
+    <result column="YJXH" jdbcType="VARCHAR" property="yjxh" />
+    <result column="HPHM" jdbcType="VARCHAR" property="hphm" />
+    <result column="HPZL" jdbcType="VARCHAR" property="hpzl" />
+    <result column="GCSJ" jdbcType="TIMESTAMP" property="gcsj" />
+    <result column="YJSJ" jdbcType="TIMESTAMP" property="yjsj" />
+    <result column="YJLX" jdbcType="VARCHAR" property="yjlx" />
+    <result column="CLFL" jdbcType="VARCHAR" property="clfl" />
+    <result column="CDBH" jdbcType="VARCHAR" property="cdbh" />
+    <result column="CSYS" jdbcType="VARCHAR" property="csys" />
+    <result column="CLLX" jdbcType="VARCHAR" property="cllx" />
+    <result column="SSDL" jdbcType="VARCHAR" property="ssdl" />
+    <result column="LDDM" jdbcType="VARCHAR" property="lddm" />
+    <result column="LDMS" jdbcType="VARCHAR" property="ldms" />
+    <result column="DLLX" jdbcType="VARCHAR" property="dllx" />
+    <result column="SBFX" jdbcType="VARCHAR" property="sbfx" />
+    <result column="SBBH" jdbcType="VARCHAR" property="sbbh" />
+    <result column="TPSL" jdbcType="VARCHAR" property="tpsl" />
+    <result column="CPTPLJ" jdbcType="VARCHAR" property="cptplj" />
+    <result column="TPLJ1" jdbcType="VARCHAR" property="tplj1" />
+    <result column="TPLJ2" jdbcType="VARCHAR" property="tplj2" />
+    <result column="TPLJ3" jdbcType="VARCHAR" property="tplj3" />
+    <result column="YJDD" jdbcType="VARCHAR" property="yjdd" />
+    <result column="XSSD" jdbcType="DECIMAL" property="xssd" />
+    <result column="SSBM" jdbcType="VARCHAR" property="ssbm" />
+    <result column="XSQY" jdbcType="VARCHAR" property="xsqy" />
+    <result column="SSGS" jdbcType="DECIMAL" property="ssgs" />
+    <result column="GSMC" jdbcType="VARCHAR" property="gsmc" />
+    <result column="GSFZR" jdbcType="VARCHAR" property="gsfzr" />
+    <result column="GSFZRDH" jdbcType="VARCHAR" property="gsfzrdh" />
+    <result column="EVENT_CURRENT_STATUS" jdbcType="VARCHAR" property="eventCurrentStatus" />
+  </resultMap>
+  <insert id="insert" parameterType="com.sbzc.model.ALARMVEHICLE">
+    insert into ZDCL_ALARM_VEHICLE (PK, YJXH, HPHM, 
+      HPZL, GCSJ, YJSJ, 
+      YJLX, CLFL, CDBH, CSYS, 
+      CLLX, SSDL, LDDM, LDMS, 
+      DLLX, SBFX, SBBH, TPSL, 
+      CPTPLJ, TPLJ1, TPLJ2, 
+      TPLJ3, YJDD, XSSD, 
+      SSBM, XSQY, SSGS, GSMC, 
+      GSFZR, GSFZRDH, EVENT_CURRENT_STATUS
+      )
+    values (#{pk,jdbcType=DECIMAL}, #{yjxh,jdbcType=VARCHAR}, #{hphm,jdbcType=VARCHAR}, 
+      #{hpzl,jdbcType=VARCHAR}, #{gcsj,jdbcType=TIMESTAMP}, #{yjsj,jdbcType=TIMESTAMP}, 
+      #{yjlx,jdbcType=VARCHAR}, #{clfl,jdbcType=VARCHAR}, #{cdbh,jdbcType=VARCHAR}, #{csys,jdbcType=VARCHAR}, 
+      #{cllx,jdbcType=VARCHAR}, #{ssdl,jdbcType=VARCHAR}, #{lddm,jdbcType=VARCHAR}, #{ldms,jdbcType=VARCHAR}, 
+      #{dllx,jdbcType=VARCHAR}, #{sbfx,jdbcType=VARCHAR}, #{sbbh,jdbcType=VARCHAR}, #{tpsl,jdbcType=VARCHAR}, 
+      #{cptplj,jdbcType=VARCHAR}, #{tplj1,jdbcType=VARCHAR}, #{tplj2,jdbcType=VARCHAR}, 
+      #{tplj3,jdbcType=VARCHAR}, #{yjdd,jdbcType=VARCHAR}, #{xssd,jdbcType=DECIMAL}, 
+      #{ssbm,jdbcType=VARCHAR}, #{xsqy,jdbcType=VARCHAR}, #{ssgs,jdbcType=DECIMAL}, #{gsmc,jdbcType=VARCHAR}, 
+      #{gsfzr,jdbcType=VARCHAR}, #{gsfzrdh,jdbcType=VARCHAR}, #{eventCurrentStatus,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.sbzc.model.ALARMVEHICLE">
+    insert into ZDCL_ALARM_VEHICLE
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="pk != null">
+        PK,
+      </if>
+      <if test="yjxh != null">
+        YJXH,
+      </if>
+      <if test="hphm != null">
+        HPHM,
+      </if>
+      <if test="hpzl != null">
+        HPZL,
+      </if>
+      <if test="gcsj != null">
+        GCSJ,
+      </if>
+      <if test="yjsj != null">
+        YJSJ,
+      </if>
+      <if test="yjlx != null">
+        YJLX,
+      </if>
+      <if test="clfl != null">
+        CLFL,
+      </if>
+      <if test="cdbh != null">
+        CDBH,
+      </if>
+      <if test="csys != null">
+        CSYS,
+      </if>
+      <if test="cllx != null">
+        CLLX,
+      </if>
+      <if test="ssdl != null">
+        SSDL,
+      </if>
+      <if test="lddm != null">
+        LDDM,
+      </if>
+      <if test="ldms != null">
+        LDMS,
+      </if>
+      <if test="dllx != null">
+        DLLX,
+      </if>
+      <if test="sbfx != null">
+        SBFX,
+      </if>
+      <if test="sbbh != null">
+        SBBH,
+      </if>
+      <if test="tpsl != null">
+        TPSL,
+      </if>
+      <if test="cptplj != null">
+        CPTPLJ,
+      </if>
+      <if test="tplj1 != null">
+        TPLJ1,
+      </if>
+      <if test="tplj2 != null">
+        TPLJ2,
+      </if>
+      <if test="tplj3 != null">
+        TPLJ3,
+      </if>
+      <if test="yjdd != null">
+        YJDD,
+      </if>
+      <if test="xssd != null">
+        XSSD,
+      </if>
+      <if test="ssbm != null">
+        SSBM,
+      </if>
+      <if test="xsqy != null">
+        XSQY,
+      </if>
+      <if test="ssgs != null">
+        SSGS,
+      </if>
+      <if test="gsmc != null">
+        GSMC,
+      </if>
+      <if test="gsfzr != null">
+        GSFZR,
+      </if>
+      <if test="gsfzrdh != null">
+        GSFZRDH,
+      </if>
+      <if test="eventCurrentStatus != null">
+        EVENT_CURRENT_STATUS,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="pk != null">
+        #{pk,jdbcType=DECIMAL},
+      </if>
+      <if test="yjxh != null">
+        #{yjxh,jdbcType=VARCHAR},
+      </if>
+      <if test="hphm != null">
+        #{hphm,jdbcType=VARCHAR},
+      </if>
+      <if test="hpzl != null">
+        #{hpzl,jdbcType=VARCHAR},
+      </if>
+      <if test="gcsj != null">
+        #{gcsj,jdbcType=TIMESTAMP},
+      </if>
+      <if test="yjsj != null">
+        #{yjsj,jdbcType=TIMESTAMP},
+      </if>
+      <if test="yjlx != null">
+        #{yjlx,jdbcType=VARCHAR},
+      </if>
+      <if test="clfl != null">
+        #{clfl,jdbcType=VARCHAR},
+      </if>
+      <if test="cdbh != null">
+        #{cdbh,jdbcType=VARCHAR},
+      </if>
+      <if test="csys != null">
+        #{csys,jdbcType=VARCHAR},
+      </if>
+      <if test="cllx != null">
+        #{cllx,jdbcType=VARCHAR},
+      </if>
+      <if test="ssdl != null">
+        #{ssdl,jdbcType=VARCHAR},
+      </if>
+      <if test="lddm != null">
+        #{lddm,jdbcType=VARCHAR},
+      </if>
+      <if test="ldms != null">
+        #{ldms,jdbcType=VARCHAR},
+      </if>
+      <if test="dllx != null">
+        #{dllx,jdbcType=VARCHAR},
+      </if>
+      <if test="sbfx != null">
+        #{sbfx,jdbcType=VARCHAR},
+      </if>
+      <if test="sbbh != null">
+        #{sbbh,jdbcType=VARCHAR},
+      </if>
+      <if test="tpsl != null">
+        #{tpsl,jdbcType=VARCHAR},
+      </if>
+      <if test="cptplj != null">
+        #{cptplj,jdbcType=VARCHAR},
+      </if>
+      <if test="tplj1 != null">
+        #{tplj1,jdbcType=VARCHAR},
+      </if>
+      <if test="tplj2 != null">
+        #{tplj2,jdbcType=VARCHAR},
+      </if>
+      <if test="tplj3 != null">
+        #{tplj3,jdbcType=VARCHAR},
+      </if>
+      <if test="yjdd != null">
+        #{yjdd,jdbcType=VARCHAR},
+      </if>
+      <if test="xssd != null">
+        #{xssd,jdbcType=DECIMAL},
+      </if>
+      <if test="ssbm != null">
+        #{ssbm,jdbcType=VARCHAR},
+      </if>
+      <if test="xsqy != null">
+        #{xsqy,jdbcType=VARCHAR},
+      </if>
+      <if test="ssgs != null">
+        #{ssgs,jdbcType=DECIMAL},
+      </if>
+      <if test="gsmc != null">
+        #{gsmc,jdbcType=VARCHAR},
+      </if>
+      <if test="gsfzr != null">
+        #{gsfzr,jdbcType=VARCHAR},
+      </if>
+      <if test="gsfzrdh != null">
+        #{gsfzrdh,jdbcType=VARCHAR},
+      </if>
+      <if test="eventCurrentStatus != null">
+        #{eventCurrentStatus,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <resultMap id="BaseResultMap" type="com.sbzc.model.ALARMVEHICLE">
+    <result column="PK" jdbcType="DECIMAL" property="pk" />
+    <result column="YJXH" jdbcType="VARCHAR" property="yjxh" />
+    <result column="HPHM" jdbcType="VARCHAR" property="hphm" />
+    <result column="HPZL" jdbcType="VARCHAR" property="hpzl" />
+    <result column="GCSJ" jdbcType="TIMESTAMP" property="gcsj" />
+    <result column="YJSJ" jdbcType="TIMESTAMP" property="yjsj" />
+    <result column="YJLX" jdbcType="VARCHAR" property="yjlx" />
+    <result column="CLFL" jdbcType="VARCHAR" property="clfl" />
+    <result column="CDBH" jdbcType="VARCHAR" property="cdbh" />
+    <result column="CSYS" jdbcType="VARCHAR" property="csys" />
+    <result column="CLLX" jdbcType="VARCHAR" property="cllx" />
+    <result column="SSDL" jdbcType="VARCHAR" property="ssdl" />
+    <result column="LDDM" jdbcType="VARCHAR" property="lddm" />
+    <result column="LDMS" jdbcType="VARCHAR" property="ldms" />
+    <result column="DLLX" jdbcType="VARCHAR" property="dllx" />
+    <result column="SBFX" jdbcType="VARCHAR" property="sbfx" />
+    <result column="SBBH" jdbcType="VARCHAR" property="sbbh" />
+    <result column="TPSL" jdbcType="VARCHAR" property="tpsl" />
+    <result column="CPTPLJ" jdbcType="VARCHAR" property="cptplj" />
+    <result column="TPLJ1" jdbcType="VARCHAR" property="tplj1" />
+    <result column="TPLJ2" jdbcType="VARCHAR" property="tplj2" />
+    <result column="TPLJ3" jdbcType="VARCHAR" property="tplj3" />
+    <result column="YJDD" jdbcType="VARCHAR" property="yjdd" />
+    <result column="XSSD" jdbcType="DECIMAL" property="xssd" />
+    <result column="SSBM" jdbcType="VARCHAR" property="ssbm" />
+    <result column="XSQY" jdbcType="VARCHAR" property="xsqy" />
+    <result column="SSGS" jdbcType="DECIMAL" property="ssgs" />
+    <result column="GSMC" jdbcType="VARCHAR" property="gsmc" />
+    <result column="GSFZR" jdbcType="VARCHAR" property="gsfzr" />
+    <result column="GSFZRDH" jdbcType="VARCHAR" property="gsfzrdh" />
+    <result column="EVENT_CURRENT_STATUS" jdbcType="VARCHAR" property="eventCurrentStatus" />
+  </resultMap>
+  <insert id="insert" parameterType="com.sbzc.model.ALARMVEHICLE">
+    insert into ZDCL_ALARM_VEHICLE (PK, YJXH, HPHM, 
+      HPZL, GCSJ, YJSJ, 
+      YJLX, CLFL, CDBH, CSYS, 
+      CLLX, SSDL, LDDM, LDMS, 
+      DLLX, SBFX, SBBH, TPSL, 
+      CPTPLJ, TPLJ1, TPLJ2, 
+      TPLJ3, YJDD, XSSD, 
+      SSBM, XSQY, SSGS, GSMC, 
+      GSFZR, GSFZRDH, EVENT_CURRENT_STATUS
+      )
+    values (#{pk,jdbcType=DECIMAL}, #{yjxh,jdbcType=VARCHAR}, #{hphm,jdbcType=VARCHAR}, 
+      #{hpzl,jdbcType=VARCHAR}, #{gcsj,jdbcType=TIMESTAMP}, #{yjsj,jdbcType=TIMESTAMP}, 
+      #{yjlx,jdbcType=VARCHAR}, #{clfl,jdbcType=VARCHAR}, #{cdbh,jdbcType=VARCHAR}, #{csys,jdbcType=VARCHAR}, 
+      #{cllx,jdbcType=VARCHAR}, #{ssdl,jdbcType=VARCHAR}, #{lddm,jdbcType=VARCHAR}, #{ldms,jdbcType=VARCHAR}, 
+      #{dllx,jdbcType=VARCHAR}, #{sbfx,jdbcType=VARCHAR}, #{sbbh,jdbcType=VARCHAR}, #{tpsl,jdbcType=VARCHAR}, 
+      #{cptplj,jdbcType=VARCHAR}, #{tplj1,jdbcType=VARCHAR}, #{tplj2,jdbcType=VARCHAR}, 
+      #{tplj3,jdbcType=VARCHAR}, #{yjdd,jdbcType=VARCHAR}, #{xssd,jdbcType=DECIMAL}, 
+      #{ssbm,jdbcType=VARCHAR}, #{xsqy,jdbcType=VARCHAR}, #{ssgs,jdbcType=DECIMAL}, #{gsmc,jdbcType=VARCHAR}, 
+      #{gsfzr,jdbcType=VARCHAR}, #{gsfzrdh,jdbcType=VARCHAR}, #{eventCurrentStatus,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.sbzc.model.ALARMVEHICLE">
+    insert into ZDCL_ALARM_VEHICLE
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="pk != null">
+        PK,
+      </if>
+      <if test="yjxh != null">
+        YJXH,
+      </if>
+      <if test="hphm != null">
+        HPHM,
+      </if>
+      <if test="hpzl != null">
+        HPZL,
+      </if>
+      <if test="gcsj != null">
+        GCSJ,
+      </if>
+      <if test="yjsj != null">
+        YJSJ,
+      </if>
+      <if test="yjlx != null">
+        YJLX,
+      </if>
+      <if test="clfl != null">
+        CLFL,
+      </if>
+      <if test="cdbh != null">
+        CDBH,
+      </if>
+      <if test="csys != null">
+        CSYS,
+      </if>
+      <if test="cllx != null">
+        CLLX,
+      </if>
+      <if test="ssdl != null">
+        SSDL,
+      </if>
+      <if test="lddm != null">
+        LDDM,
+      </if>
+      <if test="ldms != null">
+        LDMS,
+      </if>
+      <if test="dllx != null">
+        DLLX,
+      </if>
+      <if test="sbfx != null">
+        SBFX,
+      </if>
+      <if test="sbbh != null">
+        SBBH,
+      </if>
+      <if test="tpsl != null">
+        TPSL,
+      </if>
+      <if test="cptplj != null">
+        CPTPLJ,
+      </if>
+      <if test="tplj1 != null">
+        TPLJ1,
+      </if>
+      <if test="tplj2 != null">
+        TPLJ2,
+      </if>
+      <if test="tplj3 != null">
+        TPLJ3,
+      </if>
+      <if test="yjdd != null">
+        YJDD,
+      </if>
+      <if test="xssd != null">
+        XSSD,
+      </if>
+      <if test="ssbm != null">
+        SSBM,
+      </if>
+      <if test="xsqy != null">
+        XSQY,
+      </if>
+      <if test="ssgs != null">
+        SSGS,
+      </if>
+      <if test="gsmc != null">
+        GSMC,
+      </if>
+      <if test="gsfzr != null">
+        GSFZR,
+      </if>
+      <if test="gsfzrdh != null">
+        GSFZRDH,
+      </if>
+      <if test="eventCurrentStatus != null">
+        EVENT_CURRENT_STATUS,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="pk != null">
+        #{pk,jdbcType=DECIMAL},
+      </if>
+      <if test="yjxh != null">
+        #{yjxh,jdbcType=VARCHAR},
+      </if>
+      <if test="hphm != null">
+        #{hphm,jdbcType=VARCHAR},
+      </if>
+      <if test="hpzl != null">
+        #{hpzl,jdbcType=VARCHAR},
+      </if>
+      <if test="gcsj != null">
+        #{gcsj,jdbcType=TIMESTAMP},
+      </if>
+      <if test="yjsj != null">
+        #{yjsj,jdbcType=TIMESTAMP},
+      </if>
+      <if test="yjlx != null">
+        #{yjlx,jdbcType=VARCHAR},
+      </if>
+      <if test="clfl != null">
+        #{clfl,jdbcType=VARCHAR},
+      </if>
+      <if test="cdbh != null">
+        #{cdbh,jdbcType=VARCHAR},
+      </if>
+      <if test="csys != null">
+        #{csys,jdbcType=VARCHAR},
+      </if>
+      <if test="cllx != null">
+        #{cllx,jdbcType=VARCHAR},
+      </if>
+      <if test="ssdl != null">
+        #{ssdl,jdbcType=VARCHAR},
+      </if>
+      <if test="lddm != null">
+        #{lddm,jdbcType=VARCHAR},
+      </if>
+      <if test="ldms != null">
+        #{ldms,jdbcType=VARCHAR},
+      </if>
+      <if test="dllx != null">
+        #{dllx,jdbcType=VARCHAR},
+      </if>
+      <if test="sbfx != null">
+        #{sbfx,jdbcType=VARCHAR},
+      </if>
+      <if test="sbbh != null">
+        #{sbbh,jdbcType=VARCHAR},
+      </if>
+      <if test="tpsl != null">
+        #{tpsl,jdbcType=VARCHAR},
+      </if>
+      <if test="cptplj != null">
+        #{cptplj,jdbcType=VARCHAR},
+      </if>
+      <if test="tplj1 != null">
+        #{tplj1,jdbcType=VARCHAR},
+      </if>
+      <if test="tplj2 != null">
+        #{tplj2,jdbcType=VARCHAR},
+      </if>
+      <if test="tplj3 != null">
+        #{tplj3,jdbcType=VARCHAR},
+      </if>
+      <if test="yjdd != null">
+        #{yjdd,jdbcType=VARCHAR},
+      </if>
+      <if test="xssd != null">
+        #{xssd,jdbcType=DECIMAL},
+      </if>
+      <if test="ssbm != null">
+        #{ssbm,jdbcType=VARCHAR},
+      </if>
+      <if test="xsqy != null">
+        #{xsqy,jdbcType=VARCHAR},
+      </if>
+      <if test="ssgs != null">
+        #{ssgs,jdbcType=DECIMAL},
+      </if>
+      <if test="gsmc != null">
+        #{gsmc,jdbcType=VARCHAR},
+      </if>
+      <if test="gsfzr != null">
+        #{gsfzr,jdbcType=VARCHAR},
+      </if>
+      <if test="gsfzrdh != null">
+        #{gsfzrdh,jdbcType=VARCHAR},
+      </if>
+      <if test="eventCurrentStatus != null">
+        #{eventCurrentStatus,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <resultMap id="BaseResultMap" type="com.sbzc.model.ALARMVEHICLE">
+    <result column="PK" jdbcType="DECIMAL" property="pk" />
+    <result column="YJXH" jdbcType="VARCHAR" property="yjxh" />
+    <result column="HPHM" jdbcType="VARCHAR" property="hphm" />
+    <result column="HPZL" jdbcType="VARCHAR" property="hpzl" />
+    <result column="GCSJ" jdbcType="TIMESTAMP" property="gcsj" />
+    <result column="YJSJ" jdbcType="TIMESTAMP" property="yjsj" />
+    <result column="YJLX" jdbcType="VARCHAR" property="yjlx" />
+    <result column="CLFL" jdbcType="VARCHAR" property="clfl" />
+    <result column="CDBH" jdbcType="VARCHAR" property="cdbh" />
+    <result column="CSYS" jdbcType="VARCHAR" property="csys" />
+    <result column="CLLX" jdbcType="VARCHAR" property="cllx" />
+    <result column="SSDL" jdbcType="VARCHAR" property="ssdl" />
+    <result column="LDDM" jdbcType="VARCHAR" property="lddm" />
+    <result column="LDMS" jdbcType="VARCHAR" property="ldms" />
+    <result column="DLLX" jdbcType="VARCHAR" property="dllx" />
+    <result column="SBFX" jdbcType="VARCHAR" property="sbfx" />
+    <result column="SBBH" jdbcType="VARCHAR" property="sbbh" />
+    <result column="TPSL" jdbcType="VARCHAR" property="tpsl" />
+    <result column="CPTPLJ" jdbcType="VARCHAR" property="cptplj" />
+    <result column="TPLJ1" jdbcType="VARCHAR" property="tplj1" />
+    <result column="TPLJ2" jdbcType="VARCHAR" property="tplj2" />
+    <result column="TPLJ3" jdbcType="VARCHAR" property="tplj3" />
+    <result column="YJDD" jdbcType="VARCHAR" property="yjdd" />
+    <result column="XSSD" jdbcType="DECIMAL" property="xssd" />
+    <result column="SSBM" jdbcType="VARCHAR" property="ssbm" />
+    <result column="XSQY" jdbcType="VARCHAR" property="xsqy" />
+    <result column="SSGS" jdbcType="DECIMAL" property="ssgs" />
+    <result column="GSMC" jdbcType="VARCHAR" property="gsmc" />
+    <result column="GSFZR" jdbcType="VARCHAR" property="gsfzr" />
+    <result column="GSFZRDH" jdbcType="VARCHAR" property="gsfzrdh" />
+    <result column="EVENT_CURRENT_STATUS" jdbcType="VARCHAR" property="eventCurrentStatus" />
+  </resultMap>
+  <insert id="insert" parameterType="com.sbzc.model.ALARMVEHICLE">
+    insert into ZDCL_ALARM_VEHICLE (PK, YJXH, HPHM, 
+      HPZL, GCSJ, YJSJ, 
+      YJLX, CLFL, CDBH, CSYS, 
+      CLLX, SSDL, LDDM, LDMS, 
+      DLLX, SBFX, SBBH, TPSL, 
+      CPTPLJ, TPLJ1, TPLJ2, 
+      TPLJ3, YJDD, XSSD, 
+      SSBM, XSQY, SSGS, GSMC, 
+      GSFZR, GSFZRDH, EVENT_CURRENT_STATUS
+      )
+    values (#{pk,jdbcType=DECIMAL}, #{yjxh,jdbcType=VARCHAR}, #{hphm,jdbcType=VARCHAR}, 
+      #{hpzl,jdbcType=VARCHAR}, #{gcsj,jdbcType=TIMESTAMP}, #{yjsj,jdbcType=TIMESTAMP}, 
+      #{yjlx,jdbcType=VARCHAR}, #{clfl,jdbcType=VARCHAR}, #{cdbh,jdbcType=VARCHAR}, #{csys,jdbcType=VARCHAR}, 
+      #{cllx,jdbcType=VARCHAR}, #{ssdl,jdbcType=VARCHAR}, #{lddm,jdbcType=VARCHAR}, #{ldms,jdbcType=VARCHAR}, 
+      #{dllx,jdbcType=VARCHAR}, #{sbfx,jdbcType=VARCHAR}, #{sbbh,jdbcType=VARCHAR}, #{tpsl,jdbcType=VARCHAR}, 
+      #{cptplj,jdbcType=VARCHAR}, #{tplj1,jdbcType=VARCHAR}, #{tplj2,jdbcType=VARCHAR}, 
+      #{tplj3,jdbcType=VARCHAR}, #{yjdd,jdbcType=VARCHAR}, #{xssd,jdbcType=DECIMAL}, 
+      #{ssbm,jdbcType=VARCHAR}, #{xsqy,jdbcType=VARCHAR}, #{ssgs,jdbcType=DECIMAL}, #{gsmc,jdbcType=VARCHAR}, 
+      #{gsfzr,jdbcType=VARCHAR}, #{gsfzrdh,jdbcType=VARCHAR}, #{eventCurrentStatus,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.sbzc.model.ALARMVEHICLE">
+    insert into ZDCL_ALARM_VEHICLE
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="pk != null">
+        PK,
+      </if>
+      <if test="yjxh != null">
+        YJXH,
+      </if>
+      <if test="hphm != null">
+        HPHM,
+      </if>
+      <if test="hpzl != null">
+        HPZL,
+      </if>
+      <if test="gcsj != null">
+        GCSJ,
+      </if>
+      <if test="yjsj != null">
+        YJSJ,
+      </if>
+      <if test="yjlx != null">
+        YJLX,
+      </if>
+      <if test="clfl != null">
+        CLFL,
+      </if>
+      <if test="cdbh != null">
+        CDBH,
+      </if>
+      <if test="csys != null">
+        CSYS,
+      </if>
+      <if test="cllx != null">
+        CLLX,
+      </if>
+      <if test="ssdl != null">
+        SSDL,
+      </if>
+      <if test="lddm != null">
+        LDDM,
+      </if>
+      <if test="ldms != null">
+        LDMS,
+      </if>
+      <if test="dllx != null">
+        DLLX,
+      </if>
+      <if test="sbfx != null">
+        SBFX,
+      </if>
+      <if test="sbbh != null">
+        SBBH,
+      </if>
+      <if test="tpsl != null">
+        TPSL,
+      </if>
+      <if test="cptplj != null">
+        CPTPLJ,
+      </if>
+      <if test="tplj1 != null">
+        TPLJ1,
+      </if>
+      <if test="tplj2 != null">
+        TPLJ2,
+      </if>
+      <if test="tplj3 != null">
+        TPLJ3,
+      </if>
+      <if test="yjdd != null">
+        YJDD,
+      </if>
+      <if test="xssd != null">
+        XSSD,
+      </if>
+      <if test="ssbm != null">
+        SSBM,
+      </if>
+      <if test="xsqy != null">
+        XSQY,
+      </if>
+      <if test="ssgs != null">
+        SSGS,
+      </if>
+      <if test="gsmc != null">
+        GSMC,
+      </if>
+      <if test="gsfzr != null">
+        GSFZR,
+      </if>
+      <if test="gsfzrdh != null">
+        GSFZRDH,
+      </if>
+      <if test="eventCurrentStatus != null">
+        EVENT_CURRENT_STATUS,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="pk != null">
+        #{pk,jdbcType=DECIMAL},
+      </if>
+      <if test="yjxh != null">
+        #{yjxh,jdbcType=VARCHAR},
+      </if>
+      <if test="hphm != null">
+        #{hphm,jdbcType=VARCHAR},
+      </if>
+      <if test="hpzl != null">
+        #{hpzl,jdbcType=VARCHAR},
+      </if>
+      <if test="gcsj != null">
+        #{gcsj,jdbcType=TIMESTAMP},
+      </if>
+      <if test="yjsj != null">
+        #{yjsj,jdbcType=TIMESTAMP},
+      </if>
+      <if test="yjlx != null">
+        #{yjlx,jdbcType=VARCHAR},
+      </if>
+      <if test="clfl != null">
+        #{clfl,jdbcType=VARCHAR},
+      </if>
+      <if test="cdbh != null">
+        #{cdbh,jdbcType=VARCHAR},
+      </if>
+      <if test="csys != null">
+        #{csys,jdbcType=VARCHAR},
+      </if>
+      <if test="cllx != null">
+        #{cllx,jdbcType=VARCHAR},
+      </if>
+      <if test="ssdl != null">
+        #{ssdl,jdbcType=VARCHAR},
+      </if>
+      <if test="lddm != null">
+        #{lddm,jdbcType=VARCHAR},
+      </if>
+      <if test="ldms != null">
+        #{ldms,jdbcType=VARCHAR},
+      </if>
+      <if test="dllx != null">
+        #{dllx,jdbcType=VARCHAR},
+      </if>
+      <if test="sbfx != null">
+        #{sbfx,jdbcType=VARCHAR},
+      </if>
+      <if test="sbbh != null">
+        #{sbbh,jdbcType=VARCHAR},
+      </if>
+      <if test="tpsl != null">
+        #{tpsl,jdbcType=VARCHAR},
+      </if>
+      <if test="cptplj != null">
+        #{cptplj,jdbcType=VARCHAR},
+      </if>
+      <if test="tplj1 != null">
+        #{tplj1,jdbcType=VARCHAR},
+      </if>
+      <if test="tplj2 != null">
+        #{tplj2,jdbcType=VARCHAR},
+      </if>
+      <if test="tplj3 != null">
+        #{tplj3,jdbcType=VARCHAR},
+      </if>
+      <if test="yjdd != null">
+        #{yjdd,jdbcType=VARCHAR},
+      </if>
+      <if test="xssd != null">
+        #{xssd,jdbcType=DECIMAL},
+      </if>
+      <if test="ssbm != null">
+        #{ssbm,jdbcType=VARCHAR},
+      </if>
+      <if test="xsqy != null">
+        #{xsqy,jdbcType=VARCHAR},
+      </if>
+      <if test="ssgs != null">
+        #{ssgs,jdbcType=DECIMAL},
+      </if>
+      <if test="gsmc != null">
+        #{gsmc,jdbcType=VARCHAR},
+      </if>
+      <if test="gsfzr != null">
+        #{gsfzr,jdbcType=VARCHAR},
+      </if>
+      <if test="gsfzrdh != null">
+        #{gsfzrdh,jdbcType=VARCHAR},
+      </if>
+      <if test="eventCurrentStatus != null">
+        #{eventCurrentStatus,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <resultMap id="BaseResultMap" type="com.sbzc.model.ALARMVEHICLE">
+    <result column="PK" jdbcType="DECIMAL" property="pk" />
+    <result column="YJXH" jdbcType="VARCHAR" property="yjxh" />
+    <result column="HPHM" jdbcType="VARCHAR" property="hphm" />
+    <result column="HPZL" jdbcType="VARCHAR" property="hpzl" />
+    <result column="GCSJ" jdbcType="TIMESTAMP" property="gcsj" />
+    <result column="YJSJ" jdbcType="TIMESTAMP" property="yjsj" />
+    <result column="YJLX" jdbcType="VARCHAR" property="yjlx" />
+    <result column="CLFL" jdbcType="VARCHAR" property="clfl" />
+    <result column="CDBH" jdbcType="VARCHAR" property="cdbh" />
+    <result column="CSYS" jdbcType="VARCHAR" property="csys" />
+    <result column="CLLX" jdbcType="VARCHAR" property="cllx" />
+    <result column="SSDL" jdbcType="VARCHAR" property="ssdl" />
+    <result column="LDDM" jdbcType="VARCHAR" property="lddm" />
+    <result column="LDMS" jdbcType="VARCHAR" property="ldms" />
+    <result column="DLLX" jdbcType="VARCHAR" property="dllx" />
+    <result column="SBFX" jdbcType="VARCHAR" property="sbfx" />
+    <result column="SBBH" jdbcType="VARCHAR" property="sbbh" />
+    <result column="TPSL" jdbcType="VARCHAR" property="tpsl" />
+    <result column="CPTPLJ" jdbcType="VARCHAR" property="cptplj" />
+    <result column="TPLJ1" jdbcType="VARCHAR" property="tplj1" />
+    <result column="TPLJ2" jdbcType="VARCHAR" property="tplj2" />
+    <result column="TPLJ3" jdbcType="VARCHAR" property="tplj3" />
+    <result column="YJDD" jdbcType="VARCHAR" property="yjdd" />
+    <result column="XSSD" jdbcType="DECIMAL" property="xssd" />
+    <result column="SSBM" jdbcType="VARCHAR" property="ssbm" />
+    <result column="XSQY" jdbcType="VARCHAR" property="xsqy" />
+    <result column="SSGS" jdbcType="DECIMAL" property="ssgs" />
+    <result column="GSMC" jdbcType="VARCHAR" property="gsmc" />
+    <result column="GSFZR" jdbcType="VARCHAR" property="gsfzr" />
+    <result column="GSFZRDH" jdbcType="VARCHAR" property="gsfzrdh" />
+    <result column="EVENT_CURRENT_STATUS" jdbcType="VARCHAR" property="eventCurrentStatus" />
+  </resultMap>
+  <insert id="insert" parameterType="com.sbzc.model.ALARMVEHICLE">
+    insert into ZDCL_ALARM_VEHICLE (PK, YJXH, HPHM, 
+      HPZL, GCSJ, YJSJ, 
+      YJLX, CLFL, CDBH, CSYS, 
+      CLLX, SSDL, LDDM, LDMS, 
+      DLLX, SBFX, SBBH, TPSL, 
+      CPTPLJ, TPLJ1, TPLJ2, 
+      TPLJ3, YJDD, XSSD, 
+      SSBM, XSQY, SSGS, GSMC, 
+      GSFZR, GSFZRDH, EVENT_CURRENT_STATUS
+      )
+    values (#{pk,jdbcType=DECIMAL}, #{yjxh,jdbcType=VARCHAR}, #{hphm,jdbcType=VARCHAR}, 
+      #{hpzl,jdbcType=VARCHAR}, #{gcsj,jdbcType=TIMESTAMP}, #{yjsj,jdbcType=TIMESTAMP}, 
+      #{yjlx,jdbcType=VARCHAR}, #{clfl,jdbcType=VARCHAR}, #{cdbh,jdbcType=VARCHAR}, #{csys,jdbcType=VARCHAR}, 
+      #{cllx,jdbcType=VARCHAR}, #{ssdl,jdbcType=VARCHAR}, #{lddm,jdbcType=VARCHAR}, #{ldms,jdbcType=VARCHAR}, 
+      #{dllx,jdbcType=VARCHAR}, #{sbfx,jdbcType=VARCHAR}, #{sbbh,jdbcType=VARCHAR}, #{tpsl,jdbcType=VARCHAR}, 
+      #{cptplj,jdbcType=VARCHAR}, #{tplj1,jdbcType=VARCHAR}, #{tplj2,jdbcType=VARCHAR}, 
+      #{tplj3,jdbcType=VARCHAR}, #{yjdd,jdbcType=VARCHAR}, #{xssd,jdbcType=DECIMAL}, 
+      #{ssbm,jdbcType=VARCHAR}, #{xsqy,jdbcType=VARCHAR}, #{ssgs,jdbcType=DECIMAL}, #{gsmc,jdbcType=VARCHAR}, 
+      #{gsfzr,jdbcType=VARCHAR}, #{gsfzrdh,jdbcType=VARCHAR}, #{eventCurrentStatus,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.sbzc.model.ALARMVEHICLE">
+    insert into ZDCL_ALARM_VEHICLE
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="pk != null">
+        PK,
+      </if>
+      <if test="yjxh != null">
+        YJXH,
+      </if>
+      <if test="hphm != null">
+        HPHM,
+      </if>
+      <if test="hpzl != null">
+        HPZL,
+      </if>
+      <if test="gcsj != null">
+        GCSJ,
+      </if>
+      <if test="yjsj != null">
+        YJSJ,
+      </if>
+      <if test="yjlx != null">
+        YJLX,
+      </if>
+      <if test="clfl != null">
+        CLFL,
+      </if>
+      <if test="cdbh != null">
+        CDBH,
+      </if>
+      <if test="csys != null">
+        CSYS,
+      </if>
+      <if test="cllx != null">
+        CLLX,
+      </if>
+      <if test="ssdl != null">
+        SSDL,
+      </if>
+      <if test="lddm != null">
+        LDDM,
+      </if>
+      <if test="ldms != null">
+        LDMS,
+      </if>
+      <if test="dllx != null">
+        DLLX,
+      </if>
+      <if test="sbfx != null">
+        SBFX,
+      </if>
+      <if test="sbbh != null">
+        SBBH,
+      </if>
+      <if test="tpsl != null">
+        TPSL,
+      </if>
+      <if test="cptplj != null">
+        CPTPLJ,
+      </if>
+      <if test="tplj1 != null">
+        TPLJ1,
+      </if>
+      <if test="tplj2 != null">
+        TPLJ2,
+      </if>
+      <if test="tplj3 != null">
+        TPLJ3,
+      </if>
+      <if test="yjdd != null">
+        YJDD,
+      </if>
+      <if test="xssd != null">
+        XSSD,
+      </if>
+      <if test="ssbm != null">
+        SSBM,
+      </if>
+      <if test="xsqy != null">
+        XSQY,
+      </if>
+      <if test="ssgs != null">
+        SSGS,
+      </if>
+      <if test="gsmc != null">
+        GSMC,
+      </if>
+      <if test="gsfzr != null">
+        GSFZR,
+      </if>
+      <if test="gsfzrdh != null">
+        GSFZRDH,
+      </if>
+      <if test="eventCurrentStatus != null">
+        EVENT_CURRENT_STATUS,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="pk != null">
+        #{pk,jdbcType=DECIMAL},
+      </if>
+      <if test="yjxh != null">
+        #{yjxh,jdbcType=VARCHAR},
+      </if>
+      <if test="hphm != null">
+        #{hphm,jdbcType=VARCHAR},
+      </if>
+      <if test="hpzl != null">
+        #{hpzl,jdbcType=VARCHAR},
+      </if>
+      <if test="gcsj != null">
+        #{gcsj,jdbcType=TIMESTAMP},
+      </if>
+      <if test="yjsj != null">
+        #{yjsj,jdbcType=TIMESTAMP},
+      </if>
+      <if test="yjlx != null">
+        #{yjlx,jdbcType=VARCHAR},
+      </if>
+      <if test="clfl != null">
+        #{clfl,jdbcType=VARCHAR},
+      </if>
+      <if test="cdbh != null">
+        #{cdbh,jdbcType=VARCHAR},
+      </if>
+      <if test="csys != null">
+        #{csys,jdbcType=VARCHAR},
+      </if>
+      <if test="cllx != null">
+        #{cllx,jdbcType=VARCHAR},
+      </if>
+      <if test="ssdl != null">
+        #{ssdl,jdbcType=VARCHAR},
+      </if>
+      <if test="lddm != null">
+        #{lddm,jdbcType=VARCHAR},
+      </if>
+      <if test="ldms != null">
+        #{ldms,jdbcType=VARCHAR},
+      </if>
+      <if test="dllx != null">
+        #{dllx,jdbcType=VARCHAR},
+      </if>
+      <if test="sbfx != null">
+        #{sbfx,jdbcType=VARCHAR},
+      </if>
+      <if test="sbbh != null">
+        #{sbbh,jdbcType=VARCHAR},
+      </if>
+      <if test="tpsl != null">
+        #{tpsl,jdbcType=VARCHAR},
+      </if>
+      <if test="cptplj != null">
+        #{cptplj,jdbcType=VARCHAR},
+      </if>
+      <if test="tplj1 != null">
+        #{tplj1,jdbcType=VARCHAR},
+      </if>
+      <if test="tplj2 != null">
+        #{tplj2,jdbcType=VARCHAR},
+      </if>
+      <if test="tplj3 != null">
+        #{tplj3,jdbcType=VARCHAR},
+      </if>
+      <if test="yjdd != null">
+        #{yjdd,jdbcType=VARCHAR},
+      </if>
+      <if test="xssd != null">
+        #{xssd,jdbcType=DECIMAL},
+      </if>
+      <if test="ssbm != null">
+        #{ssbm,jdbcType=VARCHAR},
+      </if>
+      <if test="xsqy != null">
+        #{xsqy,jdbcType=VARCHAR},
+      </if>
+      <if test="ssgs != null">
+        #{ssgs,jdbcType=DECIMAL},
+      </if>
+      <if test="gsmc != null">
+        #{gsmc,jdbcType=VARCHAR},
+      </if>
+      <if test="gsfzr != null">
+        #{gsfzr,jdbcType=VARCHAR},
+      </if>
+      <if test="gsfzrdh != null">
+        #{gsfzrdh,jdbcType=VARCHAR},
+      </if>
+      <if test="eventCurrentStatus != null">
+        #{eventCurrentStatus,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <resultMap id="BaseResultMap" type="com.sbzc.model.ALARMVEHICLE">
+    <result column="PK" jdbcType="DECIMAL" property="pk" />
+    <result column="YJXH" jdbcType="VARCHAR" property="yjxh" />
+    <result column="HPHM" jdbcType="VARCHAR" property="hphm" />
+    <result column="HPZL" jdbcType="VARCHAR" property="hpzl" />
+    <result column="GCSJ" jdbcType="TIMESTAMP" property="gcsj" />
+    <result column="YJSJ" jdbcType="TIMESTAMP" property="yjsj" />
+    <result column="YJLX" jdbcType="VARCHAR" property="yjlx" />
+    <result column="CLFL" jdbcType="VARCHAR" property="clfl" />
+    <result column="CDBH" jdbcType="VARCHAR" property="cdbh" />
+    <result column="CSYS" jdbcType="VARCHAR" property="csys" />
+    <result column="CLLX" jdbcType="VARCHAR" property="cllx" />
+    <result column="SSDL" jdbcType="VARCHAR" property="ssdl" />
+    <result column="LDDM" jdbcType="VARCHAR" property="lddm" />
+    <result column="LDMS" jdbcType="VARCHAR" property="ldms" />
+    <result column="DLLX" jdbcType="VARCHAR" property="dllx" />
+    <result column="SBFX" jdbcType="VARCHAR" property="sbfx" />
+    <result column="SBBH" jdbcType="VARCHAR" property="sbbh" />
+    <result column="TPSL" jdbcType="VARCHAR" property="tpsl" />
+    <result column="CPTPLJ" jdbcType="VARCHAR" property="cptplj" />
+    <result column="TPLJ1" jdbcType="VARCHAR" property="tplj1" />
+    <result column="TPLJ2" jdbcType="VARCHAR" property="tplj2" />
+    <result column="TPLJ3" jdbcType="VARCHAR" property="tplj3" />
+    <result column="YJDD" jdbcType="VARCHAR" property="yjdd" />
+    <result column="XSSD" jdbcType="DECIMAL" property="xssd" />
+    <result column="SSBM" jdbcType="VARCHAR" property="ssbm" />
+    <result column="XSQY" jdbcType="VARCHAR" property="xsqy" />
+    <result column="SSGS" jdbcType="DECIMAL" property="ssgs" />
+    <result column="GSMC" jdbcType="VARCHAR" property="gsmc" />
+    <result column="GSFZR" jdbcType="VARCHAR" property="gsfzr" />
+    <result column="GSFZRDH" jdbcType="VARCHAR" property="gsfzrdh" />
+    <result column="EVENT_CURRENT_STATUS" jdbcType="VARCHAR" property="eventCurrentStatus" />
+  </resultMap>
+  <insert id="insert" parameterType="com.sbzc.model.ALARMVEHICLE">
+    insert into ZDCL_ALARM_VEHICLE (PK, YJXH, HPHM, 
+      HPZL, GCSJ, YJSJ, 
+      YJLX, CLFL, CDBH, CSYS, 
+      CLLX, SSDL, LDDM, LDMS, 
+      DLLX, SBFX, SBBH, TPSL, 
+      CPTPLJ, TPLJ1, TPLJ2, 
+      TPLJ3, YJDD, XSSD, 
+      SSBM, XSQY, SSGS, GSMC, 
+      GSFZR, GSFZRDH, EVENT_CURRENT_STATUS
+      )
+    values (#{pk,jdbcType=DECIMAL}, #{yjxh,jdbcType=VARCHAR}, #{hphm,jdbcType=VARCHAR}, 
+      #{hpzl,jdbcType=VARCHAR}, #{gcsj,jdbcType=TIMESTAMP}, #{yjsj,jdbcType=TIMESTAMP}, 
+      #{yjlx,jdbcType=VARCHAR}, #{clfl,jdbcType=VARCHAR}, #{cdbh,jdbcType=VARCHAR}, #{csys,jdbcType=VARCHAR}, 
+      #{cllx,jdbcType=VARCHAR}, #{ssdl,jdbcType=VARCHAR}, #{lddm,jdbcType=VARCHAR}, #{ldms,jdbcType=VARCHAR}, 
+      #{dllx,jdbcType=VARCHAR}, #{sbfx,jdbcType=VARCHAR}, #{sbbh,jdbcType=VARCHAR}, #{tpsl,jdbcType=VARCHAR}, 
+      #{cptplj,jdbcType=VARCHAR}, #{tplj1,jdbcType=VARCHAR}, #{tplj2,jdbcType=VARCHAR}, 
+      #{tplj3,jdbcType=VARCHAR}, #{yjdd,jdbcType=VARCHAR}, #{xssd,jdbcType=DECIMAL}, 
+      #{ssbm,jdbcType=VARCHAR}, #{xsqy,jdbcType=VARCHAR}, #{ssgs,jdbcType=DECIMAL}, #{gsmc,jdbcType=VARCHAR}, 
+      #{gsfzr,jdbcType=VARCHAR}, #{gsfzrdh,jdbcType=VARCHAR}, #{eventCurrentStatus,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.sbzc.model.ALARMVEHICLE">
+    insert into ZDCL_ALARM_VEHICLE
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="pk != null">
+        PK,
+      </if>
+      <if test="yjxh != null">
+        YJXH,
+      </if>
+      <if test="hphm != null">
+        HPHM,
+      </if>
+      <if test="hpzl != null">
+        HPZL,
+      </if>
+      <if test="gcsj != null">
+        GCSJ,
+      </if>
+      <if test="yjsj != null">
+        YJSJ,
+      </if>
+      <if test="yjlx != null">
+        YJLX,
+      </if>
+      <if test="clfl != null">
+        CLFL,
+      </if>
+      <if test="cdbh != null">
+        CDBH,
+      </if>
+      <if test="csys != null">
+        CSYS,
+      </if>
+      <if test="cllx != null">
+        CLLX,
+      </if>
+      <if test="ssdl != null">
+        SSDL,
+      </if>
+      <if test="lddm != null">
+        LDDM,
+      </if>
+      <if test="ldms != null">
+        LDMS,
+      </if>
+      <if test="dllx != null">
+        DLLX,
+      </if>
+      <if test="sbfx != null">
+        SBFX,
+      </if>
+      <if test="sbbh != null">
+        SBBH,
+      </if>
+      <if test="tpsl != null">
+        TPSL,
+      </if>
+      <if test="cptplj != null">
+        CPTPLJ,
+      </if>
+      <if test="tplj1 != null">
+        TPLJ1,
+      </if>
+      <if test="tplj2 != null">
+        TPLJ2,
+      </if>
+      <if test="tplj3 != null">
+        TPLJ3,
+      </if>
+      <if test="yjdd != null">
+        YJDD,
+      </if>
+      <if test="xssd != null">
+        XSSD,
+      </if>
+      <if test="ssbm != null">
+        SSBM,
+      </if>
+      <if test="xsqy != null">
+        XSQY,
+      </if>
+      <if test="ssgs != null">
+        SSGS,
+      </if>
+      <if test="gsmc != null">
+        GSMC,
+      </if>
+      <if test="gsfzr != null">
+        GSFZR,
+      </if>
+      <if test="gsfzrdh != null">
+        GSFZRDH,
+      </if>
+      <if test="eventCurrentStatus != null">
+        EVENT_CURRENT_STATUS,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="pk != null">
+        #{pk,jdbcType=DECIMAL},
+      </if>
+      <if test="yjxh != null">
+        #{yjxh,jdbcType=VARCHAR},
+      </if>
+      <if test="hphm != null">
+        #{hphm,jdbcType=VARCHAR},
+      </if>
+      <if test="hpzl != null">
+        #{hpzl,jdbcType=VARCHAR},
+      </if>
+      <if test="gcsj != null">
+        #{gcsj,jdbcType=TIMESTAMP},
+      </if>
+      <if test="yjsj != null">
+        #{yjsj,jdbcType=TIMESTAMP},
+      </if>
+      <if test="yjlx != null">
+        #{yjlx,jdbcType=VARCHAR},
+      </if>
+      <if test="clfl != null">
+        #{clfl,jdbcType=VARCHAR},
+      </if>
+      <if test="cdbh != null">
+        #{cdbh,jdbcType=VARCHAR},
+      </if>
+      <if test="csys != null">
+        #{csys,jdbcType=VARCHAR},
+      </if>
+      <if test="cllx != null">
+        #{cllx,jdbcType=VARCHAR},
+      </if>
+      <if test="ssdl != null">
+        #{ssdl,jdbcType=VARCHAR},
+      </if>
+      <if test="lddm != null">
+        #{lddm,jdbcType=VARCHAR},
+      </if>
+      <if test="ldms != null">
+        #{ldms,jdbcType=VARCHAR},
+      </if>
+      <if test="dllx != null">
+        #{dllx,jdbcType=VARCHAR},
+      </if>
+      <if test="sbfx != null">
+        #{sbfx,jdbcType=VARCHAR},
+      </if>
+      <if test="sbbh != null">
+        #{sbbh,jdbcType=VARCHAR},
+      </if>
+      <if test="tpsl != null">
+        #{tpsl,jdbcType=VARCHAR},
+      </if>
+      <if test="cptplj != null">
+        #{cptplj,jdbcType=VARCHAR},
+      </if>
+      <if test="tplj1 != null">
+        #{tplj1,jdbcType=VARCHAR},
+      </if>
+      <if test="tplj2 != null">
+        #{tplj2,jdbcType=VARCHAR},
+      </if>
+      <if test="tplj3 != null">
+        #{tplj3,jdbcType=VARCHAR},
+      </if>
+      <if test="yjdd != null">
+        #{yjdd,jdbcType=VARCHAR},
+      </if>
+      <if test="xssd != null">
+        #{xssd,jdbcType=DECIMAL},
+      </if>
+      <if test="ssbm != null">
+        #{ssbm,jdbcType=VARCHAR},
+      </if>
+      <if test="xsqy != null">
+        #{xsqy,jdbcType=VARCHAR},
+      </if>
+      <if test="ssgs != null">
+        #{ssgs,jdbcType=DECIMAL},
+      </if>
+      <if test="gsmc != null">
+        #{gsmc,jdbcType=VARCHAR},
+      </if>
+      <if test="gsfzr != null">
+        #{gsfzr,jdbcType=VARCHAR},
+      </if>
+      <if test="gsfzrdh != null">
+        #{gsfzrdh,jdbcType=VARCHAR},
+      </if>
+      <if test="eventCurrentStatus != null">
+        #{eventCurrentStatus,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <resultMap id="BaseResultMap" type="com.sbzc.model.ALARMVEHICLE">
+    <result column="PK" jdbcType="DECIMAL" property="pk" />
+    <result column="YJXH" jdbcType="VARCHAR" property="yjxh" />
+    <result column="HPHM" jdbcType="VARCHAR" property="hphm" />
+    <result column="HPZL" jdbcType="VARCHAR" property="hpzl" />
+    <result column="GCSJ" jdbcType="TIMESTAMP" property="gcsj" />
+    <result column="YJSJ" jdbcType="TIMESTAMP" property="yjsj" />
+    <result column="YJLX" jdbcType="VARCHAR" property="yjlx" />
+    <result column="CLFL" jdbcType="VARCHAR" property="clfl" />
+    <result column="CDBH" jdbcType="VARCHAR" property="cdbh" />
+    <result column="CSYS" jdbcType="VARCHAR" property="csys" />
+    <result column="CLLX" jdbcType="VARCHAR" property="cllx" />
+    <result column="SSDL" jdbcType="VARCHAR" property="ssdl" />
+    <result column="LDDM" jdbcType="VARCHAR" property="lddm" />
+    <result column="LDMS" jdbcType="VARCHAR" property="ldms" />
+    <result column="DLLX" jdbcType="VARCHAR" property="dllx" />
+    <result column="SBFX" jdbcType="VARCHAR" property="sbfx" />
+    <result column="SBBH" jdbcType="VARCHAR" property="sbbh" />
+    <result column="TPSL" jdbcType="VARCHAR" property="tpsl" />
+    <result column="CPTPLJ" jdbcType="VARCHAR" property="cptplj" />
+    <result column="TPLJ1" jdbcType="VARCHAR" property="tplj1" />
+    <result column="TPLJ2" jdbcType="VARCHAR" property="tplj2" />
+    <result column="TPLJ3" jdbcType="VARCHAR" property="tplj3" />
+    <result column="YJDD" jdbcType="VARCHAR" property="yjdd" />
+    <result column="XSSD" jdbcType="DECIMAL" property="xssd" />
+    <result column="SSBM" jdbcType="VARCHAR" property="ssbm" />
+    <result column="XSQY" jdbcType="VARCHAR" property="xsqy" />
+    <result column="SSGS" jdbcType="DECIMAL" property="ssgs" />
+    <result column="GSMC" jdbcType="VARCHAR" property="gsmc" />
+    <result column="GSFZR" jdbcType="VARCHAR" property="gsfzr" />
+    <result column="GSFZRDH" jdbcType="VARCHAR" property="gsfzrdh" />
+    <result column="EVENT_CURRENT_STATUS" jdbcType="VARCHAR" property="eventCurrentStatus" />
+  </resultMap>
+  <insert id="insert" parameterType="com.sbzc.model.ALARMVEHICLE">
+    insert into ZDCL_ALARM_VEHICLE (PK, YJXH, HPHM, 
+      HPZL, GCSJ, YJSJ, 
+      YJLX, CLFL, CDBH, CSYS, 
+      CLLX, SSDL, LDDM, LDMS, 
+      DLLX, SBFX, SBBH, TPSL, 
+      CPTPLJ, TPLJ1, TPLJ2, 
+      TPLJ3, YJDD, XSSD, 
+      SSBM, XSQY, SSGS, GSMC, 
+      GSFZR, GSFZRDH, EVENT_CURRENT_STATUS
+      )
+    values (#{pk,jdbcType=DECIMAL}, #{yjxh,jdbcType=VARCHAR}, #{hphm,jdbcType=VARCHAR}, 
+      #{hpzl,jdbcType=VARCHAR}, #{gcsj,jdbcType=TIMESTAMP}, #{yjsj,jdbcType=TIMESTAMP}, 
+      #{yjlx,jdbcType=VARCHAR}, #{clfl,jdbcType=VARCHAR}, #{cdbh,jdbcType=VARCHAR}, #{csys,jdbcType=VARCHAR}, 
+      #{cllx,jdbcType=VARCHAR}, #{ssdl,jdbcType=VARCHAR}, #{lddm,jdbcType=VARCHAR}, #{ldms,jdbcType=VARCHAR}, 
+      #{dllx,jdbcType=VARCHAR}, #{sbfx,jdbcType=VARCHAR}, #{sbbh,jdbcType=VARCHAR}, #{tpsl,jdbcType=VARCHAR}, 
+      #{cptplj,jdbcType=VARCHAR}, #{tplj1,jdbcType=VARCHAR}, #{tplj2,jdbcType=VARCHAR}, 
+      #{tplj3,jdbcType=VARCHAR}, #{yjdd,jdbcType=VARCHAR}, #{xssd,jdbcType=DECIMAL}, 
+      #{ssbm,jdbcType=VARCHAR}, #{xsqy,jdbcType=VARCHAR}, #{ssgs,jdbcType=DECIMAL}, #{gsmc,jdbcType=VARCHAR}, 
+      #{gsfzr,jdbcType=VARCHAR}, #{gsfzrdh,jdbcType=VARCHAR}, #{eventCurrentStatus,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.sbzc.model.ALARMVEHICLE">
+    insert into ZDCL_ALARM_VEHICLE
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="pk != null">
+        PK,
+      </if>
+      <if test="yjxh != null">
+        YJXH,
+      </if>
+      <if test="hphm != null">
+        HPHM,
+      </if>
+      <if test="hpzl != null">
+        HPZL,
+      </if>
+      <if test="gcsj != null">
+        GCSJ,
+      </if>
+      <if test="yjsj != null">
+        YJSJ,
+      </if>
+      <if test="yjlx != null">
+        YJLX,
+      </if>
+      <if test="clfl != null">
+        CLFL,
+      </if>
+      <if test="cdbh != null">
+        CDBH,
+      </if>
+      <if test="csys != null">
+        CSYS,
+      </if>
+      <if test="cllx != null">
+        CLLX,
+      </if>
+      <if test="ssdl != null">
+        SSDL,
+      </if>
+      <if test="lddm != null">
+        LDDM,
+      </if>
+      <if test="ldms != null">
+        LDMS,
+      </if>
+      <if test="dllx != null">
+        DLLX,
+      </if>
+      <if test="sbfx != null">
+        SBFX,
+      </if>
+      <if test="sbbh != null">
+        SBBH,
+      </if>
+      <if test="tpsl != null">
+        TPSL,
+      </if>
+      <if test="cptplj != null">
+        CPTPLJ,
+      </if>
+      <if test="tplj1 != null">
+        TPLJ1,
+      </if>
+      <if test="tplj2 != null">
+        TPLJ2,
+      </if>
+      <if test="tplj3 != null">
+        TPLJ3,
+      </if>
+      <if test="yjdd != null">
+        YJDD,
+      </if>
+      <if test="xssd != null">
+        XSSD,
+      </if>
+      <if test="ssbm != null">
+        SSBM,
+      </if>
+      <if test="xsqy != null">
+        XSQY,
+      </if>
+      <if test="ssgs != null">
+        SSGS,
+      </if>
+      <if test="gsmc != null">
+        GSMC,
+      </if>
+      <if test="gsfzr != null">
+        GSFZR,
+      </if>
+      <if test="gsfzrdh != null">
+        GSFZRDH,
+      </if>
+      <if test="eventCurrentStatus != null">
+        EVENT_CURRENT_STATUS,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="pk != null">
+        #{pk,jdbcType=DECIMAL},
+      </if>
+      <if test="yjxh != null">
+        #{yjxh,jdbcType=VARCHAR},
+      </if>
+      <if test="hphm != null">
+        #{hphm,jdbcType=VARCHAR},
+      </if>
+      <if test="hpzl != null">
+        #{hpzl,jdbcType=VARCHAR},
+      </if>
+      <if test="gcsj != null">
+        #{gcsj,jdbcType=TIMESTAMP},
+      </if>
+      <if test="yjsj != null">
+        #{yjsj,jdbcType=TIMESTAMP},
+      </if>
+      <if test="yjlx != null">
+        #{yjlx,jdbcType=VARCHAR},
+      </if>
+      <if test="clfl != null">
+        #{clfl,jdbcType=VARCHAR},
+      </if>
+      <if test="cdbh != null">
+        #{cdbh,jdbcType=VARCHAR},
+      </if>
+      <if test="csys != null">
+        #{csys,jdbcType=VARCHAR},
+      </if>
+      <if test="cllx != null">
+        #{cllx,jdbcType=VARCHAR},
+      </if>
+      <if test="ssdl != null">
+        #{ssdl,jdbcType=VARCHAR},
+      </if>
+      <if test="lddm != null">
+        #{lddm,jdbcType=VARCHAR},
+      </if>
+      <if test="ldms != null">
+        #{ldms,jdbcType=VARCHAR},
+      </if>
+      <if test="dllx != null">
+        #{dllx,jdbcType=VARCHAR},
+      </if>
+      <if test="sbfx != null">
+        #{sbfx,jdbcType=VARCHAR},
+      </if>
+      <if test="sbbh != null">
+        #{sbbh,jdbcType=VARCHAR},
+      </if>
+      <if test="tpsl != null">
+        #{tpsl,jdbcType=VARCHAR},
+      </if>
+      <if test="cptplj != null">
+        #{cptplj,jdbcType=VARCHAR},
+      </if>
+      <if test="tplj1 != null">
+        #{tplj1,jdbcType=VARCHAR},
+      </if>
+      <if test="tplj2 != null">
+        #{tplj2,jdbcType=VARCHAR},
+      </if>
+      <if test="tplj3 != null">
+        #{tplj3,jdbcType=VARCHAR},
+      </if>
+      <if test="yjdd != null">
+        #{yjdd,jdbcType=VARCHAR},
+      </if>
+      <if test="xssd != null">
+        #{xssd,jdbcType=DECIMAL},
+      </if>
+      <if test="ssbm != null">
+        #{ssbm,jdbcType=VARCHAR},
+      </if>
+      <if test="xsqy != null">
+        #{xsqy,jdbcType=VARCHAR},
+      </if>
+      <if test="ssgs != null">
+        #{ssgs,jdbcType=DECIMAL},
+      </if>
+      <if test="gsmc != null">
+        #{gsmc,jdbcType=VARCHAR},
+      </if>
+      <if test="gsfzr != null">
+        #{gsfzr,jdbcType=VARCHAR},
+      </if>
+      <if test="gsfzrdh != null">
+        #{gsfzrdh,jdbcType=VARCHAR},
+      </if>
+      <if test="eventCurrentStatus != null">
+        #{eventCurrentStatus,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <resultMap id="BaseResultMap" type="com.sbzc.model.ALARMVEHICLE">
+    <result column="PK" jdbcType="DECIMAL" property="pk" />
+    <result column="YJXH" jdbcType="VARCHAR" property="yjxh" />
+    <result column="HPHM" jdbcType="VARCHAR" property="hphm" />
+    <result column="HPZL" jdbcType="VARCHAR" property="hpzl" />
+    <result column="GCSJ" jdbcType="TIMESTAMP" property="gcsj" />
+    <result column="YJSJ" jdbcType="TIMESTAMP" property="yjsj" />
+    <result column="YJLX" jdbcType="VARCHAR" property="yjlx" />
+    <result column="CLFL" jdbcType="VARCHAR" property="clfl" />
+    <result column="CDBH" jdbcType="VARCHAR" property="cdbh" />
+    <result column="CSYS" jdbcType="VARCHAR" property="csys" />
+    <result column="CLLX" jdbcType="VARCHAR" property="cllx" />
+    <result column="SSDL" jdbcType="VARCHAR" property="ssdl" />
+    <result column="LDDM" jdbcType="VARCHAR" property="lddm" />
+    <result column="LDMS" jdbcType="VARCHAR" property="ldms" />
+    <result column="DLLX" jdbcType="VARCHAR" property="dllx" />
+    <result column="SBFX" jdbcType="VARCHAR" property="sbfx" />
+    <result column="SBBH" jdbcType="VARCHAR" property="sbbh" />
+    <result column="TPSL" jdbcType="VARCHAR" property="tpsl" />
+    <result column="CPTPLJ" jdbcType="VARCHAR" property="cptplj" />
+    <result column="TPLJ1" jdbcType="VARCHAR" property="tplj1" />
+    <result column="TPLJ2" jdbcType="VARCHAR" property="tplj2" />
+    <result column="TPLJ3" jdbcType="VARCHAR" property="tplj3" />
+    <result column="YJDD" jdbcType="VARCHAR" property="yjdd" />
+    <result column="XSSD" jdbcType="DECIMAL" property="xssd" />
+    <result column="SSBM" jdbcType="VARCHAR" property="ssbm" />
+    <result column="XSQY" jdbcType="VARCHAR" property="xsqy" />
+    <result column="SSGS" jdbcType="DECIMAL" property="ssgs" />
+    <result column="GSMC" jdbcType="VARCHAR" property="gsmc" />
+    <result column="GSFZR" jdbcType="VARCHAR" property="gsfzr" />
+    <result column="GSFZRDH" jdbcType="VARCHAR" property="gsfzrdh" />
+    <result column="EVENT_CURRENT_STATUS" jdbcType="VARCHAR" property="eventCurrentStatus" />
+  </resultMap>
+  <insert id="insert" parameterType="com.sbzc.model.ALARMVEHICLE">
+    insert into ZDCL_ALARM_VEHICLE (PK, YJXH, HPHM, 
+      HPZL, GCSJ, YJSJ, 
+      YJLX, CLFL, CDBH, CSYS, 
+      CLLX, SSDL, LDDM, LDMS, 
+      DLLX, SBFX, SBBH, TPSL, 
+      CPTPLJ, TPLJ1, TPLJ2, 
+      TPLJ3, YJDD, XSSD, 
+      SSBM, XSQY, SSGS, GSMC, 
+      GSFZR, GSFZRDH, EVENT_CURRENT_STATUS
+      )
+    values (#{pk,jdbcType=DECIMAL}, #{yjxh,jdbcType=VARCHAR}, #{hphm,jdbcType=VARCHAR}, 
+      #{hpzl,jdbcType=VARCHAR}, #{gcsj,jdbcType=TIMESTAMP}, #{yjsj,jdbcType=TIMESTAMP}, 
+      #{yjlx,jdbcType=VARCHAR}, #{clfl,jdbcType=VARCHAR}, #{cdbh,jdbcType=VARCHAR}, #{csys,jdbcType=VARCHAR}, 
+      #{cllx,jdbcType=VARCHAR}, #{ssdl,jdbcType=VARCHAR}, #{lddm,jdbcType=VARCHAR}, #{ldms,jdbcType=VARCHAR}, 
+      #{dllx,jdbcType=VARCHAR}, #{sbfx,jdbcType=VARCHAR}, #{sbbh,jdbcType=VARCHAR}, #{tpsl,jdbcType=VARCHAR}, 
+      #{cptplj,jdbcType=VARCHAR}, #{tplj1,jdbcType=VARCHAR}, #{tplj2,jdbcType=VARCHAR}, 
+      #{tplj3,jdbcType=VARCHAR}, #{yjdd,jdbcType=VARCHAR}, #{xssd,jdbcType=DECIMAL}, 
+      #{ssbm,jdbcType=VARCHAR}, #{xsqy,jdbcType=VARCHAR}, #{ssgs,jdbcType=DECIMAL}, #{gsmc,jdbcType=VARCHAR}, 
+      #{gsfzr,jdbcType=VARCHAR}, #{gsfzrdh,jdbcType=VARCHAR}, #{eventCurrentStatus,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.sbzc.model.ALARMVEHICLE">
+    insert into ZDCL_ALARM_VEHICLE
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="pk != null">
+        PK,
+      </if>
+      <if test="yjxh != null">
+        YJXH,
+      </if>
+      <if test="hphm != null">
+        HPHM,
+      </if>
+      <if test="hpzl != null">
+        HPZL,
+      </if>
+      <if test="gcsj != null">
+        GCSJ,
+      </if>
+      <if test="yjsj != null">
+        YJSJ,
+      </if>
+      <if test="yjlx != null">
+        YJLX,
+      </if>
+      <if test="clfl != null">
+        CLFL,
+      </if>
+      <if test="cdbh != null">
+        CDBH,
+      </if>
+      <if test="csys != null">
+        CSYS,
+      </if>
+      <if test="cllx != null">
+        CLLX,
+      </if>
+      <if test="ssdl != null">
+        SSDL,
+      </if>
+      <if test="lddm != null">
+        LDDM,
+      </if>
+      <if test="ldms != null">
+        LDMS,
+      </if>
+      <if test="dllx != null">
+        DLLX,
+      </if>
+      <if test="sbfx != null">
+        SBFX,
+      </if>
+      <if test="sbbh != null">
+        SBBH,
+      </if>
+      <if test="tpsl != null">
+        TPSL,
+      </if>
+      <if test="cptplj != null">
+        CPTPLJ,
+      </if>
+      <if test="tplj1 != null">
+        TPLJ1,
+      </if>
+      <if test="tplj2 != null">
+        TPLJ2,
+      </if>
+      <if test="tplj3 != null">
+        TPLJ3,
+      </if>
+      <if test="yjdd != null">
+        YJDD,
+      </if>
+      <if test="xssd != null">
+        XSSD,
+      </if>
+      <if test="ssbm != null">
+        SSBM,
+      </if>
+      <if test="xsqy != null">
+        XSQY,
+      </if>
+      <if test="ssgs != null">
+        SSGS,
+      </if>
+      <if test="gsmc != null">
+        GSMC,
+      </if>
+      <if test="gsfzr != null">
+        GSFZR,
+      </if>
+      <if test="gsfzrdh != null">
+        GSFZRDH,
+      </if>
+      <if test="eventCurrentStatus != null">
+        EVENT_CURRENT_STATUS,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="pk != null">
+        #{pk,jdbcType=DECIMAL},
+      </if>
+      <if test="yjxh != null">
+        #{yjxh,jdbcType=VARCHAR},
+      </if>
+      <if test="hphm != null">
+        #{hphm,jdbcType=VARCHAR},
+      </if>
+      <if test="hpzl != null">
+        #{hpzl,jdbcType=VARCHAR},
+      </if>
+      <if test="gcsj != null">
+        #{gcsj,jdbcType=TIMESTAMP},
+      </if>
+      <if test="yjsj != null">
+        #{yjsj,jdbcType=TIMESTAMP},
+      </if>
+      <if test="yjlx != null">
+        #{yjlx,jdbcType=VARCHAR},
+      </if>
+      <if test="clfl != null">
+        #{clfl,jdbcType=VARCHAR},
+      </if>
+      <if test="cdbh != null">
+        #{cdbh,jdbcType=VARCHAR},
+      </if>
+      <if test="csys != null">
+        #{csys,jdbcType=VARCHAR},
+      </if>
+      <if test="cllx != null">
+        #{cllx,jdbcType=VARCHAR},
+      </if>
+      <if test="ssdl != null">
+        #{ssdl,jdbcType=VARCHAR},
+      </if>
+      <if test="lddm != null">
+        #{lddm,jdbcType=VARCHAR},
+      </if>
+      <if test="ldms != null">
+        #{ldms,jdbcType=VARCHAR},
+      </if>
+      <if test="dllx != null">
+        #{dllx,jdbcType=VARCHAR},
+      </if>
+      <if test="sbfx != null">
+        #{sbfx,jdbcType=VARCHAR},
+      </if>
+      <if test="sbbh != null">
+        #{sbbh,jdbcType=VARCHAR},
+      </if>
+      <if test="tpsl != null">
+        #{tpsl,jdbcType=VARCHAR},
+      </if>
+      <if test="cptplj != null">
+        #{cptplj,jdbcType=VARCHAR},
+      </if>
+      <if test="tplj1 != null">
+        #{tplj1,jdbcType=VARCHAR},
+      </if>
+      <if test="tplj2 != null">
+        #{tplj2,jdbcType=VARCHAR},
+      </if>
+      <if test="tplj3 != null">
+        #{tplj3,jdbcType=VARCHAR},
+      </if>
+      <if test="yjdd != null">
+        #{yjdd,jdbcType=VARCHAR},
+      </if>
+      <if test="xssd != null">
+        #{xssd,jdbcType=DECIMAL},
+      </if>
+      <if test="ssbm != null">
+        #{ssbm,jdbcType=VARCHAR},
+      </if>
+      <if test="xsqy != null">
+        #{xsqy,jdbcType=VARCHAR},
+      </if>
+      <if test="ssgs != null">
+        #{ssgs,jdbcType=DECIMAL},
+      </if>
+      <if test="gsmc != null">
+        #{gsmc,jdbcType=VARCHAR},
+      </if>
+      <if test="gsfzr != null">
+        #{gsfzr,jdbcType=VARCHAR},
+      </if>
+      <if test="gsfzrdh != null">
+        #{gsfzrdh,jdbcType=VARCHAR},
+      </if>
+      <if test="eventCurrentStatus != null">
+        #{eventCurrentStatus,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+</mapper>

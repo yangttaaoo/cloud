@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sbzc.mappers.ZdclCarInfoMapper" >
+  <resultMap id="BaseResultMap" type="com.sbzc.model.ZdclCarInfo" >
+    <result column="PK" property="pk" jdbcType="DECIMAL" />
+    <result column="HPHM" property="hphm" jdbcType="VARCHAR" />
+    <result column="CLFL" property="clfl" jdbcType="VARCHAR" />
+    <result column="CLPP" property="clpp" jdbcType="VARCHAR" />
+    <result column="CSYS" property="csys" jdbcType="VARCHAR" />
+    <result column="CLLX" property="cllx" jdbcType="VARCHAR" />
+    <result column="FDJBH" property="fdjbh" jdbcType="VARCHAR" />
+    <result column="CLSBDM" property="clsbdm" jdbcType="VARCHAR" />
+    <result column="HDZKRS" property="hdzkrs" jdbcType="VARCHAR" />
+    <result column="HDZZL" property="hdzzl" jdbcType="VARCHAR" />
+    <result column="NJYXQ" property="njyxq" jdbcType="TIMESTAMP" />
+    <result column="SSGS" property="ssgs" jdbcType="DECIMAL" />
+    <result column="JSR" property="jsr" jdbcType="DECIMAL" />
+    <result column="GLBM" property="glbm" jdbcType="VARCHAR" />
+    <result column="XZQH" property="xzqh" jdbcType="VARCHAR" />
+  </resultMap>
+  <insert id="insert" parameterType="com.sbzc.model.ZdclCarInfo" >
+    insert into ZDCL_CAR_INFO (PK, HPHM, CLFL, 
+      CLPP, CSYS, CLLX, FDJBH, 
+      CLSBDM, HDZKRS, HDZZL, 
+      NJYXQ, SSGS, JSR, 
+      GLBM, XZQH)
+    values (#{pk,jdbcType=DECIMAL}, #{hphm,jdbcType=VARCHAR}, #{clfl,jdbcType=VARCHAR}, 
+      #{clpp,jdbcType=VARCHAR}, #{csys,jdbcType=VARCHAR}, #{cllx,jdbcType=VARCHAR}, #{fdjbh,jdbcType=VARCHAR}, 
+      #{clsbdm,jdbcType=VARCHAR}, #{hdzkrs,jdbcType=VARCHAR}, #{hdzzl,jdbcType=VARCHAR}, 
+      #{njyxq,jdbcType=TIMESTAMP}, #{ssgs,jdbcType=DECIMAL}, #{jsr,jdbcType=DECIMAL}, 
+      #{glbm,jdbcType=VARCHAR}, #{xzqh,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.sbzc.model.ZdclCarInfo" >
+    insert into ZDCL_CAR_INFO
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="pk != null" >
+        PK,
+      </if>
+      <if test="hphm != null" >
+        HPHM,
+      </if>
+      <if test="clfl != null" >
+        CLFL,
+      </if>
+      <if test="clpp != null" >
+        CLPP,
+      </if>
+      <if test="csys != null" >
+        CSYS,
+      </if>
+      <if test="cllx != null" >
+        CLLX,
+      </if>
+      <if test="fdjbh != null" >
+        FDJBH,
+      </if>
+      <if test="clsbdm != null" >
+        CLSBDM,
+      </if>
+      <if test="hdzkrs != null" >
+        HDZKRS,
+      </if>
+      <if test="hdzzl != null" >
+        HDZZL,
+      </if>
+      <if test="njyxq != null" >
+        NJYXQ,
+      </if>
+      <if test="ssgs != null" >
+        SSGS,
+      </if>
+      <if test="jsr != null" >
+        JSR,
+      </if>
+      <if test="glbm != null" >
+        GLBM,
+      </if>
+      <if test="xzqh != null" >
+        XZQH,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="pk != null" >
+        #{pk,jdbcType=DECIMAL},
+      </if>
+      <if test="hphm != null" >
+        #{hphm,jdbcType=VARCHAR},
+      </if>
+      <if test="clfl != null" >
+        #{clfl,jdbcType=VARCHAR},
+      </if>
+      <if test="clpp != null" >
+        #{clpp,jdbcType=VARCHAR},
+      </if>
+      <if test="csys != null" >
+        #{csys,jdbcType=VARCHAR},
+      </if>
+      <if test="cllx != null" >
+        #{cllx,jdbcType=VARCHAR},
+      </if>
+      <if test="fdjbh != null" >
+        #{fdjbh,jdbcType=VARCHAR},
+      </if>
+      <if test="clsbdm != null" >
+        #{clsbdm,jdbcType=VARCHAR},
+      </if>
+      <if test="hdzkrs != null" >
+        #{hdzkrs,jdbcType=VARCHAR},
+      </if>
+      <if test="hdzzl != null" >
+        #{hdzzl,jdbcType=VARCHAR},
+      </if>
+      <if test="njyxq != null" >
+        #{njyxq,jdbcType=TIMESTAMP},
+      </if>
+      <if test="ssgs != null" >
+        #{ssgs,jdbcType=DECIMAL},
+      </if>
+      <if test="jsr != null" >
+        #{jsr,jdbcType=DECIMAL},
+      </if>
+      <if test="glbm != null" >
+        #{glbm,jdbcType=VARCHAR},
+      </if>
+      <if test="xzqh != null" >
+        #{xzqh,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+</mapper>
